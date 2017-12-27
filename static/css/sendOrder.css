@@ -1,0 +1,86 @@
+h5 {
+    font-weight: normal;
+}
+.fl{
+    float:left;
+}
+.fr{
+    float:right;
+}
+.orderDeil .order-btn span:nth-child(2) a{
+    color:#fff;
+}
+.mainContent{
+    width:100%;
+    position:absolute;
+    top:1rem; bottom:0px;
+    overflow-y:auto;
+    background: #f1f1f1;
+}
+.sureBtn{
+    position:fixed;
+    width:100%; 
+    bottom:0px;
+    line-height:1rem;
+    text-align:center;
+    color:#fff!important;
+    background:#804090;
+}
+.yuan{
+    width:.4rem; height:.4rem;
+    border-radius:50%;
+    border:1px solid #ccc;
+    margin-top:.5rem;
+}
+.active1{
+    width: 0.15rem!important;
+    height: .15rem!important;
+    border: .15rem solid #26a2ff!important;
+}
+.active2{
+    background:#804090;
+}
+.listBox{
+    overflow:hidden;
+}
+.listBox li{
+    height:1.4rem; width:100%;
+    padding:.2rem .2rem .2rem .25rem;
+    background:#fff;
+    border-bottom:1px solid #e5e5e5;    
+    margin-top:.1rem;
+}
+.select_div{
+    width:.5rem;
+    height:1.4rem;
+    margin-right: .25rem;
+}
+.pic_div1{
+    width:1.325rem;
+    height:1.325rem;
+    border-radius:.15rem;
+    border:1px solid #ccc;
+}
+.pic_div1 img{
+    border-right: .15rem;
+}
+.txt_div1{
+    height:1.4rem;
+    width:4rem;
+    padding-left:.2rem;
+}
+.next_btn1{
+    width:1rem;
+    height:1.4rem;
+    line-height:1.4rem; text-align:center;
+}
+.workerName{
+    color:#333;
+}
+.orderNum{
+    color:#804090;
+}
+.workerNum{
+    color:#ccc;
+    padding-left:10px;
+}

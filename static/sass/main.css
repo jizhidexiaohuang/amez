@@ -1,0 +1,154 @@
+@charset "UTF-8";
+.main {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+.layout {
+  background: #f5f7f9;
+  overflow: hidden;
+}
+
+.ivu-row-flex {
+  height: 100%;
+}
+
+.my-layout-box {
+  position: absolute;
+  top: 91px;
+  width: 100%;
+  bottom: 0px;
+}
+
+.layout-content {
+  overflow: hidden;
+  background: #f0f0f0;
+  border-radius: 4px;
+  position: absolute;
+  top: 107px;
+  width: 100%;
+  bottom: 0px;
+  overflow-y: auto;
+}
+
+.layout-content-main {
+  padding: 10px;
+}
+
+.layout-copy {
+  text-align: center;
+  padding: 10px 0 20px;
+  color: #9ea7b4;
+}
+
+.layout-menu-left {
+  background: #464c5b;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.layout-header {
+  height: 60px;
+  line-height: 60px;
+  background: #fff;
+  position: relative;
+}
+
+.layout-logo-left {
+  width: 90%;
+  height: 30px;
+  background: #5b6270;
+  border-radius: 3px;
+  margin: 15px auto;
+}
+
+.layout-ceiling-main a {
+  color: #9ba7b5;
+}
+
+.layout-hide-text .layout-text {
+  display: none;
+}
+
+.layout-breadcrumb {
+  padding: 0px;
+  float: left;
+}
+
+.showOrHide {
+  float: left;
+  line-height: 60px;
+}
+
+.tagWrap {
+  position: relative;
+  width: 100%;
+  height: 47px;
+  padding-top: 0px !important;
+  background: #f0f0f0;
+  border-bottom: 3px solid #e6e6e6;
+  border-top: 3px solid #e6e6e6;
+}
+
+.tagWrap .tabPrev {
+  position: absolute;
+  left: 0px;
+  width: 15px;
+  text-align: center;
+  height: 41px;
+  line-height: 41px;
+  cursor: pointer;
+  background: #fff;
+}
+
+.tagWrap .tabNext {
+  position: absolute;
+  right: 110px;
+  width: 15px;
+  text-align: center;
+  height: 41px;
+  line-height: 41px;
+  cursor: pointer;
+  background: #fff;
+  box-shadow: -3px 0 15px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tagWrap .tabLeft {
+  padding-top: 2px;
+  margin-left: 5px;
+  position: absolute;
+  left: 0px;
+  right: 110px;
+  height: 41px;
+  overflow: hidden;
+}
+
+.tagWrap .tabLeft .tabLeftWrap {
+  position: absolute;
+  width: max-content;
+  height: 41px;
+  left: 0px;
+}
+
+.tagWrap .tabRight {
+  width: 110px;
+  height: 41px;
+  right: 0px;
+  height: 41px;
+  position: absolute;
+  background: #fff;
+  box-shadow: -3px 0 15px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* 顶部右侧区域 */
+.layout-right-header {
+  height: 100%;
+  line-height: 60px;
+  float: right;
+}
+
+.swiper-slide {
+  width: auto !important;
+}

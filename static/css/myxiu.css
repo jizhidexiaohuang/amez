@@ -1,0 +1,31 @@
+.userWrap{
+  width:84%;
+  height:25%;
+  padding:15% 8%;
+}
+.userhead{
+  width:33%; height:100%;
+  float:left;
+}
+.userhead img{
+  display:block;
+  width:100%;
+}
+.userBtn{
+  width:60%; height:100%;
+  float:right;
+}
+.userName{
+  height:1.2rem; line-height:1.2rem;
+  font-size:.35rem;
+}
+.btnWrap{
+  width:100%; height:1rem;
+}
+.enterBtn,.regBtn{
+  padding:.15rem .4rem; background:#e6356b;
+  margin-right:.35rem;
+  border-radius:.1rem;
+  color:#fff;
+  font-size:.25rem;
+}

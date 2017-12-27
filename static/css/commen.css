@@ -1,0 +1,107 @@
+/* ==========================头部============================= */
+.header{
+  height:.95rem;
+  width:100%;
+  line-height: .95rem;
+  font-size: .35rem;
+  position:relative;
+  font-family: PingFangSC;
+  color: #333333;
+  background: #fff;
+  border-bottom:.05rem solid #f1f1f1;
+}
+.header a{
+    color: inherit;
+    padding-left: .2rem;
+}
+.header img{
+  display: block;
+  width: 40%;
+  margin: 0 auto;
+  padding-top: .1rem;
+}
+.headerName{
+  position:absolute;
+  left:50%; margin-left:-20%;
+  top:0;
+  width:40%; height:1rem;
+  text-align:center;
+  line-height:1rem;
+}
+.preBtn{
+    font-size: .3rem;
+    line-height: 1rem;
+    color: #030303;
+    letter-spacing: 1.8px;
+    position:absolute;
+    left:.2rem;
+    height:1rem;
+}
+.preBtn img{
+    width:.4rem; height:.4rem;
+    vertical-align:middle;
+    display:block;
+    margin-top:.3rem;
+    padding-top:0px!important;
+}
+/* =========================容器 ================================*/
+.container{
+  position:absolute;
+  top:1rem; bottom:1rem;
+  width:100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #f1f1f1;
+}
+.container_100{
+    position: absolute;
+    top: 1rem; bottom:0rem;
+    overflow: auto;
+    width: 100%;
+    background: #f1f1f1;
+}
+.sm_container{
+  position:absolute;
+  top:1.99rem; bottom:1.1rem;
+  width:100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #f7f7f7;
+}
+/* ============================底部菜单======================= */
+.footer{
+  position:absolute;
+  bottom:0rem;
+  height:1rem; width:100%;
+}
+.footer ul{
+  width:100%; height:1rem;
+  background:#fff;
+}
+.footer ul li{
+  float:left;
+  width:25%; height: inherit;
+  text-align:center;
+  color:#999999;
+  font-size: .25rem;
+}
+.footer_img{
+  width: .4rem; display: inline-block;
+}
+.active{
+    color:#f5d493!important;
+}
+/* transition过渡动画 */
+.slide-down-enter-active, .slide-down-leave-active {
+	  transition: opacity .5s;
+	  opacity: .7;
+	}
+.slide-down-enter, .slide-down-leave-active {
+  opacity: .1;
+}
+/* 弹出框 */
+
+
+
+
+

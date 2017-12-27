@@ -1,0 +1,287 @@
+.enptyCar div:nth-of-type(1){
+  text-align:center;
+  font-size:.45rem;
+  color:#000;
+  margin-top:.5rem;
+  margin-bottom:.25rem;
+}
+.enptyCar div:nth-of-type(2){
+  margin:0 auto;
+  width:50%;
+  border-radius:1rem;
+  margin-bottom:.8rem;
+}
+.enptyCar div:nth-of-type(2) img{
+  width:100%;
+  display:block;
+}
+.enptyCar div:nth-of-type(3){
+  margin:0 auto;
+  width:80%;
+  height:1rem; line-height:1rem;
+  background:#e43168;
+  border-radius:.1rem;
+  text-align:center;
+  color:#fff;
+  font-size:.45rem;
+}
+.hasCar{
+  width:100%;
+}
+.carInfo{
+  height:1rem;
+  padding:0 .2rem;
+  color:#fff;
+  background:#333333;
+  line-height:1rem;
+  font-size:.3rem;
+}
+.price{
+  color:#df3768;
+}
+.goodsList{
+  height:2.2rem;
+  border-bottom:1px solid #ccc;
+  padding:.35rem .2rem .4rem .2rem; 
+  background:#fff;
+}
+.goodsList>div{
+  height:2.2rem;
+  float: left;
+}
+.goodsList>div:nth-of-type(1){
+  width:40%;
+}
+.goodsList>div:nth-of-type(1) img{
+  display:block;
+  width:2.2rem; height:100%;
+}
+.goodsList>div:nth-of-type(2){
+  width:45%;
+}
+.goodsList>div:nth-of-type(3){
+  width:15%;
+}
+.goodsName{
+  font-size:.3rem;
+  margin-bottom:.25rem;
+}
+.priceBox{
+  height:1rem; width:100%; 
+  position:relative;
+  font-size:.3rem;
+}
+.discount{
+  padding-top:.1rem;
+}
+.nPrice{
+  color:#f42a73;
+}
+.delectBtn{
+  width:100%;
+  margin-top:2px;
+  margin-bottom:1rem;
+  text-align:center;
+  font-size:.3rem;
+}
+.delectBtn img{
+  width:35%;
+  display:block;
+  margin:0 auto;
+}
+.goodsSize{
+  width:100%;
+  font-size:.3rem;
+  text-align:center;
+}
+.goodsNumber{
+  width: .7rem;
+  height: .3rem;
+  border: 1px solid #ccc;
+}
+
+/* 数据列表 */
+.record_time{
+  height: 1rem; line-height: 1rem;
+  background: #fff;
+  padding-left: .3rem; padding-right:.3rem;
+  margin-top: .1rem;
+}
+.general_box{
+  padding-left:.3rem; padding-right:.3rem;
+  background: #fff;
+}
+.general_box .title{
+  width: 100%;
+  border-bottom:2px solid #f1f1f1;
+  height: 1rem; line-height: 1rem;
+  font-size: .32rem;
+}
+.data_circle{
+  width: 100%;
+  height: 4rem;
+  background: #fff;
+  position: relative;
+}
+.circle_big{
+  width: 3rem; height: 3rem; 
+  margin: 0 auto;
+  background: #f5d493;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%; margin-top: -1.5rem;
+  left: 50%; margin-left: -1.5rem;
+}
+.circle_sm{
+  width: 2.7rem; height: 2.7rem; 
+  margin: 0 auto;
+  background: #fff;
+  z-index: 1;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%; margin-top: -1.35rem;
+  left: 50%; margin-left: -1.35rem;
+}
+.sm_top{
+  width: 100%;
+  height: 1.7rem;
+  border-bottom: .15rem solid #f5d493;
+  font-size: .275rem;
+}
+.sm_top p{
+  text-align: center;
+}
+.sm_top .txt{
+  padding-top: .55rem;
+}
+.sm_top .money{
+  padding-top:.1rem;
+}
+.sm_bottom .uprate{
+  padding-top: .15rem;
+  text-align: center;
+  font-size: .275rem;
+}
+.data_box{
+  padding-left: .3rem; padding-right:.3rem;
+  background: #fff;
+}
+.ratelist{
+  width: 100%;
+  border-top: 2px solid #f1f1f1;
+  font-size:.275rem;
+}
+.ratelist div{
+  width: 50%; float: left;
+}
+.ratelist div p{
+  padding-left: .3rem;
+  padding-top: .3rem;
+}
+.serve_box{
+  padding-left: .3rem; padding-right: .3rem;
+  margin-top: .1rem;
+  margin-bottom: .1rem;
+  background: #fff;
+}
+.serve_box .title{
+  width: 100%;
+  border-bottom:2px solid #f1f1f1;
+  height: 1rem; line-height: 1rem;
+  font-size: .32rem;
+}
+.rankList{
+  border-bottom:2px solid #f1f1f1;
+  padding-top: .2rem;
+  padding-bottom: .2rem;
+  position: relative;
+}
+.rankList .pic{
+  width: 1.6rem; height: 1.6rem;
+}
+.rankList .pic img{
+  width: 100%; height: 100%;
+  display: block;
+  border-radius: .15rem;
+}
+.rankList .txt{
+  position: absolute;
+  left: 1.6rem; right: 0px;
+  height: 1.6rem;
+}
+.ranktxt{
+  width: 70%; 
+  padding-left: .2rem;
+}
+.ranknum{
+  color:#f5d493;
+}
+.numberBox{
+  position: absolute;
+  bottom:0px; left: 0px;
+  width: 100%;
+  padding-left: .2rem;
+}
+.money_box{
+  width: 100%;
+  padding-left: .2rem;
+  margin-top: .35rem;
+}
+.totle_box{
+  height: 1rem; line-height: 1rem;
+  border-bottom: 2px solid #f1f1f1;
+}
+.analyseBox{
+  padding-left: .3rem; padding-right: .3rem;
+  background: #fff;
+}
+.analyseBox .title{
+  width: 100%;
+  border-bottom:2px solid #f1f1f1;
+  height: 1rem; line-height: 1rem;
+  font-size: .32rem;
+}
+.analyseList{
+  width: 100%;
+  height: 1rem; line-height: 1rem;
+  padding-left: .2rem;
+  font-size: .32rem;
+}
+.analyseList div{
+  width: 33.33%;
+}
+
+.analyseWrap ul{
+  width: 100%;
+  border-top:2px solid #f1f1f1;
+  padding-left: .2rem;
+  padding-top:.1rem;
+  overflow: hidden;
+}
+.analyseWrap ul li{
+  width: 33.3%;
+}
+.analyseWrap ul li p{
+  padding-top:.05rem;
+  padding-bottom:.05rem;
+}
+.backServeBox{
+  padding-left: .3rem; padding-right: .3rem;
+  background: #fff;
+  margin-top: .1rem;
+}
+.backServeBox .title{
+  width: 100%;
+  height: 1rem; line-height: 1rem;
+  font-size: .32rem;
+}
+.backSeverList{
+  height: 1rem; line-height: 1rem;
+  border-top:2px solid #f1f1f1;
+}
+.upPic{
+  display: block;
+  width: .35rem;
+  margin-top: .325rem;
+  padding-left: .1rem;
+}

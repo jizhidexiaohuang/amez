@@ -1,0 +1,81 @@
+#payGo a{
+    color:#fff;
+}
+.cancel .cancelRule {
+  margin-top:.2rem;
+  box-sizing: border-box;
+  padding-left: .3rem;
+  height: .9rem;
+  line-height: .9rem;
+  width: 100%;
+  background: #fff;
+  position: relative; }
+  .cancel .cancelRule a {
+    display: inline-block;
+    width: 100%;
+    height: 100%; }
+  .cancel .cancelRule i {
+    position: absolute;
+    top: 50%;
+    right: .3rem;
+    transform: translateY(-50%); }
+  .cancel .cancelRule span {
+    font-size: .3rem;
+    color: #333333; }
+.cancel h3 {
+  font-size: .3rem;
+  font-weight: normal;
+  height: .6rem;
+  line-height: .6rem;
+  padding-left: .3rem;
+  color: #333333; }
+.cancel .mint-radio-label {
+  font-size: .29rem;
+  color: #666666;
+  margin: 0; }
+.cancel .mint-radiolist {
+  box-sizing: border-box;
+  padding-left: 15px;
+  background: #fff; }
+.cancel .mint-cell-wrapper {
+  border-bottom: 0.5px solid #e5e5e5;
+  box-sizing: border-box;
+  padding-left: 0; }
+.cancel .mint-radiolist-label {
+  padding-left: 0px; }
+.cancel .textIn {
+  width: 100%;
+  background: #fff;
+  padding: .24rem 5%;
+  box-sizing: border-box; }
+.cancel textarea {
+  width: 90%;
+  min-height: 1.4rem;
+  outline: none;
+  background: #f1f1f1;
+  font-size: .26rem;
+  padding: .24rem .3rem;
+  border: none;
+  resize: none;
+  margin: auto;
+  border-radius: .12rem; }
+.cancel input::-webkit-input-placeholder {
+  /* WebKit browsers */
+  color: #fff; }
+.cancel input:-moz-placeholder {
+  /* Mozilla Firefox 4 to 18 */
+  color: #fff; }
+.cancel input::-moz-placeholder {
+  /* Mozilla Firefox 19+ */
+  color: #fff; }
+.cancel input::-ms-input-placeholder {
+  /* Internet Explorer 10+ */
+  color: #fff; }
+.sureBtn{
+  width: 100%; height: 1rem;
+  position: absolute; bottom: 0px;
+  text-align: center; line-height: 1rem;
+  background: #804090;
+  color: #fff;
+}
+/*# sourceMappingURL=orderCancel.css.map */

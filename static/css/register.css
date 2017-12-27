@@ -1,0 +1,26 @@
+#register{
+  padding:1rem 0;
+}
+#register input{
+  width:76%; height:1rem;
+  line-height:1rem;
+  background:#fff;
+  margin:0 auto;
+  display:block;
+  margin-bottom:.6rem;
+  border-radius:.2rem;
+  padding:0 2%;
+  font-size:.3rem;
+  border-left:1px solid #ccc;
+  border-top:1px solid #ccc;
+}
+#register div{
+  margin:0 auto;
+  width:80%;
+  height:1rem; line-height:1rem;
+  background:#e43168;
+  border-radius:.1rem;
+  text-align:center;
+  color:#fff;
+  font-size:.35rem;
+}

@@ -1,0 +1,43 @@
+.list{
+  height:inherit;
+}
+.searchWrap{
+  width:100%;
+  height:1rem;
+  background:#52525a;
+  overflow:hidden;
+  position:relative;
+}
+.searchWrap input{
+  width: 75%;
+  height: .7rem;
+  background: #fff;
+  display: block;
+  margin: .15rem auto;
+  border-radius:1.16rem;
+  padding:0 5% 0 10%;
+  font-size:.3rem;
+}
+.searchWrap img{
+  position: absolute;
+  display: block;
+  height: .5rem;
+  width: .5rem;
+  line-height: 1rem;
+  left: 7%;
+  top: .2rem;
+}
+.selectList{
+  height:1.1rem; width:90%;
+  line-height:1.1rem;
+  padding:0 5%;
+  border-bottom:1px solid #ccc;
+  font-size:.35rem;
+}
+.selectList span:nth-of-type(1){
+  color:#000;
+}
+.selectList span:nth-of-type(2){
+  color:#ddd;
+  font-size:.6rem;
+}

@@ -1,0 +1,137 @@
+#pullDown, #pullUp {
+    background:#fff;
+    height:40px;
+    line-height:40px;
+    font-weight:bold;
+    font-size:14px;
+    color:#888;
+}
+#pullDown{
+    margin-top: -.75rem;
+    z-index:-1;
+}
+#pullUp{
+  margin-top:1px;
+  height:0px;
+}
+.main_box{
+  width:100%; height:auto;
+  background: #f1f1f1;
+}
+.home{
+  height:inherit;
+}
+.searchWrap{
+  width:100%;
+  height:1rem;
+  background:#52525a;
+  overflow:hidden;
+  position:relative;
+}
+.searchWrap input{
+  width: 75%;
+  height: .7rem;
+  background: #fff;
+  display: block;
+  margin: .15rem auto;
+  border-radius:1.16rem;
+  padding:0 5% 0 10%;
+  font-size:.3rem;
+}
+.searchWrap img{
+  position: absolute;
+  display: block;
+  height: .5rem;
+  width: .5rem;
+  line-height: 1rem;
+  left: 7%;
+  top: .2rem;
+}
+.bannerWrap{
+  width:100%;
+  height:3.5rem;
+  position:relative;
+}
+.bannerWrap img{
+  display:block;
+  width:100%; height:100%;
+}
+.goodsWrap{
+  width:100%;
+}
+.goodsList{
+  height:2.2rem;
+  border-bottom:1px solid #ccc;
+  padding:.35rem .7rem .4rem .2rem; 
+}
+.goodsList>div{
+  height:2.2rem;
+  float: left;
+}
+.goodsList>div:nth-of-type(1){
+  width:40%;
+}
+.goodsList>div:nth-of-type(1) img{
+  display:block;
+  width:2.2rem; height:100%;
+}
+.goodsList>div:nth-of-type(2){
+  width:60%;
+}
+.goodsName{
+  font-size:.3rem;
+  margin-bottom:.25rem;
+}
+.priceBox{
+  height:1rem; width:100%; 
+  position:relative;
+}
+.nPrice{
+  font-size:.3rem;
+  color:#f42a73;
+}
+.oPrice{
+  color:#bcbcbc;
+  text-decoration: line-through;
+  padding-left:.2rem;
+}
+.discount{
+  padding-top:.1rem;
+  font-size:.25rem;
+}
+.shopCarBtn{
+  position:absolute;
+  right:.1rem; bottom:.1rem;
+  width:1.2rem; height:.55rem;
+}
+.shopCarBtn img{
+  display:block;
+  width:100%; height:100%;
+}
+
+/* 列表 */
+.home_list{
+  padding-left: .6rem; padding-right: .6rem;
+  margin-bottom: .3rem;
+  background: #fff;
+}
+.home_list .title{
+  height: 1rem; line-height: .8rem;
+  font-size: .3rem;
+  font-family: PingFangSC;
+}
+.aItem{
+  height: 1.6rem; width: 25%;
+}
+.aItem img{
+  display: block;
+  width: .75rem; height: .75rem;
+  margin: 0 auto;
+}
+.aItem p{
+  text-align: center; 
+  padding-top:.2rem;
+  font-size: .2rem;
+  font-family: PingFangSC;
+  color:#666;
+}
