@@ -180,6 +180,7 @@
                                     click: () => {
                                         this.targetKeys1 = []
                                         this.userId = params.row.userId;
+                                        this.relation(params.row.userId)
                                         this.modal = true;
                                     }
                                 }
@@ -323,6 +324,13 @@
                         })
                     }
                 });
+            },
+            //获取关联信息
+            relation(id){
+                // let url = common.path+'system/api/baseUserRole/'+id;
+                // this.$http.get(url).then(res=>{
+                //     console.log(res)
+                // })
             },
             //模态框点击ok
             ok(){

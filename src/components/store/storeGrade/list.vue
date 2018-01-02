@@ -2,6 +2,8 @@
     <div>
         <!-- 新增容器 -->
         <AddPage v-if="pageType == 'add'"  class="testWrap" v-on:returnList="fnBackformAdd"/>
+        <!--成长值设置-->
+        <RulesPage v-if="pageType == 'rules'"  class="testWrap" v-on:returnList="fnBackformAdd"/>
         <!-- 编辑容器 -->
         <div v-if="pageType == 'edit'" class="testWrap">
             编辑
@@ -58,7 +60,7 @@
                 </Col> -->
                 <Col span="10">
                     <Button style="float:left;margin-right:10px;" @click.native="changePageType('add')" type="success" icon="android-add">新增店铺等级</Button>
-                    <Button style="float:left;" @click.native="changePageType('list')" type="primary" icon="android-add">成长规则设置</Button>
+                    <Button style="float:left;" @click.native="changePageType('rules')" type="primary" icon="android-add">成长规则设置</Button>
                 </Col>
             </Row>
             <Table
@@ -87,6 +89,7 @@
 </template>
 <script>
     import AddPage from './add.vue'
+    import RulesPage from './rules.vue'
     import common from '../../../base.js'
     export default {
         data () {
@@ -124,15 +127,18 @@
                     },
                     {
                         title: '店铺等级',
-                        key: 'storeName',
+                        key: 'levelName',
                     },
                     {   
                         title: '成长值范围',
-                        key: 'sellerName'
+                        key: 'beginUpgradeValue',
+                        render:(h,params)=>{
+                            return h('div',params.row.beginUpgradeValue+'--'+params.row.endUpgradeValue)
+                        }
                     },
                     {
                         title: '图标',
-                        key: 'storeTel'
+                        key: 'levelLogo'
                     },
                     {
                         title: '操作',
@@ -166,8 +172,7 @@
                                 },
                                 on: {
                                     click: () => {
-                                        // this.show(params.index)
-                                        //this.changePageType('edit');
+                                        
                                     }
                                 }
                                }, '删除')
@@ -196,14 +201,14 @@
                 let vm = this;
                 let start = (vm.pageNun-1)*vm.size;//从第几个开始
                 let size = vm.size;//每页条数
-                let url = common.path+"store/front/findByPage?pageNo="+this.pageNun+'&pageSize='+this.size;
+                let url = common.path+"storeLevel/findList?pageNo="+this.pageNun+'&pageSize='+this.size;
                 // let url = "http://172.16.20.151:8080/product/front/findByPage?pageNo=1&pageSize=1";
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size
                 }
                 vm.loading = true;
-                this.$http.post(
+                this.$http.get(
                     url,
                     // ajaxData,
                     {
@@ -212,7 +217,7 @@
                         },
                     }
                 ).then(function(res){
-                    console.log(res.data.data);
+                    console.log(res.data);
                     let oData = res.data
                     vm.recordsTotal = oData.data.total;
                     vm.tableData1 = res.data.data.list;
@@ -276,6 +281,7 @@
         },
         components:{
             AddPage,
+            RulesPage
         }
     }
 </script>
