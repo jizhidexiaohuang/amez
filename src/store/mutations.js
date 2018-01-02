@@ -9,7 +9,9 @@ const state = {
 	userInfo:"",
 	msgModal:false,
 	//是否存在页签菜单
-	TabType:true
+	TabType:true,
+	//用户登录信息
+	adminInfo:"",
 };
 /* =========================改变状态的唯一方法======================= */
 const mutations = {
@@ -55,7 +57,11 @@ const mutations = {
 	},
 	[types.TAB_FALSE](state){
 		state.TabType = false;
-	}
+	},
+	[types.ADMIN_INFO](state,adminInfo){
+		console.log(adminInfo);
+		state.adminInfo = adminInfo;
+	},
 }
 /* ====================对状态进行处理再输出=========================== */
 const getters = {
@@ -82,7 +88,10 @@ const getters = {
 	},
 	tabTrue(state){
 		return state.TabType
-	}
+	},
+	adminInfo(state){
+		return state.adminInfo
+	},
 }
 export default{
 	state,

@@ -69,6 +69,7 @@
             },
             fnDoSome: function(id){
                 console.log(id);
+
             },
             fnDelete: function(id){
                 let vm = this;
@@ -84,7 +85,7 @@
                     vm.$Message.error(err);
                 })
             }
-        }
+        },
     };
 </script>
 <style scoped>

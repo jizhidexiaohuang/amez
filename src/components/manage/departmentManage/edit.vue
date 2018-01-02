@@ -35,7 +35,7 @@
                 path:this.common.path1+"system/api/file/uploadForKindeditor",
                 treeList:[],
                 allMenu:[],
-                spinShow: true,//加载开关
+                spinShow: false,//加载开关
                 allList:[],//所有权限
                 mineList:[],//该角色拥有的权限
                 resourcesIds:"",//权限id数组
@@ -50,18 +50,20 @@
                     roleId:vm.roleId,
                     resourcesIds:vm.resourcesIds
                 }
+                console.log(ajaxData);
                 // let url = vm.common.path+"system/api/baseRoleResources/distributionBaseRoleResources?roleId="+vm.roleId+"&resourcesIds="+vm.resourcesIds;
-                let url = vm.common.path+"system/api/baseRoleResources/distributionBaseRoleResources";
-                vm.$http.post(
-                    url,
+                let url = vm.common.path+"baseRoleResources/distributionBaseRoleResources?roleId="+vm.roleId+"&resourcesIds="+vm.resourcesIds;
+                vm.$http.get(
+                    url
                     // JSON.stringify(ajaxData),
-                    vm.qs.stringify(ajaxData),
-                    {
+                    // vm.qs.stringify(ajaxData),
+                    // ajaxData,
+                    /* {
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
                             'Accept': 'application/json'
                         }
-                    }
+                    } */
                 ).then(function(res){
                     console.log(res);
                     let oData = res.data
@@ -236,7 +238,7 @@
 
 
 
-                let url = vm.common.path + "system/api/baseRoleResources/findList?pageSize=1000&roleId="+id;
+                let url = vm.common.path + "baseRoleResources/selectListByConditions?pageSize=999&roleId="+id;
                 let ajaxData = {
                     roleId: id,
                     pageSize: 1000
@@ -270,6 +272,7 @@
         mounted: function(){
             let vm = this;
             vm.allList = vm.allMenus;
+            console.log(vm.allList);
             // 获取角色数据
             vm.fnGetData();
         },

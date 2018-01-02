@@ -46,7 +46,7 @@
                 }
             }
         },
-        props: ["sendChild"],
+        props: ["twoChild"],
         methods: {
             // 提交验证
             handleSubmit (name) {
@@ -58,7 +58,7 @@
                         let ajaxData = {
                             categoryName: vm.formValidate.categoryName, // 分类名称
                             categoryLogo: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
-                            categoryParentId: vm.formValidate.categoryParentId,// 父类id
+                            categoryParentId: !!!this.twoChild.categoryParentId?0:this.twoChild.categoryParentId,// 父类id
                             isEnabled: !!!vm.switch1?0:1,//开启状态
                         }
                         let url = vm.common.path+"productCategory/insert";
@@ -101,6 +101,7 @@
             }
         },
         mounted: function(){
+            console.log(this.twoChild);
         },
         components:{
             MyUpload

@@ -62,7 +62,33 @@ export default {
             let vm = this;
             vm.$refs.loginForm.validate((valid) => {
                 if (valid) {
-                    vm.$router.push("/home");
+                    let url = vm.common.path + "baseUsers/userLogin?userName="+vm.form.userName+"&password="+vm.form.password;
+                    let ajaxData = {
+                        userName:vm.form.userName,
+                        password:vm.form.password
+                    }
+                    vm.$http.post(
+                        url,
+                        ajaxData
+                    ).then(function(res){
+                        console.log(res);
+                        if(res.data.code != 200){
+                            vm.$Notice.warning({
+                                title: res.data.message
+                            });
+                        }else{
+                            vm.$store.dispatch("adminInfo",{
+                                adminInfo:res.data.data
+                            })
+                            vm.$router.push("/home");
+                            window.localStorage.setItem("userInfo",JSON.stringify(res.data.data));
+                        }
+                    }).catch(function(err){
+                        console.log(err);
+                    })
+
+
+                    // vm.$router.push("/home");
                 }
             });
         }

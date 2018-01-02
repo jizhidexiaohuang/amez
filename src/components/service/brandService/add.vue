@@ -47,7 +47,7 @@
                 <Input v-model="formValidate.commission" placeholder="请填写佣金价格，单位元"></Input>
             </FormItem>
             <FormItem label="轮播图">
-                <MyUpload :defaultList="defaultList" v-on:listenUpload="getUploadList"></MyUpload>
+                <MyUpload :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
             </FormItem>
             <FormItem label="图片地址" prop="img" style="position:absolute; left:-9999px;">
                 <Input v-model="formValidate.img" placeholder=""></Input>
@@ -123,6 +123,9 @@
                     
                 },
                 defaultList: [],
+                uploadConfig: {
+                    num:5
+                },
                 uploadList:[],//图片列表
                 // path:"http://172.16.20.151:8009/system/api/file/uploadForKindeditor"
                 path:this.common.path1+"system/api/file/uploadForKindeditor",

@@ -7,13 +7,13 @@
                     <template v-for="item in menu.menuList">
                         <router-link v-if="!!!item.hasChildList" :to="item.href">
                             <MenuItem  :name="item.href">
-                                <Icon :type="item.type" :size="iconSize"></Icon>
+                                <Icon :type="item.menuLogo" :size="iconSize"></Icon>
                                 <span class="layout-text">{{ item.name }}</span>
                             </MenuItem>
                         </router-link>
                         <Submenu v-if="!!item.hasChildList" :name="item.name">
                             <template slot="title">
-                                <Icon :type="item.type" :size="iconSize"></Icon>
+                                <Icon :type="item.menuLogo" :size="iconSize"></Icon>
                                 <span class="layout-text">{{ item.name }}</span>
                             </template>
                             <router-link v-for="list in item.childList" :to="list.href">
@@ -231,8 +231,12 @@ export default {
                 // timer.setTimeout(function(){
                 //     vm.menuList = arrs;
                 // }，1000)
+            console.log(vm.$store.getters.adminInfo.menu);
+
             window.setTimeout(function(){
-                vm.menu.menuList = arrs;
+                // vm.menu.menuList = arrs;
+                // vm.menu.menuList = vm.$store.getters.adminInfo.menu;
+                vm.menu.menuList = JSON.parse(window.localStorage.getItem("userInfo")).menu;
                 vm.fnMenuChange();
                 //初始化菜的那
             },400)

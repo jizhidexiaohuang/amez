@@ -26,6 +26,8 @@
         <EditPage v-if="pageType == 'edit'"  class="testWrap" :sendChild="sendChild" v-on:returnList="changePageType"/>
         <!-- 新增 -->
         <AddPage v-if="pageType == 'add'"  class="testWrap" v-on:returnList="changePageType"></AddPage>
+        <!-- 新增2级 -->
+        <AddPageChild v-if="pageType == 'addChild'" :twoChild="twoChild" class="testWrap" v-on:returnList="changePageType"></AddPageChild>
         <!-- 详情容器 -->
         <div v-if="pageType == 'info'" class="testWrap">详情</div>
         <!-- 列表容器 -->
@@ -73,7 +75,9 @@
     import expandRow from './table-expand.vue'
     import EditPage from './edit.vue'
     import AddPage from './add.vue'
+    import AddPageChild from './addChild.vue'
     import MyUpload from '../../common/upload.vue'
+    import EditChildPage from './editChild.vue'
     export default {
         data () {
             return {
@@ -103,7 +107,7 @@
                     tableData1: [],//数据
                     //table头
                     tableColumns: [
-                        {
+                         {
                             type: 'expand',
                             width: 50,
                             render: (h, params) => {
@@ -113,7 +117,7 @@
                                     }
                                 })
                             }
-                        },
+                        }, 
                         {
                             title: '分类名称',
                             key: 'categoryName',
@@ -130,11 +134,14 @@
                             key: 'isEnabled',
                             render: (h,params) => {
                                 const row = params.row;
-                                if(row.isEnabled == 1){
-                                    return "开启"
-                                }else{
-                                    return "关闭"
-                                }
+                                const color = !!!row.isEnabled ? 'red' : 'blue';
+                                const text = !!!row.isEnabled ? '关闭' : '开启';
+                                return h('Tag', {
+                                    props: {
+                                        type: 'border',
+                                        color: color
+                                    }
+                                }, text);
                             }
                         },
                         {
@@ -145,7 +152,7 @@
                             // fixed: 'right',
                             render: (h, params) => {
                                 return h('div', [
-                                    h('Button', {
+                                     h('Button', {
                                         props: {
                                             type: 'primary',
                                             size: 'small'
@@ -156,11 +163,11 @@
                                         on: {
                                             click: () => {
                                                 let row = params.row;
-                                                this.roleId = row.roleId;
-                                                this.changePageType('edit');
+                                                this.twoChild.categoryParentId = row.id;
+                                                this.changePageType('addChild');
                                             }
                                         }
-                                    }, '添加子分类'),
+                                    }, '添加子分类'), 
                                     h('Button', {
                                         props: {
                                             type: 'primary',
@@ -248,6 +255,11 @@
                 sendChild:{
                     id: "", // 编辑选项的id
                 },
+                /* 传递给二级分类的数据 */
+                twoChild:{
+                    categoryParentId:"",//父类id
+                    id:"",//类目id
+                }
             }
         },
         methods: {
@@ -507,7 +519,8 @@
             expandRow,
             EditPage,
             MyUpload,
-            AddPage
+            AddPage,
+            AddPageChild
         }
     }
 </script>

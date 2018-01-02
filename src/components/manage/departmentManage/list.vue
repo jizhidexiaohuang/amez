@@ -367,6 +367,8 @@
                         console.log(err);
                         vm.modal.spinShow = false;
                     })
+                }else{
+                    vm.roleId = id;
                 }
                 vm.modal.mineModal = true;
                 vm.modal.spinShow = false;
@@ -439,12 +441,18 @@
             /* 获取所有菜单 */
             fnGetAllMenu () {
                 let vm = this;
-                let url = vm.common.path + "/system/api/baseMenu/findList?pageSize=1000";
+                let url = vm.common.path + "/baseMenus/selectListByConditions?pageSize=999";
                 vm.$http.post(
                     url,
+                    {
+                        headers:{
+                            'Content-type':'application/json;charset=UTF-8'
+                        }
+                    }
                 ).then(function(res){
                     console.log(res);
                     vm.allMenus = res.data.data.list;
+                    console.log(111111111111)
                     console.log(vm.allMenus);
                 }).catch(function(err){
                     console.log(err);
@@ -457,6 +465,7 @@
                     let arrs = [];
                     let type = vm.$store.getters.tabTrue;
                     if(!!!type){
+                        /* 重新初始化页面的代码 */
                         vm.table.tableData1 = [];//为了处理进来的时候看到之前缓存的页面
                         vm.table.loading = true;//进一步模拟第一次进来时的页面效果
                         vm.pageType = 'list'//显示列表页，放在这里是给上边的处理留点时间，也就是初始化放在这段代码上边
@@ -470,6 +479,7 @@
         mounted: function(){
             this.getData();
             // 获取所有菜单。之所以放在这里，是为了减少编辑页面的在同步获取数据的过程中产生的不好体验
+            console.log(11111);
             this.fnGetAllMenu();
         },
         activated: function(){

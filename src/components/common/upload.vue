@@ -24,7 +24,7 @@
             :before-upload="handleBeforeUpload"
             multiple
             type="drag"
-            action="http://172.16.20.151:8080/system/api/file/uploadFile"
+            action="http://120.79.42.13:8080/system/api/file/uploadFile"
             style="display: inline-block;width:58px;">
             <div style="width: 58px;height:58px;line-height: 58px;">
                 <Icon type="camera" size="20"></Icon>
@@ -44,7 +44,7 @@
                 uploadList: [],
             }
         },
-        props: ["defaultList"],
+        props: ["defaultList","uploadConfig"],
         methods: {
             /*======================上传图片  start=======================*/
             handleView (data) {
@@ -76,10 +76,13 @@
                 });
             },
             handleBeforeUpload () {
-                const check = this.uploadList.length < 5;
+                console.log(this.uploadConfig.num);
+                let num = this.uploadConfig.num||5;
+                let title = '最多可以上传'+ num + '张照片';
+                const check = this.uploadList.length < num;
                 if (!check) {
                     this.$Notice.warning({
-                        title: 'Up to five pictures can be uploaded.'
+                        title: title
                     });
                 }
                 return check;
@@ -89,6 +92,7 @@
         mounted: function(){
             this.uploadList = this.$refs.upload.fileList;
             console.log(this.defaultList);
+            console.log(this.uploadConfig);
         },
     };
 </script>
