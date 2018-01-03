@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- 新增容器 -->
-        <AddPage v-if="pageType == 'add'"  class="testWrap" v-on:returnList="fnBackformAdd"/>
+        <GradePage v-if="pageType == 'grade'"  class="testWrap" v-on:returnList="fnBackformAdd"/>
         <!--成长值设置-->
         <RulesPage v-if="pageType == 'rules'"  class="testWrap" v-on:returnList="fnBackformAdd"/>
         <!-- 编辑容器 -->
@@ -59,7 +59,7 @@
                     <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">重置</Button>
                 </Col> -->
                 <Col span="10">
-                    <Button style="float:left;margin-right:10px;" @click.native="changePageType('add')" type="success" icon="android-add">新增店铺等级</Button>
+                    <Button style="float:left;margin-right:10px;" @click.native="changePageType('grade')" type="success" icon="android-add">新增店铺等级</Button>
                     <Button style="float:left;" @click.native="changePageType('rules')" type="primary" icon="android-add">成长规则设置</Button>
                 </Col>
             </Row>
@@ -88,7 +88,7 @@
     </div>
 </template>
 <script>
-    import AddPage from './add.vue'
+    import GradePage from './grade.vue'
     import RulesPage from './rules.vue'
     import common from '../../../base.js'
     export default {
@@ -138,47 +138,22 @@
                     },
                     {
                         title: '图标',
-                        key: 'levelLogo'
-                    },
-                    {
-                        title: '操作',
-                        key: 'action',
-                        width: 180,
-                        // align: 'center',
-                        // fixed: 'right',
-                        render: (h, params) => {
-                            return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small'
-                                },
-                                style: {
-                                    marginRight: '5px'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.changePageType('edit');
+                        key: 'levelLogo',
+                        render:(h,params)=>{
+                            return h('div',[
+                                h('img',{
+                                    attrs:{
+                                        src:params.row.levelLogo
+                                    },
+                                    style:{
+                                        width:'36px',
+                                        height:'40px'
                                     }
-                                }
-                            }, '编辑'),
-                            h('Button', {
-                                props: {
-                                    type: 'error',
-                                    size: 'small'
-                                },
-                                style: {
-                                    marginRight: '5px'
-                                },
-                                on: {
-                                    click: () => {
-                                        
-                                    }
-                                }
-                               }, '删除')
-                             ]);
+                                })
+                            ])
                         }
-                    }
+                    },
+                   
                 ],
                 test:1,
                 recordsTotal:0,
@@ -219,8 +194,8 @@
                 ).then(function(res){
                     console.log(res.data);
                     let oData = res.data
-                    vm.recordsTotal = oData.data.total;
-                    vm.tableData1 = res.data.data.list;
+                    vm.recordsTotal = oData.data.length;
+                    vm.tableData1 = res.data.data;
                     vm.loading = false;
                 }).catch(function(err){
                 })
@@ -280,7 +255,7 @@
             vm.fnExistTabList()
         },
         components:{
-            AddPage,
+            GradePage,
             RulesPage
         }
     }

@@ -10,7 +10,8 @@
         <infoPage v-if="pageType == 'info'"  class="testWrap" :message="parentMsg" v-on:returnList="changePageType"/>
         <!-- 列表容器 -->
         <div v-if="pageType == 'list'" class="testWrap">
-            <Row style="margin-bottom:10px;">
+            <div class="boxStyle">
+            <Row style="margin-bottom:10px;" v-show="false">
                 <Col span="5">
                     <ButtonGroup>
                         <Button @click.native="changePageType('list')" type="primary" size="small" icon="ios-search">新增</Button>
@@ -22,6 +23,54 @@
                     <Input size="small" placeholder="please write text" icon="ios-search"></Input>
                 </Col>
             </Row>
+            <Form :model="cd" inline>
+                <Button style="float:left;margin-right:10px;" @click.native="changePageType('add')" type="success">订单导出</Button>
+                <FormItem style="margin-bottom:10px;">
+                    订单类型
+                    <Select v-model="orderType" style="width:100px">
+                        <Option v-for="item in orderTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+                </FormItem>
+                <FormItem style="margin-bottom:10px;">
+                    订单来源
+                    <Select v-model="orderOrigin" style="width:100px">
+                        <Option v-for="item in orderOriginList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+                </FormItem>
+                <FormItem style="margin-bottom:10px;">
+                    订单状态
+                    <Select v-model="orderStatus" style="width:100px">
+                        <Option v-for="item in orderStatusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+                </FormItem>
+                <FormItem style="margin-bottom:10px;">
+                    下单时间
+                    <DatePicker v-model="cd.startTime" type="date" placeholder="开始时间" style="width:200px;"></DatePicker>
+                </FormItem>
+                <FormItem style="margin-bottom:10px;">
+                    <DatePicker v-model="cd.endTime" type="date" placeholder="结束时间" style="width:200px;"></DatePicker>
+                </FormItem>
+                <FormItem style="margin-bottom:10px;">
+                    <Input v-model="value">
+                    <Select v-model="selectType" slot="prepend" style="width: 100px">
+                        <Option value="订单号">订单号</Option>
+                        <Option value="门店名称">门店名称</Option>
+                        <Option value="收货人姓名">收货人姓名</Option>
+                        <Option value="收货人手机">收货人手机</Option>
+                    </Select>
+                    </Input>
+                </FormItem>
+                <FormItem style="margin-bottom:10px; width:220px;" v-show="false">
+                    <Row>
+                        <Col span="22">
+                            <Input v-model="area" placeholder="门店名称/注册手机"></Input>
+                        </Col>
+                    </Row>
+                </FormItem>
+                <FormItem style="margin-bottom:10px;">
+                    <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
+                </FormItem>
+            </Form>
             <Table
                 :loading="loading" 
                 :data="tableData1" 
@@ -42,6 +91,7 @@
                     ></Page>
                 </div>
             </div>
+            </div>
         </div>
     </div>
 </template>
@@ -53,6 +103,69 @@
         data () {
             return {
                 src:'../../../static/images/footer/1_1.png',
+                value:'',
+                editId:'',//编辑id
+                infoId:'',//查看详情Id
+                selectType:'门店名称',
+                storeStatus:'', //店铺状态下拉框
+                area:'', //地区
+                orderType:'',//订单类型
+                orderOrigin:'',//订单类型
+                payType:'',//支付类型
+                orderStatus:'',//订单状态
+                orderTypeList:[
+                    {
+                        value:'0',
+                        label:'全部'
+                    },{
+                        value:'1',
+                        label:'上门服务'
+                    },{
+                        value:'2',
+                        label:'到店服务'
+                    },
+                ],  //订单类型
+                orderOriginList:[
+                    {
+                        value:'0',
+                        label:'全部'
+                    },{
+                        value:'1',
+                        label:'微信商城'
+                    },{
+                        value:'2',
+                        label:'APP商城'
+                    },
+                ],  //订单类型
+                orderStatusList:[
+                    {
+                        value:'0',
+                        label:'全部'
+                    },{
+                        value:'1',
+                        label:'待付款'
+                    },{
+                        value:'2',
+                        label:'待服务'
+                    },{
+                        value:'3',
+                        label:'待退款'
+                    },{
+                        value:'4',
+                        label:'待评价'
+                    },{
+                        value:'5',
+                        label:'服务完成'
+                    },{
+                        value:'6',
+                        label:'待客服介入'
+                    },
+                ],//订单状态
+                cd:{
+                    startTime:'',//评论时间范围
+                    endTime:'',//评论时间范围
+                    operType:"1"//评论类型、不用重置
+                },
                 activatedType: false,//主要解决mounted和activated重复调用
                 pageType: 'list',
                 openPage: false,

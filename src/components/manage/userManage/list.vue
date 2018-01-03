@@ -86,7 +86,7 @@
             title="分配权限"
             @on-ok="ok"
             @on-cancel="cancel">
-            <div v-if="transferCtrl">
+            <div v-if="modal">
                 <Transfer
                     :data="data1"
                     :titles="titles"
@@ -109,7 +109,6 @@
                 modal:false,//控制模态框
                 data1: [], //穿梭框数据
                 userId:0, //用户id
-                transferCtrl:false,
                 targetKeys1: [],//目标列表
                 roleIds:'',//分配的权限的字符串
                 editId:'',//传到子组件的值
@@ -178,10 +177,9 @@
                                 },
                                 on: {
                                     click: () => {
-                                        this.targetKeys1 = []
+                                        // this.targetKeys1 = []
                                         this.userId = params.row.userId;
                                         this.relation(params.row.userId)
-                                        this.modal = true;
                                     }
                                 }
                             }, '分配权限'),
@@ -214,7 +212,7 @@
                                     }
                                 }
                             }, '删除')
-                           ]);      
+                           ]);
                         }
                     }
                 ],
@@ -232,22 +230,17 @@
                 console.log(page)
                 let vm = this;
                 vm.pageNun = page;   
-                vm.getData();             
+                vm.getData();
             },
             /* 数据获取 */
             getData () {
                 let vm = this;
                 let start = (vm.pageNun-1)*vm.size;//从第几个开始
                 let size = vm.size;//每页条数
-                let url = common.path+"system/api/baseUser/findList?pageNo="+this.pageNun+'&pageSize='+this.size;
-                let ajaxData = {
-                    pageNo:start,
-                    pageSize: size,
-                }
+                let url = common.path+"baseUsers/selectListByConditions?pageNo="+this.pageNun+'&pageSize='+this.size;
                 vm.loading = true;
                 this.$http.post(
                     url,
-                    // ajaxData,
                     {
                         headers: {
                             'Content-type': 'application/json;charset=UTF-8'
@@ -327,31 +320,53 @@
             },
             //获取关联信息
             relation(id){
-                // let url = common.path+'system/api/baseUserRole/'+id;
-                // this.$http.get(url).then(res=>{
-                //     console.log(res)
-                // })
+                let url = common.path+'baseUserRoles/findBaseUserRoles/'+id;
+                this.$http.get(
+                    url
+                ).then(res=>{
+                    let data = res.data.data
+                    let leftArr = []
+                    let rightArr = []
+                    let rightKey = []
+                    for(var i=0;i<data.all.length;i++){
+                        leftArr.push({
+                            label:data.all[i].roleName,
+                            key:data.all[i].roleId.toString()
+                        })
+                    }
+                    for(var i=0;i<data.used.length;i++){
+                        rightArr.push({
+                            label:data.used[i].roleName,
+                            key:data.used[i].roleId.toString()
+                        })
+                    }
+                    for(var i=0;i<data.used.length;i++){
+                        rightKey.push(data.used[i].roleId.toString())
+                    }
+                    this.data1 = leftArr.concat(rightArr);
+                    this.targetKeys1 = rightKey;
+                    this.modal = true;
+                    console.log(this.data1)
+                    console.log(this.targetKeys1)
+                })
             },
             //模态框点击ok
             ok(){
-                let url = common.path+'/system/api/baseUserRole/distributionBaseUserRole'
-                let ajaxData = {
-                    userId:this.userId,
-                    roleIds:this.roleIds
-                }
-                this.$http.post(
+                let url = common.path+'baseUserRoles/distributionBaseUserRole?userId='+this.userId+'&roleIds='+this.roleIds
+                this.$http.get(
                     url,
-                    JSON.stringify(ajaxData)
                 ).then(res=>{
                     console.log(res)
                     if(res.status==200){
                         this.$Message.info('提交成功');
                     }
+                    this.modal = false;
                 })
             },
             //模态框点击取消
             cancel(){
                 this.$Message.info('Clicked cancel');
+                this.modal = false;
             },
             getMockData () {
                 let mockData = [];
@@ -364,7 +379,7 @@
                 console.log(mockData)
                 return mockData;
             },
-            //获取角色
+            //获取所有角色
             getRoleData () {
                 let url = common.path+'baseRoles/selectListByConditions?pageNo=1&pageSize=1000';
                 this.$http.post(
@@ -385,7 +400,6 @@
                     }
                     console.log(tempArr)
                     this.data1 = tempArr
-                    this.transferCtrl = true;
                 })
             },
             //渲染列表
@@ -395,7 +409,7 @@
             //穿梭框事件
             handleChange1 (newTargetKeys, direction, moveKeys) {
                 console.log(newTargetKeys); //目的列表
-                this.roleIds = newTargetKeys.join(',')
+                this.roleIds = newTargetKeys
                 console.log(this.roleIds)
                 console.log(direction);  //目标方向
                 console.log(moveKeys);  //移动的数据
@@ -403,11 +417,10 @@
             },
         },
         beforeMount:function(){
-             this.getRoleData()
+            // this.getRoleData()
         },
         mounted: function(){
             this.getData();
-            // this.getRoleData()
         },
         activated: function(){
             let vm = this;

@@ -32,7 +32,7 @@
                         <InputNumber :max="10" :min="1" v-model="item.sort"></InputNumber>
                     </Col>
                     <Col span="3" style="text-align:center;padding-top:10px;">
-                        <MyUpload :defaultList="defaultList" v-on:listenUpload="getUploadList"></MyUpload>
+                        <MyUpload :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
                     </Col>
                     <Col span="2" offset="1">
                         <Button type="error" @click="handleRemove(index)">删除</Button>
@@ -71,11 +71,14 @@
                             startValue:'',//最小值
                             endValue:'',//最大值
                             sort:1,//排序
-                            levelLogo:'',//图片上传地址
+                            levelLogo:'',
                             index: 1,
                             status: 1
                         }
                     ]
+                },
+                uploadConfig:{
+                    num:1
                 }
             }
         },
@@ -103,8 +106,10 @@
                             }
                         ).then(res=>{
                             console.log(res)
+                            if(res.status==200){
+                                this.$Message.success('Success!');
+                            }
                         })
-                        this.$Message.success('Success!');
                     } else {
                         this.$Message.error('Fail!');
                     }
@@ -148,10 +153,34 @@
                 }
                 console.log(this.ajaxArr)
                 return this.ajaxArr
+            },
+            //获取数据
+            getData(){
+                let url = common.path+'storeLevel/findList'
+                this.$http.get(url).then(res=>{
+                    let data = res.data.data
+                    console.log(data)
+                    this.formDynamic.items = []
+                    for(var i=0;i<data.length;i++){
+                        this.formDynamic.items.push({
+                            gradeName:data[i].levelName,
+                            startValue:data[i].beginUpgradeValue,
+                            endValue:data[i].endUpgradeValue,
+                            sort:data[i].sort,
+                            levelLogo:data[i].levelLogo,
+                            index: i+1,
+                            status: 1
+                        })
+                        this.index = i+1
+                    }
+                })
             }
         },
         components:{
             MyUpload
+        },
+        beforeMount:function(){
+            this.getData()
         }
     }
 </script>
