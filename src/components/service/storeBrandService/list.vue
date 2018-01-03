@@ -421,12 +421,13 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path2+"products/selectListByConditions?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"products/selectListByConditions?pageNo="+start+"&pageSize="+size+"&storeId=4";
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
                     saleStatus: vm.cd.saleStatus,
-                    isBrand: vm.cd.isBrand
+                    isBrand: vm.cd.isBrand,
+                    storeId: 4
                 }
                 ajaxData[vm.cd.inputType] = vm.cd.inputval
                 vm.table.loading = true;
@@ -534,7 +535,8 @@
                 let ajaxData = {
                     saleStatus : type == 0?1:0,
                     productId: id,
-                    isEnabled: 0
+                    isEnabled: 0,
+                    storeId: 4
                     // storeId: vm.modal.storeId
                 }
                 vm.$http.post(
@@ -573,7 +575,9 @@
             // 服务所属品牌接口数据
             fnGetStoreChainBrand () {
                 let vm = this;
-                let url = vm.common.path2 + "storeChainBrand/front/findByPage?pageSize=1000";
+                let _url = "http://120.79.42.13:8080/";
+                // let url = vm.common.path2 + "storeChainBrand/front/findByPage?pageSize=1000";
+                let url = _url + "storeChainBrand/front/findByPage?pageSize=1000";
                 vm.$http.post(
                     url,
                     {

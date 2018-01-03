@@ -157,6 +157,7 @@
                             serverIntroduce: vm.formValidate.serverIntroduce, // 注意事项
                             isBrand: vm.sendChild.isBrand,// 服务分类
                             auditStatus: 0, // 审核状态，0待审核，1通过，2不通过
+                            storeId: 4,//店铺id
                         }
                         console.log(ajaxData);
                         let url = vm.common.path2+"products/insert";
@@ -226,7 +227,9 @@
             // 服务所属品牌接口数据
             fnGetStoreChainBrand () {
                 let vm = this;
-                let url = vm.common.path2 + "storeChainBrand/front/findByPage?pageSize=1000";
+                let _url = "http://120.79.42.13:8080/";
+                let url = _url + "storeChainBrand/front/findByPage?pageSize=1000";
+                // let url = vm.common.path2 + "storeChainBrand/front/findByPage?pageSize=1000";
                 vm.$http.post(
                     url,
                     {
