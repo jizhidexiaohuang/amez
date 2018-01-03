@@ -1,5 +1,22 @@
 <template>
     <div class="layout main" :class="{'layout-hide-text': layout.spanLeft < 3}">
+        <Modal
+            v-model="modal.show"
+            title="修改密码"
+            :loading="modal.loading"
+            @on-ok="asyncOK">
+            <Form ref="formCustom" :model="formCustom" :rules="ruleCustom" :label-width="80">
+                <FormItem label="用户名" prop="age">
+                    <Input type="text" v-model="formCustom.age" number></Input>
+                </FormItem>
+                <FormItem label="密码" prop="passwd">
+                    <Input type="password" v-model="formCustom.passwd"></Input>
+                </FormItem>
+                <FormItem label="二次密码" prop="passwdCheck">
+                    <Input type="password" v-model="formCustom.passwdCheck"></Input>
+                </FormItem>
+            </Form>
+        </Modal>
         <Row type="flex">
             <Col :span="layout.spanLeft" class="layout-menu-left">
                 <!-- 左侧菜单 -->
@@ -54,7 +71,10 @@
                                         <router-link to="/ownspace">个人中心</router-link>
                                     </DropdownItem>
                                     <DropdownItem>
-                                        <router-link to="/login">退出</router-link>
+                                        <a @click="changePassWord">修改密码</a>
+                                    </DropdownItem>
+                                    <DropdownItem>
+                                        <a @click="backHome">退出</a>
                                     </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
@@ -101,7 +121,6 @@
                         </keep-alive>
                     </div>
                 </div>
-               
             </Col>
         </Row>
     </div>
@@ -113,6 +132,44 @@ import 'swiper/dist/css/swiper.css'
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 export default {
     data () {
+        const validatePass = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请输入您的密码'));
+            } else {
+                if (this.formCustom.passwdCheck !== '') {
+                    // 对第二个密码框单独验证
+                    this.$refs.formCustom.validateField('passwdCheck');
+                }
+                callback();
+            }
+        };
+        const validatePassCheck = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请再次输入您的密码'));
+            } else if (value !== this.formCustom.passwd) {
+                callback(new Error('两次输入的密码不一致!'));
+            } else {
+                callback();
+            }
+        };
+        const validateAge = (rule, value, callback) => {
+            if (!value) {
+                return callback(new Error('用户名不能为空'));
+            }
+            callback();
+            // 模拟异步验证效果
+            /* setTimeout(() => {
+                if (!Number.isInteger(value)) {
+                    callback(new Error('Please enter a numeric value'));
+                } else {
+                    if (value < 18) {
+                        callback(new Error('Must be over 18 years of age'));
+                    } else {
+                        callback();
+                    }
+                }
+            }, 1000); */
+        };
         return {
             user:{
                 name:"admin"
@@ -140,6 +197,26 @@ export default {
                 "slidesPerView":"auto",
                 "observer":true,//修改swiper自己或子元素时，自动初始化swiper
                 "observeParents":true,
+            },
+            modal:{
+                show:false,
+                loading:true
+            },
+            formCustom: {
+                passwd: '',
+                passwdCheck: '',
+                age: ''
+            },
+            ruleCustom: {
+                passwd: [
+                    { validator: validatePass, trigger: 'blur' }
+                ],
+                passwdCheck: [
+                    { validator: validatePassCheck, trigger: 'blur' }
+                ],
+                age: [
+                    { validator: validateAge, trigger: 'blur' }
+                ]
             }
         }
     },
@@ -154,6 +231,7 @@ export default {
         },
     },
     activated: function(){
+        this.fnGetMenuList();//获取菜单数据
     },
     methods: {
         /* 菜单的收缩和展开 */
@@ -228,18 +306,12 @@ export default {
             let timer = null;
             let arrs = common.menuList;
             let vm = this;
-                // timer.setTimeout(function(){
-                //     vm.menuList = arrs;
-                // }，1000)
             console.log(vm.$store.getters.adminInfo.menu);
-
-            window.setTimeout(function(){
-                vm.menu.menuList = arrs;
-                // vm.menu.menuList = vm.$store.getters.adminInfo.menu;
+            if(window.localStorage.getItem("userInfo")){
                 // vm.menu.menuList = JSON.parse(window.localStorage.getItem("userInfo")).menu;
+                vm.menu.menuList = arrs;
                 vm.fnMenuChange();
-                //初始化菜的那
-            },400)
+            }
         },
         /* 激活菜单 */
         fnMenuChange () {
@@ -329,7 +401,63 @@ export default {
                 default:
                     //情况不符
             }
-        }
+        },
+        /* 退回 */
+        backHome () {
+            let vm = this;
+            window.localStorage.clear("userInfo");
+            vm.$router.push("/login");
+        },
+        /* 修改密码 */
+        changePassWord () {
+            let vm = this;
+            let data = JSON.parse(window.localStorage.getItem("userInfo"));
+            this.$refs['formCustom'].resetFields();
+            vm.modal.show = true;
+            vm.formCustom.age = data.user.loginName;
+            console.log(data);
+        },
+        /* 修改密码的确定事件 */
+        asyncOK () {
+            let vm = this;
+            let name = "formCustom";
+            let data = JSON.parse(window.localStorage.getItem("userInfo"));
+            this.$refs[name].validate((valid) => {
+                if (valid) {
+                    let url = vm.common.path + "baseUsers/update";
+                    console.log(vm.formCustom.passwd)
+                    let ajaxData = {
+                        password:vm.formCustom.passwd,
+                        userId:data.user.userId,
+                        loginName:vm.formCustom.age
+                    }
+                    console.log(ajaxData);
+                    vm.$http.put(
+                        url,
+                        ajaxData
+                    ).then(function(res){
+                        console.log(res);
+                        let oData = res.data;
+                        if(oData.code == 200){
+                            vm.modal.show = false;
+                            window.localStorage.clear("userInfo");
+                            vm.$router.push("/login");
+                        }
+                        vm.modal.loading = false;
+                        vm.$Message.success(oData.message);
+                    }).catch(function(err){
+                        vm.modal.loading = false;
+                        vm.$Message.success(res);
+                    })
+                } else {
+                    vm.modal.loading = false;
+                    vm.$Message.error('失败!');
+                }
+            })
+            /* setTimeout(() => {
+                this.modal.show = false;
+            }, 2000); */
+        },
 
     },
     components:{

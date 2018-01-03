@@ -32,7 +32,7 @@
                 ruleValidate: {
                 },
                 // path:"http://172.16.20.151:8009/system/api/file/uploadForKindeditor"
-                path:this.common.path1+"system/api/file/uploadForKindeditor",
+                path:this.common.path21+"system/api/file/uploadForKindeditor",
                 treeList:[],
                 allMenu:[],
                 spinShow: false,//加载开关
@@ -51,8 +51,8 @@
                     resourcesIds:vm.resourcesIds
                 }
                 console.log(ajaxData);
-                // let url = vm.common.path+"system/api/baseRoleResources/distributionBaseRoleResources?roleId="+vm.roleId+"&resourcesIds="+vm.resourcesIds;
-                let url = vm.common.path+"baseRoleResources/distributionBaseRoleResources?roleId="+vm.roleId+"&resourcesIds="+vm.resourcesIds;
+                // let url = vm.common.path2+"system/api/baseRoleResources/distributionBaseRoleResources?roleId="+vm.roleId+"&resourcesIds="+vm.resourcesIds;
+                let url = vm.common.path2+"baseRoleResources/distributionBaseRoleResources?roleId="+vm.roleId+"&resourcesIds="+vm.resourcesIds;
                 vm.$http.get(
                     url
                     // JSON.stringify(ajaxData),
@@ -221,7 +221,7 @@
             fnGetData () {
                 let vm = this;
                 let id = vm.roleId;
-                /* let url = vm.common.path + "system/api/baseRoleResources/"+id;
+                /* let url = vm.common.path2 + "system/api/baseRoleResources/"+id;
                 vm.$http.get(
                     url
                 ).then(function(res){
@@ -238,7 +238,7 @@
 
 
 
-                let url = vm.common.path + "baseRoleResources/selectListByConditions?pageSize=999&roleId="+id;
+                let url = vm.common.path2 + "baseRoleResources/selectListByConditions?pageSize=999&roleId="+id;
                 let ajaxData = {
                     roleId: id,
                     pageSize: 1000

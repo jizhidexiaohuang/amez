@@ -250,9 +250,9 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                // let url = common.path+"orderComment/front/findByPage?pageNo="+start+"&pageSize="+size;
-                let url = vm.common.path+"baseRoles/selectListByConditions?pageNo="+start+"&pageSize="+size;
-                // let url = common.path+"system/api/baseRole/findList";
+                // let url = common.path2+"orderComment/front/findByPage?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"baseRoles/selectListByConditions?pageNo="+start+"&pageSize="+size;
+                // let url = common.path2+"system/api/baseRole/findList";
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
@@ -282,7 +282,7 @@
                     title: '删除角色',
                     content: '确定要删除此角色吗？',
                     onOk: function(){
-                        let url = vm.common.path+"baseRoles/"+id;
+                        let url = vm.common.path2+"baseRoles/"+id;
                         let ajaxData = {
                             id:id
                         }
@@ -352,7 +352,7 @@
                 // 判断是新增还是编辑
                 if(!!id){
                     // 编辑
-                    let url = vm.common.path + "baseRoles/"+id;
+                    let url = vm.common.path2 + "baseRoles/"+id;
                     vm.$http.get(
                         url
                     ).then(function(res){
@@ -381,7 +381,7 @@
                     if (valid) {
                         //添加角色
                         if(!!vm.roleId){
-                            let url = vm.common.path + "/baseRoles/update";
+                            let url = vm.common.path2 + "/baseRoles/update";
                             let ajaxData = {
                                 roleName:vm.formValidate.roleName,
                                 roleCode:vm.formValidate.roleCode,
@@ -411,7 +411,7 @@
                                 roleName:vm.formValidate.roleName,
                                 roleCode:vm.formValidate.roleCode
                             }
-                            let url = vm.common.path+"/baseRoles/insert";
+                            let url = vm.common.path2+"/baseRoles/insert";
                                 vm.$http.post(
                                 url,
                                 JSON.stringify(ajaxData),
@@ -441,7 +441,7 @@
             /* 获取所有菜单 */
             fnGetAllMenu () {
                 let vm = this;
-                let url = vm.common.path + "/baseMenus/selectListByConditions?pageSize=999";
+                let url = vm.common.path2 + "/baseMenus/selectListByConditions?pageSize=999";
                 vm.$http.post(
                     url,
                     {

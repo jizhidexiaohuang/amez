@@ -1,14 +1,47 @@
 const common = {
     /* 接口 */
-    // 测试
-    // path:"http://120.79.42.13:8080/",
-    // 飞华
-    path:"http://192.168.1.32:8081/",
-    // 开哥
-    // path:"http://192.168.1.141:8000/",
+    /*
+    1.测试
+    2.飞华
+    */
+    path: (function(i){
+        switch (i) {
+            case 1:
+                return "http://120.79.42.13:8080/"  // 非系统和服务
+                break;
+            case 2:
+                return "http://192.168.1.32:8081/"
+                break;
+            case 3:
+                return "http://120.79.42.13:8005/pc/"  
+                break;
+            default:
+                return "http://120.79.42.13:8080/"
+        } 
+    })(2),
+    path2: (function(i){
+        switch (i) {
+            case 1:
+                return "http://120.79.42.13:8080/"
+                break;
+            case 2:
+                return "http://192.168.1.32:8081/"
+                break;
+            case 3:
+                return "http://120.79.42.13:8005/pc/"  
+                break;
+            default:
+                return "http://120.79.42.13:8005/pc/"  
+        } 
+    })(2),
     /* 富文本 */
-    path1:"http://172.16.20.151:8080/",
-    // path1:"http://120.79.42.13:8080/",
+    // path1:"http://172.16.20.151:8080/",
+    path1:"http://120.79.42.13:8080/",
+    /* 用户信息 */
+    u: (function(){
+        let data = JSON.parse(window.localStorage.getItem("userInfo"));
+        return data;
+    })(),
     /* 菜单 */
     menuList:[
         {
@@ -46,12 +79,12 @@ const common = {
             type:"ios-people",
             childList: [
                 {
-                    name:"品牌服务",
+                    name:"门店自营服务",
                     hasChildList: false,
                     href:"/service/brandService"
                 },
                 {
-                    name:"门店自营服务",
+                    name:"品牌服务",
                     hasChildList: false,
                     href:"/service/storeBrandService"
                 },
@@ -92,6 +125,19 @@ const common = {
                     name:"评论管理",
                     hasChildList: false,
                     href:"/order/commentManage"
+                }
+            ]
+        },
+        {
+            name:"员工管理",
+            hasChildList:true,
+            href:"",
+            type:"laptop",
+            childList: [
+                {
+                    name:"员工管理",
+                    hasChildList: false,
+                    href:"/worker/workerManage"
                 }
             ]
         },
@@ -146,6 +192,6 @@ const common = {
         let d = new Date(date);
         let time = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds(); 
         return time;
-    }
+    },
 }
 export default common

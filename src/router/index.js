@@ -50,6 +50,9 @@ import OperationLog from '@/components/manage/operationLog/list'
 /*=====================================财务管理=========================*/
 //交易流水
 import TradeWater from '@/components/financeManage/tradeWater/list'
+/*=====================================员工管理=========================*/
+//员工管理
+import WorkerManage from '@/components/worker/workerManage/list'
 
 
 
@@ -119,22 +122,22 @@ const menuRouter = [
     children: [
       {
         path: '/service/brandService',
-        name: '品牌服务',
-        title: '品牌服务',
+        name: '门店自营服务',
+        title: '门店自营服务',
         component: BrandService,
         meta:{
           type:"菜单",
-          name:"品牌服务"
+          name:"门店自营服务"
         }
       },
       {
         path: '/service/storeBrandService',
-        name: '门店自营服务',
-        title: '门店自营服务',
+        name: '品牌服务',
+        title: '品牌服务',
         component: StoreBrandService,
         meta:{
           type:"菜单",
-          name:"门店自营服务"
+          name:"品牌服务"
         }
       },
       {
@@ -167,6 +170,24 @@ const menuRouter = [
           name:"平台佣金方案"
         }
       },
+    ]
+  },
+  {
+    path: '/worker',
+    name: '员工管理',
+    title: '员工管理',
+    component: Main,
+    children: [
+      {
+        path: '/worker/workerManage',
+        name: '员工管理',
+        title: '员工管理',
+        component: WorkerManage,
+        meta:{
+          type:"菜单",
+          name:"员工管理"
+        }
+      }
     ]
   },
   {

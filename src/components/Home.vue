@@ -16,10 +16,16 @@ export default {
 
     },
     mounted: function() {
-        
+        this.fnIsEnter();
     },
     methods: {
-        
+        /* 是否有登录 */
+        fnIsEnter () {
+            if(!!!window.localStorage.getItem("userInfo")){
+                alert("请先登录")
+                this.$router.push("/login");
+            }
+        }
     },
     components:{
         

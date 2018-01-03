@@ -137,7 +137,7 @@
                 },
                 uploadList:[],//图片列表
                 // path:"http://172.16.20.151:8009/system/api/file/uploadForKindeditor"
-                path:this.common.path1+"system/api/file/uploadForKindeditor",
+                path:this.common.path21+"system/api/file/uploadForKindeditor",
                 testCode: false,
                 serviceList:[],// 产品分类
                 brandList:[],// 品牌分类
@@ -171,7 +171,7 @@
                             auditStatus: vm.formValidate.auditStatus, // 审核结果
                         }
                         console.log(ajaxData);
-                        let url = vm.common.path + "product/edit"
+                        let url = vm.common.path2 + "products/update"
                         vm.$http.put(
                             url,
                             ajaxData,
@@ -212,7 +212,7 @@
             // 服务分类接口数据
             fnGetProductCategory () {
                 let vm = this;
-                let url = vm.common.path + "productCategory/front/findByPage?pageSize=1000";
+                let url = vm.common.path2 + "productCategory/front/findByPage?pageSize=1000";
                 vm.$http.post(
                     url,
                     {
@@ -230,7 +230,7 @@
             // 服务所属品牌接口数据
             fnGetStoreChainBrand () {
                 let vm = this;
-                let url = vm.common.path + "storeChainBrand/front/findByPage?pageSize=1000";
+                let url = vm.common.path2 + "storeChainBrand/front/findByPage?pageSize=1000";
                 vm.$http.post(
                     url,
                     {
@@ -249,7 +249,7 @@
             fnQueryById () {
                 let vm = this;
                 let id = vm.sendChild.itemId;
-                let url = vm.common.path + "product/queryById/"+id;
+                let url = vm.common.path2 + "products/"+id;
                 vm.spinShow = true;
                 vm.$http.get(
                     url

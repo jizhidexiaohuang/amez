@@ -11,12 +11,10 @@ import iView from 'iview';
 import common from './base.js';
 import '../static/sass/common.min.css'
 import qs from 'qs'
-
 // 引入 vue-kikindeditor 需要的文件
 import VueKindEditor from 'vue-kindeditor'
 import 'kindeditor/kindeditor-all-min.js'
 import 'kindeditor/themes/default/default.css'
-
 // 注册 vue-kikindeditor plugin
 Vue.use(VueKindEditor)
 Vue.prototype.common = common;
@@ -39,19 +37,23 @@ axios.interceptors.response.use(function (response) { //配置请求回来的信
   return Promise.reject(error);
 });
 */
-
 Vue.prototype.$http = axios  //其他页面在使用axios的时候直接  this.$http就可以了
 /* eslint-disable no-new */
-
-
 /* 路由的前置钩子函数 */
 router.beforeEach((to, from, next) => {
   iView.LoadingBar.start();
-  // console.log("to:"+to.name+" from:"+from.name);
+  console.log("to:"+to.name+" from:"+from.name);
   next();
   //从本地拿存储，如果没有登录过，就跳到登录页，如果登陆过就跳到首页
-  if(to.fullPath == "/"){
-    router.push("/login");
+  if(to.name=="login"){
+  }else{
+    if(to.name=="首页"&&from.name == "login"){
+    }else{
+      if(!!!window.localStorage.getItem("userInfo")){
+        alert("请先登录");
+        router.push("/login");
+      }
+    }
   }
   iView.LoadingBar.finish();
 })

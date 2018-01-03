@@ -60,7 +60,7 @@
                     
                 },
                 // path:"http://172.16.20.151:8009/system/api/file/uploadForKindeditor"
-                path:this.common.path1+"system/api/file/uploadForKindeditor",
+                path:this.common.path21+"system/api/file/uploadForKindeditor",
                 treeList:[
                     /* {
                         title: '首页',
@@ -113,7 +113,7 @@
                             roleName:vm.formValidate.roleName,
                             roleCode:vm.formValidate.roleCode
                         }
-                        let url = vm.common.path+"system/api/baseRole/";
+                        let url = vm.common.path2+"system/api/baseRole/";
                         vm.$http.post(
                             url,
                             JSON.stringify(ajaxData),

@@ -88,14 +88,15 @@
                     loading: true,
                     type: '0',
                     info: '确定要上架？',
-                    id:""
+                    id:"",
+                    storeId:"",//店铺id
                 },
                 cd:{
                     time:[],//评论时间范围
                     saleStatus:"",//上下架状态
                     inputval:'',//选择的值
                     inputType:'serviceName',//input类型
-                    isBrand:'2',// 门店自营还是产品
+                    isBrand:'0',// 门店自营还是产品
                 },
                 table:{
                     recordsTotal:0,//总数量
@@ -213,6 +214,7 @@
                                                 let row = params.row;
                                                 this.modal.id = row.id;
                                                 this.modal.type = row.saleStatus;
+                                                this.modal.storeId = row.storeId;
                                                 this.fnShowModal();
                                             }
                                         }
@@ -351,6 +353,7 @@
                                                 let row = params.row;
                                                 this.modal.id = row.id;
                                                 this.modal.type = row.saleStatus;
+                                                this.modal.storeId = row.storeId;
                                                 this.fnShowModal();
                                             }
                                         }
@@ -381,7 +384,7 @@
                     serviceList:"", // 产品分类
                     brandList:"", // 服务分类
                     itemId: "", // 编辑选项的id
-                    isBrand: 2,// 服务分类
+                    isBrand: 0,// 服务分类
                 },
             }
         },
@@ -414,11 +417,11 @@
                     vm.cd.isBrand = "1";
                 }else{
                     vm.table.tableColumns = vm.table.sellerColumns;
-                    vm.cd.isBrand = "2";
+                    vm.cd.isBrand = "0";
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path+"product/front/findByPage?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"products/selectListByConditions?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
@@ -453,7 +456,7 @@
                     title: '删除产品',
                     content: '确定要删除此产品吗？',
                     onOk: function(){
-                        let url = vm.common.path+"product/deleteById/"+id;
+                        let url = vm.common.path2+"product/deleteById/"+id;
                         this.$http.delete(
                             url,
                         ).then(function(res){
@@ -527,12 +530,14 @@
                 let id = vm.modal.id;
                 let type = vm.modal.type;
                 console.log(type);
-                let url = vm.common.path + "product/edit"
+                let url = vm.common.path2 + "productStoreRefs/updateProductStoreRef"
                 let ajaxData = {
                     saleStatus : type == 0?1:0,
-                    id: id
+                    productId: id,
+                    isEnabled: 0
+                    // storeId: vm.modal.storeId
                 }
-                vm.$http.put(
+                vm.$http.post(
                     url,
                     ajaxData
                 ).then(function(res){
@@ -548,7 +553,7 @@
             // 服务分类接口数据
             fnGetProductCategory () {
                 let vm = this;
-                let url = vm.common.path + "productCategory/front/findByPage?pageSize=1000";
+                let url = vm.common.path2 + "productCategorys/selectListByConditions?pageSize=1000";
                 vm.$http.post(
                     url,
                     {
@@ -568,7 +573,7 @@
             // 服务所属品牌接口数据
             fnGetStoreChainBrand () {
                 let vm = this;
-                let url = vm.common.path + "storeChainBrand/front/findByPage?pageSize=1000";
+                let url = vm.common.path2 + "storeChainBrand/front/findByPage?pageSize=1000";
                 vm.$http.post(
                     url,
                     {
@@ -594,7 +599,7 @@
                         vm.table.loading = true;//进一步模拟第一次进来时的页面效果
                         vm.pageType = 'list'//显示列表页，放在这里是给上边的处理留点时间，也就是初始化放在这段代码上边
                         
-                        vm.cd.isBrand = "2"
+                        vm.cd.isBrand = "0"
                         vm.getData('init');//再次请求数据
                     }
                 }

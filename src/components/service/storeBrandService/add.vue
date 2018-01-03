@@ -47,7 +47,7 @@
                 <Input v-model="formValidate.commission" placeholder="请填写佣金价格，单位元"></Input>
             </FormItem>
             <FormItem label="轮播图">
-                <MyUpload :defaultList="defaultList" v-on:listenUpload="getUploadList"></MyUpload>
+                <MyUpload :defaultList="defaultList" v-on:listenUpload="getUploadList" :uploadConfig="uploadConfig"></MyUpload>
             </FormItem>
             <FormItem label="图片地址" prop="img" style="position:absolute; left:-9999px;">
                 <Input v-model="formValidate.img" placeholder=""></Input>
@@ -126,9 +126,12 @@
                 defaultList: [],
                 uploadList:[],//图片列表
                 // path:"http://172.16.20.151:8009/system/api/file/uploadForKindeditor"
-                path:this.common.path1+"system/api/file/uploadForKindeditor",
+                path:this.common.path21+"system/api/file/uploadForKindeditor",
                 serviceList:[],// 产品分类
                 brandList:[],// 品牌分类
+                uploadConfig:{
+                    num:5
+                }
             }
         },
         props: ["sendChild"],
@@ -156,7 +159,7 @@
                             auditStatus: 0, // 审核状态，0待审核，1通过，2不通过
                         }
                         console.log(ajaxData);
-                        let url = vm.common.path+"product/insert";
+                        let url = vm.common.path2+"products/insert";
                         vm.$http.post(
                             url,
                             JSON.stringify(ajaxData),
@@ -205,7 +208,7 @@
             // 服务分类接口数据
             fnGetProductCategory () {
                 let vm = this;
-                let url = vm.common.path + "productCategory/front/findByPage?pageSize=1000";
+                let url = vm.common.path2 + "productCategorys/selectListByConditions?pageSize=1000";
                 vm.$http.post(
                     url,
                     {
@@ -223,7 +226,7 @@
             // 服务所属品牌接口数据
             fnGetStoreChainBrand () {
                 let vm = this;
-                let url = vm.common.path + "storeChainBrand/front/findByPage?pageSize=1000";
+                let url = vm.common.path2 + "storeChainBrand/front/findByPage?pageSize=1000";
                 vm.$http.post(
                     url,
                     {

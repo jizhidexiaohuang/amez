@@ -128,7 +128,7 @@
                 },
                 uploadList:[],//图片列表
                 // path:"http://172.16.20.151:8009/system/api/file/uploadForKindeditor"
-                path:this.common.path1+"system/api/file/uploadForKindeditor",
+                path:this.common.path221+"system/api/file/uploadForKindeditor",
                 serviceList:[],// 产品分类
                 brandList:[],// 品牌分类
             }
@@ -158,7 +158,7 @@
                             auditStatus: 0, // 审核状态，0待审核，1通过，2不通过
                         }
                         console.log(ajaxData);
-                        let url = vm.common.path+"product/insert";
+                        let url = vm.common.path22+"products/insert";
                         vm.$http.post(
                             url,
                             JSON.stringify(ajaxData),
@@ -207,7 +207,7 @@
             // 服务分类接口数据
             fnGetProductCategory () {
                 let vm = this;
-                let url = vm.common.path + "productCategory/front/findByPage?pageSize=1000";
+                let url = vm.common.path22 + "productCategorys/selectListByConditions?pageSize=1000";
                 vm.$http.post(
                     url,
                     {
@@ -225,7 +225,7 @@
             // 服务所属品牌接口数据
             fnGetStoreChainBrand () {
                 let vm = this;
-                let url = vm.common.path + "storeChainBrand/front/findByPage?pageSize=1000";
+                let url = vm.common.path22 + "storeChainBrand/front/findByPage?pageSize=1000";
                 vm.$http.post(
                     url,
                     {
