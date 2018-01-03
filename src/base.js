@@ -84,7 +84,7 @@ const common = {
                     href:"/order/serviceOrder"
                 },
                 {
-                    name:"客服介入订单",
+                    name:"退款订单客服介入",
                     hasChildList: false,
                     href:"/order/customerOrder"
                 },
@@ -92,6 +92,19 @@ const common = {
                     name:"评论管理",
                     hasChildList: false,
                     href:"/order/commentManage"
+                }
+            ]
+        },
+        {
+            name:"财务管理",
+            hasChildList:true,
+            href:"",
+            type:"social-python",
+            childList: [
+                {
+                    name:"交易流水",
+                    hasChildList: false,
+                    href:"/financeManage/tradeWater"
                 }
             ]
         },

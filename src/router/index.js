@@ -47,6 +47,12 @@ import UserManage from '@/components/manage/userManage/list'
 import DepartmentManage from '@/components/manage/departmentManage/list'
 //操作日志
 import OperationLog from '@/components/manage/operationLog/list'
+/*=====================================财务管理=========================*/
+//交易流水
+import TradeWater from '@/components/financeManage/tradeWater/list'
+
+
+
 Vue.use(Router)
 
 /* 登录页 */
@@ -181,12 +187,12 @@ const menuRouter = [
       },
       {
         path: '/order/customerOrder',
-        name: '客服介入订单',
-        title: '客服介入订单',
+        name: '退款订单客服介入',
+        title: '退款订单客服介入',
         component: CustomerOrder,
         meta:{
           type:"菜单",
-          name:"客服介入订单"
+          name:"退款订单客服介入"
         }
       },
       {
@@ -235,6 +241,24 @@ const menuRouter = [
         meta:{
           type:"菜单",
           name:"操作日志"
+        }
+      }
+    ]
+  },
+  {
+    path: '/financeManage',
+    name: '财务管理',
+    title: '财务管理',
+    component: Main,
+    children: [
+      {
+        path: '/financeManage/tradeWater',
+        name: '交易流水',
+        title: '交易流水',
+        component: TradeWater,
+        meta:{
+          type:"菜单",
+          name:"交易流水"
         }
       }
     ]

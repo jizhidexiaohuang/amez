@@ -234,9 +234,9 @@ export default {
             console.log(vm.$store.getters.adminInfo.menu);
 
             window.setTimeout(function(){
-                // vm.menu.menuList = arrs;
+                vm.menu.menuList = arrs;
                 // vm.menu.menuList = vm.$store.getters.adminInfo.menu;
-                vm.menu.menuList = JSON.parse(window.localStorage.getItem("userInfo")).menu;
+                // vm.menu.menuList = JSON.parse(window.localStorage.getItem("userInfo")).menu;
                 vm.fnMenuChange();
                 //初始化菜的那
             },400)
