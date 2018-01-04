@@ -424,7 +424,8 @@ export default {
             let data = JSON.parse(window.localStorage.getItem("userInfo"));
             this.$refs[name].validate((valid) => {
                 if (valid) {
-                    let url = vm.common.path + "baseUsers/update";
+                    let url = vm.common.path2 + "baseUsers/update";
+                    // let url = "http://120.79.42.13:8081/baseUsers/update";
                     console.log(vm.formCustom.passwd)
                     let ajaxData = {
                         password:vm.formCustom.passwd,

@@ -74,7 +74,7 @@ export default {
                         console.log(res);
                         if(res.data.code != 200){
                             vm.$Notice.warning({
-                                title: res.data.message
+                                title: !!!res.data.message?"异常错误，请重新登录！":res.data.message
                             });
                         }else{
                             vm.$store.dispatch("adminInfo",{
