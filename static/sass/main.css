@@ -152,3 +152,7 @@
 .swiper-slide {
   width: auto !important;
 }
+
+.ivu-icon {
+  line-height: unset !important;
+}

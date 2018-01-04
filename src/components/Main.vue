@@ -57,10 +57,10 @@
                     <div class="layout-right-header">
                         <div style="float:left">
                             <router-link to="/newsmanage">
-                                <Icon type="android-notifications"></Icon>
+                                <Icon size="16" type="android-notifications"></Icon>
                             </router-link>
                         </div>
-                        <div style="float:left; margin-left:20px; margin-right:10px;">
+                        <div style="float:left; margin-left:8px; margin-right:10px;">
                             <Dropdown>
                                 <a href="javascript:void(0)">
                                     {{ user.name }}
