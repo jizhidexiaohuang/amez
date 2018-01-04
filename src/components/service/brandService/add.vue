@@ -158,7 +158,7 @@
                             auditStatus: 0, // 审核状态，0待审核，1通过，2不通过
                         }
                         console.log(ajaxData);
-                        let url = vm.common.path22+"products/insert";
+                        let url = vm.common.path2+"products/insert";
                         vm.$http.post(
                             url,
                             JSON.stringify(ajaxData),
@@ -207,7 +207,7 @@
             // 服务分类接口数据
             fnGetProductCategory () {
                 let vm = this;
-                let url = vm.common.path22 + "productCategorys/selectListByConditions?pageSize=1000";
+                let url = vm.common.path2 + "productCategorys/selectListByConditions?pageSize=1000";
                 vm.$http.post(
                     url,
                     {
@@ -225,7 +225,9 @@
             // 服务所属品牌接口数据
             fnGetStoreChainBrand () {
                 let vm = this;
-                let url = vm.common.path22 + "storeChainBrand/front/findByPage?pageSize=1000";
+                let _url = "http://120.79.42.13:8080/";
+                let url = _url + "storeChainBrand/front/findByPage?pageSize=1000";
+                // let url = vm.common.path22 + "storeChainBrand/front/findByPage?pageSize=1000";
                 vm.$http.post(
                     url,
                     {

@@ -22,7 +22,7 @@ const common = {
     path2: (function(i){
         switch (i) {
             case 1:
-                return "http://120.79.42.13:8080/"
+                return "http://120.79.42.13:8081/"
                 break;
             case 2:
                 // 联合 飞华
@@ -38,7 +38,7 @@ const common = {
             default:
                 return "http://120.79.42.13:8005/pc/"  
         } 
-    })(4),
+    })(1),
     /* 富文本 */
     // path1:"http://172.16.20.151:8080/",
     path1:"http://120.79.42.13:8080/",

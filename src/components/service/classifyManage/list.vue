@@ -283,7 +283,7 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path+"productCategory/front/findByPage?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"productCategorys/selectListByConditions?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
@@ -314,7 +314,7 @@
                     title: '删除分类',
                     content: '确定要删除此分类吗？',
                     onOk: function(){
-                        let url = vm.common.path+"productCategory/deleteById/"+id;
+                        let url = vm.common.path2+"productCategorys/"+id;
                         this.$http.delete(
                             url
                         ).then(function(res){
@@ -509,7 +509,7 @@
         mounted: function(){
             this.getData();
             // 获取所有菜单。之所以放在这里，是为了减少编辑页面的在同步获取数据的过程中产生的不好体验
-            this.fnGetAllMenu();
+            // this.fnGetAllMenu();
         },
         activated: function(){
             let vm = this;

@@ -430,7 +430,8 @@
                     pageNo:start,
                     pageSize: size,
                     saleStatus: vm.cd.saleStatus,
-                    isBrand: vm.cd.isBrand
+                    isBrand: vm.cd.isBrand,
+                    storeId:4
                 }
                 ajaxData[vm.cd.inputType] = vm.cd.inputval
                 vm.table.loading = true;
@@ -539,7 +540,8 @@
                 let ajaxData = {
                     saleStatus : type == 0?1:0,
                     productId: id,
-                    storeId: vm.modal.storeId
+                    // storeId: vm.modal.storeId
+                    storeId:4
                 }
                 vm.$http.post(
                     url,
@@ -577,7 +579,9 @@
             // 服务所属品牌接口数据
             fnGetStoreChainBrand () {
                 let vm = this;
-                let url = vm.common.path2 + "storeChainBrand/front/findByPage?pageSize=1000";
+                let _url = "http://120.79.42.13:8080/";
+                // let url = vm.common.path2 + "storeChainBrand/front/findByPage?pageSize=1000";
+                let url = _url + "storeChainBrand/front/findByPage?pageSize=1000";
                 vm.$http.post(
                     url,
                     {

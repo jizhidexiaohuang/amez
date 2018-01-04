@@ -49,7 +49,7 @@
                         <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
 		                <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     </Col>
-                    <Col span="3" offset="11" v-show="true">
+                    <Col span="3" offset="11" v-if="!!!storeId">
                         <Button style="float:right;" @click.native="changePageType('add')" type="success" icon="android-add">发布服务</Button>
                     </Col>
                 </Row>
@@ -183,23 +183,7 @@
                                 const row = params.row;
                                 const color = row.saleStatus === 0 ? 'success' : 'warning';
                                 const text = row.saleStatus === 0 ? '上架' : '下架';
-                                return h('div', [
-                                    h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                let row = params.row;
-                                                this.sendChild.itemId = row.id;
-                                                this.changePageType('edit');
-                                            }
-                                        }
-                                    }, '编辑'),
+                                let arrs = [
                                     h('Button', {
                                         props: {
                                             type: color,
@@ -233,7 +217,28 @@
                                             }
                                         }
                                     }, '删除'),
-                                ]);
+                                ]
+                                let obj = h('Button', {
+                                        props: {
+                                            type: 'primary',
+                                            size: 'small'
+                                        },
+                                        style: {
+                                            marginRight: '5px',
+                                        },
+                                        on: {
+                                            click: () => {
+                                                let row = params.row;
+                                                this.sendChild.itemId = row.id;
+                                                this.changePageType('edit');
+                                            }
+                                        }
+                                    }, '编辑');
+                                console.log(11111111111);
+                                if(!!!this.storeId){
+                                    arrs.unshift(obj);
+                                }
+                                return h('div',arrs);
                             }
                         }
                     ],
@@ -322,23 +327,7 @@
                                 const row = params.row;
                                 const color = row.saleStatus === 0 ? 'success' : 'warning';
                                 const text = row.saleStatus === 0 ? '上架' : '下架';
-                                return h('div', [
-                                    h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                let row = params.row;
-                                                this.sendChild.itemId = row.id;
-                                                this.changePageType('edit');
-                                            }
-                                        }
-                                    }, '编辑'),
+                                let arrs = [
                                     h('Button', {
                                         props: {
                                             type: color,
@@ -372,7 +361,28 @@
                                             }
                                         }
                                     }, '删除'),
-                                ]);
+                                ]
+                                let obj = h('Button', {
+                                        props: {
+                                            type: 'primary',
+                                            size: 'small'
+                                        },
+                                        style: {
+                                            marginRight: '5px',
+                                        },
+                                        on: {
+                                            click: () => {
+                                                let row = params.row;
+                                                this.sendChild.itemId = row.id;
+                                                this.changePageType('edit');
+                                            }
+                                        }
+                                    }, '编辑');
+                                console.log(11111111111);
+                                if(!!!this.storeId){
+                                    arrs.unshift(obj);
+                                }
+                                return h('div',arrs);
                             }
                         }
                     ],
@@ -386,6 +396,8 @@
                     itemId: "", // 编辑选项的id
                     isBrand: 0,// 服务分类
                 },
+                // 店铺ID
+                storeId:""
             }
         },
         methods: {
@@ -421,13 +433,15 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path2+"products/selectListByConditions?pageNo="+start+"&pageSize="+size+"&storeId=4";
+                let url = vm.common.path2+"products/selectListByConditions?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
                     saleStatus: vm.cd.saleStatus,
-                    isBrand: vm.cd.isBrand,
-                    storeId: 4
+                    isBrand: vm.cd.isBrand
+                }
+                if(!!vm.storeId){
+                    ajaxData.storeId = vm.storeId
                 }
                 ajaxData[vm.cd.inputType] = vm.cd.inputval
                 vm.table.loading = true;
@@ -530,27 +544,55 @@
                 let vm = this;
                 let id = vm.modal.id;
                 let type = vm.modal.type;
-                console.log(type);
-                let url = vm.common.path2 + "productStoreRefs/updateProductStoreRef"
-                let ajaxData = {
-                    saleStatus : type == 0?1:0,
-                    productId: id,
-                    isEnabled: 0,
-                    storeId: 4
-                    // storeId: vm.modal.storeId
+                
+                if(!!!vm.storeId){
+                    /* 平台管理员上下架 */
+                    let url = vm.common.path2 + "products/update";
+                    let ajaxData = {
+                        saleStatus : type == 0?1:0,
+                        productId: id,
+                        isEnabled: 0,
+                    }
+                    console.log(ajaxData);
+                    vm.$http.put(
+                        url,
+                        ajaxData,
+                        {
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        }
+                    ).then(function(res){
+                        console.log(res);
+                        vm.getData();
+                        vm.modal.loading = true;
+                        vm.modal.mineModal = false;
+                    }).catch(function(err){
+                        console.log(err);
+                        vm.getData();
+                    })
+                }else{
+                    /* 店长上下架 */
+                    let url = vm.common.path2 + "productStoreRefs/updateProductStoreRef"
+                    let ajaxData = {
+                        saleStatus : type == 0?1:0,
+                        productId: id,
+                        isEnabled: 0,
+                        storeId: vm.storeId
+                    }
+                    vm.$http.post(
+                        url,
+                        ajaxData
+                    ).then(function(res){
+                        console.log(res);
+                        vm.getData();
+                        vm.modal.loading = true;
+                        vm.modal.mineModal = false;
+                    }).catch(function(err){
+                        console.log(err);
+                        vm.getData();
+                    })
                 }
-                vm.$http.post(
-                    url,
-                    ajaxData
-                ).then(function(res){
-                    console.log(res);
-                    vm.getData();
-                    vm.modal.loading = true;
-                    vm.modal.mineModal = false;
-                }).catch(function(err){
-                    console.log(err);
-                    vm.getData();
-                })
             },
             // 服务分类接口数据
             fnGetProductCategory () {

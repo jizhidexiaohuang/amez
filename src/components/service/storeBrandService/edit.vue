@@ -138,6 +138,7 @@
                 serviceList:[],// 产品分类
                 brandList:[],// 品牌分类
                 spinShow: false,// 加载开关
+                auditCode:""
             }
         },
         props: ["sendChild"],
@@ -261,7 +262,6 @@
             // 产品的信息遍历出来
             fnInitQuery (data) {
                 let vm = this;
-                console.log(11111);
                 vm.formValidate.type = data.type;// 服务分类
                 vm.formValidate.brandId = data.brandId; // 服务所属品牌
                 vm.formValidate.serverName = data.serverName; // 服务名称
