@@ -172,7 +172,7 @@ export default {
         };
         return {
             user:{
-                name:"admin"
+                name:""
             },
             layout:{
                 spanLeft: 3,//layout布局左侧的宽度
@@ -224,6 +224,8 @@ export default {
         this.fnGetMenuList();//获取菜单
         this.addItem();
         this.fnBreadcrumb();//更新面包屑
+        let userName = JSON.parse(window.localStorage.getItem("userInfo")).user.loginName;
+        this.user.name = userName;
     },
     computed: {
         iconSize () {
