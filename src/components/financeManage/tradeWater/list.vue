@@ -22,7 +22,7 @@
                 </Col>
             </Row>
             <Form :model="cd" inline>
-                <Button style="float:left;margin-right:10px;" @click.native="changePageType('add')" type="success">导出Excel</Button>
+                <Button style="float:left;margin-right:10px;" @click="exportData" type="success">导出Excel</Button>
                 <FormItem style="margin-bottom:10px;">
                     交易类型
                     <Select v-model="transactionType" style="width:100px">
@@ -84,6 +84,7 @@
                 :loading="loading" 
                 :data="tableData1" 
                 :columns="tableColumns1" 
+                ref="table"
                 stripe
                 border
                 @on-select="fnSelect"
@@ -396,7 +397,46 @@
                 }).catch(function(err){
                 })
             },
-            
+            //导出Excel
+            exportData(){
+                this.$refs.table.exportCsv({
+                    filename: '数据',
+                    data: this.tableData1.filter((data, index) => {
+                        // console.log(data)
+                        //订单号
+                        data.orderNo = ''+data.orderNo+'';
+                        //交易流水号
+                        data.tradeNo = data.tradeNo?(''+data.tradeNo+''):'';
+                        //付款时间
+                        data.payTime = data.payTime?common.formatDate(data.payTime):'';
+                        //交易类型
+                        if(data.tradeType==1){
+                            data.tradeType = '服务订单'
+                        }else if(data.tradeType==3){
+                            data.tradeType = '会员卡售卡'
+                        }else if(data.tradeType==4){
+                            data.tradeType = '会员卡充值'
+                        }
+                        //支付方式
+                        if(data.payType=='alipay'){
+                            data.payType = '支付宝支付'
+                        }else if(data.payType=='wechatpay'){
+                            data.payType = '微信支付'
+                        }
+                        //交易状态
+                        switch(data.tradeStatus){
+                            case '0':return data.tradeStatus = '待付款'; break;
+                            case '1':return data.tradeStatus = '交易关闭'; break;
+                            case '2':return data.tradeStatus = '待服务'; break;
+                            case '4':return data.tradeStatus = '服务中'; break;
+                            case '5':return data.tradeStatus = '待评价'; break;
+                            case '6':return data.tradeStatus = '评价完成'; break;
+                            case '7':return data.tradeStatus = '购卡成功'; break;
+                            case '8':return data.tradeStatus = '充值完成'; break;
+                        }
+                    })
+                });
+            },
             /* 页码改变的回掉函数 */
             changeSize (size) {
                 console.log(size);
