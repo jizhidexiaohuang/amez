@@ -1,65 +1,55 @@
 <template>
-  <div class="infoPage" :id="message">
+  <div class="infoPage">
     <Steps :current="progress">
-        <Step title="提交订单" :content="common.formatDate(orderBase.addTime)"></Step>
-        <Step title="付款时间" :content="showTime(orderBase.payTime)"></Step>
-        <Step title="服务开始时间" :content="showTime(orderBase.serverStartTime)"></Step>
-        <Step title="服务完成" :content="showTime(orderBase.serverEndTime)"></Step>
+        <Step title="买家申请退款" :content="common.formatDate(orderBase.applyTime)"></Step>
+        <Step title="卖家处理申请" :content="showTime(orderBase.applyTime)"></Step>
+        <Step title="退款完成" :content="showTime(orderBase.applyTime)"></Step>
     </Steps>
     <div class="order_info">
-      <h4>订单信息</h4>
+      <h4>售后信息</h4>
       <Row>
-        <Col span="8">订单号：{{orderBase.orderNo}}</Col>
-        <Col span="8">订单状态：{{orderType}}</Col>
-        <Col span="8">订单来源：微信商城que</Col>
+        <Col span="8">退款流水号：{{orderBase.orderNo}}</Col>
+        <Col span="8">售后状态：{{returnStatus}}</Col>
+        <Col span="8"></Col>
       </Row>
       <Row>
-        <Col span="8">订单类型：{{orderBase.type==0?'到店订单':'上门订单'}}</Col>
-        <Col span="8">支付单号：que</Col>
-        <Col span="8">付款方式：{{orderBase.payType=='wechatpay'?'微信支付':'支付宝支付'}}</Col>
-      </Row>
-    </div>
-    <div class="order_info">
-      <h4>买家信息</h4>
-      <Row>
-        <Col span="8">购买人：{{orderBeautician.beauticianName}}</Col>
-        <Col span="8">联系电话：{{orderBeautician.mobile}}</Col>
-        <Col span="8">上门地址：地址</Col>
+        <Col span="8">买家：{{orderBase.memberName}}</Col>
+        <Col span="8">联系电话：13232434352</Col>
+        <Col span="8"></Col>
       </Row>
       <Row>
-        <Col span="8">备注：{{orderBase.remark?orderBase.remark:'无'}}</Col>
+        <Col span="8">退款金额：{{orderBase.fee}}</Col>
+        <Col span="8">退款原因：{{orderBase.reason}}</Col>
+        <Col span="8"></Col>
       </Row>
     </div>
     <div class="order_info">
       <h4>美容院信息</h4>
       <Row>
-        <Col span="8">门店：{{orderBase.storeName}}</Col>
-        <Col span="8">老板姓名：que</Col>
-        <Col span="8">注册手机：{{orderBeautician.mobile}}</Col>
+        <Col span="8">门店：唯伊美高端美容体验中心</Col>
+        <Col span="8">老板姓名：朱艳林</Col>
+        <Col span="8">注册手机：15987635412</Col>
       </Row>
       <Row>
-        <Col span="8">地址：{{orderBase.address}}</Col>
-        <Col span="8">服务美容师：{{orderBeautician.beauticianName}}</Col>
+        <Col span="8">地址：深圳市罗湖区金光华广场6楼</Col>
+        <Col span="8">服务美容师：艾小美</Col>
       </Row>
     </div>
     <div class="service_info">
-      <h3>服务信息 <span class="service_type">{{orderBase.type==0?'到店订单':'上门订单'}}</span></h3>
+      <h3>服务信息</h3>
       <div class="table">
         <div class="title">
           <Row>
-            <Col span="6">服务</Col>
-            <Col span="6">单价</Col>
-            <Col span="6">订单总额</Col>
-            <Col span="6">售后</Col>
+            <Col span="8">服务</Col>
+            <Col span="8">单价</Col>
+            <Col span="8">订单总额</Col>
           </Row>
         </div>
         <div class="content">
           <Row>
-            <Col span="6"><img :src="orderProduct.productImg" alt=""><span>{{orderProduct.productName}}</span></Col>
-            <Col span="6">￥{{unitPrice}}</Col>
-            <!-- <Col span="6">{{orderProduct.productPrice}}</Col> -->
-            <Col span="6">{{orderBase.amountTotal}}(含上门费：￥30.00)</Col>
-            <Col span="6">{{customerService}}</Col>
+            <Col span="8"><img :src=src alt=""><span>胸部艾灸+腹部艾灸</span></Col>
+            <Col span="8">￥{{orderBase.fee}}</Col>
+            <Col span="8">￥288.00(含上门费：￥30.00)</Col>
           </Row>
         </div>
       </div>
@@ -72,10 +62,70 @@
         会员卡：-￥20.00 <span>一卡通折扣</span>
       </div>
       <div class="total_pay">
-        <Button style="float:left;" type="success" @click.native="returnHome('list')">返回</Button>
-        实付金额：<strong>{{orderBase.amountTotal-orderBase.amountReduce}}</strong>
+        实付金额：<strong>￥{{orderBase.fee}}</strong>
       </div>
     </div>
+    <div class="order_info">
+      <h3>客服介入退款</h3>
+      <Row>
+        <Col span="8">处理结果：同意退款给买家</Col>
+        <Col span="8"></Col>
+        <Col span="8"></Col>
+      </Row>
+      <Row>
+        <Col span="8" style="padding-left:60px;">
+            <RadioGroup v-model="refundType">
+                <Radio label="全额退款"></Radio>
+                <Radio label="部分退款"></Radio>
+            </RadioGroup>
+        </Col>
+        <Col span="8"></Col>
+      </Row>
+      <Row>
+        <Col span="8">退款金额：<InputNumber  :min="1" v-model="refundMonry"></InputNumber></Col>
+        <Col span="8"></Col>
+      </Row>
+      <Row style="margin:10px 0px;">
+        <Col span="8" style="padding-left:60px;">
+          <Button @click.native="returnHome('list')">确定</Button>
+          <Button style="margin-left:20px;">取消</Button>
+        </Col>
+        <Col span="8"></Col>
+      </Row>
+      <div class="log">
+        <h3>协商处理记录</h3>
+        <Row>
+          <Col span="6">平台：2017-07-1-20 12：20：30</Col>
+          <Col span="6">客服介入，支持买家，退款成功</Col>
+          <Col span="6"></Col>
+        </Row>
+        <Row>
+          <Col span="6">买家：2017-07-1-20 12：20：30</Col>
+          <Col span="6">卖家拒绝退款，买家申请客服介入</Col>
+        </Row>
+        <Row>
+          <Col span="6">买家：2017-07-1-20 12：20：30</Col>
+          <Col span="6">卖家拒绝退款，未及时处理，退款关闭</Col>
+        </Row>
+        <Row>
+          <Col span="6">卖家：2017-07-1-20 12：20：30</Col>
+          <Col span="6">卖家拒绝退款</Col>
+        </Row>
+        <Row>
+          <Col span="6">卖家：2017-07-1-20 12：20：30</Col>
+          <Col span="6">卖家同意退款，退款成功</Col>
+        </Row>
+        <Row>
+          <Col span="6">平台：2017-07-1-20 12：20：30</Col>
+          <Col span="6">卖家未及时处理，系统自动退款</Col>
+        </Row>
+        <Row>
+          <Col span="6">买家：2017-07-1-20 12：20：30</Col>
+          <Col span="6">提交退款申请</Col>
+        </Row>
+      </div>
+    </div>
+    <Button style="margin-top:10px;" type="success" @click.native="returnHome('list')">返回</Button>
   </div>
 </template>
 <script>
@@ -85,33 +135,21 @@ export default {
     return {
       src:'../../../static/images/footer/1_1.png',
       orderBase:"",
-      orderBeautician:"",
-      orderProduct:"",
       progress:0,
+      refundMonry:0,//退款金额
+      refundType:'全额退款',//退款类型
     };
   },
   computed:{
     // 订单状态    
-    orderType:function(){
+    returnStatus:function(){
       let str = ""
-      if(this.orderBase.status == 0){
-        str = "待付款";
-        this.progress = 1;
-      }else if(this.orderBase.status == 1){
-        str = '交易关闭'
-        this.progress = 1;
-      }else if(this.orderBase.status == 2){
-        str = '待服务'
+      if(this.orderBase.returnStatus == 2){
+        str = "申请中";
         this.progress = 2;
-      }else if(this.orderBase.status == 3){
-        str = '服务中'
-        this.progress = 2;
-      }else if(this.orderBase.status == 4){
-        str = '待评价';
+      }else if(this.orderBase.returnStatus == 3){
+        str = '审核通过'
         this.progress = 3;
-      }else if(this.orderBase.status == 5){
-        str = '评价完成';
-        this.progress = 4;
       }
       return str
     },
@@ -134,13 +172,10 @@ export default {
   methods: {
     getData(id){
       let vm = this;
-      let url = common.path+'orderBase/queryOrderDetailsInfO/'+id;
+      let url = common.path+'orderReturn/queryById/'+id;
       this.$http.get(url).then(res=>{
         console.log(res)
-        vm.orderBase = res.data.data.orderBase;
-        vm.orderBeautician = res.data.data.orderBeautician;
-        vm.orderProduct = res.data.data.orderProduct;
-        console.log(vm.orderBase.orderNo);
+        vm.orderBase = res.data.data;
       }).catch(err=>{
         console.log(err)
       })
@@ -186,7 +221,8 @@ export default {
         padding-bottom:10px;
       }
       .ivu-col{
-        height: 30px;
+        height: 40px;
+        line-height: 40px;
       }
     }
     .service_info{

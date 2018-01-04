@@ -11,20 +11,23 @@
       <Row>
         <Col span="8">订单号：{{orderBase.orderNo}}</Col>
         <Col span="8">订单状态：{{orderType}}</Col>
-        <Col span="8">订单来源：微信商城que</Col>
+        <Col span="8">订单来源：微信商城</Col>
       </Row>
       <Row>
         <Col span="8">订单类型：{{orderBase.type==0?'到店订单':'上门订单'}}</Col>
-        <Col span="8">支付单号：que</Col>
+        <Col span="8">支付单号：{{orderBase.orderNo}}</Col>
         <Col span="8">付款方式：{{orderBase.payType=='wechatpay'?'微信支付':'支付宝支付'}}</Col>
       </Row>
     </div>
     <div class="order_info">
       <h4>买家信息</h4>
       <Row>
-        <Col span="8">购买人：{{orderBeautician.beauticianName}}</Col>
+        <Col span="8">购买人：{{orderBase.memberRealName}}</Col>
         <Col span="8">联系电话：{{orderBeautician.mobile}}</Col>
-        <Col span="8">上门地址：地址</Col>
+        <Col span="8"></Col>
+      </Row>
+      <Row>
+        <Col span="8">上门地址：深圳市罗湖区翠竹路崔雍华府A栋302</Col>
       </Row>
       <Row>
         <Col span="8">备注：{{orderBase.remark?orderBase.remark:'无'}}</Col>
@@ -34,7 +37,7 @@
       <h4>美容院信息</h4>
       <Row>
         <Col span="8">门店：{{orderBase.storeName}}</Col>
-        <Col span="8">老板姓名：que</Col>
+        <Col span="8">老板姓名：朱艳林</Col>
         <Col span="8">注册手机：{{orderBeautician.mobile}}</Col>
       </Row>
       <Row>
@@ -56,10 +59,10 @@
         <div class="content">
           <Row>
             <Col span="6"><img :src="orderProduct.productImg" alt=""><span>{{orderProduct.productName}}</span></Col>
-            <Col span="6">￥{{unitPrice}}</Col>
+            <Col span="6">￥{{unitPrice/100}}</Col>
             <!-- <Col span="6">{{orderProduct.productPrice}}</Col> -->
-            <Col span="6">{{orderBase.amountTotal}}(含上门费：￥30.00)</Col>
-            <Col span="6">{{customerService}}</Col>
+            <Col span="6">{{orderBase.amountTotal/100}}(含上门费：￥30.00)</Col>
+            <Col span="6">{{customerService/100}}</Col>
           </Row>
         </div>
       </div>
@@ -73,7 +76,7 @@
       </div>
       <div class="total_pay">
         <Button style="float:left;" type="success" @click.native="returnHome('list')">返回</Button>
-        实付金额：<strong>{{orderBase.amountTotal-orderBase.amountReduce}}</strong>
+        实付金额：<strong>{{(orderBase.amountTotal-orderBase.amountReduce)/100}}</strong>
       </div>
     </div>
   </div>

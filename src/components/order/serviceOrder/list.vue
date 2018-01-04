@@ -207,12 +207,15 @@
                         title: '单价',
                         key: 'payTime',
                         render: (h,params) =>{
-                            return "1000"
+                            return "268"
                         }
                     },
                     {
                         title: '订单总价',
                         key: 'amountTotal',
+                        render:(h,params)=>{
+                            return params.row.amountTotal/100
+                        }
                     },
                     {
                         title: '服务状态',
@@ -241,7 +244,7 @@
                         title: '应/实付金额',
                         key: 'amountReduce',
                         render:(h,params)=>{
-                            return h('div',params.row.amountTotal-(params.row.amountReduce?params.row.amountReduce:0))
+                            return h('div',(params.row.amountTotal-(params.row.amountReduce?params.row.amountReduce:0))/100)
                         }
                     },
                     {   
