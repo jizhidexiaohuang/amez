@@ -18,22 +18,27 @@ const common = {
             default:
                 return "http://120.79.42.13:8080/"
         } 
-    })(2),
+    })(1),
     path2: (function(i){
         switch (i) {
             case 1:
                 return "http://120.79.42.13:8080/"
                 break;
             case 2:
+                // 联合 飞华
                 return "http://192.168.1.32:8081/"
                 break;
             case 3:
                 return "http://120.79.42.13:8005/pc/"  
                 break;
+            case 4:
+                // 艾美 飞华
+                return "http://172.16.20.151:8081/"
+                break;
             default:
                 return "http://120.79.42.13:8005/pc/"  
         } 
-    })(2),
+    })(4),
     /* 富文本 */
     // path1:"http://172.16.20.151:8080/",
     path1:"http://120.79.42.13:8080/",

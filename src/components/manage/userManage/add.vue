@@ -94,7 +94,7 @@
                         password:this.formCustom.passwd,//登陆密码
                         isDisabled:this.status,//用户状态 0 启用 1 禁用
                     }
-                    let url = common.path+'system/api/baseUser/';
+                    let url = common.path2+'system/api/baseUser/';
                     console.log(ajaxData)
                     this.$http.post(
                         url,

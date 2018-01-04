@@ -62,7 +62,7 @@ export default {
             let vm = this;
             vm.$refs.loginForm.validate((valid) => {
                 if (valid) {
-                    let url = vm.common.path + "baseUsers/userLogin?userName="+vm.form.userName+"&password="+vm.form.password;
+                    let url = vm.common.path2 + "baseUsers/userLogin?userName="+vm.form.userName+"&password="+vm.form.password;
                     let ajaxData = {
                         userName:vm.form.userName,
                         password:vm.form.password

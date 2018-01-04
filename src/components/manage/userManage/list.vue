@@ -237,7 +237,7 @@
                 let vm = this;
                 let start = (vm.pageNun-1)*vm.size;//从第几个开始
                 let size = vm.size;//每页条数
-                let url = common.path+"baseUsers/selectListByConditions?pageNo="+this.pageNun+'&pageSize='+this.size;
+                let url = common.path2+"baseUsers/selectListByConditions?pageNo="+this.pageNun+'&pageSize='+this.size;
                 vm.loading = true;
                 this.$http.post(
                     url,
@@ -308,7 +308,7 @@
                     title:'删除',
                     content:'删除后将不能恢复，确认删除这项吗？',
                     onOk(){
-                        let url = common.path+'system/api/baseUser/'+id;
+                        let url = common.path2+'system/api/baseUser/'+id;
                         this.$http.delete(url).then(res=>{
                             if(res.status==200){
                                 this.$Message.success('删除成功！')
@@ -320,7 +320,7 @@
             },
             //获取关联信息
             relation(id){
-                let url = common.path+'baseUserRoles/findBaseUserRoles/'+id;
+                let url = common.path2+'baseUserRoles/findBaseUserRoles/'+id;
                 this.$http.get(
                     url
                 ).then(res=>{
@@ -352,7 +352,7 @@
             },
             //模态框点击ok
             ok(){
-                let url = common.path+'baseUserRoles/distributionBaseUserRole?userId='+this.userId+'&roleIds='+this.roleIds
+                let url = common.path2+'baseUserRoles/distributionBaseUserRole?userId='+this.userId+'&roleIds='+this.roleIds
                 this.$http.get(
                     url,
                 ).then(res=>{
@@ -381,7 +381,7 @@
             },
             //获取所有角色
             getRoleData () {
-                let url = common.path+'baseRoles/selectListByConditions?pageNo=1&pageSize=1000';
+                let url = common.path2+'baseRoles/selectListByConditions?pageNo=1&pageSize=1000';
                 this.$http.post(
                     url,
                     {

@@ -96,7 +96,7 @@
                         password:this.formCustom.passwd,//登陆密码
                         isDisabled:this.status,//用户状态 0 启用 1 禁用
                     }
-                    let url = common.path+'system/api/baseUser/';
+                    let url = common.path2+'system/api/baseUser/';
                     console.log(ajaxData)
                     this.$http.put(
                         url,
@@ -124,7 +124,7 @@
            
         },
         created:function(){
-          let url = common.path+'system/api/baseUser/'+this.message
+          let url = common.path2+'system/api/baseUser/'+this.message
           this.$http.get(url).then(res=>{
               console.log(res)
               this.data = res.data
