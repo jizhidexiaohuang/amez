@@ -118,28 +118,27 @@
                     }
                 })
             },
-           
-        },
-        watch: {
-           
-        },
-        created:function(){
-          let url = common.path2+'system/api/baseUser/'+this.message
-          this.$http.get(url).then(res=>{
-              console.log(res)
-              this.data = res.data
-              this.formCustom.accountName = this.data.loginName;
-              this.formCustom.passwd = this.data.password;
-              this.formCustom.passwdCheck = this.data.password;
-              if(this.data.isDisabled==0){
-                  this.formCustom.accountStatus = true
-              }else{
-                  this.formCustom.accountStatus = false
-              }
-          })
+           getDataById(id){
+            let url = common.path2+'baseUsers/'+id
+            this.$http.get(url).then(res=>{
+                console.log(res)
+                this.data = res.data.data
+                this.formCustom.accountName = this.data.loginName;
+                this.formCustom.passwd = this.data.password;
+                this.formCustom.passwdCheck = this.data.password;
+                if(this.data.isDisabled==0){
+                    this.formCustom.accountStatus = true
+                }else{
+                    this.formCustom.accountStatus = false
+                }
+            })
+           }
         },
         mounted: function(){
           
+        },
+        beforeMount:function(){
+            this.getDataById(this.message)
         },
         activated: function(){
             

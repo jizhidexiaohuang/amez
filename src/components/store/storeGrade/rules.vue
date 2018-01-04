@@ -2,7 +2,7 @@
   <div class="testWrap">
       <div class="addPage boxStyle">
         <h2>成长值设置</h2>
-        <Form ref="formDynamic" :model="formDynamic" :label-width="80" style="width: 100%">
+        <Form ref="formDynamic" :model="formDynamic" :label-width="50" style="width: 100%">
             <FormItem>
                 <Row>
                     <Col span="2" style="text-align:center;">最近一次接单</Col>
@@ -26,7 +26,7 @@
                 <Row>
                     <Col span="2" style="text-align:center;">
                         <Row>
-                          <Col span="12"><InputNumber :min="1" v-model="item.condition1"></InputNumber></Col>
+                          <Col span="12"><InputNumber style="width:50px;" :min="1" v-model="item.condition1"></InputNumber></Col>
                           <Col span="12">天以内</Col>
                         </Row>
                     </Col>
@@ -35,7 +35,7 @@
                     </Col>
                     <Col span="2" style="text-align:center;">
                         <Row>
-                          <Col span="12"><InputNumber :min="1" v-model="item.condition2"></InputNumber></Col>
+                          <Col span="12"><InputNumber style="width:50px;" :min="1" v-model="item.condition2"></InputNumber></Col>
                           <Col span="12">次以上</Col>
                         </Row>
                     </Col>
@@ -44,7 +44,7 @@
                     </Col>
                     <Col span="2" style="text-align:center;">
                         <Row>
-                          <Col span="12"><InputNumber :min="1" v-model="item.condition3"></InputNumber></Col>
+                          <Col span="12"><InputNumber style="width:50px;" :min="1" v-model="item.condition3"></InputNumber></Col>
                           <Col span="12">元以上</Col>
                         </Row>
                     </Col>
@@ -53,7 +53,7 @@
                     </Col>
                     <Col span="2" style="text-align:center;">
                         <Row>
-                          <Col span="12"><InputNumber :min="1" v-model="item.condition4"></InputNumber></Col>
+                          <Col span="12"><InputNumber style="width:50px;" :min="1" v-model="item.condition4"></InputNumber></Col>
                           <Col span="12">个以上</Col>
                         </Row>
                     </Col>
@@ -62,7 +62,7 @@
                     </Col>
                     <Col span="2" style="text-align:center;">
                         <Row>
-                          <Col span="12"><InputNumber :min="1" v-model="item.condition5"></InputNumber></Col>
+                          <Col span="12"><InputNumber style="width:50px;" :min="1" v-model="item.condition5"></InputNumber></Col>
                           <Col span="12">个以上</Col>
                         </Row>
                     </Col>

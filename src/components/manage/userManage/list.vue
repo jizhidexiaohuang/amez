@@ -308,7 +308,7 @@
                     title:'删除',
                     content:'删除后将不能恢复，确认删除这项吗？',
                     onOk(){
-                        let url = common.path2+'system/api/baseUser/'+id;
+                        let url = common.path2+'baseUsers/'+id;
                         this.$http.delete(url).then(res=>{
                             if(res.status==200){
                                 this.$Message.success('删除成功！')
@@ -320,6 +320,8 @@
             },
             //获取关联信息
             relation(id){
+                let vm = this;
+                 vm.loading = true;
                 let url = common.path2+'baseUserRoles/findBaseUserRoles/'+id;
                 this.$http.get(
                     url
@@ -348,6 +350,7 @@
                     this.modal = true;
                     console.log(this.data1)
                     console.log(this.targetKeys1)
+                     vm.loading = false;
                 })
             },
             //模态框点击ok
