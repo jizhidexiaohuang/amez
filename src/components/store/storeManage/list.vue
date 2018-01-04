@@ -193,7 +193,7 @@
                                 }, '编辑'),
                                 h('Button', {
                                     props: {
-                                        type: 'primary',
+                                        type: 'info',
                                         size: 'small'
                                     },
                                     style: {
@@ -225,7 +225,7 @@
                                 }, '编辑'),
                                 h('Button', {
                                     props: {
-                                        type: 'primary',
+                                        type: 'success',
                                         size: 'small'
                                     },
                                     style: {
@@ -257,7 +257,7 @@
                                 }, '编辑'),
                                 h('Button', {
                                     props: {
-                                        type: 'primary',
+                                        type: 'error',
                                         size: 'small'
                                     },
                                     style: {
@@ -271,7 +271,7 @@
                                 }, '关闭'),
                                 h('Button', {
                                     props: {
-                                        type: 'primary',
+                                        type: 'warning',
                                         size: 'small'
                                     },
                                     style: {

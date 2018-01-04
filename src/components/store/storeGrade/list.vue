@@ -26,32 +26,32 @@
                 </Col>
             </Row>
             <Form :model="cd" inline v-show="false">
-                        <FormItem style="margin-bottom:10px;">
-                            状态
-                            <Select v-model="storeStatus" style="width:80px">
-                                <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                            </Select>
-                        </FormItem>
-                        <FormItem style="margin-bottom:10px;">
-                            开店时间
-                            <DatePicker v-model="cd.time" type="date" placeholder="请选择评价时间" style="width:200px;"></DatePicker>
-                        </FormItem>
-                        <FormItem style="margin-bottom:10px;">
-                           <Input v-model="value">
-                            <Select v-model="selectType" slot="prepend" style="width: 80px">
-                                <Option value="门店名称">门店名称</Option>
-                                <Option value="注册手机">注册手机</Option>
-                            </Select>
-                          </Input>
-                        </FormItem>
-                        <FormItem style="margin-bottom:10px; width:250px;">
-                            <Row>
-                                <Col span="4">地区</Col>
-                                <Col span="20">
-                                    <Input v-model="area" placeholder="全部（省-市-区）"></Input>
-                                </Col>
-                            </Row>
-                        </FormItem>
+                <FormItem style="margin-bottom:10px;">
+                    状态
+                    <Select v-model="storeStatus" style="width:80px">
+                        <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+                </FormItem>
+                <FormItem style="margin-bottom:10px;">
+                    开店时间
+                    <DatePicker v-model="cd.time" type="date" placeholder="请选择评价时间" style="width:200px;"></DatePicker>
+                </FormItem>
+                <FormItem style="margin-bottom:10px;">
+                    <Input v-model="value">
+                    <Select v-model="selectType" slot="prepend" style="width: 80px">
+                        <Option value="门店名称">门店名称</Option>
+                        <Option value="注册手机">注册手机</Option>
+                    </Select>
+                    </Input>
+                </FormItem>
+                <FormItem style="margin-bottom:10px; width:250px;">
+                    <Row>
+                        <Col span="4">地区</Col>
+                        <Col span="20">
+                            <Input v-model="area" placeholder="全部（省-市-区）"></Input>
+                        </Col>
+                    </Row>
+                </FormItem>
             </Form>
             <Row style="margin-bottom:10px;">
                 <!-- <Col span="5">

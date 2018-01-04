@@ -335,6 +335,7 @@
             },
             //开启店铺
             openStore(id){
+                let vm = this;
                 this.$Modal.confirm({
                     title:'审核店铺',
                     content:'审核后，该店铺可以继续开展美容邦相关业务，确认审核该店铺？',
@@ -343,6 +344,7 @@
                         this.$http.put(url).then(res=>{
                             if(res.status==200){
                                 this.$Message.success('审核成功！')
+                                vm.getData()
                             }
                         })
                     }

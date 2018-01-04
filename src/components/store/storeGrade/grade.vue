@@ -32,7 +32,12 @@
                         <InputNumber :max="10" :min="1" v-model="item.sort"></InputNumber>
                     </Col>
                     <Col span="3" style="text-align:center;padding-top:10px;">
-                        <MyUpload :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
+                        <!-- <MyUpload :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList">
+                            <button @click="getIndex(item.index)"></button>
+                        </MyUpload> -->
+                        <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="getUploadList">
+                            <Button type="ghost" icon="ios-cloud-upload-outline" @click="getIndex(index)">上传Logo</Button>
+                        </Upload>
                     </Col>
                     <Col span="2" offset="1">
                         <Button type="error" @click="handleRemove(index)">删除</Button>
@@ -64,6 +69,7 @@
                 defaultList:[],//默认图片
                 index: 1,
                 ajaxArr:[],//提交的数据
+                logoIndex:0,
                 formDynamic: {
                     items: [
                         {
@@ -107,19 +113,24 @@
                         ).then(res=>{
                             console.log(res)
                             if(res.status==200){
-                                this.$Message.success('Success!');
+                                this.$Message.success('提交成功!');
+                                this.returnHome('list')
                             }
                         })
                     } else {
-                        this.$Message.error('Fail!');
+                        this.$Message.error('出错!');
                     }
                 })
             },
             //照片上传
             getUploadList(data){
                 let vm = this;
-                vm.formDynamic.items[this.index-1].levelLogo = data[0].response.data;
-                console.log(data[0].response.data);
+                vm.formDynamic.items[this.logoIndex].levelLogo = data.data;
+                console.log(data.data)
+            },
+            //获取index
+            getIndex(index){
+                this.logoIndex = index;
             },
             //取消
             handleReset (name) {
