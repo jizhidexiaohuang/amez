@@ -123,7 +123,7 @@
                     </RadioGroup>
                 </FormItem>
                 <FormItem label="上传合同">
-                    <Upload action="http://172.16.20.151:8009/system/api/file/uploadFile" :on-success="uploadFile">
+                    <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadFile">
                         <Button type="ghost" icon="ios-cloud-upload-outline">上传文件</Button>
                     </Upload>
                 </FormItem>
@@ -131,24 +131,24 @@
             <div class="box">
                 <h3>认证照片</h3>
                 <FormItem label="营业执照" prop="">
-                    <Upload action="http://172.16.20.151:8009/system/api/file/uploadFile" :on-success="uploadLicense">
+                    <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadLicense">
                         <Button type="ghost" icon="ios-cloud-upload-outline">上传</Button>
                     </Upload>
                 </FormItem>
                 <FormItem label="身份证照片" prop="">
                     <Row>
                         <Col span="6">
-                            <Upload action="http://172.16.20.151:8009/system/api/file/uploadFile" :on-success="uploadPositivePhoto">
+                            <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadPositivePhoto">
                                 <Button type="ghost" icon="ios-cloud-upload-outline">正面照</Button>
                             </Upload>
                         </Col>
                         <Col span="6">
-                            <Upload action="http://172.16.20.151:8009/system/api/file/uploadFile" :on-success="uploadNegativePhoto">
+                            <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadNegativePhoto">
                                 <Button type="ghost" icon="ios-cloud-upload-outline">反面照</Button>
                             </Upload>
                         </Col>
                         <Col span="6">
-                            <Upload action="http://172.16.20.151:8009/system/api/file/uploadFile" :on-success="uploadHandheldPhoto">
+                            <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadHandheldPhoto">
                                 <Button type="ghost" icon="ios-cloud-upload-outline">手持照</Button>
                             </Upload>
                         </Col>
@@ -157,24 +157,24 @@
                 <FormItem label="门店照片" prop="">
                     <Row>
                         <Col span="6">
-                            <Upload action="http://172.16.20.151:8009/system/api/file/uploadFile" :on-success="uploadDoorPhoto">
+                            <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadDoorPhoto">
                                 <Button type="ghost" icon="ios-cloud-upload-outline">门头照</Button>
                             </Upload>
                         </Col>
                         <Col span="6">
-                            <Upload action="http://172.16.20.151:8009/system/api/file/uploadFile" :on-success="uploadCashierPhoto">
+                            <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadCashierPhoto">
                                 <Button type="ghost" icon="ios-cloud-upload-outline">收银台</Button>
                             </Upload>
                         </Col>
                         <Col span="6">
-                            <Upload action="http://172.16.20.151:8009/system/api/file/uploadFile" :on-success="uploadInPhoto">
+                            <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadInPhoto">
                                 <Button type="ghost" icon="ios-cloud-upload-outline">店内照</Button>
                             </Upload>
                         </Col>
                     </Row>  
                 </FormItem>
                 <FormItem label="上传合同">
-                    <Upload action="http://172.16.20.151:8009/system/api/file/uploadFile" :on-success="uploadFile">
+                    <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadFile">
                         <Button type="ghost" icon="ios-cloud-upload-outline">上传文件</Button>
                     </Upload>
                 </FormItem>

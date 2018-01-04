@@ -398,6 +398,7 @@
             },
             //冻结店铺
             frozenStore(id){
+                let vm = this;
                 this.$Modal.confirm({
                     title:'冻结店铺',
                     content:'冻结后，该店铺将无法交易，确认冻结该店铺？',
@@ -406,6 +407,7 @@
                         this.$http.put(url).then(res=>{
                             if(res.status==200){
                                 this.$Message.success('冻结成功！')
+                                vm.getData()
                             }
                         })
                     }
@@ -413,6 +415,7 @@
             },
             //开启店铺
             openStore(id){
+                let vm = this
                 this.$Modal.confirm({
                     title:'开启店铺',
                     content:'开启后，该店铺可以继续开展美容邦相关业务，确认开启该店铺？',
@@ -421,6 +424,7 @@
                         this.$http.put(url).then(res=>{
                             if(res.status==200){
                                 this.$Message.success('开启成功！')
+                                vm.getData()
                             }
                         })
                     }
@@ -428,6 +432,7 @@
             },
             //关闭店铺
             closeStore(id){
+                let vm = this
                 this.$Modal.confirm({
                     title:'关闭店铺',
                     content:'关闭后，该店铺将无法开展美容邦相关业务，确认关闭该店铺？',
@@ -436,6 +441,7 @@
                         this.$http.put(url).then(res=>{
                             if(res.status==200){
                                 this.$Message.success('关闭成功！')
+                                vm.getData()
                             }
                         })
                     }

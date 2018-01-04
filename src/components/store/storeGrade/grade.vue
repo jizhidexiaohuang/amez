@@ -71,7 +71,7 @@
                             startValue:'',//最小值
                             endValue:'',//最大值
                             sort:1,//排序
-                            levelLogo:'',
+                            levelLogo:'',//图片路径
                             index: 1,
                             status: 1
                         }
