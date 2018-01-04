@@ -308,8 +308,8 @@ export default {
             let vm = this;
             console.log(vm.$store.getters.adminInfo.menu);
             if(window.localStorage.getItem("userInfo")){
-                // vm.menu.menuList = JSON.parse(window.localStorage.getItem("userInfo")).menu;
-                vm.menu.menuList = arrs;
+                vm.menu.menuList = JSON.parse(window.localStorage.getItem("userInfo")).menu;
+                // vm.menu.menuList = arrs;
                 vm.fnMenuChange();
             }
         },

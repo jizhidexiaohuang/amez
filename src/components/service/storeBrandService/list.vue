@@ -550,7 +550,8 @@
                     let url = vm.common.path2 + "products/update";
                     let ajaxData = {
                         saleStatus : type == 0?1:0,
-                        productId: id,
+                        // productId: id,
+                        id: id,
                         isEnabled: 0,
                     }
                     console.log(ajaxData);
@@ -576,7 +577,8 @@
                     let url = vm.common.path2 + "productStoreRefs/updateProductStoreRef"
                     let ajaxData = {
                         saleStatus : type == 0?1:0,
-                        productId: id,
+                        id: id,
+                        // productId: id,
                         isEnabled: 0,
                         storeId: vm.storeId
                     }
