@@ -2,7 +2,7 @@
   <div class="testWrap">
       <div class="boxStyle editPage">
         <h2>新增连锁品牌</h2>
-        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
+        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120">
             <Row>
                 <Col span="8">
                     <FormItem label="品牌名称" prop="brandName">

@@ -1,5 +1,6 @@
 <template>
-  <div class="infoPage">
+  <div class="testWrap">
+    <div class="infoPage boxStyle">
     <Steps :current="progress">
         <Step title="买家申请退款" :content="common.formatDate(orderBase.applyTime)"></Step>
         <Step title="卖家处理申请" :content="showTime(orderBase.applyTime)"></Step>
@@ -126,6 +127,7 @@
       </div>
     </div>
     <Button style="margin-top:10px;" type="success" @click.native="returnHome('list')">返回</Button>
+    </div>
   </div>
 </template>
 <script>

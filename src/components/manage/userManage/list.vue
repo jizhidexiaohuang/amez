@@ -52,7 +52,7 @@
             <Row style="margin-bottom:10px;">
                 <Col span="5">
                     <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
-                    <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">重置</Button>
+                    <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                 </Col>
                 <Col span="3" offset="16">
                     <Button style="float:right;" @click.native="changePageType('add')" type="success" icon="android-add">新增用户</Button>
@@ -153,7 +153,7 @@
                         key: 'isDisabled',
                         render:(h,params)=>{
                             let str = '';
-                            if(params.row.isDisabled==0){
+                            if(params.row.isDisabled=='0'){
                                 str = '开启'
                             }else{
                                 str = '关闭'
@@ -272,8 +272,9 @@
                 console.log(selection);
             },
             fnBackformAdd (type) {
-                this.changePageType(type);
-                this.getData();
+                let vm = this;
+                vm.changePageType(type);
+                vm.getData();
             },
             changePageType (type) {
                 this.pageType = type;

@@ -10,6 +10,7 @@
         <div v-if="pageType == 'info'" class="testWrap">详情</div>
         <!-- 列表容器 -->
         <div v-if="pageType == 'list'" class="testWrap">
+            <div class="boxStyle">
             <Row style="margin-bottom:10px;" v-show="false">
                 <Col span="5">
                     <ButtonGroup>
@@ -83,6 +84,7 @@
                         @on-page-size-change="changeSize"
                     ></Page>
                 </div>
+            </div>
             </div>
         </div>
     </div>

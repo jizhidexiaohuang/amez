@@ -1,5 +1,6 @@
 <template>
-  <div class="infoPage">
+  <div class="testWrap">
+    <div class="infoPage boxStyle">
     <Steps :current="progress">
         <Step title="提交订单" :content="common.formatDate(orderBase.applyTime)"></Step>
         <Step title="付款时间" :content="showTime(orderBase.applyTime)"></Step>
@@ -77,6 +78,7 @@
         <Button style="float:left;" type="success" @click.native="returnHome('list')">返回</Button>
         实付金额：<strong>{{orderBase.fee}}</strong>
       </div>
+    </div>
     </div>
   </div>
 </template>

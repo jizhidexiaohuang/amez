@@ -154,6 +154,7 @@
                     if (valid) {
                         //添加品牌服务
                         let ajaxData = {
+                            storeId:4,
                             type: vm.formValidate.type, // 服务分类
                             brandId: vm.formValidate.brandId, // 服务所属品牌
                             serverName: vm.formValidate.serverName, // 服务名称

@@ -2,7 +2,7 @@
   <div class="testWrap">
       <div class="boxStyle editPage">
         <h2>新增连锁品牌</h2>
-        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
+        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120">
             <Row>
                 <Col span="8">
                     <FormItem label="品牌名称" prop="brandName">
@@ -13,7 +13,7 @@
             <Row>
                 <Col span="8">
                     <FormItem label="品牌Logo" prop="brandLogo" v-if="testCode">
-                        <MyUpload :defaultList="defaultList" v-on:listenUpload="getUploadList"></MyUpload>
+                        <MyUpload :uploadConfig="uploadConfig" :defaultList="defaultList" v-on:listenUpload="getUploadList"></MyUpload>
                     </FormItem>
                 </Col>
             </Row>
@@ -41,6 +41,9 @@
             return {
                 testCode: false,
                 defaultList:[],//默认图片
+                uploadConfig:{
+                    num:1
+                },
                 brandLogo:'',//图片途径
                 formValidate: {
                     brandName: '',

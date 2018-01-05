@@ -140,17 +140,21 @@
                         title: '图标',
                         key: 'levelLogo',
                         render:(h,params)=>{
-                            return h('div',[
-                                h('img',{
-                                    attrs:{
-                                        src:params.row.levelLogo
-                                    },
-                                    style:{
-                                        width:'36px',
-                                        height:'40px'
-                                    }
-                                })
-                            ])
+                            if(params.row.levelLogo){
+                                return h('div',[
+                                    h('img',{
+                                        attrs:{
+                                            src:params.row.levelLogo
+                                        },
+                                        style:{
+                                            width:'36px',
+                                            height:'40px'
+                                        }
+                                    })
+                                ])
+                            }else{
+                                h('div','无图标')
+                            }
                         }
                     },
                    

@@ -36,7 +36,11 @@
                             <button @click="getIndex(item.index)"></button>
                         </MyUpload> -->
                         <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="getUploadList">
-                            <Button type="ghost" icon="ios-cloud-upload-outline" @click="getIndex(index)">上传Logo</Button>
+                            <Button v-show="!item.levelLogo" type="ghost" icon="ios-cloud-upload-outline" @click="getIndex(index)">上传Logo</Button>
+                            <div class="imgBox">
+                            <img v-show="item.levelLogo" :src="item.levelLogo" alt=""  @click="getIndex(index)">
+                            <div class="cover"><Icon type="ios-cloud-upload-outline"></Icon></div>
+                            </div>
                         </Upload>
                     </Col>
                     <Col span="2" offset="1">
@@ -125,12 +129,13 @@
             //照片上传
             getUploadList(data){
                 let vm = this;
-                vm.formDynamic.items[this.logoIndex].levelLogo = data.data;
+                vm.formDynamic.items[vm.logoIndex].levelLogo = data.data;
                 console.log(data.data)
             },
             //获取index
             getIndex(index){
                 this.logoIndex = index;
+                console.log(this.logoIndex)
             },
             //取消
             handleReset (name) {
@@ -196,6 +201,41 @@
     }
 </script>
 <style lang='scss' scoped>
-
+    .imgBox{
+        position: relative;
+        img,.cover{
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            line-height: 60px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #fff;
+            position: relative;
+            box-shadow: 0 1px 1px rgba(0,0,0,.2);
+            margin-right: 4px;
+        }
+        .cover{
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: rgba(0,0,0,.6);
+            .ivu-icon-ios-cloud-upload-outline{
+                color: #fff;
+                font-size: 28px;
+                cursor: pointer;
+                margin: 0 2px;
+            }
+        }
+    }
+    .imgBox:hover{
+        .cover{
+            display: inline;
+        }
+    }
+  
 </style>
 

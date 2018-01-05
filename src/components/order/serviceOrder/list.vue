@@ -27,19 +27,19 @@
                 <Button style="float:left;margin-right:10px;" @click="exportData" type="success">订单导出</Button>
                 <FormItem style="margin-bottom:10px;">
                     订单类型
-                    <Select v-model="orderType" style="width:100px">
+                    <Select v-model="cd.orderType" style="width:100px">
                         <Option v-for="item in orderTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem style="margin-bottom:10px;">
                     订单来源
-                    <Select v-model="orderOrigin" style="width:100px">
+                    <Select v-model="cd.orderOrigin" style="width:100px">
                         <Option v-for="item in orderOriginList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem style="margin-bottom:10px;">
                     订单状态
-                    <Select v-model="orderStatus" style="width:100px">
+                    <Select v-model="cd.orderStatus" style="width:100px">
                         <Option v-for="item in orderStatusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
                 </FormItem>
@@ -51,12 +51,12 @@
                     <DatePicker v-model="cd.endTime" type="date" placeholder="结束时间" style="width:200px;"></DatePicker>
                 </FormItem>
                 <FormItem style="margin-bottom:10px;">
-                    <Input v-model="value">
-                    <Select v-model="selectType" slot="prepend" style="width: 100px">
-                        <Option value="订单号">订单号</Option>
-                        <Option value="门店名称">门店名称</Option>
-                        <Option value="收货人姓名">收货人姓名</Option>
-                        <Option value="收货人手机">收货人手机</Option>
+                    <Input v-model="cd.inputval">
+                    <Select v-model="cd.selectType" slot="prepend" style="width: 100px">
+                        <Option value="orderNo">订单号</Option>
+                        <Option value="storeName">门店名称</Option>
+                        <Option value="addressReveiver">收货人姓名</Option>
+                        <Option value="memberPhone">收货人手机</Option>
                     </Select>
                     </Input>
                 </FormItem>
@@ -69,11 +69,12 @@
                 </FormItem>
                 <FormItem style="margin-bottom:10px;">
                     <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
+                    <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                 </FormItem>
             </Form>
             <Table
-                :loading="loading" 
-                :data="tableData1" 
+                :loading="table.loading" 
+                :data="table.tableData1" 
                 :columns="tableColumns1" 
                 ref="table"
                 stripe
@@ -84,8 +85,8 @@
             <div style="margin: 10px;overflow: hidden">
                 <div style="float: right;">
                     <Page 
-                        :total="recordsTotal" 
-                        :current="pageNun"
+                        :total="table.recordsTotal" 
+                        :current="table.pageNun"
                         show-sizer 
                         @on-change="changePage"
                         @on-page-size-change="changeSize"
@@ -104,25 +105,17 @@
         data () {
             return {
                 src:'../../../static/images/footer/1_1.png',
-                value:'',
-                editId:'',//编辑id
-                infoId:'',//查看详情Id
-                selectType:'门店名称',
-                storeStatus:'', //店铺状态下拉框
-                area:'', //地区
-                orderType:'',//订单类型
-                orderOrigin:'',//订单类型
-                payType:'',//支付类型
-                orderStatus:'',//订单状态
+                area:'',
+                parentMsg:'',
                 orderTypeList:[
                     {
-                        value:'0',
+                        value:'',
                         label:'全部'
                     },{
                         value:'1',
                         label:'上门服务'
                     },{
-                        value:'2',
+                        value:'0',
                         label:'到店服务'
                     },
                 ],  //订单类型
@@ -140,38 +133,39 @@
                 ],  //订单类型
                 orderStatusList:[
                     {
-                        value:'0',
+                        value:'',
                         label:'全部'
                     },{
-                        value:'1',
+                        value:'0',
                         label:'待付款'
+                    },{
+                        value:'1',
+                        label:'交易关闭'
                     },{
                         value:'2',
                         label:'待服务'
                     },{
                         value:'3',
-                        label:'待退款'
+                        label:'服务中'
                     },{
                         value:'4',
                         label:'待评价'
                     },{
                         value:'5',
-                        label:'服务完成'
-                    },{
-                        value:'6',
-                        label:'待客服介入'
+                        label:'评价完成'
                     },
                 ],//订单状态
                 cd:{
                     startTime:'',//评论时间范围
                     endTime:'',//评论时间范围
-                    operType:"1"//评论类型、不用重置
-                },
+                    selectType:'orderNo', //订单号
+                    orderType:'',//订单类型
+                    orderOrigin:'',//订单来源
+                    orderStatus:'',//订单状态
+                    inputval:'', // 搜索条件
+                }, //顶部搜索条件
                 activatedType: false,//主要解决mounted和activated重复调用
                 pageType: 'list',
-                openPage: false,
-                tableData1: [],
-                parentMsg:'',
                 tableColumns1: [
                     {
                         type: 'expand',
@@ -186,7 +180,7 @@
                     },
                     {
                         title: '服务项目',
-                        key: 'orderNo',
+                        key: 'productName',
                         render:(h,params)=>{
                             return h('div',[
                                 // h('img',{
@@ -222,7 +216,6 @@
                         title: '服务状态',
                         key: 'status',
                         render:(h,params) =>{
-                           console.log(params.row.status)
                            let status = params.row.status;
                            let text = ''
                             if(status==0){
@@ -243,7 +236,7 @@
                     },
                     {   
                         title: '应/实付金额',
-                        key: 'amountReduce',
+                        key: 'amountTotal',
                         render:(h,params)=>{
                             return h('div',(params.row.amountTotal-(params.row.amountReduce?params.row.amountReduce:0))/100)
                         }
@@ -316,36 +309,44 @@
                         }
                     }
                 ],
-                test:1,
-                recordsTotal:0,
-                pageNun:1,
-                loading: false,
-                size: 10,
+                table:{
+                    tableData1: [],
+                    recordsTotal:0,
+                    pageNun:1,
+                    loading: false,
+                    size: 10,
+                }
             }
         },
         methods: {
             /* 分页回掉函数 */
             changePage (page) {
                 let vm = this;
-                vm.pageNun = page;   
+                vm.table.pageNun = page;   
                 vm.getData();             
                 // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
             },
             /* 数据获取 */
-            getData () {
+            getData (init) {
                 let vm = this;
-                let start = (vm.pageNun-1)*vm.size;//从第几个开始
-                let size = vm.size;//每页条数
-                // let path_test = "http://120.79.42.13:8080/";
+                if(!!init&&init=='init'){
+                    vm.fnInit();
+                }
+                let start = vm.table.pageNun;//从第几个开始
+                let size = vm.table.size;//每页条数
                 let url = common.path+"orderBase/front/findByPage";
                 let ajaxData = {
                     pageNo:start,
-                    pageSize: size
+                    pageSize: size,
+                    type:vm.cd.orderType,//订单类型
+                    status:vm.cd.orderStatus,//订单状态
+                    addTime:vm.cd.startTime,//下单时间
                 }
-                vm.loading = true;
+                ajaxData[vm.cd.selectType] = vm.cd.inputval
+                vm.table.loading = true;
                 this.$http.post(
                     url,
-                    JSON.stringify(ajaxData),
+                    ajaxData,
                     {
                         headers: {
                             'Content-type': 'application/json;charset=UTF-8'
@@ -354,55 +355,48 @@
                 ).then(function(res){
                     console.log(res.data.data);
                     let oData = res.data
-                    vm.recordsTotal = oData.total;
-                    vm.tableData1 = res.data.data.list;
-                    vm.loading = false;
+                    vm.table.recordsTotal = oData.total;
+                    vm.table.tableData1 = res.data.data.list;
+                    vm.table.loading = false;
                 }).catch(function(err){
                 })
             },
-            /* 查看详情 */
-            show (index) {
-                this.$Modal.info({
-                    title: '老师活动详情',
-                    content: `老师名称：${this.tableData1[index].teacherName}<br>老师类型：${this.tableData1[index].typeName}<br>活动类型：${this.tableData1[index].typeName}`
-                })
+             /* 初始化表格筛选条件 */
+            fnInit () {
+                let vm = this;
+                vm.table.pageNun = 1;//索引
+                vm.table.size = 10;//页数
+                vm.cd.startTime = '';//评价时间
+                vm.cd.endTime = '';//评价时间
+                vm.cd.orderType = '';// 状态
+                vm.cd.orderStatus = '';// 输入框类型
+                vm.cd.inputval = "";// 输入框的值
+                vm.cd.orderOrigin = '';//订单来源
+                vm.cd.selectType = 'orderNo';
             },
-             //导出Excel
+            //导出Excel
             exportData(){
                 this.$refs.table.exportCsv({
                     filename: '数据',
-                    data: this.tableData1.filter((data, index) => {
+                    original :true,                 
+                    data: this.table.tableData1.filter((data, index) => {
                         // console.log(data)
-                        //订单号
-                        data.orderNo = ''+data.orderNo+'';
-                        //交易流水号
-                        data.tradeNo = data.tradeNo?(''+data.tradeNo+''):'';
-                        //付款时间
-                        data.payTime = data.payTime?common.formatDate(data.payTime):'';
-                        //交易类型
-                        if(data.tradeType==1){
-                            data.tradeType = '服务订单'
-                        }else if(data.tradeType==3){
-                            data.tradeType = '会员卡售卡'
-                        }else if(data.tradeType==4){
-                            data.tradeType = '会员卡充值'
+                        //订单总价
+                        data.amountTotal = data.amountTotal;
+                        //订单类型
+                        if(data.type=='0'){
+                            data.type = '到店服务'
+                        }else{
+                            data.type = '上门服务'
                         }
-                        //支付方式
-                        if(data.payType=='alipay'){
-                            data.payType = '支付宝支付'
-                        }else if(data.payType=='wechatpay'){
-                            data.payType = '微信支付'
-                        }
-                        //交易状态
-                        switch(data.tradeStatus){
-                            case '0':return data.tradeStatus = '待付款'; break;
-                            case '1':return data.tradeStatus = '交易关闭'; break;
-                            case '2':return data.tradeStatus = '待服务'; break;
-                            case '4':return data.tradeStatus = '服务中'; break;
-                            case '5':return data.tradeStatus = '待评价'; break;
-                            case '6':return data.tradeStatus = '评价完成'; break;
-                            case '7':return data.tradeStatus = '购卡成功'; break;
-                            case '8':return data.tradeStatus = '充值完成'; break;
+                        //服务状态
+                        switch(data.status){
+                            case 0:return data.status = '待付款'; break;
+                            case 1:return data.status = '交易关闭'; break;
+                            case 2:return data.status = '待服务'; break;
+                            case 3:return data.status = '退款中'; break;
+                            case 4:return data.status = '待评价'; break;
+                            case 5:return data.status = '评价完成'; break;
                         }
                     })
                 });
@@ -411,7 +405,7 @@
             changeSize (size) {
                 console.log(size);
                 let vm = this;
-                vm.size = size;
+                vm.table.size = size;
                 vm.getData();
             },
             /* 选中某一项的回掉函数 */
@@ -429,8 +423,8 @@
             /* 刷新 */
             refreshTable () {
                 var vm = this;
-                vm.pageNun = 1;
-                vm.size = 10;
+                vm.table.pageNun = 1;
+                vm.table.size = 10;
                 vm.getData();
             },
             /* 判断页签中是否有该模块，如果有则使用缓存，如果没有则重新加载数据 */
@@ -440,10 +434,10 @@
                     let arrs = [];
                     let type = vm.$store.getters.tabTrue;
                     if(!!!type){
-                        vm.tableData1 = [];//为了处理进来的时候看到之前缓存的页面
-                        vm.loading = true;//进一步模拟第一次进来时的页面效果
+                        vm.table.tableData1 = [];//为了处理进来的时候看到之前缓存的页面
+                        vm.table.loading = true;//进一步模拟第一次进来时的页面效果
                         vm.pageType = 'list'//显示列表页，放在这里是给上边的处理留点时间，也就是初始化放在这段代码上边
-                        vm.getData();//再次请求数据
+                        vm.getData('init');//再次请求数据
                     }
                 }
                 vm.activatedType = true;//主要解决mounted和activated重复调用
