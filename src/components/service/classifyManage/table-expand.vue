@@ -45,7 +45,7 @@
                 let categoryParentId = vm.row.id;
                 let start = 1;//从第几个开始
                 let size = 1000;//每页条数
-                let url = vm.common.path2+"productCategorys/selectListByConditions?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"productCategory/front/findByPage?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
@@ -73,7 +73,7 @@
             },
             fnDelete: function(id){
                 let vm = this;
-                let url = vm.common.path2 + "productCategorys/" + id;
+                let url = vm.common.path2 + "productCategory/deleteById/" + id;
                 vm.$http.delete(
                     url
                 ).then(function(res){

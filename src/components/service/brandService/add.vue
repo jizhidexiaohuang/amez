@@ -64,6 +64,13 @@
                     <Checkbox label="补水">补水</Checkbox>
                 </CheckboxGroup>
             </FormItem>
+            <FormItem label="审核">
+                <RadioGroup v-model="formValidate.auditStatus">
+                    <Radio label="0">待审核</Radio>
+                    <Radio label="1">已审核</Radio>
+                    <Radio label="2">不通过</Radio>
+                </RadioGroup>
+            </FormItem>
             <FormItem label="服务详情" prop="serverIntroduce">
                 <editor id="editor_id" height="700px" width="100%;" :content="formValidate.serverIntroduce"
                     :uploadJson="path"
@@ -102,6 +109,7 @@
                     serverEffect: [],//功效
                     formalWorker: "",//正式员工提成
                     ParTtimeWorker: "",//兼职员工服务提成
+                    auditStatus: 0, // 审核状态，0待审核，1通过，2不通过
                 },
                 ruleValidate: {
                     teacherName: [
@@ -141,7 +149,7 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         //添加品牌服务
-                        let ajaxData = {
+                        /* let ajaxData = {
                             storeId:4,
                             type: vm.formValidate.type, // 服务分类
                             brandId: vm.formValidate.brandId, // 服务所属品牌
@@ -157,9 +165,43 @@
                             serverIntroduce: vm.formValidate.serverIntroduce, // 注意事项
                             isBrand: vm.sendChild.isBrand,// 服务分类
                             auditStatus: 0, // 审核状态，0待审核，1通过，2不通过
+                        } */
+
+
+                        let ajaxData = {};
+                        /* 商品 */
+                        ajaxData.product = {
+                            serverName: vm.formValidate.serverName, // 商品名称
+                            originalPrice: vm.formValidate.originalPrice, // 原价
+                            salePrice: vm.formValidate.salePrice, // 销售价
+                            saleVolume: vm.formValidate.saleVolume, // 销量
+                            serverBookType: vm.formValidate.serverBookType, // 销量
+                            visitPrice: vm.formValidate.serverBookType == 2?vm.formValidate.visitPrice:"", // 上门费
+                            coverImg: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
+                            serverAttention: vm.formValidate.serverAttention, // 注意事项
+                            serverNeedTime: vm.formValidate.serverNeedTime, // 服务总时长
+                            serverEffect: JSON.stringify(vm.formValidate.serverEffect), // 功效
+                            serverIntroduce: vm.formValidate.serverIntroduce, // 商品介绍
+                            isBrand: vm.sendChild.isBrand,// 服务分类
+                            auditStatus: vm.formValidate.auditStatus, // 审核状态，0待审核，1通过，2不通过
+                            brandId: vm.formValidate.brandId, // 服务所属品牌
+                            storeId: 4
+                        }
+                        /* 商品分类 */
+                        ajaxData.productCategoryRef = {
+                            categoryId:vm.formValidate.type, // 商品分类id
+                        }
+                        /* 商品轮播图 */
+                        ajaxData.productImg = {
+                            type:1, // 图片类型，1轮播图
+                            url:"" // 存储图片地址
+                        }
+                        /* 店铺 */
+                        ajaxData.productStoreRef = {
+                            storeId:4 // 店铺id
                         }
                         console.log(ajaxData);
-                        let url = vm.common.path2+"products/insert";
+                        let url = vm.common.path2+"product/add";
                         vm.$http.post(
                             url,
                             JSON.stringify(ajaxData),
@@ -208,14 +250,13 @@
             // 服务分类接口数据
             fnGetProductCategory () {
                 let vm = this;
-                let url = vm.common.path2 + "productCategorys/selectListByConditions?pageSize=1000";
+                let url = vm.common.path2 + "productCategory/front/findByPage?pageSize=1000";
+                let ajaxData = {
+                    categoryParentId:0,
+                }
                 vm.$http.post(
                     url,
-                    {
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        }
-                    }
+                    ajaxData,
                 ).then(function(res){
                     let oData = res.data.data.list;
                     vm.serviceList = oData;

@@ -65,8 +65,9 @@
                     <Checkbox label="补水">补水</Checkbox>
                 </CheckboxGroup>
             </FormItem>
-            <FormItem label="审核结果" v-show="auditCode">
+            <FormItem label="审核结果">
                 <RadioGroup v-model="formValidate.auditStatus">
+                    <Radio label="0">待审核</Radio>
                     <Radio label="1">通过</Radio>
                     <Radio label="2">不通过</Radio>
                 </RadioGroup>
@@ -138,7 +139,6 @@
                 serviceList:[],// 产品分类
                 brandList:[],// 品牌分类
                 spinShow: false,// 加载开关
-                auditCode:""
             }
         },
         props: ["sendChild"],
@@ -245,7 +245,7 @@
             fnQueryById () {
                 let vm = this;
                 let id = vm.sendChild.itemId;
-                let url = vm.common.path2 + "products/"+id;
+                let url = vm.common.path2 + "product/queryById/"+id;
                 vm.spinShow = true;
                 vm.$http.get(
                     url
@@ -283,10 +283,6 @@
 
                 // 审核结果
                 vm.formValidate.auditStatus = data.auditStatus;
-                if(data.auditStatus == 0){
-                    vm.auditCode = true;
-                }
-
                 // 封面图以及轮播图的处理
                 if(!!!data.coverImg){
 

@@ -234,7 +234,6 @@
                                             }
                                         }
                                     }, '编辑');
-                                console.log(11111111111);
                                 if(!!!this.storeId){
                                     arrs.unshift(obj);
                                 }
@@ -257,6 +256,10 @@
                         {
                             title: '价格',
                             key: 'salePrice',
+                            render: (h,params) => {
+                                const row = params.row;
+                                return !!!row.salePrice?0:row.salePrice
+                            }
                         },
                         {
                             title: '状态',
@@ -289,28 +292,11 @@
                             }
                         },
                         {
-                            title: '分销门店数量（e）',
-                            key: 'salePrice',
-                            render: (h,params) =>{
-                                return "100"
-                            }
+                            title: '累计销量',
+                            key: 'saleVolume',
                         },
                         {
-                            title: '上月销量（e）',
-                            key: 'salePrice',
-                            render: (h,params) =>{
-                                return "0"
-                            }
-                        },
-                        {
-                            title: '累计销量（e）',
-                            key: 'salePrice',
-                            render: (h,params) =>{
-                                return "1000"
-                            }
-                        },
-                        {
-                            title: '发布时间（e）',
+                            title: '发布时间',
                             key: 'createTime',
                             render: (h,params) =>{
                                 const row = params.row
@@ -378,7 +364,6 @@
                                             }
                                         }
                                     }, '编辑');
-                                console.log(11111111111);
                                 if(!!!this.storeId){
                                     arrs.unshift(obj);
                                 }
@@ -433,7 +418,7 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path2+"products/selectListByConditions?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"product/front/findByPage?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
@@ -545,6 +530,25 @@
                 let id = vm.modal.id;
                 let type = vm.modal.type;
                 
+                
+                (function(){
+                    let saleStatus = type == 0?1:0;
+                    let url = vm.common.path2 + "product/modify/saleStatus/brand/"+id+"/"+saleStatus;
+                    vm.$http.put(
+                        url,
+                    ).then(function(res){
+                        console.log(res);
+                        vm.getData();
+                        vm.modal.loading = true;
+                        vm.modal.mineModal = false;
+                    }).catch(function(err){
+                        console.log(err);
+                        vm.getData();
+                    })
+                })()
+                
+
+                return false;
                 if(!!!vm.storeId){
                     /* 平台管理员上下架 */
                     let url = vm.common.path2 + "products/update";
@@ -599,18 +603,16 @@
             // 服务分类接口数据
             fnGetProductCategory () {
                 let vm = this;
-                let url = vm.common.path2 + "productCategorys/selectListByConditions?pageSize=1000";
+                let ajaxData = {
+                    categoryParentId:0,
+                }
+                let url = vm.common.path2 + "productCategory/front/findByPage?pageSize=1000";
                 vm.$http.post(
                     url,
-                    {
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        }
-                    }
+                    ajaxData,
                 ).then(function(res){
                     let oData = res.data.data.list;
                     vm.sendChild.serviceList = oData;
-                    console.log(1111111111);
                     console.log(vm.sendChild);
                 }).catch(function(err){
                     console.log(err);

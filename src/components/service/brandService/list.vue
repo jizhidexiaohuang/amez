@@ -425,7 +425,7 @@
                 }
                 let start = vm.table.pageNun;//从第几页开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path2+"products/selectListByConditions?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"product/front/findByPage?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
@@ -536,6 +536,25 @@
                 let id = vm.modal.id;
                 let type = vm.modal.type;
                 console.log(type);
+
+                (function(){
+                    let saleStatus = type == 0?1:0;
+                    let url = vm.common.path2 + "product/modify/saleStatus/self/"+id+"/"+saleStatus;
+                    vm.$http.put(
+                        url,
+                    ).then(function(res){
+                        console.log(res);
+                        vm.getData();
+                        vm.modal.loading = true;
+                        vm.modal.mineModal = false;
+                    }).catch(function(err){
+                        console.log(err);
+                        vm.getData();
+                    })
+                })()
+
+
+                return false
                 let url = vm.common.path2 + "productStoreRefs/updateProductStoreRef"
                 let ajaxData = {
                     saleStatus : type == 0?1:0,
@@ -559,14 +578,13 @@
             // 服务分类接口数据
             fnGetProductCategory () {
                 let vm = this;
-                let url = vm.common.path2 + "productCategorys/selectListByConditions?pageSize=1000";
+                let url = vm.common.path2 + "productCategory/front/findByPage?pageSize=1000";
+                let ajaxData = {
+                    categoryParentId:0,
+                }
                 vm.$http.post(
                     url,
-                    {
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        }
-                    }
+                    ajaxData,
                 ).then(function(res){
                     let oData = res.data.data.list;
                     vm.sendChild.serviceList = oData;

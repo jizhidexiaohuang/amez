@@ -61,7 +61,7 @@
                             categoryParentId: vm.formValidate.categoryParentId,// 父类id
                             isEnabled: !!!vm.switch1?0:1,//开启状态
                         }
-                        let url = vm.common.path2+"productCategorys/insert";
+                        let url = vm.common.path2+"productCategory/insert";
                         vm.$http.post(
                             url,
                             JSON.stringify(ajaxData),

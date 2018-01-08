@@ -283,7 +283,7 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path2+"productCategorys/selectListByConditions?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"productCategory/front/findByPage?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
@@ -314,7 +314,7 @@
                     title: '删除分类',
                     content: '确定要删除此分类吗？',
                     onOk: function(){
-                        let url = vm.common.path2+"productCategorys/"+id;
+                        let url = vm.common.path2+"productCategory/deleteById/"+id;
                         this.$http.delete(
                             url
                         ).then(function(res){

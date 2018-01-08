@@ -65,7 +65,7 @@
                             isEnabled: !!!vm.switch1?0:1,//开启状态
                         }
                         console.log(ajaxData);
-                        let url = vm.common.path2 + "productCategorys/update"
+                        let url = vm.common.path2 + "productCategory/edit"
                         vm.$http.put(
                             url,
                             ajaxData,
@@ -98,7 +98,7 @@
             fnQueryById () {
                 let vm = this;
                 let id = vm.sendChild.id;
-                let url = vm.common.path2 + "productCategorys/"+id;
+                let url = vm.common.path2 + "productCategory/queryById/"+id;
                 vm.spinShow = true;
                 vm.$http.get(
                     url
