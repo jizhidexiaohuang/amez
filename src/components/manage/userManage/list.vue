@@ -24,7 +24,7 @@
             <Form :model="cd" inline>
                 <FormItem style="margin-bottom:10px;">
                     账号状态
-                    <Select v-model="accountStatus" style="width:100px">
+                    <Select v-model="cd.accountStatus" style="width:100px">
                         <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
                 </FormItem>
@@ -44,7 +44,7 @@
                     <Row>
                         <Col span="5">账号名称</Col>
                         <Col span="16">
-                            <Input v-model="area" placeholder="账号名称"></Input>
+                            <Input v-model="cd.accountName" placeholder="账号名称"></Input>
                         </Col>
                     </Row>
                 </FormItem>
@@ -59,8 +59,8 @@
                 </Col>
             </Row>
             <Table
-                :loading="loading" 
-                :data="tableData1" 
+                :loading="table.loading" 
+                :data="table.tableData1" 
                 :columns="tableColumns1" 
                 stripe
                 border
@@ -70,8 +70,8 @@
             <div style="margin: 10px;overflow: hidden">
                 <div style="float: right;">
                     <Page 
-                        :total="recordsTotal" 
-                        :current="pageNun"
+                        :total="table.recordsTotal" 
+                        :current="table.pageNun"
                         show-sizer 
                         @on-change="changePage"
                         @on-page-size-change="changeSize"
@@ -114,25 +114,24 @@
                 editId:'',//传到子组件的值
                 value:'',
                 selectType:'门店名称',
-                accountStatus:'', //账号状态
-                area:'', //地区
                 statusList:[
                     {
-                        value:'1',
+                        value:'0',
                         label:'启用'
                     },{
-                        value:'2',
+                        value:'1',
                         label:'关闭'
                     },
                 ],
                 cd:{
-                    time:[],//评论时间范围
-                    operType:"1"//评论类型、不用重置
+                    time:'',//评论时间范围
+                    operType:"1",//评论类型、不用重置
+                    accountName:'',//账号名称
+                    accountStatus:'', //账号状态
                 },
                 activatedType: false,//主要解决mounted和activated重复调用
                 pageType: 'list',
                 openPage: false,
-                tableData1: [],
                 tableColumns1: [
                     {
                         type: 'index',
@@ -216,11 +215,13 @@
                         }
                     }
                 ],
-                test:1,
-                recordsTotal:0,
-                pageNun:1,
-                loading: false,
-                size: 10,
+                table:{
+                    tableData1: [],
+                    recordsTotal:0,
+                    pageNun:1,
+                    loading: false,
+                    size: 10,
+                },
                 titles:['分配角色','已分配角色'] //穿梭框的标题
             }
         },
@@ -229,18 +230,33 @@
             changePage (page) {
                 console.log(page)
                 let vm = this;
-                vm.pageNun = page;   
+                vm.table.pageNun = page;   
                 vm.getData();
             },
             /* 数据获取 */
-            getData () {
+            getData (init) {
                 let vm = this;
-                let start = (vm.pageNun-1)*vm.size;//从第几个开始
-                let size = vm.size;//每页条数
-                let url = common.path2+"baseUsers/selectListByConditions?pageNo="+this.pageNun+'&pageSize='+this.size;
-                vm.loading = true;
+                if(!!init&&init=='init'){
+                    vm.fnInit();
+                }
+                let start = vm.table.pageNun;//从第几个开始
+                let size = vm.table.size;//每页条数
+                let url = common.path2+"baseUsers/selectListByConditions?pageNo="+start+'&pageSize='+size;
+                vm.table.loading = true;
+                let ajaxData = {
+                    pageNo:start,
+                    pageSize:size
+                }
+                if(vm.cd.accountStatus){
+                    ajaxData.isDisabled = vm.cd.accountStatus //状态
+                }
+                if(vm.cd.accountName){
+                    ajaxData.loginName = vm.cd.accountName //开店时间
+                }
+                console.log(ajaxData)
                 this.$http.post(
                     url,
+                    ajaxData,
                     {
                         headers: {
                             'Content-type': 'application/json;charset=UTF-8'
@@ -249,17 +265,25 @@
                 ).then(function(res){
                     console.log(res);
                     let oData = res.data
-                    vm.recordsTotal = oData.data.total;
-                    vm.tableData1 = res.data.data.list;
-                    vm.loading = false;
+                    vm.table.recordsTotal = oData.data.total;
+                    vm.table.tableData1 = res.data.data.list;
+                    vm.table.loading = false;
                 }).catch(function(err){
                 })
             }, 
+            /* 初始化表格筛选条件 */
+            fnInit () {
+                let vm = this;
+                vm.table.pageNun = 1;//索引
+                vm.table.size = 10;//页数
+                vm.cd.accountName = '';//       
+                vm.cd.accountStatus = '';//
+            },
             /* 页码改变的回掉函数 */
             changeSize (size) {
                 console.log(size);
                 let vm = this;
-                vm.size = size;
+                vm.table.size = size;
                 vm.getData();
             },
             /* 选中某一项的回掉函数 */
@@ -282,8 +306,8 @@
             /* 刷新 */
             refreshTable () {
                 var vm = this;
-                vm.pageNun = 1;
-                vm.size = 10;
+                vm.table.pageNun = 1;
+                vm.table.size = 10;
                 vm.getData();
             },
             /* 判断页签中是否有该模块，如果有则使用缓存，如果没有则重新加载数据 */
@@ -293,8 +317,8 @@
                     let arrs = [];
                     let type = vm.$store.getters.tabTrue;
                     if(!!!type){
-                        vm.tableData1 = [];//为了处理进来的时候看到之前缓存的页面
-                        vm.loading = true;//进一步模拟第一次进来时的页面效果
+                        vm.table.tableData1 = [];//为了处理进来的时候看到之前缓存的页面
+                        vm.table.loading = true;//进一步模拟第一次进来时的页面效果
                         vm.pageType = 'list'//显示列表页，放在这里是给上边的处理留点时间，也就是初始化放在这段代码上边
                         vm.getData();//再次请求数据
                     }
@@ -322,7 +346,7 @@
             //获取关联信息
             relation(id){
                 let vm = this;
-                 vm.loading = true;
+                 vm.table.loading = true;
                 let url = common.path2+'baseUserRoles/findBaseUserRoles/'+id;
                 this.$http.get(
                     url
@@ -351,7 +375,7 @@
                     this.modal = true;
                     console.log(this.data1)
                     console.log(this.targetKeys1)
-                     vm.loading = false;
+                     vm.table.loading = false;
                 })
             },
             //模态框点击ok

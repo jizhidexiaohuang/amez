@@ -51,7 +51,7 @@
                     <DatePicker v-model="cd.endTime" type="date" placeholder="结束时间" style="width:200px;"></DatePicker>
                 </FormItem>
                 <FormItem style="margin-bottom:10px;">
-                    <Input v-model="cd.inputval">
+                    <Input v-model="cd.inputVal">
                     <Select v-model="cd.selectType" slot="prepend" style="width: 100px">
                         <Option value="orderNo">订单号</Option>
                         <Option value="storeName">门店名称</Option>
@@ -145,13 +145,13 @@
                         value:'2',
                         label:'待服务'
                     },{
-                        value:'3',
+                        value:'4',
                         label:'服务中'
                     },{
-                        value:'4',
+                        value:'5',
                         label:'待评价'
                     },{
-                        value:'5',
+                        value:'6',
                         label:'评价完成'
                     },
                 ],//订单状态
@@ -162,7 +162,7 @@
                     orderType:'',//订单类型
                     orderOrigin:'',//订单来源
                     orderStatus:'',//订单状态
-                    inputval:'', // 搜索条件
+                    inputVal:'', // 搜索条件
                 }, //顶部搜索条件
                 activatedType: false,//主要解决mounted和activated重复调用
                 pageType: 'list',
@@ -224,11 +224,11 @@
                                 text = '交易关闭'
                             }else if(status==2){
                                 text = '待服务'
-                            }else if(status==3){
-                                text = '退款中'
                             }else if(status==4){
-                                text = '待评价'
+                                text = '服务中'
                             }else if(status==5){
+                                text = '待评价'
+                            }else if(status==6){
                                 text = '评价完成'
                             }
                            return h('div',text)
@@ -338,11 +338,21 @@
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
-                    type:vm.cd.orderType,//订单类型
-                    status:vm.cd.orderStatus,//订单状态
-                    addTime:vm.cd.startTime,//下单时间
                 }
-                ajaxData[vm.cd.selectType] = vm.cd.inputval
+                if(vm.cd.orderType){
+                    ajaxData.type = vm.cd.orderType //类型
+                }
+                if(vm.cd.orderStatus){
+                    ajaxData.status = vm.cd.orderStatus //状态
+                }
+                if(vm.cd.inputVal){
+                    console.log(1111111111111);
+                    ajaxData[vm.cd.selectType] = vm.cd.inputVal 
+                }
+                if(vm.cd.startTime){
+                    ajaxData.addTime = vm.cd.startTime //地区
+                }
+                console.log(ajaxData)
                 vm.table.loading = true;
                 this.$http.post(
                     url,
@@ -353,9 +363,9 @@
                         },
                     }
                 ).then(function(res){
-                    console.log(res.data.data);
                     let oData = res.data
-                    vm.table.recordsTotal = oData.total;
+                    console.log(oData);
+                    vm.table.recordsTotal = oData.data.total;
                     vm.table.tableData1 = res.data.data.list;
                     vm.table.loading = false;
                 }).catch(function(err){
@@ -370,7 +380,7 @@
                 vm.cd.endTime = '';//评价时间
                 vm.cd.orderType = '';// 状态
                 vm.cd.orderStatus = '';// 输入框类型
-                vm.cd.inputval = "";// 输入框的值
+                vm.cd.inputVal = "";// 输入框的值
                 vm.cd.orderOrigin = '';//订单来源
                 vm.cd.selectType = 'orderNo';
             },

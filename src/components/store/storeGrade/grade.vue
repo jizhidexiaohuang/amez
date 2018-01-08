@@ -36,10 +36,10 @@
                             <button @click="getIndex(item.index)"></button>
                         </MyUpload> -->
                         <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="getUploadList">
-                            <Button v-show="!item.levelLogo" type="ghost" icon="ios-cloud-upload-outline" @click="getIndex(index)">上传Logo</Button>
+                            <Button v-if="!item.levelLogo" type="ghost" icon="ios-cloud-upload-outline" @click="getIndex(index)">上传Logo</Button>
                             <div class="imgBox">
-                            <img v-show="item.levelLogo" :src="item.levelLogo" alt=""  @click="getIndex(index)">
-                            <div class="cover"><Icon type="ios-cloud-upload-outline"></Icon></div>
+                                <img v-if="item.levelLogo" :src="item.levelLogo" alt=""  @click="getIndex(index)">
+                                <div class="cover" @click="getIndex(index)"><Icon type="ios-cloud-upload-outline"></Icon></div>
                             </div>
                         </Upload>
                     </Col>
@@ -129,13 +129,15 @@
             //照片上传
             getUploadList(data){
                 let vm = this;
+                vm.formDynamic.items[vm.logoIndex].status = 0
                 vm.formDynamic.items[vm.logoIndex].levelLogo = data.data;
                 console.log(data.data)
+                vm.formDynamic.items[vm.logoIndex].status = 1
             },
             //获取index
             getIndex(index){
                 this.logoIndex = index;
-                console.log(this.logoIndex)
+                console.log(index)
             },
             //取消
             handleReset (name) {
