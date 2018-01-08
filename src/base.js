@@ -13,10 +13,10 @@ const common = {
                 return "http://192.168.1.32:8081/"
                 break;
             case 3:
-                return "http://120.79.42.13:8005/pc/"  
+                return "http://mrb.amez999.com/pc/"  
                 break;
             default:
-                return "http://120.79.42.13:8080/"
+                return "http://mrb.amez999.com/pc/"
         } 
     })(1),
     path2: (function(i){
@@ -29,16 +29,16 @@ const common = {
                 return "http://192.168.1.32:8081/"
                 break;
             case 3:
-                return "http://120.79.42.13:8005/pc/"  
+                return "http://mrb.amez999.com/pc/"  
                 break;
             case 4:
                 // 艾美 飞华
                 return "http://172.16.20.151:8081/"
                 break;
             default:
-                return "http://120.79.42.13:8005/pc/"  
+                return "http://mrb.amez999.com/pc/"  
         } 
-    })(1),
+    })(3),
     /* 富文本 */
     // path1:"http://172.16.20.151:8080/",
     path1:"http://120.79.42.13:8080/",
