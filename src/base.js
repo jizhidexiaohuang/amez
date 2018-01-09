@@ -38,7 +38,7 @@ const common = {
             default:
                 return "http://mrb.amez999.com/pc/"  
         } 
-    })(3),
+    })(1),
     /* 富文本 */
     // path1:"http://172.16.20.151:8080/",
     path1:"http://120.79.42.13:8080/",
@@ -156,6 +156,19 @@ const common = {
                     name:"交易流水",
                     hasChildList: false,
                     href:"/financeManage/tradeWater"
+                }
+            ]
+        },
+        {
+            name:"营销管理",
+            hasChildList:true,
+            href:"",
+            type:"social-python",
+            childList: [
+                {
+                    name:"首页装修",
+                    hasChildList: false,
+                    href:"/marketing/decorateHome"
                 }
             ]
         },

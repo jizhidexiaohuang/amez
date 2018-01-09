@@ -53,7 +53,9 @@ import TradeWater from '@/components/financeManage/tradeWater/list'
 /*=====================================员工管理=========================*/
 //员工管理
 import WorkerManage from '@/components/worker/workerManage/list'
-
+/*=====================================营销管理=========================*/
+//首页装修
+import DecorateHome from '@/components/marketing/decorateHome/index'
 
 
 Vue.use(Router)
@@ -280,6 +282,24 @@ const menuRouter = [
         meta:{
           type:"菜单",
           name:"交易流水"
+        }
+      }
+    ]
+  },
+  {
+    path: '/marketing',
+    name: '营销管理',
+    title: '营销管理',
+    component: Main,
+    children: [
+      {
+        path: '/marketing/decorateHome',
+        name: '首页装修',
+        title: '首页装修',
+        component: DecorateHome,
+        meta:{
+          type:"菜单",
+          name:"首页装修"
         }
       }
     ]

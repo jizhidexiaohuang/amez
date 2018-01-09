@@ -54,6 +54,9 @@
                     </Col>
                 </Row>
             </FormItem>
+            <FormItem  label="详细地址" prop="address">
+                <Input v-model="formValidate.address" placeholder=""></Input>
+            </FormItem>
             <FormItem label="员工状态" prop="beauticianStatus">
                 <RadioGroup v-model="formValidate.beauticianStatus">
                     <Radio label="0">在职</Radio>
@@ -129,6 +132,8 @@
                             label:'高级'
                         }
                     ],
+                    address:'',// 详细地址
+                    area:'',// 省市县
                 },
                 ruleValidate: {
                 },
