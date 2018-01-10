@@ -58,8 +58,6 @@
                     :data="table.tableData1" 
                     :columns="table.tableColumns" 
                     border
-                    @on-select="fnSelect"
-                    @on-select-all="fnSelectAll"
                 ></Table>
                 <div style="margin: 10px;overflow: hidden">
                     <div style="float: right;">
@@ -257,129 +255,7 @@
                         }
                     ],
                     //品牌服务表头
-                    sellerColumns: [
-                        {
-                            type: 'index',
-                            width: 80,
-                            align: 'center',
-                            title: '序号'
-                        },
-                        {
-                            title: '服务名称（e）',
-                            key: 'serverName',
-                        },
-                        {
-                            title: '价格',
-                            key: 'salePrice',
-                        },
-                        {
-                            title: '状态',
-                            key: 'saleStatus',
-                            render: (h,params) => {
-                                const row = params.row;
-                                const color = row.saleStatus === 0 ? 'red' : 'blue';
-                                const text = row.saleStatus === 0 ? '下架' : '上架';
-                                return h('Tag', {
-                                    props: {
-                                        type: 'border',
-                                        color: color
-                                    }
-                                }, text);
-                            }
-                        },
-                        {
-                            title: '分销门店数量（e）',
-                            key: 'salePrice',
-                            render: (h,params) =>{
-                                return "100"
-                            }
-                        },
-                        {
-                            title: '上月销量（e）',
-                            key: 'salePrice',
-                            render: (h,params) =>{
-                                return "0"
-                            }
-                        },
-                        {
-                            title: '累计销量（e）',
-                            key: 'salePrice',
-                            render: (h,params) =>{
-                                return "1000"
-                            }
-                        },
-                        {
-                            title: '发布时间（e）',
-                            key: 'createTime',
-                            render: (h,params) =>{
-                                const row = params.row
-                                return this.common.baseFormatDate(row.createTime)
-                            }
-                        },
-                        {
-                            title: '操作',
-                            key: 'action',
-                            width: 180,
-                            // align: 'center',
-                            // fixed: 'right',
-                            render: (h, params) => {
-                                const row = params.row;
-                                const color = row.saleStatus === 0 ? 'success' : 'warning';
-                                const text = row.saleStatus === 0 ? '上架' : '下架';
-                                return h('div', [
-                                    h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                let row = params.row;
-                                                this.sendChild.itemId = row.id;
-                                                this.changePageType('edit');
-                                            }
-                                        }
-                                    }, '编辑'),
-                                    h('Button', {
-                                        props: {
-                                            type: color,
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                // this.fnDeleteItem(params.row.id);
-                                                let row = params.row;
-                                                this.modal.id = row.id;
-                                                this.modal.type = row.saleStatus;
-                                                this.modal.storeId = row.storeId;
-                                                this.fnShowModal();
-                                            }
-                                        }
-                                    }, text),
-                                    h('Button', {
-                                        props: {
-                                            type: 'error',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                this.fnDeleteItem(params.row.id);
-                                            }
-                                        }
-                                    }, '删除'),
-                                ]);
-                            }
-                        }
-                    ],
+                    sellerColumns: [],
                 },
                 activatedType: false,//主要解决mounted和activated重复调用
                 pageType: 'list',//子页面类型
@@ -390,6 +266,7 @@
                     itemId: "", // 编辑选项的id
                     isBrand: 1,// 服务分类
                 },
+                storeId:4,//店铺id
             }
         },
         methods: {
@@ -431,7 +308,7 @@
                     pageSize: size,
                     saleStatus: vm.cd.saleStatus,
                     isBrand: vm.cd.isBrand,
-                    storeId:4
+                    storeId:vm.storeId
                 }
                 ajaxData[vm.cd.inputType] = vm.cd.inputval
                 vm.table.loading = true;
@@ -488,28 +365,12 @@
                     }
                 })
             },
-            /* 查看详情 */
-            show (index) {
-                this.$Modal.info({
-                    title: '老师活动详情',
-                    content: `老师名称：${this.table.tableData1[index].teacherName}<br>老师类型：${this.table.tableData1[index].typeName}<br>活动类型：${this.table.tableData1[index].typeName}`
-                })
-            },
             /* 页码改变的回掉函数 */
             changeSize (size) {
                 console.log(size);
                 let vm = this;
                 vm.table.size = size;
                 vm.getData();
-            },
-            /* 选中某一项的回掉函数 */
-            fnSelect (selection,row) {
-                console.log(row);
-                console.log(selection);
-            },
-            /* 全选时的回调函数 */
-            fnSelectAll (selection) {
-                console.log(selection);
             },
             changePageType (type) {
                 this.pageType = type;

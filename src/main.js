@@ -16,6 +16,9 @@ import VueKindEditor from 'vue-kindeditor'
 import 'kindeditor/kindeditor-all-min.js'
 import 'kindeditor/themes/default/default.css'
 // 注册 vue-kikindeditor plugin
+import VueDND from 'awe-dnd'
+Vue.use(VueDND)
+
 Vue.use(VueKindEditor)
 Vue.prototype.common = common;
 Vue.config.productionTip = false

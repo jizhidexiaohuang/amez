@@ -7,7 +7,7 @@
                     <Option :value="item.id" v-for="item in serviceList" :key="item.id">{{ item.categoryName }}</Option>
                 </Select>
             </FormItem>
-            <FormItem label="服务所属品牌" prop="brandId">
+            <FormItem label="服务所属品牌" prop="brandId" v-if="false">
                 <Select v-model="formValidate.brandId" placeholder="选择服务所属品牌">
                     <Option :value="item.id" v-for="item in brandList" :key="item.id">{{ item.brandName }}</Option>
                 </Select>
@@ -137,11 +137,12 @@
                 },
                 uploadList:[],//图片列表
                 // path:"http://172.16.20.151:8009/system/api/file/uploadForKindeditor"
-                path:this.common.path21+"system/api/file/uploadForKindeditor",
+                path:this.common.path2+"system/api/file/uploadForKindeditor",
                 testCode: false,
                 serviceList:[],// 产品分类
                 brandList:[],// 品牌分类
                 spinShow: false,// 加载开关
+                storeId:4,//店铺id
             }
         },
         props: ["sendChild"],
@@ -152,8 +153,8 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         //添加品牌服务
-                        let ajaxData = {
-                            storeId:4,
+                        /* let ajaxData = {
+                            storeId:vm.storeId,
                             type: vm.formValidate.type, // 服务分类
                             brandId: vm.formValidate.brandId, // 服务所属品牌
                             serverName: vm.formValidate.serverName, // 服务名称
@@ -169,9 +170,43 @@
                             id:vm.sendChild.itemId, // id
                             isBrand: vm.sendChild.isBrand,// 服务分类
                             auditStatus: vm.formValidate.auditStatus, // 审核结果
+                        } */
+                        let ajaxData = {};
+                        /* 商品 */
+                        ajaxData.product = {
+                            serverName: vm.formValidate.serverName, // 商品名称
+                            originalPrice: vm.formValidate.originalPrice, // 原价
+                            salePrice: vm.formValidate.salePrice, // 销售价
+                            saleVolume: vm.formValidate.saleVolume, // 销量
+                            serverBookType: vm.formValidate.serverBookType, // 销量
+                            visitPrice: vm.formValidate.serverBookType == 2?vm.formValidate.visitPrice:"", // 上门费
+                            coverImg: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
+                            serverAttention: vm.formValidate.serverAttention, // 注意事项
+                            serverNeedTime: vm.formValidate.serverNeedTime, // 服务总时长
+                            serverEffect: JSON.stringify(vm.formValidate.serverEffect), // 功效
+                            serverIntroduce: vm.formValidate.serverIntroduce, // 商品介绍
+                            isBrand: vm.sendChild.isBrand,// 服务分类
+                            auditStatus: vm.formValidate.auditStatus, // 审核状态，0待审核，1通过，2不通过
+                            // brandId: vm.formValidate.brandId, // 服务所属品牌
+                            id:vm.sendChild.itemId
+                        }
+                        /* 商品分类 */
+                        ajaxData.productCategoryRef = {
+                            categoryId:vm.formValidate.type, // 商品分类id
+                        }
+                        /* 商品轮播图 */
+                        let arrs = [];
+                        if(vm.uploadList.length > 0){
+                            vm.uploadList.forEach(function(item,index){
+                                arrs.push(item.url);
+                            })
+                        }
+                        ajaxData.productImg = {
+                            type:1, // 图片类型，1轮播图
+                            url: !!!arrs?"":arrs.join() // 存储图片地址
                         }
                         console.log(ajaxData);
-                        let url = vm.common.path2 + "products/update"
+                        let url = vm.common.path2 + "product/modify"
                         vm.$http.put(
                             url,
                             ajaxData,
@@ -230,7 +265,8 @@
             // 服务所属品牌接口数据
             fnGetStoreChainBrand () {
                 let vm = this;
-                let url = vm.common.path2 + "storeChainBrand/front/findByPage?pageSize=1000";
+                let _url = "http://120.79.42.13:8080/";
+                let url = _url + "storeChainBrand/front/findByPage?pageSize=1000";
                 vm.$http.post(
                     url,
                     {
@@ -249,56 +285,57 @@
             fnQueryById () {
                 let vm = this;
                 let id = vm.sendChild.itemId;
-                let url = vm.common.path2 + "product/queryById/"+id;
+                let url = vm.common.path2 + "product/detail/"+id;
                 vm.spinShow = true;
                 vm.$http.get(
                     url
                 ).then(function(res){
                     let oData = res.data.data;
-                    console.log(oData);
                     vm.fnInitQuery(oData);
                     vm.spinShow = false;
                 }).catch(function(err){
-                    console.log(err);
                     vm.spinShow = false;
                 })
             },
             // 产品的信息遍历出来
             fnInitQuery (data) {
                 let vm = this;
-                console.log(11111);
-                vm.formValidate.type = data.type;// 服务分类
-                vm.formValidate.brandId = data.brandId; // 服务所属品牌
-                vm.formValidate.serverName = data.serverName; // 服务名称
-                vm.formValidate.originalPrice = data.originalPrice; // 市场价
-                vm.formValidate.salePrice = data.salePrice; // 服务销售价
-                vm.formValidate.serverBookType = data.serverBookType;// 预约方式 1上门 2到店
-                vm.formValidate.visitPrice = data.visitPrice;// 上门费
-                vm.formValidate.coverImg = data.coverImg;//封面图
-                vm.formValidate.serverAttention = data.serverAttention; // 注意事项
-                vm.formValidate.serverNeedTime = data.serverNeedTime; // 服务总时长
+                vm.formValidate.type = data.productCategoryRef.categoryId;// 服务分类
+                // vm.formValidate.brandId = data.product.brandId; // 服务所属品牌
+                vm.formValidate.serverName = data.product.serverName; // 服务名称
+                vm.formValidate.originalPrice = data.product.originalPrice; // 市场价
+                vm.formValidate.salePrice = data.product.salePrice; // 服务销售价
+                vm.formValidate.serverBookType = data.product.serverBookType;// 预约方式 1上门 2到店
+                vm.formValidate.visitPrice = data.product.visitPrice;// 上门费
+                vm.formValidate.coverImg = data.product.coverImg;//封面图
+                vm.formValidate.serverAttention = data.product.serverAttention; // 注意事项
+                vm.formValidate.serverNeedTime = data.product.serverNeedTime; // 服务总时长
                 // serverEffect: JSON.stringify(vm.formValidate.serverEffect), // 功效
-                if(!!!data.serverEffect){
+                if(!!!data.product.serverEffect){
                     vm.formValidate.serverEffect = [];
                 }else{
-                vm.formValidate.serverEffect = JSON.parse(data.serverEffect);
+                vm.formValidate.serverEffect = JSON.parse(data.product.serverEffect);
                 }
-                vm.formValidate.serverIntroduce = data.serverIntroduce // 服务详情
-                console.log(JSON.parse(data.serverEffect));
-
+                vm.formValidate.serverIntroduce = data.product.serverIntroduce // 服务详情
 
                 // 审核结果
-                vm.formValidate.auditStatus = data.auditStatus;
+                vm.formValidate.auditStatus = data.product.auditStatus;
                 // 封面图以及轮播图的处理
-                if(!!!data.coverImg){
+                if(!!!data.product.coverImg){
 
                 }else{
-                    vm.formValidate.coverImg = data.coverImg;//封面图
-                    vm.defaultList = [
-                        {
-                            'url':data.coverImg
-                        }
-                    ]
+                    vm.formValidate.coverImg = data.product.coverImg;//封面图
+                    if(!!data.productImg.url){
+                        let arrs = data.productImg.url.split(",");
+                        let obj = {};
+                        vm.defaultList = [];
+                        arrs.forEach(function(item,index){
+                            obj = {
+                                'url': item
+                            }
+                            vm.defaultList.push(obj);
+                        })
+                    }
                 }
                 vm.testCode = true;
                 vm.uploadList = vm.defaultList;
@@ -309,8 +346,8 @@
             console.log(1);
             console.log(this.sendChild.serviceList);
             this.serviceList = this.sendChild.serviceList;
-            this.brandList = this.sendChild.brandList;
-            // this.fnGetProductCategory();
+            // this.brandList = this.sendChild.brandList;
+            this.fnGetProductCategory();
             // this.fnGetStoreChainBrand();
             this.fnQueryById();
         },

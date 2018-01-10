@@ -38,7 +38,7 @@ const common = {
             default:
                 return "http://mrb.amez999.com/pc/"  
         } 
-    })(1),
+    })(3),
     /* 富文本 */
     // path1:"http://172.16.20.151:8080/",
     path1:"http://120.79.42.13:8080/",
@@ -192,6 +192,11 @@ const common = {
                     name:"操作日志",
                     hasChildList: false,
                     href:"/manage/operationLog"
+                },
+                {
+                    name:"短信模板",
+                    hasChildList: false,
+                    href:"/manage/newsTemplate"
                 }
             ]
         },

@@ -139,7 +139,8 @@
                 brandList:[],// 品牌分类
                 uploadConfig:{
                     num:5
-                }
+                },
+                storeId:"",// 店铺id
             }
         },
         props: ["sendChild"],
@@ -150,23 +151,6 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         //添加品牌服务
-                        /* let ajaxData = {
-                            type: vm.formValidate.type, // 服务分类
-                            brandId: vm.formValidate.brandId, // 服务所属品牌
-                            serverName: vm.formValidate.serverName, // 服务名称
-                            originalPrice: vm.formValidate.originalPrice, // 市场价
-                            salePrice: vm.formValidate.salePrice, // 服务销售价
-                            serverBookType: vm.formValidate.serverBookType,// 预约方式 1上门 2到店
-                            visitPrice: vm.formValidate.serverBookType == 2?vm.formValidate.visitPrice:"",// 上门费
-                            coverImg: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
-                            serverAttention: vm.formValidate.serverAttention, // 注意事项
-                            serverNeedTime: vm.formValidate.serverNeedTime, // 服务总时长
-                            serverEffect: JSON.stringify(vm.formValidate.serverEffect), // 功效
-                            serverIntroduce: vm.formValidate.serverIntroduce, // 注意事项
-                            isBrand: vm.sendChild.isBrand,// 服务分类
-                            auditStatus: 0, // 审核状态，0待审核，1通过，2不通过
-                            storeId: 4,//店铺id
-                        } */
                         let ajaxData = {};
                         /* 商品 */
                         ajaxData.product = {
@@ -190,13 +174,19 @@
                             categoryId:vm.formValidate.type, // 商品分类id
                         }
                         /* 商品轮播图 */
+                        let arrs = [];
+                        if(vm.uploadList.length > 0){
+                            vm.uploadList.forEach(function(item,index){
+                                arrs.push(item.url);
+                            })
+                        }
                         ajaxData.productImg = {
                             type:1, // 图片类型，1轮播图
-                            url:"" // 存储图片地址
+                            url: !!!arrs?"":arrs.join() // 存储图片地址
                         }
                         /* 店铺 */
                         ajaxData.productStoreRef = {
-                            storeId:"" // 店铺id
+                            storeId:vm.storeId // 店铺id
                         }
                         console.log(ajaxData);
                         let url = vm.common.path2+"product/add";
@@ -286,6 +276,10 @@
             },
         },
         mounted: function(){
+            let vm = this;
+            /* 模拟身份 */
+            // vm.storeId = 4;// 店长
+            vm.storeId = "";// 管理员
             this.fnGetProductCategory();
             this.fnGetStoreChainBrand();
         },

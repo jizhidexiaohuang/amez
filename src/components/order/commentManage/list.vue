@@ -18,7 +18,7 @@
                 <Form :model="cd" inline>
                     <FormItem style="margin-bottom:10px;">
                         评价时间
-                        <DatePicker v-model="cd.time" type="date" placeholder="请选择评价时间" style="width:200px;"></DatePicker>
+                        <DatePicker v-model="cd.time" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="请填写时间范围" style="width: 300px"></DatePicker>
                     </FormItem>
                 </Form>
                 <Row style="margin-bottom:10px;">
@@ -55,7 +55,6 @@
 </template>
 <script>
     // import AddPage from './add.vue'
-    import common from '../../../base.js'
     import expandRow from './table-expand.vue'
     export default {
         data () {
@@ -200,18 +199,19 @@
             /* 数据获取 */
             getData (init) {
                 let vm = this;
-                if(!!init){
+                if(!!init&&init=='init'){
                     vm.fnInit();
                 }
+                console.log(vm.cd.time);
                 /* 买家和卖家的表头不一样 */
                 if(vm.cd.operType == "1"){
                     vm.table.tableColumns = vm.table.buyerColumns;
                 }else{
                     vm.table.tableColumns = vm.table.sellerColumns;
                 }
-                let start = (vm.table.pageNun-1)*vm.table.size;//从第几个开始
+                let start = vm.table.pageNun;//从第几页开始
                 let size = vm.table.size;//每页条数
-                let url = common.path+"orderComment/front/findByPage";
+                let url = vm.common.path2+"orderComment/front/findByPage?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
@@ -220,11 +220,16 @@
                 vm.table.loading = true;
                 this.$http.post(
                     url,
-                    JSON.stringify(ajaxData)
+                    ajaxData,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
                 ).then(function(res){
-                    console.log(res.data.data);
-                    let oData = res.data
+                    let oData = res.data.data
                     vm.table.recordsTotal = oData.total;
+                    console.log(vm.table.recordsTotal)
                     vm.table.tableData1 = res.data.data.list;
                     vm.table.loading = false;
                 }).catch(function(err){
@@ -240,7 +245,7 @@
                         let ajaxData = {
                             id: 20
                         }
-                        let url = common.path+"orderComment/deleteById/"+id;
+                        let url = vm.common.path2+"orderComment/deleteById/"+id;
                         this.$http.delete(
                             url,
                         ).then(function(res){

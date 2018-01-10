@@ -6,7 +6,7 @@
                     <Option :value="item.id" v-for="item in serviceList" :key="item.id">{{ item.categoryName }}</Option>
                 </Select>
             </FormItem>
-            <FormItem label="服务所属品牌" prop="brandId">
+            <FormItem label="服务所属品牌" prop="brandId" v-if="false">
                 <Select v-model="formValidate.brandId" placeholder="选择服务所属品牌">
                     <Option :value="item.id" v-for="item in brandList" :key="item.id">{{ item.brandName }}</Option>
                 </Select>
@@ -139,6 +139,7 @@
                 path:this.common.path221+"system/api/file/uploadForKindeditor",
                 serviceList:[],// 产品分类
                 brandList:[],// 品牌分类
+                storeId: 4,//店铺id
             }
         },
         props: ["sendChild"],
@@ -149,25 +150,6 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         //添加品牌服务
-                        /* let ajaxData = {
-                            storeId:4,
-                            type: vm.formValidate.type, // 服务分类
-                            brandId: vm.formValidate.brandId, // 服务所属品牌
-                            serverName: vm.formValidate.serverName, // 服务名称
-                            originalPrice: vm.formValidate.originalPrice, // 市场价
-                            salePrice: vm.formValidate.salePrice, // 服务销售价
-                            serverBookType: vm.formValidate.serverBookType,// 预约方式 1上门 2到店
-                            visitPrice: vm.formValidate.serverBookType == 2?vm.formValidate.visitPrice:"",// 上门费
-                            coverImg: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
-                            serverAttention: vm.formValidate.serverAttention, // 注意事项
-                            serverNeedTime: vm.formValidate.serverNeedTime, // 服务总时长
-                            serverEffect: JSON.stringify(vm.formValidate.serverEffect), // 功效
-                            serverIntroduce: vm.formValidate.serverIntroduce, // 注意事项
-                            isBrand: vm.sendChild.isBrand,// 服务分类
-                            auditStatus: 0, // 审核状态，0待审核，1通过，2不通过
-                        } */
-
-
                         let ajaxData = {};
                         /* 商品 */
                         ajaxData.product = {
@@ -184,8 +166,8 @@
                             serverIntroduce: vm.formValidate.serverIntroduce, // 商品介绍
                             isBrand: vm.sendChild.isBrand,// 服务分类
                             auditStatus: vm.formValidate.auditStatus, // 审核状态，0待审核，1通过，2不通过
-                            brandId: vm.formValidate.brandId, // 服务所属品牌
-                            storeId: 4
+                            // brandId: vm.formValidate.brandId, // 服务所属品牌
+                            storeId:vm.storeId,//店铺id
                         }
                         /* 商品分类 */
                         ajaxData.productCategoryRef = {
@@ -198,7 +180,7 @@
                         }
                         /* 店铺 */
                         ajaxData.productStoreRef = {
-                            storeId:4 // 店铺id
+                            storeId:vm.storeId // 店铺id
                         }
                         console.log(ajaxData);
                         let url = vm.common.path2+"product/add";
@@ -212,10 +194,6 @@
                             }
                         ).then(function(res){
                             let oData = res.data
-                            console.log(oData);
-                            /* vm.table.recordsTotal = oData.data.total;
-                            vm.table.tableData1 = res.data.data.list;
-                            vm.table.loading = false; */
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
                         }).catch(function(err){
@@ -288,7 +266,7 @@
         },
         mounted: function(){
             this.fnGetProductCategory();
-            this.fnGetStoreChainBrand();
+            // this.fnGetStoreChainBrand();
         },
         components:{
             MyUpload

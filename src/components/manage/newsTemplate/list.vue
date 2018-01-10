@@ -1,8 +1,12 @@
 <template>
     <div>
+      
+        <!-- 详情容器 -->
+        <div v-if="pageType == 'info'" class="testWrap">详情</div>
         <!-- 新增 -->
         <AddPage v-if="pageType == 'add'"  class="testWrap" v-on:returnList="changePageType"></AddPage>
-        <div v-if="pageType == 'info'" class="testWrap">详情</div>
+        <!-- 编辑容器 -->
+        <EditPage v-if="pageType == 'edit'"  class="testWrap" :sendChild="sendChild" v-on:returnList="changePageType"/>
         <!-- 列表容器 -->
         <div v-if="pageType == 'list'" class="testWrap">
             <div class="boxStyle">
@@ -14,26 +18,18 @@
                 </Form>
                 <Row style="margin-bottom:10px;">
                     <Col span="5">
-                        <Input v-model="cd.inputval">
-                            <Select v-model="cd.inputType" slot="prepend" style="width: 80px">
-                                <Option value="beauticianName">员工姓名</Option>
-                                <Option value="storeName">店铺名称</Option>
-                                <Option value="phone">注册手机</Option>
-                            </Select>
-                        </Input>
-                    </Col>
-                    <Col span="5">
-                        <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
+                        <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search" v-if="false">查询</Button>
 		                <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     </Col>
-                    <Col span="3" offset="11" v-show="true">
-                        <Button style="float:right;" @click.native="changePageType('add')" type="success" icon="android-add">新增员工</Button>
+                    <Col span="3" offset="16" v-show="true">
+                        <Button style="float:right;" @click.native="changePageType('add')" type="success" icon="android-add">新增模板</Button>
                     </Col>
                 </Row>
                 <Table
                     :loading="table.loading" 
                     :data="table.tableData1" 
                     :columns="table.tableColumns" 
+                    border
                 ></Table>
                 <div style="margin: 10px;overflow: hidden">
                     <div style="float: right;">
@@ -54,22 +50,10 @@
 <script>
     import MyUpload from '../../common/upload.vue'
     import AddPage from './add.vue'
+    import EditPage from './edit.vue'
     export default {
         data () {
             return {
-                cd: {
-                    inputval: '', //选择的值
-                    inputType:'beauticianName',//input类型
-                },
-                formValidate: {
-                    roleName: '',//角色名称
-                    roleCode: '',//角色描述
-                },
-                ruleValidate: {
-                    teacherName: [
-                        { required: true, message: '老师姓名不能为空', trigger: 'blur' }
-                    ],
-                },
                 table:{
                     pageSize:10,//每页显示的数量
                     recordsTotal:0,//总数量
@@ -80,65 +64,38 @@
                     //table头
                     tableColumns: [
                         {
-                            title: '员工名称',
-                            key: 'beauticianName',
+                            title: '短信名称',
+                            key: 'smsName',
                         },
                         {
-                            title: '工号',
-                            key: 'workCardNo',
-                        },
-                        {
-                            title: '注册账号',
-                            key: 'mobile',
-                        },
-                        {
-                            title: '性别',
-                            key: 'sex',
+                            title: '短信编码',
+                            key: 'smsCode',
                             render: (h,params) => {
                                 const row = params.row;
-                                const color = row.sex == 1 ? 'red' : 'blue';
-                                const text = !!!row.sex == 1 ? '女' : '男';
-                                return h('Tag', {
-                                    props: {
-                                        type: 'border',
-                                        color: color
-                                    }
-                                }, text);
-                            }
-                        },
-                        {
-                            title: '职位',
-                            key: 'position',
-                        },
-                        {
-                            title: '所属门店',
-                            key: 'storeId',
-                            render: (h,params) => {
-                                return "美业一店"
-                            }
-                        },
-                        {
-                            title: '创建时间',
-                            key: 'createTime',
-                            render: (h,params) => {
-                                const row = params.row;
-                                const time = this.common.formatDate(row.createTime);
-                                return time
+                                return !!row.smsCode?row.smsCode:"无"
                             }
                         },
                         {   
-                            title: '收银权限',
-                            key: 'isEnabled',
+                            title: '短信类型',
+                            key: 'smsType',
                             render: (h,params) => {
                                 const row = params.row;
-                                const color = !!!row.isEnabled ? 'red' : 'blue';
-                                const text = !!!row.isEnabled ? '关闭' : '开启';
+                                const color = !!!row.smsType ? 'red' : row.smsType == 0 ? 'yellow': row.smsType == 1 ? 'green': row.smsType == 2?'blue':'white';
+                                const text = !!!row.smsType ? '无' : row.smsType == 0 ? '验证码': row.smsType == 1?'短信通知': row.smsType == 2? '短信推广': '';
                                 return h('Tag', {
                                     props: {
                                         type: 'border',
                                         color: color
                                     }
                                 }, text);
+                            }
+                        },
+                        {
+                            title: '更新时间',
+                            key: 'updateTime',
+                            render: (h,params) => {
+                                const row = params.row;
+                                return this.common.formatDate(row.updateTime);
                             }
                         },
                         {
@@ -184,7 +141,6 @@
                 },
                 activatedType: false,//主要解决mounted和activated重复调用
                 pageType: 'list',//子页面类型
-                uploadList: [],//图片
                  /* 传递给子组件的数据 */
                 sendChild:{
                     id: "", // 编辑选项的id
@@ -203,9 +159,6 @@
                 let vm = this;
                 vm.table.size = 10;//页数
                 vm.table.pageNun = 1;//索引
-                vm.cd.saleStatus = "";// 状态
-                vm.cd.inputType = "serviceName";// 输入框类型
-                vm.cd.inputval = "";// 输入框的值
             },
             /* 数据获取 */
             getData (init) {
@@ -215,13 +168,11 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path+"storeBeautician/front/findByPage?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"baseSmsTemplates/selectListByConditions?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
-                }
-                if(!!vm.cd.inputval){
-                    ajaxData[vm.cd.inputType] = vm.cd.inputval;
+                    categoryParentId: 0
                 }
                 vm.table.loading = true;
                 this.$http.post(
@@ -245,10 +196,10 @@
             fnDeleteItem (id) {
                 let vm = this;
                 this.$Modal.confirm({
-                    title: '删除分类',
-                    content: '确定要删除此分类吗？',
+                    title: '删除短信模板',
+                    content: '确定要删除此短信模板吗？',
                     onOk: function(){
-                        let url = vm.common.path+"productCategory/deleteById/"+id;
+                        let url = vm.common.path2+"baseSmsTemplates/"+id;
                         this.$http.delete(
                             url
                         ).then(function(res){
@@ -259,12 +210,6 @@
                                 setTimeout(function(){
                                     vm.$Message.success('删除成功');
                                 },500)
-                                /* // 解决删除第(10n+1)个时，页数没有往后跳一页
-                                let total = vm.table.recordsTotal;
-                                console.log(total);
-                                if(total>10&&total%10 == 1){
-                                    vm.table.pageNun = vm.table.pageNun - 1;
-                                } */
                                 vm.getData();
                             }else{
                                 vm.$Message.error(oData.message);
@@ -284,6 +229,7 @@
             },
             /* 控制当前显示页面的类型 */
             changePageType (type) {
+                // this.getData();
                 this.pageType = type;
                 if(type == "list"){
                     this.table.pageSize = this.table.size;
@@ -306,12 +252,6 @@
                 }
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
-            // 获取图片列表
-            getUploadList (data) {
-                let vm = this;
-                vm.uploadList = data;
-                console.log(vm.uploadList);
-            },
         },
         mounted: function(){
             this.getData();
@@ -322,7 +262,8 @@
         },
         components:{
             MyUpload,
-            AddPage
+            AddPage,
+            EditPage,
         }
     }
 </script>

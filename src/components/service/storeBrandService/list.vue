@@ -202,22 +202,22 @@
                                                 this.fnShowModal();
                                             }
                                         }
-                                    }, text),
-                                    h('Button', {
-                                        props: {
-                                            type: 'error',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                this.fnDeleteItem(params.row.id);
-                                            }
-                                        }
-                                    }, '删除'),
+                                    }, text)
                                 ]
+                                let obj1 = h('Button', {
+                                    props: {
+                                        type: 'error',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.fnDeleteItem(params.row.id);
+                                        }
+                                    }
+                                }, '删除11');
                                 let obj = h('Button', {
                                         props: {
                                             type: 'primary',
@@ -235,6 +235,7 @@
                                         }
                                     }, '编辑');
                                 if(!!!this.storeId){
+                                    arrs.unshift(obj1);
                                     arrs.unshift(obj);
                                 }
                                 return h('div',arrs);
@@ -332,22 +333,22 @@
                                                 this.fnShowModal();
                                             }
                                         }
-                                    }, text),
-                                    h('Button', {
-                                        props: {
-                                            type: 'error',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                this.fnDeleteItem(params.row.id);
-                                            }
-                                        }
-                                    }, '删除'),
+                                    }, text)
                                 ]
+                                let obj1 = h('Button', {
+                                    props: {
+                                        type: 'error',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.fnDeleteItem(params.row.id);
+                                        }
+                                    }
+                                }, '删除');
                                 let obj = h('Button', {
                                         props: {
                                             type: 'primary',
@@ -366,6 +367,7 @@
                                     }, '编辑');
                                 if(!!!this.storeId){
                                     arrs.unshift(obj);
+                                    arrs.push(obj1);
                                 }
                                 return h('div',arrs);
                             }
@@ -657,6 +659,10 @@
             },
         },
         mounted: function(){
+            let vm = this;
+            /* 模拟身份 */
+            // vm.storeId = 4;// 店长
+            vm.storeId = "";// 管理员
             this.fnGetProductCategory();
             this.fnGetStoreChainBrand();
             this.getData();

@@ -47,6 +47,10 @@ import UserManage from '@/components/manage/userManage/list'
 import DepartmentManage from '@/components/manage/departmentManage/list'
 //操作日志
 import OperationLog from '@/components/manage/operationLog/list'
+//短信模板
+import NewsTemplate from '@/components/manage/newsTemplate/list'
+
+
 /*=====================================财务管理=========================*/
 //交易流水
 import TradeWater from '@/components/financeManage/tradeWater/list'
@@ -264,6 +268,16 @@ const menuRouter = [
         meta:{
           type:"菜单",
           name:"操作日志"
+        }
+      },
+      {
+        path: '/manage/newsTemplate',
+        name: '短信模板',
+        title: '短信模板',
+        component: NewsTemplate,
+        meta:{
+          type:"菜单",
+          name:"短信模板"
         }
       }
     ]
