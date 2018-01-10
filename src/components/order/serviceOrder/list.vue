@@ -346,7 +346,6 @@
                     ajaxData.status = vm.cd.orderStatus //状态
                 }
                 if(vm.cd.inputVal){
-                    console.log(1111111111111);
                     ajaxData[vm.cd.selectType] = vm.cd.inputVal 
                 }
                 if(vm.cd.startTime){

@@ -53,7 +53,7 @@
                     <DatePicker v-model="cd.endTime" type="date" placeholder="结束时间" style="width:200px;"></DatePicker>
                 </FormItem>
                 <FormItem style="margin-bottom:10px;">
-                    <Input v-model="cd.inputval">
+                    <Input v-model="cd.inputVal">
                     <Select v-model="cd.selectType" slot="prepend" style="width: 100px">
                         <Option value="orderNo">订单号</Option>
                         <Option value="storeName">门店名称</Option>
@@ -117,15 +117,15 @@
                         label:'全部'
                     },{
                         value:'1',
-                        label:'上门服务'
+                        label:'换货'
                     },{
-                        value:'0',
-                        label:'到店服务'
+                        value:'2',
+                        label:'退款'
                     },
                 ],  //订单类型
                 orderOriginList:[
                     {
-                        value:'0',
+                        value:'',
                         label:'全部'
                     },{
                         value:'1',
@@ -143,7 +143,7 @@
                         value:'2',
                         label:'待客服介入'
                     },{
-                        value:'1',
+                        value:'3',
                         label:'退款成功'
                     },
                 ],//订单状态
@@ -154,12 +154,11 @@
                     orderType:'',//订单类型
                     orderOrigin:'',//订单来源
                     orderStatus:'',//订单状态
-                    inputval:'', // 搜索条件
+                    inputVal:'', // 搜索条件
                 },
                 activatedType: false,//主要解决mounted和activated重复调用
                 pageType: 'list',
                 openPage: false,
-                
                 tableColumns1: [
                     {
                         type: 'expand',
@@ -244,7 +243,7 @@
                             if(status==1){
                                 text = '换货'
                             }else if(status==2){
-                                text = '退货'
+                                text = '退款'
                             }
                            return h('div',text)
                         }
@@ -320,10 +319,23 @@
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
-                    addTime:vm.cd.startTime,//下单时间
-                    returnStatus:vm.cd.orderStatus,
                 }
-                ajaxData[vm.cd.selectType] = vm.cd.inputval
+                if(vm.cd.orderType){
+                    ajaxData.returnType = vm.cd.orderType //类型
+                }
+                if(vm.cd.orderStatus){
+                    ajaxData.returnStatus = vm.cd.orderStatus //状态
+                }
+                if(vm.cd.inputVal){
+                    ajaxData[vm.cd.selectType] = vm.cd.inputVal 
+                }
+                if(vm.cd.startTime){
+                    ajaxData.applyTime = vm.cd.startTime //申请时间
+                }
+                if(vm.cd.endTime){
+                    ajaxData.auditTime = vm.cd.endTime //审核通过时间
+                }
+                console.log(ajaxData)
                 vm.table.loading = true;
                 this.$http.post(
                     url,
@@ -351,7 +363,7 @@
                 vm.cd.endTime = '';//评价时间
                 vm.cd.orderType = '';// 状态
                 vm.cd.orderStatus = '';// 输入框类型
-                vm.cd.inputval = "";// 输入框的值
+                vm.cd.inputVal = "";// 输入框的值
                 vm.cd.orderOrigin = '';//订单来源
                 vm.cd.selectType = 'orderNo';
             },

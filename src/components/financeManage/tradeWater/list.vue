@@ -55,15 +55,15 @@
                 <FormItem style="margin-bottom:10px;">
                     <DatePicker v-model="cd.accountEndTime" type="date" placeholder="结束时间" style="width:200px;"></DatePicker>
                 </FormItem>
-                <FormItem style="margin-bottom:10px;" v-show="false">
+                <FormItem style="margin-bottom:10px;">
                     <Input v-model="cd.inputVal">
-                    <Select v-model="cd.selectType" slot="prepend" style="width: 80px">
-                        <Option value="门店名称">门店名称</Option>
-                        <Option value="注册手机">注册手机</Option>
+                    <Select v-model="cd.selectType" slot="prepend" style="width: 100px">
+                        <Option value="storeName">门店名称</Option>
+                        <Option value="bossPhone">注册手机</Option>
                     </Select>
                     </Input>
                 </FormItem>
-                <FormItem style="margin-bottom:10px; width:220px;">
+                <FormItem style="margin-bottom:10px; width:220px;" v-show="false">
                     <Row>
                         <Col span="22">
                             <Input v-model="cd.text" placeholder="门店名称/注册手机"></Input>
@@ -183,7 +183,7 @@
                     accountStartTime:'',//评论时间范围
                     accountEndTime:'',//评论时间范围
                     inputVal:'',
-                    selectType:'门店名称',
+                    selectType:'storeName',
                     storeStatus:'', //店铺状态下拉框
                     text:'', //地区
                     transactionType:'',//交易类型
@@ -388,6 +388,7 @@
                     payTime:vm.cd.payStartTime,//付款时间
                     settlementAmount:vm.cd.accountStartTime,//结算时间
                 }
+                console.log(ajaxData)
                 vm.table.loading = true;
                 this.$http.post(
                     url,
@@ -415,13 +416,12 @@
                 vm.cd.payEndTime = '';//评价时间
                 vm.cd.accountStartTime = '';//评价时间
                 vm.cd.accountEndTime = '';//评价时间
-                vm.cd.selectType = '';// 状态
+                vm.cd.selectType = 'storeName';// 状态
                 vm.cd.storeStatus = '';// 输入框类型
                 vm.cd.orderStatus = '';//订单状态
-                vm.cd.inputval = "";// 输入框的值
+                vm.cd.inputVal = "";// 输入框的值
                 vm.cd.transactionType = '';//订单来源
                 vm.cd.payType = '';//支付类型
-                vm.cd.text = '';
             },
             //导出Excel
             exportData(){
