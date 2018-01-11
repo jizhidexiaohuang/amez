@@ -171,6 +171,7 @@ export default {
             }, 1000); */
         };
         return {
+            testNum:0,
             user:{
                 name:""
             },
@@ -224,8 +225,10 @@ export default {
         this.fnGetMenuList();//获取菜单
         this.addItem();
         this.fnBreadcrumb();//更新面包屑
-        let userName = JSON.parse(window.localStorage.getItem("userInfo")).user.loginName;
-        this.user.name = userName;
+        if(!!window.localStorage.getItem("userInfo")){
+            let userName = JSON.parse(window.localStorage.getItem("userInfo")).user.loginName;
+            this.user.name = userName;
+        }
     },
     computed: {
         iconSize () {
@@ -478,7 +481,10 @@ export default {
         screenWidth(val){
             this.screenWidth = val;
         }  
-    }  
+    },
+    beforeDestory(){
+        alert(1);
+    } 
 }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->

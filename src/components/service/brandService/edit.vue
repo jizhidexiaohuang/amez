@@ -300,7 +300,7 @@
             // 产品的信息遍历出来
             fnInitQuery (data) {
                 let vm = this;
-                vm.formValidate.type = data.productCategoryRef.categoryId;// 服务分类
+                vm.formValidate.type = !!!data.productCategoryRef?"":data.productCategoryRef.categoryId;// 服务分类
                 // vm.formValidate.brandId = data.product.brandId; // 服务所属品牌
                 vm.formValidate.serverName = data.product.serverName; // 服务名称
                 vm.formValidate.originalPrice = data.product.originalPrice; // 市场价
@@ -321,14 +321,14 @@
                 // 审核结果
                 vm.formValidate.auditStatus = data.product.auditStatus;
                 // 封面图以及轮播图的处理
+                vm.defaultList = [];
                 if(!!!data.product.coverImg){
 
                 }else{
                     vm.formValidate.coverImg = data.product.coverImg;//封面图
-                    if(!!data.productImg.url){
+                    if(!!data.productImg&&!!data.productImg.url){
                         let arrs = data.productImg.url.split(",");
                         let obj = {};
-                        vm.defaultList = [];
                         arrs.forEach(function(item,index){
                             obj = {
                                 'url': item

@@ -30,6 +30,10 @@
                             <Option value="1">上架</Option>
                         </Select>
                     </FormItem>
+                    <FormItem style="margin-bottom:10px;">
+                        评价时间
+                        <DatePicker v-model="cd.time" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="请填写时间范围" style="width: 300px"></DatePicker>
+                    </FormItem>
                     <FormItem style="margin-bottom:10px;" v-if="false">
                         发布时间
                         <DatePicker v-model="cd.time" type="date" placeholder="请选择发布时间" style="width:200px;"></DatePicker>
@@ -109,139 +113,7 @@
                         
                     ],
                     //门店自营服务表头
-                    buyerColumns: [
-                        {
-                            type: 'index',
-                            width: 80,
-                            align: 'center',
-                            title: '序号'
-                        },
-                        {
-                            title: '服务名称',
-                            key: 'serverName',
-                        },
-                        {
-                            title: '价格',
-                            key: 'salePrice',
-                        },
-                        {   
-                            title: '是否支持上门',
-                            key: 'serverBookType',
-                            render: (h,params) => {
-                                const row = params.row;
-                                const color = row.serverBookType === 0 ? 'blue' : row.serverBookType === 1 ? 'green' : 'yellow';
-                                const text = row.serverBookType === 0 ? '默认' : row.serverBookType === 1 ? '到店' : '上门';
-                                return h('Tag', {
-                                    props: {
-                                        type: 'border',
-                                        color: color
-                                    }
-                                }, text);
-                            }
-                        },
-                        {
-                            title: '上门费用',
-                            key: 'visitPrice',
-                        },
-                        {
-                            title: '状态',
-                            key: 'saleStatus',
-                            render: (h,params) => {
-                                const row = params.row;
-                                const color = row.saleStatus === 0 ? 'red' : 'blue';
-                                const text = row.saleStatus === 0 ? '下架' : '上架';
-                                return h('Tag', {
-                                    props: {
-                                        type: 'border',
-                                        color: color
-                                    }
-                                }, text);
-                            }
-                        },
-                        {
-                            title: '门店（e）',
-                            key: 'salePrice',
-                            render: (h,params) =>{
-                                return "艾美"
-                            }
-                        },
-                        {
-                            title: '发布时间（e）',
-                            key: 'createTime',
-                            render: (h,params) =>{
-                                const row = params.row
-                                return this.common.baseFormatDate(row.createTime)
-                            }
-                        },
-                        {
-                            title: '操作',
-                            key: 'action',
-                            width: 180,
-                            // align: 'center',
-                            // fixed: 'right',
-                            render: (h, params) => {
-                                const row = params.row;
-                                const color = row.saleStatus === 0 ? 'success' : 'warning';
-                                const text = row.saleStatus === 0 ? '上架' : '下架';
-                                let arrs = [
-                                    h('Button', {
-                                        props: {
-                                            type: color,
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                // this.fnDeleteItem(params.row.id);
-                                                let row = params.row;
-                                                this.modal.id = row.id;
-                                                this.modal.type = row.saleStatus;
-                                                this.modal.storeId = row.storeId;
-                                                this.fnShowModal();
-                                            }
-                                        }
-                                    }, text)
-                                ]
-                                let obj1 = h('Button', {
-                                    props: {
-                                        type: 'error',
-                                        size: 'small'
-                                    },
-                                    style: {
-                                        marginRight: '5px'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            this.fnDeleteItem(params.row.id);
-                                        }
-                                    }
-                                }, '删除11');
-                                let obj = h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px',
-                                        },
-                                        on: {
-                                            click: () => {
-                                                let row = params.row;
-                                                this.sendChild.itemId = row.id;
-                                                this.changePageType('edit');
-                                            }
-                                        }
-                                    }, '编辑');
-                                if(!!!this.storeId){
-                                    arrs.unshift(obj1);
-                                    arrs.unshift(obj);
-                                }
-                                return h('div',arrs);
-                            }
-                        }
-                    ],
+                    buyerColumns: [],
                     //品牌服务表头
                     sellerColumns: [
                         {

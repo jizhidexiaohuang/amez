@@ -30,6 +30,10 @@
                             <Option value="1">上架</Option>
                         </Select>
                     </FormItem>
+                    <FormItem style="margin-bottom:10px;">
+                        评价时间
+                        <DatePicker v-model="cd.time" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="请填写时间范围" style="width: 300px"></DatePicker>
+                    </FormItem>
                     <FormItem style="margin-bottom:10px;" v-if="false">
                         发布时间
                         <DatePicker v-model="cd.time" type="date" placeholder="请选择发布时间" style="width:200px;"></DatePicker>
@@ -104,7 +108,6 @@
                     tableData1: [],//数据
                     //table头
                     tableColumns: [
-                        
                     ],
                     //门店自营服务表头
                     buyerColumns: [
@@ -501,7 +504,7 @@
         },
         activated: function(){
             let vm = this;
-            vm.fnExistTabList()
+            vm.fnExistTabList();
         },
         components:{
             AddPage,
