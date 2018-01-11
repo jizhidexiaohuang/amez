@@ -14,16 +14,22 @@
                     <Row>
                         <Col span="11">
                             <FormItem prop="date">
-                                <DatePicker type="date" v-model="formValidate.date"></DatePicker>
+                                <DatePicker type="date" v-model="formValidate.date" disabled></DatePicker>
                             </FormItem>
                         </Col>
                     </Row>
                 </FormItem>
-                <FormItem label="老板账号" prop="sellerAccount">
+                <FormItem label="老板姓名" prop="sellerAccount">
                     <Input v-model="formValidate.sellerAccount"></Input>
                 </FormItem>
-                <FormItem label="店长账号" prop="storeManagerAccount">
+                <FormItem label="老板账号" prop="bossPhone">
+                    <Input v-model="formValidate.bossPhone"></Input>
+                </FormItem>
+                <FormItem label="店长姓名" prop="storeManagerAccount">
                     <Input v-model="formValidate.storeManagerAccount"></Input>
+                </FormItem>
+                <FormItem label="店长账号" prop="sellerPhone">
+                    <Input v-model="formValidate.sellerPhone"></Input>
                 </FormItem>
                 <FormItem label="所属品牌" prop="branch">
                     <Select v-model="formValidate.branch">
@@ -242,8 +248,8 @@
                 <FormItem label="保证金缴纳状态" prop="">
                     <Select style="width:80px" v-model="marginPaymentStatus">
                         <!-- <Option v-for="item in storeStatus" :value="item.value" :key="item.value">{{ item.label }}</Option> -->
-                        <Option value="true">已缴纳</Option>
-                        <Option value="false">未缴纳</Option>
+                        <Option value="1">已缴纳</Option>
+                        <Option value="0">未缴纳</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="缴纳金额" prop="premiumReceived">
@@ -262,6 +268,7 @@
     export default {
         data () {
             return {
+                extendId:0,//扩展id
                 branchList:[],//渲染品牌下拉框数组
                 storeBanner:false,//正面照的显示
                 placeholders: {
@@ -306,8 +313,10 @@
                 formValidate: {
                     storeName: '',   //店名
                     date: '',    //开店日期
-                    sellerAccount:'',  //老板账号
-                    storeManagerAccount:'',//店长账号
+                    sellerAccount:'',  //老板姓名
+                    bossPhone:'',//老板账号
+                    storeManagerAccount:'',//店长姓名
+                    sellerPhone:'',//店长账号
                     branch:0,             //品牌id
                     mainProject:[],   //主营特色项目
                     companyName:'',//公司名称
@@ -363,7 +372,7 @@
                 str = str.substr(0,str.length - 2)
                 this.projectStr = str;
                 //处理缴费金额
-                if(this.marginPaymentStatus=='true'){
+                if(this.marginPaymentStatus=='1'){
                     this.payStatus = true;
                 }else{
                     this.payStatus = false;
@@ -376,8 +385,10 @@
                         storeLatitude:this.mapData.latitude, //纬度
                         storeLongitude:this.mapData.longitude, //经度
                         storeName:this.formValidate.storeName, //店铺名称
-                        bossName:this.formValidate.sellerAccount,//老板账号
-                        sellerName:this.formValidate.storeManagerAccount,//店长账号
+                        bossName:this.formValidate.sellerAccount,//老板姓名
+                        bossPhone:this.formValidate.bossPhone,//老板账号
+                        sellerName:this.formValidate.storeManagerAccount,//店长姓名
+                        sellerPhone:this.formValidate.sellerPhone,//店长账号
                         brandName:this.branchName,//品牌名
                         brandId:this.formValidate.branch, //品牌Id
                         scId:this.oldStore,//老店
@@ -386,6 +397,7 @@
                         specialProject:this.projectStr,//特色项目
                     },
                     storeExtend:{
+                        id:this.extendId,
                         companyName:this.formValidate.companyName,//公司名称
                         businessLicenseUmber:this.formValidate.BusinessLicenseNumber,//营业执照号码
                         legalPersonName:this.formValidate.LegalPersonName,//法人姓名
@@ -402,7 +414,7 @@
                         eraBankCardNumber:this.formValidate.eraBankCardNumber,//企业--银行卡号
 
                         paymentAmount:(this.formValidate.premiumReceived-0),//缴纳金额
-                        marginPaymentStatus:this.payStatus,//保证金缴纳状态
+                        marginPaymentStatus:this.payStatus,//保证金缴纳状态 
                         businessLicense:this.businessLicense,//营业执照
                         idcardPositivePhoto:this.idcardPositivePhoto,//正面照
                         idcardNegativePhoto:this.idcardNegativePhoto,//反面照
@@ -540,8 +552,10 @@
                     console.log(storeExtend)
                     this.formValidate.storeName = store.storeName; //门店名称
                     this.formValidate.date = store.createTime;  //开店时间
-                    this.formValidate.sellerAccount = store.bossName;  //老板账号
-                    this.formValidate.storeManagerAccount = store.sellerName; //店长账号
+                    this.formValidate.sellerAccount = store.bossName;  //老板姓名
+                    this.formValidate.bossPhone = store.bossPhone; //老板账号
+                    this.formValidate.storeManagerAccount = store.sellerName; //店长姓名
+                    this.formValidate.sellerPhone = store.sellerPhone;//店长账号
                     //多选框
                     this.formValidate.branch = (store.brandId-0)?(store.brandId-0):2; //所属品牌
                     if(store.specialProject){
@@ -571,8 +585,16 @@
                         this.select.area = areaArr[2]
                     }  //省市区
                     //------------扩展表----------------------------------------
+                    this.extendId = storeExtend.id;
                     this.formValidate.companyName = store.storeCompanyName; //公司名称
                     this.businessLicense = storeExtend.businessLicense;  //营业执照(暂时用横幅代替营业执照)
+                    this.idcardPositivePhoto = storeExtend.idcardPositivePhoto;//正面照
+                    this.idcardNegativePhoto = storeExtend.idcardNegativePhoto;//正面照
+                    this.idcardHandheldPhoto = storeExtend.idcardHandheldPhoto;//手持照
+                    this.storeDoorPhoto = storeExtend.storeDoorPhoto;//门头照
+                    this.storeCashierPhoto = storeExtend.storeCashierPhoto;//收银照
+                    this.storeInPhoto = storeExtend.storeInPhoto;//店内照
+                    this.contract = storeExtend.contract;//合同
                     // if(storeExtend.businessLicense){
                     //     this.businessLicense = true;
                     // }
@@ -589,7 +611,7 @@
                     this.formValidate.eraBankBranch = storeExtend.eraBankBranch?storeExtend.eraBankBranch:'东门支行'; //企业--支行名称
                     this.formValidate.eraCompanyName = storeExtend.eraCompanyName?storeExtend.eraCompanyName:'美业一店'; //企业--公司名称
                     this.formValidate.eraBankCardNumber = storeExtend.eraBankCardNumber?storeExtend.eraBankCardNumber:'420621789652526656'; //企业--银行卡号
-                    this.marginPaymentStatus = storeExtend.marginPaymentStatus?'true':'false'; //保证金缴纳状态
+                    this.marginPaymentStatus = storeExtend.marginPaymentStatus?'1':'0'; //保证金缴纳状态
                     this.formValidate.premiumReceived = storeExtend.paymentAmount?storeExtend.paymentAmount:'1000'; //缴纳金额
                 })
             },

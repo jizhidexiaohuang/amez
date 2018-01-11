@@ -174,11 +174,7 @@
                     {
                         title: '退款订单',
                         key: 'orderNo',
-                        render:(h,params)=>{
-                            return h('div',[
-                                h('span',params.row.orderNo)
-                            ])
-                        }
+                        
                     },
                     {
                         title: '退款总金额',

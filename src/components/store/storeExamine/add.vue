@@ -10,20 +10,17 @@
                 <FormItem label="门店名称" prop="storeName">
                     <Input v-model="formValidate.storeName"></Input>
                 </FormItem>
-                <FormItem label="开店时间">
-                    <Row>
-                        <Col span="11">
-                            <FormItem prop="date">
-                                <DatePicker type="date" v-model="formValidate.date"></DatePicker>
-                            </FormItem>
-                        </Col>
-                    </Row>
-                </FormItem>
-                <FormItem label="老板账号" prop="sellerAccount">
+                <FormItem label="老板姓名" prop="sellerAccount">
                     <Input v-model="formValidate.sellerAccount"></Input>
                 </FormItem>
-                <FormItem label="店长账号" prop="storeManagerAccount">
+                <FormItem label="老板账号" prop="bossPhone">
+                    <Input v-model="formValidate.bossPhone"></Input>
+                </FormItem>
+                <FormItem label="店长姓名" prop="storeManagerAccount">
                     <Input v-model="formValidate.storeManagerAccount"></Input>
+                </FormItem>
+                <FormItem label="店长账号" prop="sellerPhone">
+                    <Input v-model="formValidate.sellerPhone"></Input>
                 </FormItem>
                 <FormItem label="所属品牌" prop="branch">
                     <Select v-model="formValidate.branch">
@@ -295,8 +292,10 @@
                 formValidate: {
                     storeName: '',   //店名
                     date: '',    //开店日期
-                    sellerAccount:'',  //老板账号
-                    storeManagerAccount:'',//店长账号
+                    sellerAccount:'',  //老板姓名
+                    bossPhone:'',//老板账号
+                    storeManagerAccount:'',//店长姓名
+                    sellerPhone:'',//店长账号
                     branch:'',             //品牌
                     mainProject:[],   //主营特色项目
                     companyName:'',//公司名称
@@ -359,8 +358,10 @@
                         storeLatitude:this.mapData.latitude, //纬度
                         storeLongitude:this.mapData.longitude, //经度
                         storeName:this.formValidate.storeName, //店铺名称
-                        bossName:this.formValidate.sellerAccount,//老板账号
-                        sellerName:this.formValidate.storeManagerAccount,//店长账号
+                        bossName:this.formValidate.sellerAccount,//老板姓名
+                        bossPhone:this.formValidate.bossPhone,//老板账号
+                        sellerName:this.formValidate.storeManagerAccount,//店长姓名
+                        sellerPhone:this.formValidate.sellerPhone,//店长账号
                         brandName:this.branchName,//品牌名
                         brandId:this.formValidate.branch, //品牌Id
                         scId:this.oldStore,//老店

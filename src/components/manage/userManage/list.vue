@@ -116,6 +116,9 @@
                 selectType:'门店名称',
                 statusList:[
                     {
+                        value:'',
+                        label:'全部'
+                    },{
                         value:'0',
                         label:'启用'
                     },{

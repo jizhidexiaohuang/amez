@@ -13,6 +13,7 @@
     "test": "npm run unit && npm run e2e"
   },
   "dependencies": {
+    "awe-dnd": "^0.3.0",
     "v-distpicker": "^1.0.14",
     "vue": "^2.3.3",
     "vue-kindeditor": "^0.2.1",

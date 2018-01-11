@@ -130,7 +130,7 @@
                     },
                     {
                         title: '注册手机',
-                        key: 'storeTel'
+                        key: 'bossPhone'
                     },
                     {
                         title: '门店地址',
@@ -138,17 +138,9 @@
                     },
                     {
                         title: '申请时间',
-                        key: 'storeTime',
-                    },
-                    {
-                        title: '保证金',
-                        key: 'paymentAmount',
+                        key: 'createTime',
                         render:(h,params)=>{
-                            if(!params.row.paymentAmount){
-                                return 1000
-                            }else{
-                                return params.row.paymentAmount
-                            }
+                            return h('div',common.formatDate(params.row.createTime))
                         }
                     },
                     {
@@ -257,14 +249,14 @@
                 let size = vm.table.size;//每页条数
                 let url = common.path+"store/front/findByPage?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {
-                    pageNo:start,
-                    pageSize: size,
+                    // pageNo:start,
+                    // pageSize: size,
                 }
                 if(vm.cd.storeStatus){
                     ajaxData.storeState = vm.cd.storeStatus //状态
                 }
                 if(vm.cd.time){
-                    ajaxData.storeTime = vm.cd.time //开店时间
+                    ajaxData.storeTime = new Date(vm.cd.time).getTime() //开店时间
                 }
                 if(vm.cd.inputVal){
                     ajaxData[vm.cd.selectType] = vm.cd.inputVal 
