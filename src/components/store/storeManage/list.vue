@@ -40,19 +40,16 @@
                     </Select>
                     </Input>
                 </FormItem>
-                <FormItem style="margin-bottom:10px; width:250px;">
+                <FormItem style="margin-bottom:10px; width:480px;" v-if="!!testCode">
                     <Row>
-                        <Col span="4">地区</Col>
-                        <Col span="20">
-                            <Input v-model="cd.areaInfo" placeholder="全部（省-市-区）"></Input>
-                        </Col>
+                        <CityLinkage :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
                     </Row>
                 </FormItem>
             </Form>
             <Row style="margin-bottom:10px;">
                 <Col span="5">
                     <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
-                    <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
+                    <Button style="margin-left:5px;" @click.native="getData('init')" @click="ievent" type="warning" icon="refresh">刷新</Button>
                 </Col>
                 <Col span="3" offset="16">
                     <Button style="float:right;" @click.native="changePageType('add')" type="success" icon="android-add">新增门店</Button>
@@ -85,10 +82,16 @@
 <script>
     import AddPage from './add.vue'
     import EditPage from './edit.vue'
+    import CityLinkage from '../../common/city.vue'
     import common from '../../../base.js'
     export default {
         data () {
             return {
+                cityConfig:{
+                    key:false,
+                    title:'地区',
+                    type:'select'
+                },
                 editId:0,//传给编辑页面的id
                 statusList:[
                     {
@@ -108,7 +111,7 @@
                     inputVal:'',
                     selectType:'storeName',
                     storeStatus:'', //店铺状态下拉框
-                    areaInfo:'', //地区
+                    cityArr:[]
                 },
                 activatedType: false,//主要解决mounted和activated重复调用
                 pageType: 'list',
@@ -305,7 +308,8 @@
                     pageNun:1,
                     loading: false,
                     size: 10,
-                }
+                },
+                testCode: true,
             }
         },
         methods: {
@@ -340,8 +344,8 @@
                 if(vm.cd.inputVal){
                     ajaxData[vm.cd.selectType] = vm.cd.inputVal 
                 }
-                if(vm.cd.areaInfo){
-                    ajaxData.areaInfo = vm.cd.areaInfo //地区
+                if(vm.cd.cityArr){
+                    console.log(vm.cd.cityArr)
                 }
                 console.log(ajaxData)
                 vm.table.loading = true;
@@ -370,8 +374,11 @@
                 vm.cd.storeStatus = '';//
                 vm.cd.time = '';//
                 vm.cd.inputVal = "";// 
-                vm.cd.areaInfo = '';//
                 vm.cd.selectType = 'storeName';
+                vm.cityConfig.key = true;
+            },
+            ievent(data){
+                this.cityConfig.key = data;
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {
@@ -469,9 +476,13 @@
                     }
                 });
             },
+            getCity(data){
+                console.log(data)
+                this.cd.cityArr = data
+            }
         },
         mounted: function(){
-            this.getData();
+            this.getData();      
         },
         activated: function(){
             let vm = this;
@@ -479,7 +490,8 @@
         },
         components:{
             AddPage,
-            EditPage
+            EditPage,
+            CityLinkage
         }
     }
 </script>

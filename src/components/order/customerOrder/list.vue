@@ -47,10 +47,7 @@
                 </FormItem>
                 <FormItem style="margin-bottom:10px;">
                     下单时间
-                    <DatePicker v-model="cd.startTime" type="date" placeholder="开始时间" style="width:200px;"></DatePicker>
-                </FormItem>
-                <FormItem style="margin-bottom:10px;">
-                    <DatePicker v-model="cd.endTime" type="date" placeholder="结束时间" style="width:200px;"></DatePicker>
+                    <DatePicker v-model="cd.addTime" type="daterange" placement="bottom-end" placeholder="请填写时间范围" style="width:200px"></DatePicker>
                 </FormItem>
                 <FormItem style="margin-bottom:10px;">
                     <Input v-model="cd.inputVal">
@@ -148,8 +145,7 @@
                     },
                 ],//订单状态
                 cd:{
-                    startTime:'',//评论时间范围
-                    endTime:'',//评论时间范围
+                    addTime:[],//评论时间范围
                     selectType:'orderNo', //订单号
                     orderType:'',//订单类型
                     orderOrigin:'',//订单来源
@@ -174,7 +170,6 @@
                     {
                         title: '退款订单',
                         key: 'orderNo',
-                        
                     },
                     {
                         title: '退款总金额',
@@ -325,11 +320,8 @@
                 if(vm.cd.inputVal){
                     ajaxData[vm.cd.selectType] = vm.cd.inputVal 
                 }
-                if(vm.cd.startTime){
-                    ajaxData.applyTime = vm.cd.startTime //申请时间
-                }
-                if(vm.cd.endTime){
-                    ajaxData.auditTime = vm.cd.endTime //审核通过时间
+                if(vm.cd.addTime&&vm.cd.addTime[0]&&vm.cd.addTime[1]){
+                    ajaxData.applyTime = vm.cd.addTime //申请时间
                 }
                 console.log(ajaxData)
                 vm.table.loading = true;
@@ -355,8 +347,7 @@
                 let vm = this;
                 vm.table.pageNun = 1;//索引
                 vm.table.size = 10;//页数
-                vm.cd.startTime = '';//评价时间
-                vm.cd.endTime = '';//评价时间
+                vm.cd.addTime = [];//评价时间
                 vm.cd.orderType = '';// 状态
                 vm.cd.orderStatus = '';// 输入框类型
                 vm.cd.inputVal = "";// 输入框的值

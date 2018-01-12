@@ -395,6 +395,7 @@
                         manageYear:this.managerYear,//实际经营年限
                         storeLabel:this.storeLabel,//店铺标签(五年老店)
                         specialProject:this.projectStr,//特色项目
+                        storeBanner:this.storeDoorPhoto,//门头照
                     },
                     storeExtend:{
                         id:this.extendId,

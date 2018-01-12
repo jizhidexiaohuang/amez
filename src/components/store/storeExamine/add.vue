@@ -369,6 +369,7 @@
                         storeLabel:this.storeLabel,//店铺标签(五年老店)
                         specialProject:this.projectStr,//特色项目
                         storeCompanyName:this.formValidate.companyName,//公司名称
+                        storeBanner:this.storeDoorPhoto,//门头照
                     },
                     storeExtend:{
                         companyName:this.formValidate.companyName,//公司名称

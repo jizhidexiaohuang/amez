@@ -30,10 +30,7 @@
                     </Select>
                 </FormItem>
                 <FormItem style="margin-bottom:10px;">
-                    <DatePicker v-model="cd.startTime" type="date" placeholder="开始时间" style="width:160px;"></DatePicker>
-                </FormItem>
-                <FormItem style="margin-bottom:10px;">
-                    <DatePicker v-model="cd.endTime" type="date" placeholder="结束时间" style="width:160px;"></DatePicker>
+                    <DatePicker v-model="cd.addTime" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="请填写时间范围" style="width: 250px"></DatePicker>
                 </FormItem>
                 <FormItem style="margin-bottom:10px;" v-show="false">
                     <Input v-model="value">
@@ -103,8 +100,7 @@
                     },
                 ],
                 cd:{
-                    startTime:'',//评论时间范围
-                    endTime:'',//评论时间范围
+                    addTime:[],//评论时间范围
                     operType:"1",//评论类型、不用重置
                     storeStatus:'', //店铺状态下拉框
                     userName:'',//用户名
@@ -187,8 +183,8 @@
                 if(vm.cd.departmentName){
                     ajaxData.departmentName = vm.cd.storeStatus //状态
                 }
-                if(vm.cd.startTime){
-                    ajaxData.loginTime = vm.cd.startTime //开店时间
+                if(vm.cd.addTime&&vm.cd.addTime[0]&&vm.cd.addTime[1]){
+                    ajaxData.loginTime = vm.cd.addTime //开店时间
                 }
                 if(vm.cd.userName){
                     ajaxData.userName = vm.cd.userName 
@@ -218,8 +214,7 @@
                 vm.table.pageNun = 1;//索引
                 vm.table.size = 10;//页数
                 vm.cd.storeStatus = '';//
-                vm.cd.endTime = '';//
-                vm.cd.startTime = "";// 
+                vm.cd.addTime = [];//
                 vm.cd.userName = '';//
             },
             /* 页码改变的回掉函数 */

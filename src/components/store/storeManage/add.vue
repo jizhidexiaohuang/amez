@@ -10,6 +10,19 @@
                 <FormItem label="门店名称" prop="storeName">
                     <Input v-model="formValidate.storeName"></Input>
                 </FormItem>
+                <FormItem label="门店电话" prop="storeTel">
+                    <Input v-model="formValidate.storeTel"></Input>
+                </FormItem>
+                <FormItem label="营业时间">
+                    <Row>
+                        <Col span="11">
+                            <FormItem prop="storeTime">
+                                <!-- <DatePicker type="date" v-model="formValidate.storeTime"></DatePicker> -->
+                                <TimePicker format="HH:mm" :value="formValidate.storeTime" type="timerange" placement="bottom-end"></TimePicker>
+                            </FormItem>
+                        </Col>
+                    </Row>
+                </FormItem>
                 <FormItem label="老板姓名" prop="sellerAccount">
                     <Input v-model="formValidate.sellerAccount"></Input>
                 </FormItem>
@@ -57,7 +70,8 @@
                 <FormItem label="店铺地址" prop="">
                     <Row>
                         <Col span="20">
-                            <v-distpicker :placeholders="placeholders" @selected="onSelected"></v-distpicker>
+                            <!-- <v-distpicker :placeholders="placeholders" @selected="onSelected"></v-distpicker> -->
+                            <CityLinkage :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
                         </Col>
                     </Row>
                 </FormItem>
@@ -248,10 +262,16 @@
 <script>
     import common from '../../../base.js'
     import VDistpicker from 'v-distpicker'
+    import CityLinkage from '../../common/city.vue'
     // import MyUpload from '../../common/upload.vue'
     export default {
         data () {
             return {
+                cityConfig:{
+                    key:false,
+                    title:'',
+                    type:'linkage'
+                },
                 branchList:[], //渲染所属品牌下拉框数组
                 placeholders: {
                     province: '------- 省 --------',
@@ -291,6 +311,8 @@
                 //formValidate对象
                 formValidate: {
                     storeName: '',   //店名
+                    storeTel:'', //门店电话
+                    storeTime:['09:00','18:30'], //营业时间
                     date: '',    //开店日期
                     sellerAccount:'',  //老板姓名
                     bossPhone:'',//老板账号
@@ -358,6 +380,7 @@
                         storeLatitude:this.mapData.latitude, //纬度
                         storeLongitude:this.mapData.longitude, //经度
                         storeName:this.formValidate.storeName, //店铺名称
+                        storeTel:this.formValidate.storeTel, //店铺电话
                         bossName:this.formValidate.sellerAccount,//老板姓名
                         bossPhone:this.formValidate.bossPhone,//老板账号
                         sellerName:this.formValidate.storeManagerAccount,//店长姓名
@@ -369,6 +392,7 @@
                         storeLabel:this.storeLabel,//店铺标签(五年老店)
                         specialProject:this.projectStr,//特色项目
                         storeCompanyName:this.formValidate.companyName,//公司名称
+                        storeBanner:this.storeDoorPhoto, //门头照
                     },
                     storeExtend:{
                         companyName:this.formValidate.companyName,//公司名称
@@ -437,6 +461,13 @@
                 this.province = data.province.value
                 this.city = data.city.value
                 this.area = data.area.value
+            },
+            getCity(data){
+                console.log(data)
+                // this.cd.cityArr = data
+                this.province = data[0].label
+                this.city = data[1].label
+                this.area = data[2].label
             },
             //定位按钮
             orientate(){
@@ -551,6 +582,7 @@
         },
         components:{
            VDistpicker,
+           CityLinkage
         //    MyUpload
         }
     }

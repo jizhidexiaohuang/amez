@@ -43,17 +43,11 @@
                 </FormItem>
                 <FormItem style="margin-bottom:10px;">
                     付款时间
-                    <DatePicker v-model="cd.payStartTime" type="date" placeholder="开始时间" style="width:200px;"></DatePicker>
-                </FormItem>
-                <FormItem style="margin-bottom:10px;">
-                    <DatePicker v-model="cd.payEndTime" type="date" placeholder="结束时间" style="width:200px;"></DatePicker>
+                    <DatePicker v-model="cd.payTime" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="请填写时间范围" style="width: 250px"></DatePicker>
                 </FormItem>
                 <FormItem style="margin-bottom:10px;">
                     结算时间
-                    <DatePicker v-model="cd.accountStartTime" type="date" placeholder="开始时间" style="width:200px;"></DatePicker>
-                </FormItem>
-                <FormItem style="margin-bottom:10px;">
-                    <DatePicker v-model="cd.accountEndTime" type="date" placeholder="结束时间" style="width:200px;"></DatePicker>
+                    <DatePicker v-model="cd.balanceTime" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="请填写时间范围" style="width: 250px"></DatePicker>
                 </FormItem>
                 <FormItem style="margin-bottom:10px;">
                     <Input v-model="cd.inputVal">
@@ -178,10 +172,8 @@
                     },
                 ],//订单状态
                 cd:{
-                    payStartTime:'',//评论时间范围
-                    payEndTime:'',//评论时间范围
-                    accountStartTime:'',//评论时间范围
-                    accountEndTime:'',//评论时间范围
+                    payTime:[],//评论时间范围
+                    balanceTime:[],//评论时间范围
                     inputVal:'',
                     selectType:'storeName',
                     storeStatus:'', //店铺状态下拉框
@@ -385,8 +377,8 @@
                     tradeType:vm.cd.transactionType,//交易类型
                     payType:vm.cd.payType,//支付类型
                     tradeStatus:vm.cd.orderStatus,//订单状态
-                    payTime:vm.cd.payStartTime,//付款时间
-                    settlementAmount:vm.cd.accountStartTime,//结算时间
+                    payTime:vm.cd.payTime,//付款时间
+                    settlementAmount:vm.cd.balanceTime,//结算时间
                 }
                 console.log(ajaxData)
                 vm.table.loading = true;
@@ -412,10 +404,8 @@
                 let vm = this;
                 vm.table.pageNun = 1;//索引
                 vm.table.size = 10;//页数
-                vm.cd.payStartTime = '';//评价时间
-                vm.cd.payEndTime = '';//评价时间
-                vm.cd.accountStartTime = '';//评价时间
-                vm.cd.accountEndTime = '';//评价时间
+                vm.cd.payTime = [];//支付时间
+                vm.cd.balanceTime = [];//结算时间
                 vm.cd.selectType = 'storeName';// 状态
                 vm.cd.storeStatus = '';// 输入框类型
                 vm.cd.orderStatus = '';//订单状态
