@@ -8,7 +8,7 @@
                 <div></div>
             </div>
             <div class="body">
-                <div class="aItem" v-for="(item,index) in list" :key="item.id">
+                <div class="aItem" v-for="(item,index) in list">
                     <component v-on:getData="fnGetDataFromChild" v-on:deleteModal="fnDeleteModal" :index="index" :curIndex="curIndex" :datas="item" v-bind:is="item.type" @click.native="fnTest(index)"></component>
                 </div>
             </div>
@@ -39,21 +39,18 @@
                         data: {
                             text: '区域1'
                         }, // 数据
-                        id: 1,
                     },
                     {
                         type: 'Banner', // 编辑类型
                         data: {
                             text: '区域2'
                         }, // 数据
-                        id: 2,
                     },
                     {
                         type: 'Banner', // 编辑类型
                         data: {
                             text: '区域3'
                         }, // 数据
-                        id: 3,
                     }
                 ]
                 vm.list = arrs;
@@ -97,34 +94,19 @@
             /* 删除模块 */
             fnDeleteModal () {
                 let vm = this;
-                /* let arrs = vm.list;
-                vm.list = [];
-                arrs.forEach(function(item,index){
-                    console.log(index);
-                    if(vm.curIndex != index){
-                        vm.list.push(item);
-                    }
-                })
-                console.log(vm.list); */
-               if(vm.list.length == 1){
-                   return false;
-               }
                 let arrs = [];
+                if(vm.list.length == 1){
+                   return false;
+                }
                 vm.list.forEach(function(item,index){
                     if(vm.curIndex != index){
                         arrs.push(item);
                     }
                 })
-                // vm.curIndex = vm.curIndex == 0?0:vm.curIndex-1
-                vm.list = [];
+                vm.list = arrs;
                 setTimeout(function(){
-                    vm.list = arrs;
-                    console.log(vm.list);
-                    console.log(vm.curIndex);
-                    vm.curIndex = 0;
-                    // vm.curIndex = vm.curIndex == 0?0:vm.curIndex-1
-                },5)
-                
+                    vm.curIndex = vm.curIndex == 0?0:vm.curIndex-1
+                },10)
             },
             /* 判断页签中是否有该模块，如果有则使用缓存，如果没有则重新加载数据 */
             fnExistTabList () {
