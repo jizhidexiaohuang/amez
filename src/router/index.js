@@ -60,7 +60,8 @@ import WorkerManage from '@/components/worker/workerManage/list'
 /*=====================================营销管理=========================*/
 //首页装修
 import DecorateHome from '@/components/marketing/decorateHome/index'
-
+//活动商家分组
+import ActivityShop from '@/components/marketing/activityShop/list'
 
 Vue.use(Router)
 
@@ -314,6 +315,16 @@ const menuRouter = [
         meta:{
           type:"菜单",
           name:"首页装修"
+        }
+      },
+      {
+        path: '/marketing/activityShop',
+        name: '活动商家分组',
+        title: '活动商家分组',
+        component: ActivityShop,
+        meta:{
+          type:"菜单",
+          name:"活动商家分组"
         }
       }
     ]

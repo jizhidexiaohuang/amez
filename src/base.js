@@ -169,6 +169,11 @@ const common = {
                     name:"首页装修",
                     hasChildList: false,
                     href:"/marketing/decorateHome"
+                },
+                {
+                    name:"活动商家分组",
+                    hasChildList: false,
+                    href:"/marketing/activityShop"
                 }
             ]
         },
