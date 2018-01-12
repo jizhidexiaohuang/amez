@@ -43,7 +43,7 @@
                     <Col span="5">
                         <Input v-model="cd.inputval">
                             <Select v-model="cd.inputType" slot="prepend" style="width: 80px">
-                                <Option value="serviceName">服务名称</Option>
+                                <Option value="serverName">服务名称</Option>
                                 <Option value="storeName">店铺名称</Option>
                                 <Option value="phone">注册手机</Option>
                             </Select>
@@ -97,7 +97,7 @@
                     time:[],//评论时间范围
                     saleStatus:"",//上下架状态
                     inputval:'',//选择的值
-                    inputType:'serviceName',//input类型
+                    inputType:'serverName',//input类型
                     isBrand:'1',// 门店自营还是产品
                 },
                 table:{
@@ -286,7 +286,7 @@
                 vm.table.size = 10;//页数
                 vm.cd.time = [];//评价时间
                 vm.cd.saleStatus = "";// 状态
-                vm.cd.inputType = "serviceName";// 输入框类型
+                vm.cd.inputType = "serverName";// 输入框类型
                 vm.cd.inputval = "";// 输入框的值
             },
             /* 数据获取 */
@@ -305,15 +305,20 @@
                 }
                 let start = vm.table.pageNun;//从第几页开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path2+"product/front/findByPage?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"product/findByPageForBrand?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
-                    saleStatus: vm.cd.saleStatus,
                     isBrand: vm.cd.isBrand,
                     storeId:vm.storeId
                 }
-                ajaxData[vm.cd.inputType] = vm.cd.inputval
+                if(!!vm.cd.saleStatus){
+                    ajaxData.saleStatus = vm.cd.saleStatus;
+                }
+                if(!!vm.cd.inputval){
+                    console.log(1);
+                    ajaxData[vm.cd.inputType] = vm.cd.inputval
+                }
                 vm.table.loading = true;
                 this.$http.post(
                     url,

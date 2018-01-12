@@ -31,7 +31,7 @@
                         </Select>
                     </FormItem>
                     <FormItem style="margin-bottom:10px;">
-                        评价时间
+                        发布时间
                         <DatePicker v-model="cd.time" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="请填写时间范围" style="width: 300px"></DatePicker>
                     </FormItem>
                     <FormItem style="margin-bottom:10px;" v-if="false">
@@ -43,7 +43,7 @@
                     <Col span="5">
                         <Input v-model="cd.inputval">
                             <Select v-model="cd.inputType" slot="prepend" style="width: 80px">
-                                <Option value="serviceName">服务名称</Option>
+                                <Option value="serverName">服务名称</Option>
                                 <Option value="storeName">店铺名称</Option>
                                 <Option value="phone">注册手机</Option>
                             </Select>
@@ -53,7 +53,7 @@
                         <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
 		                <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     </Col>
-                    <Col span="3" offset="11" v-if="!!!storeId">
+                    <Col span="3" offset="11" >
                         <Button style="float:right;" @click.native="changePageType('add')" type="success" icon="android-add">发布服务</Button>
                     </Col>
                 </Row>
@@ -99,7 +99,7 @@
                     time:[],//评论时间范围
                     saleStatus:"",//上下架状态
                     inputval:'',//选择的值
-                    inputType:'serviceName',//input类型
+                    inputType:'serverName',//input类型
                     isBrand:'0',// 门店自营还是产品
                 },
                 table:{
@@ -273,12 +273,16 @@
                 vm.table.size = 10;//页数
                 vm.cd.time = [];//评价时间
                 vm.cd.saleStatus = "";// 状态
-                vm.cd.inputType = "serviceName";// 输入框类型
+                vm.cd.inputType = "serverName";// 输入框类型
                 vm.cd.inputval = "";// 输入框的值
             },
             /* 数据获取 */
             getData (init) {
+                
+                let beginReleaseTime = this.common.formatDate(new Date(this.cd.time[0]));
+                let endReleaseTime = this.common.formatDate(new Date(this.cd.time[1]));
                 let vm = this;
+                console.log(vm.cd.time);
                 if(!!init&&init=='init'){
                     vm.fnInit();
                 }
@@ -292,17 +296,26 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path2+"product/front/findByPage?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"product/findByPageForBrand?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
-                    saleStatus: vm.cd.saleStatus,
                     isBrand: vm.cd.isBrand
                 }
                 if(!!vm.storeId){
                     ajaxData.storeId = vm.storeId
                 }
-                ajaxData[vm.cd.inputType] = vm.cd.inputval
+                if(!!vm.cd.saleStatus){
+                    ajaxData.saleStatus = vm.cd.saleStatus;
+                }
+                if(!!vm.cd.inputval){
+                    console.log(1);
+                    ajaxData[vm.cd.inputType] = vm.cd.inputval
+                }
+                if(!!vm.cd.time&&!!vm.cd.time[0]){
+                    ajaxData.beginReleaseTime = "2018-02-16 10:10:20";
+                    ajaxData.endReleaseTime = "2018-02-17 10:20:30";
+                }
                 vm.table.loading = true;
                 this.$http.post(
                     url,
@@ -533,8 +546,8 @@
         mounted: function(){
             let vm = this;
             /* 模拟身份 */
-            // vm.storeId = 4;// 店长
-            vm.storeId = "";// 管理员
+            vm.storeId = 4;// 店长
+            // vm.storeId = "";// 管理员
             this.fnGetProductCategory();
             this.fnGetStoreChainBrand();
             this.getData();
