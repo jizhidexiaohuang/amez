@@ -37,7 +37,18 @@
                     {
                         type: 'Banner', // 编辑类型
                         data: {
-                            text: '区域1'
+                            text: '区域1',
+                            imgList:[
+                                {
+                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg"
+                                },
+                                {
+                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg"
+                                },
+                                {
+                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg"
+                                }
+                            ]
                         }, // 数据
                     },
                     {
@@ -62,6 +73,8 @@
             },
             /* 重新编辑组件获取到的数据 */
             fnGetDataFromChild (obj) {
+                console.log(1111111111112);
+                console.log(obj);
                 let vm = this;
                 let arrs = [];
                 vm.list.forEach(function(item,index){
@@ -72,10 +85,6 @@
                     }
                 })
                 vm.list = arrs;
-                console.log(1111111111);
-                console.log(vm.list);
-                console.log(obj);
-                // 重新组织数据
             },
             /* 添加模块 */
             fnDoSome () {
@@ -95,18 +104,21 @@
             fnDeleteModal () {
                 let vm = this;
                 let arrs = [];
-                if(vm.list.length == 1){
+                let arrs1 = vm.list;
+                /* if(vm.list.length == 1){
                    return false;
-                }
+                } */
                 vm.list.forEach(function(item,index){
                     if(vm.curIndex != index){
                         arrs.push(item);
                     }
                 })
-                vm.list = arrs;
+                vm.list = arrs1;
+                // vm.list = arrs;
                 setTimeout(function(){
+                    vm.list = arrs;
                     vm.curIndex = vm.curIndex == 0?0:vm.curIndex-1
-                },10)
+                },5)
             },
             /* 判断页签中是否有该模块，如果有则使用缓存，如果没有则重新加载数据 */
             fnExistTabList () {

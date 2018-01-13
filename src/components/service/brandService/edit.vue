@@ -135,7 +135,7 @@
                 uploadConfig: {
                     num:5
                 },
-                uploadList:[],//图片列表
+                uploadList:[],//图片列表 用来保存图片上传之后的数据
                 // path:"http://172.16.20.151:8009/system/api/file/uploadForKindeditor"
                 path:this.common.path2+"system/api/file/uploadForKindeditor",
                 testCode: false,
