@@ -281,6 +281,9 @@
                 province:'',//城市级联的值
                 city:'',//城市级联的值
                 erea:'',//城市级联的值
+                provinceId:'',//城市级联的Id
+                cityId:'',//城市级联的Id
+                ereaId:'',//城市级联的Id
                 seat:"",//输入框中具体的地址
                 positionList:[], //将要展示的列表中的定位的值
                 mapData:{  //地图数据
@@ -376,7 +379,13 @@
                 let ajaxData = {
                     store:{
                         storeAddress:this.seat, //店铺详细地址
-                        areaInfo:this.province+' '+this.city+' '+this.area, //省市区
+                        // areaInfo:this.province+' '+this.city+' '+this.area, //省市区
+                        provinceName:this.province,//省
+                        cityName:this.city,//市
+                        areaName:this.area,//区
+                        productId:this.provinceId,//省
+                        cityId:this.cityId,//市
+                        areaId:this.areaId,//区
                         storeLatitude:this.mapData.latitude, //纬度
                         storeLongitude:this.mapData.longitude, //经度
                         storeName:this.formValidate.storeName, //店铺名称
@@ -468,6 +477,9 @@
                 this.province = data[0].label
                 this.city = data[1].label
                 this.area = data[2].label
+                this.provinceId = data[0].value
+                this.cityId = data[1].value
+                this.areaId = data[2].value
             },
             //定位按钮
             orientate(){

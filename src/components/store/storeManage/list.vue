@@ -344,8 +344,27 @@
                 if(vm.cd.inputVal){
                     ajaxData[vm.cd.selectType] = vm.cd.inputVal 
                 }
-                if(vm.cd.cityArr){
-                    console.log(vm.cd.cityArr)
+                if(!!vm.cd.cityArr){
+                    if(vm.cd.cityArr.length==1){
+                        if(!!vm.cd.cityArr[0].value){
+                            ajaxData.productId = vm.cd.cityArr[0].value
+                        }
+                    }else if(vm.cd.cityArr.length==2){
+                        if(!!vm.cd.cityArr[0].value){
+                            ajaxData.productId = vm.cd.cityArr[0].value
+                        }
+                        if(!!vm.cd.cityArr[1].value){
+                            ajaxData.cityId = vm.cd.cityArr[1].value
+                        }
+                    }else if(vm.cd.cityArr.length==3){
+                        for(var i=0;i<3;i++){
+                            if(!!vm.cd.cityArr[i].value){
+                                ajaxData.productId = vm.cd.cityArr[0].value
+                                ajaxData.cityId = vm.cd.cityArr[1].value
+                                ajaxData.areaId = vm.cd.cityArr[2].value
+                            }
+                        }
+                    }
                 }
                 console.log(ajaxData)
                 vm.table.loading = true;
@@ -376,6 +395,7 @@
                 vm.cd.inputVal = "";// 
                 vm.cd.selectType = 'storeName';
                 vm.cityConfig.key = true;
+                vm.cd.cityArr = []
             },
             ievent(data){
                 this.cityConfig.key = data;
