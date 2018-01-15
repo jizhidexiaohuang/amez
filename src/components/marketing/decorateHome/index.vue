@@ -25,7 +25,7 @@
         data () {
             return {
                 activatedType: false,//主要解决mounted和activated重复调用
-                list:[],
+                list:[],// 最后提交的数据
                 curIndex: 0,// 传递给子组件的数据
             }
         },
@@ -40,29 +40,41 @@
                             text: '区域1',
                             imgList:[
                                 {
-                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg"
+                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg",
+                                    src:"http://www.baidu.com",
+                                    myId: 1, // 唯一标识
                                 },
                                 {
-                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg"
+                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg",
+                                    src:"http://www.baidu.com",
+                                    myId: 2,
                                 },
                                 {
-                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg"
-                                }
+                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg",
+                                    src:"http://www.baidu.com",
+                                    myId: 3,
+                                },
                             ]
                         }, // 数据
                     },
                     {
                         type: 'Banner', // 编辑类型
                         data: {
-                            text: '区域2'
+                            text: '区域2',
+                            imgList:[
+                                {
+                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg",
+                                    src:"http://www.baidu.com",
+                                    myId: 4,
+                                },
+                                {
+                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg",
+                                    src:"http://www.baidu.com",
+                                    myId: 5
+                                }
+                            ]
                         }, // 数据
                     },
-                    {
-                        type: 'Banner', // 编辑类型
-                        data: {
-                            text: '区域3'
-                        }, // 数据
-                    }
                 ]
                 vm.list = arrs;
             },
@@ -73,8 +85,6 @@
             },
             /* 重新编辑组件获取到的数据 */
             fnGetDataFromChild (obj) {
-                console.log(1111111111112);
-                console.log(obj);
                 let vm = this;
                 let arrs = [];
                 vm.list.forEach(function(item,index){
@@ -85,6 +95,8 @@
                     }
                 })
                 vm.list = arrs;
+                console.log('ssssssssssssssss')
+                console.log(vm.list);
             },
             /* 添加模块 */
             fnDoSome () {
@@ -143,7 +155,7 @@
             vm.fnExistTabList();
         },
         components:{
-            Banner
+            Banner,
         }
     }
 </script>

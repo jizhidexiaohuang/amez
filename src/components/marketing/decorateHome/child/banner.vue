@@ -10,15 +10,16 @@
             </div>
         </div>
         <!-- 编辑区域 -->
-        <div class="item-edit-box" v-show="curIndex == index">
+        <div class="item-edit-box" v-if="curIndex == index">
             <div class="edit-box-inner">
+                <h3 style="width:90%; margin-left:5%; line-height: 30px;">轮播图</h3>
                 <Form style="padding:15px 10px;">
-                    <FormItem label="轮播图" v-if="testCode">
+                    <FormItem label="" v-if="testCode">
                         <MyUpload :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
                         <span style="color:red;">注：图片大小建议640px*300px</span>
                     </FormItem>
                     <FormItem label="">
-                        <Button type="primary" @click="fnHandleSubmit">确定</Button>
+                        <Button v-if="false" type="primary" @click="fnHandleSubmit">确定</Button>
                         <Button type="error" @click="fnHandleDelete">删除</Button>
                     </FormItem>
                 </Form>
@@ -29,7 +30,7 @@
     </div>
 </template>
 <script>
-    import MyUpload from '../../../common/upload.vue'
+    import MyUpload from './upload.vue'
     export default {
         props: [
             "curIndex", // 当前选中的区域
@@ -58,13 +59,15 @@
                 uploadList:[],// 用来保存图片上传之后的数据，最终提交的时候，是根据这个变量来拿的
                 testCode: false, 
                 imgArrs:[],
-                curImg:0
+                curImg:0,
             }
         },
         methods: {
             /* 根据父组件传递过来的数据初始化数据 */
             fnInitData () {
                 let vm = this;
+                console.log(1111111111);
+                console.log(vm.datas);
                 vm.oData = !!!vm.datas?vm.oData:vm.datas;
                 vm.fnInitBox();
             },
@@ -73,6 +76,7 @@
                 let vm = this;
                 let oData = vm.oData.data;
                 vm.edit.value = oData.text;
+                vm.defaultList = [];
                 vm.defaultList = oData.imgList;
                 vm.uploadList = oData.imgList;
                 vm.fnGetArrs();
@@ -103,7 +107,7 @@
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = data;
-                
+                vm.fnHandleSubmit();
             },
             fnGetArrs () {
                 let vm = this;
@@ -126,10 +130,10 @@
         },
         watch:{
             curIndex (curVal,oldVal) {
-                console.log("新值:"+curVal);
-                console.log("旧值:"+oldVal);
+                // console.log("新值:"+curVal);
+                // console.log("旧值:"+oldVal);
                 this.fnInitData();
-            }
+            },
         },
         components:{
             MyUpload
