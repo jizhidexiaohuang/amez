@@ -40,19 +40,16 @@
                     </Select>
                     </Input>
                 </FormItem>
-                <FormItem style="margin-bottom:10px; width:250px;">
+                <FormItem style="margin-bottom:10px; width:480px;">
                     <Row>
-                        <Col span="4">地区</Col>
-                        <Col span="20">
-                            <Input v-model="cd.areaInfo" placeholder="全部（省-市-区）"></Input>
-                        </Col>
+                        <CityLinkage :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
                     </Row>
                 </FormItem>
             </Form>
             <Row style="margin-bottom:10px;">
                 <Col span="5">
                     <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
-                    <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
+                    <Button style="margin-left:5px;" @click.native="getData('init')" @click="ievent" type="warning" icon="refresh">刷新</Button>
                 </Col>
                 <Col span="3" offset="16" v-show="false">
                     <Button style="float:right;" @click.native="changePageType('add')" type="success" icon="android-add">新增门店</Button>
@@ -85,10 +82,16 @@
 <script>
     import AddPage from './add.vue'
     import EditPage from './edit.vue'
+    import CityLinkage from '../../common/city.vue'
     import common from '../../../base.js'
     export default {
         data () {
             return {
+                cityConfig:{
+                    key:false,
+                    title:'地区',
+                    type:'select'
+                },
                 editId:0,//传给编辑页面的id
                 statusList:[
                     {
@@ -108,7 +111,7 @@
                     storeStatus:'', //店铺状态下拉框
                     inputVal:'',//带前缀的input
                     selectType:'storeName',
-                    areaInfo:'', //地区
+                    cityArr:[]
                 },
                 activatedType: false,//主要解决mounted和activated重复调用
                 pageType: 'list',
@@ -247,7 +250,7 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path+"store/front/findByPage?pageNo="+start+'&pageSize='+size;
+                let url = common.path2+"store/front/findByPage?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {
                     // pageNo:start,
                     // pageSize: size,
@@ -261,8 +264,27 @@
                 if(vm.cd.inputVal){
                     ajaxData[vm.cd.selectType] = vm.cd.inputVal 
                 }
-                if(vm.cd.areaInfo){
-                    ajaxData.areaInfo = vm.cd.areaInfo //地区
+                if(!!vm.cd.cityArr){
+                    if(vm.cd.cityArr.length==1){
+                        if(!!vm.cd.cityArr[0].value){
+                            ajaxData.productId = vm.cd.cityArr[0].value
+                        }
+                    }else if(vm.cd.cityArr.length==2){
+                        if(!!vm.cd.cityArr[0].value){
+                            ajaxData.productId = vm.cd.cityArr[0].value
+                        }
+                        if(!!vm.cd.cityArr[1].value){
+                            ajaxData.cityId = vm.cd.cityArr[1].value
+                        }
+                    }else if(vm.cd.cityArr.length==3){
+                        for(var i=0;i<3;i++){
+                            if(!!vm.cd.cityArr[i].value){
+                                ajaxData.productId = vm.cd.cityArr[0].value
+                                ajaxData.cityId = vm.cd.cityArr[1].value
+                                ajaxData.areaId = vm.cd.cityArr[2].value
+                            }
+                        }
+                    }
                 }
                 console.log(ajaxData)
                 vm.table.loading = true;
@@ -291,8 +313,12 @@
                 vm.cd.storeStatus = '';//
                 vm.cd.time = '';//
                 vm.cd.inputVal = "";// 
-                vm.cd.areaInfo = '';//
                 vm.cd.selectType = 'storeName';
+                vm.cityConfig.key = true;
+                vm.cd.cityArr = []
+            },
+            ievent(data){
+                this.cityConfig.key = data;
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {
@@ -345,7 +371,7 @@
                     title:'冻结店铺',
                     content:'冻结后，该店铺将无法交易，确认冻结该店铺？',
                     onOk(){
-                        let url = common.path+'store/freeze/'+id;
+                        let url = common.path2+'store/freeze/'+id;
                         this.$http.put(url).then(res=>{
                             if(res.status==200){
                                 this.$Message.success('冻结成功！')
@@ -361,7 +387,7 @@
                     title:'审核店铺',
                     content:'审核后，该店铺可以继续开展美容邦相关业务，确认审核该店铺？',
                     onOk(){
-                        let url = common.path+'store/open/'+id;
+                        let url = common.path2+'store/open/'+id;
                         this.$http.put(url).then(res=>{
                             if(res.status==200){
                                 this.$Message.success('审核成功！')
@@ -377,7 +403,7 @@
                     title:'关闭店铺',
                     content:'关闭后，该店铺将无法开展美容邦相关业务，确认关闭该店铺？',
                     onOk(){
-                        let url = common.path+'store/close/'+id;
+                        let url = common.path2+'store/close/'+id;
                         this.$http.put(url).then(res=>{
                             if(res.status==200){
                                 this.$Message.success('关闭成功！')
@@ -386,6 +412,9 @@
                     }
                 });
             },
+            getCity(data){
+                this.cd.cityArr = data
+            }
         },
         mounted: function(){
             this.getData();
@@ -396,7 +425,8 @@
         },
         components:{
             AddPage,
-            EditPage
+            EditPage,
+            CityLinkage
         }
     }
 </script>

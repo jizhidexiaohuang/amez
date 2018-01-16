@@ -329,7 +329,7 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path+"store/front/findByPage?pageNo="+start+'&pageSize='+size;
+                let url = common.path2+"store/front/findByPage?pageNo="+start+'&pageSize='+size;
                 // let url = "http://172.16.20.151:8080/product/front/findByPage?pageNo=1&pageSize=1";
                 let ajaxData = {
                     // pageNo:start,
@@ -452,7 +452,7 @@
                     title:'冻结店铺',
                     content:'冻结后，该店铺将无法交易，确认冻结该店铺？',
                     onOk(){
-                        let url = common.path+'store/freeze/'+id;
+                        let url = common.path2+'store/freeze/'+id;
                         this.$http.put(url).then(res=>{
                             if(res.status==200){
                                 this.$Message.success('冻结成功！')
@@ -469,7 +469,7 @@
                     title:'开启店铺',
                     content:'开启后，该店铺可以继续开展美容邦相关业务，确认开启该店铺？',
                     onOk(){
-                        let url = common.path+'store/open/'+id;
+                        let url = common.path2+'store/open/'+id;
                         this.$http.put(url).then(res=>{
                             if(res.status==200){
                                 this.$Message.success('开启成功！')
@@ -486,7 +486,7 @@
                     title:'关闭店铺',
                     content:'关闭后，该店铺将无法开展美容邦相关业务，确认关闭该店铺？',
                     onOk(){
-                        let url = common.path+'store/close/'+id;
+                        let url = common.path2+'store/close/'+id;
                         this.$http.put(url).then(res=>{
                             if(res.status==200){
                                 this.$Message.success('关闭成功！')

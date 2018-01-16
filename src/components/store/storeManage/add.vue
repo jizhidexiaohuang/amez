@@ -1,10 +1,8 @@
 <template>
   <div class="addPage">
-    
     <Form  ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120">
-        <Row>
-
-          <Col span="12" class="boxStyle">
+        <Row class="testWrap">
+          <div class="boxStyle divBox">
             <h2>新增门店基本资料</h2>          
             <div class="box">
                 <FormItem label="门店名称" prop="storeName">
@@ -13,15 +11,8 @@
                 <FormItem label="门店电话" prop="storeTel">
                     <Input v-model="formValidate.storeTel"></Input>
                 </FormItem>
-                <FormItem label="营业时间">
-                    <Row>
-                        <Col span="11">
-                            <FormItem prop="storeTime">
-                                <!-- <DatePicker type="date" v-model="formValidate.storeTime"></DatePicker> -->
-                                <TimePicker format="HH:mm" :value="formValidate.storeTime" type="timerange" placement="bottom-end"></TimePicker>
-                            </FormItem>
-                        </Col>
-                    </Row>
+                <FormItem label="营业时间" prop="storeTime">
+                    <Input v-model="formValidate.storeTime"></Input>
                 </FormItem>
                 <FormItem label="老板姓名" prop="sellerAccount">
                     <Input v-model="formValidate.sellerAccount"></Input>
@@ -46,21 +37,21 @@
                     </CheckboxGroup>
                 </FormItem>
                 <FormItem label="" prop="">
-                    <Row>
+                    <Row type="flex" justify="start">
                         <Col span="8"><Input v-model="project" class="addProject"></Input></Col>
                         <Button type="primary" class="addBtn" @click="addProject">新增</Button>
                         <Button type="ghost" @click="resetProject">取消</Button>
                     </Row>
                 </FormItem>
                 <FormItem label="是否属于老店" prop="oldStore">
-                    <Row>
+                    <Row type="flex" justify="start">
                         <Col span="8">
                              <RadioGroup v-model="oldStore" @on-change="disabled = !disabled">
                                 <Radio label="1">是</Radio>
                                 <Radio label="0">否</Radio>
                             </RadioGroup>
                         </Col>
-                        <Col span="3">实际经营年限</Col>
+                        <Col span="5">实际经营年限</Col>
                         <Col span="3">
                             <InputNumber :max="10" :min="1" v-model="managerYear" :disabled="disabled"></InputNumber>
                         </Col>
@@ -68,15 +59,15 @@
                     </Row>
                 </FormItem>
                 <FormItem label="店铺地址" prop="">
-                    <Row>
+                    <Row type="flex" justify="start">
                         <Col span="20">
                             <!-- <v-distpicker :placeholders="placeholders" @selected="onSelected"></v-distpicker> -->
                             <CityLinkage :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
                         </Col>
                     </Row>
                 </FormItem>
-                <FormItem label="店铺地址" prop="">
-                    <Row>
+                <FormItem label="店铺详细地址" prop="">
+                    <Row type="flex" justify="start">
                         <Col span="12">
                             <AutoComplete
                             v-model="seat"
@@ -90,23 +81,23 @@
                     </Row>
                 </FormItem>
                 <FormItem label="" prop="">
-                    <Row>
+                    <Row type="flex" justify="start">
                         <Col span="20">
-                            <div id="map" style="height:276px;"></div>
+                            <div id="map" style="height:300px;"></div>
                         </Col>
                     </Row>
                 </FormItem>
                 <div class="box">
                     <FormItem>
-                        <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
-                        <Button type="ghost" @click="handleReset('formValidate')" style="margin:0px 8px;">重置</Button>
+                        <Button type="primary" @click="handleSubmit('formValidate')" style="margin:0px 8px;">保存</Button>
+                        <Button v-if="false" type="ghost" @click="handleReset('formValidate')" style="margin:0px 8px;">重置</Button>
                         <Button type="success" @click.native="returnHome('list')">返回</Button>    
                     </FormItem>
                 </div>
             </div>
-          </Col>  
+          </div>  
 
-          <Col span="12" class="boxStyle">
+          <div class="boxStyle divBox">
             <div class="box" v-show="false">
                 <h3>门店等级</h3>
                 <FormItem label="七星门店" prop="sevenStarStore">
@@ -142,45 +133,65 @@
             <div class="box">
                 <h3>认证照片</h3>
                 <FormItem label="营业执照" prop="">
-                    <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadLicense">
-                        <Button type="ghost" icon="ios-cloud-upload-outline">上传</Button>
+                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadLicense">
+                        <!-- <Button type="ghost" icon="ios-cloud-upload-outline">正面照</Button> -->
+                        <Button v-if="!businessLicense" type="ghost" icon="ios-cloud-upload-outline">上传</Button>
+                        <img v-if="businessLicense" :src="businessLicense" alt="">
                     </Upload>
                 </FormItem>
                 <FormItem label="身份证照片" prop="">
                     <Row>
-                        <Col span="6">
-                            <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadPositivePhoto">
-                                <Button type="ghost" icon="ios-cloud-upload-outline">正面照</Button>
+                        <Col span="8">
+                            <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadPositivePhoto">
+                                <!-- <Button type="ghost" icon="ios-cloud-upload-outline">正面照</Button> -->
+                                <Button v-if="!idcardPositivePhoto" type="ghost" icon="ios-cloud-upload-outline">正面照</Button>
+                                <img v-if="idcardPositivePhoto" :src="idcardPositivePhoto" alt="">
                             </Upload>
+                            <span v-if="idcardPositivePhoto">正面照</span>
                         </Col>
-                        <Col span="6">
-                            <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadNegativePhoto">
-                                <Button type="ghost" icon="ios-cloud-upload-outline">反面照</Button>
+                        <Col span="8">
+                            <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadNegativePhoto">
+                                <!-- <Button type="ghost" icon="ios-cloud-upload-outline">反面照</Button> -->
+                                <Button v-if="!idcardNegativePhoto" type="ghost" icon="ios-cloud-upload-outline">反面照</Button>
+                                <img v-if="idcardNegativePhoto" :src="idcardNegativePhoto" alt="">
                             </Upload>
+                            <span v-if="idcardNegativePhoto">反面照</span>
                         </Col>
-                        <Col span="6">
-                            <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadHandheldPhoto">
-                                <Button type="ghost" icon="ios-cloud-upload-outline">手持照</Button>
+                        <Col span="8">
+                            <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadHandheldPhoto">
+                                <!-- <Button type="ghost" icon="ios-cloud-upload-outline">手持照</Button> -->
+                                <Button v-if="!idcardHandheldPhoto" type="ghost" icon="ios-cloud-upload-outline">手持照</Button>
+                                <img v-if="idcardHandheldPhoto" :src="idcardHandheldPhoto" alt="">
                             </Upload>
+                            <span v-if="idcardHandheldPhoto">手持照</span>
                         </Col>
                     </Row>
                 </FormItem>
                 <FormItem label="门店照片" prop="">
                     <Row>
-                        <Col span="6">
-                            <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadDoorPhoto">
-                                <Button type="ghost" icon="ios-cloud-upload-outline">门头照</Button>
+                        <Col span="8">
+                            <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadDoorPhoto">
+                                <!-- <Button type="ghost" icon="ios-cloud-upload-outline">门头照</Button> -->
+                                <Button v-if="!storeDoorPhoto" type="ghost" icon="ios-cloud-upload-outline">门头照</Button>
+                                <img v-if="storeDoorPhoto" :src="storeDoorPhoto" alt="">
                             </Upload>
+                            <span v-if="storeDoorPhoto">门头照</span>
                         </Col>
-                        <Col span="6">
-                            <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadCashierPhoto">
-                                <Button type="ghost" icon="ios-cloud-upload-outline">收银台</Button>
+                        <Col span="8">
+                            <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadCashierPhoto">
+                                <!-- <Button type="ghost" icon="ios-cloud-upload-outline">收银台</Button> -->
+                                <Button v-if="!storeCashierPhoto" type="ghost" icon="ios-cloud-upload-outline">收银台</Button>
+                                <img v-if="storeCashierPhoto" :src="storeCashierPhoto" alt="">
                             </Upload>
+                            <span v-if="storeCashierPhoto">收银台</span>
                         </Col>
-                        <Col span="6">
-                            <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadInPhoto">
-                                <Button type="ghost" icon="ios-cloud-upload-outline">店内照</Button>
+                        <Col span="8">
+                            <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadInPhoto">
+                                <!-- <Button type="ghost" icon="ios-cloud-upload-outline">店内照</Button> -->
+                                <Button v-if="!storeInPhoto" type="ghost" icon="ios-cloud-upload-outline">店内照</Button>
+                                <img v-if="storeInPhoto" :src="storeInPhoto" alt="">
                             </Upload>
+                            <span v-if="storeInPhoto">店内照</span>
                         </Col>
                     </Row>  
                 </FormItem>
@@ -254,7 +265,7 @@
                 <Col span="4"><Input v-model="formValidate.premiumReceived"></Input></Col>
                 </FormItem>
             </div>
-          </Col> 
+          </div> 
         </Row>
     </Form>
   </div>
@@ -273,11 +284,6 @@
                     type:'linkage'
                 },
                 branchList:[], //渲染所属品牌下拉框数组
-                placeholders: {
-                    province: '------- 省 --------',
-                    city: '--- 市 ---',
-                    area: '--- 区 ---',
-                },//省市区的占位符
                 province:'',//城市级联的值
                 city:'',//城市级联的值
                 erea:'',//城市级联的值
@@ -315,7 +321,7 @@
                 formValidate: {
                     storeName: '',   //店名
                     storeTel:'', //门店电话
-                    storeTime:['09:00','18:30'], //营业时间
+                    storeTime:'', //营业时间
                     date: '',    //开店日期
                     sellerAccount:'',  //老板姓名
                     bossPhone:'',//老板账号
@@ -379,7 +385,6 @@
                 let ajaxData = {
                     store:{
                         storeAddress:this.seat, //店铺详细地址
-                        // areaInfo:this.province+' '+this.city+' '+this.area, //省市区
                         provinceName:this.province,//省
                         cityName:this.city,//市
                         areaName:this.area,//区
@@ -390,6 +395,7 @@
                         storeLongitude:this.mapData.longitude, //经度
                         storeName:this.formValidate.storeName, //店铺名称
                         storeTel:this.formValidate.storeTel, //店铺电话
+                        storeTime:this.formValidate.storeTime, //营业时间
                         bossName:this.formValidate.sellerAccount,//老板姓名
                         bossPhone:this.formValidate.bossPhone,//老板账号
                         sellerName:this.formValidate.storeManagerAccount,//店长姓名
@@ -432,7 +438,7 @@
                     }
                 }
                 console.log(ajaxData)
-                let url = common.path + 'store/add'
+                let url = common.path2 + 'store/add'
                 this.$http.post(
                     url,
                     JSON.stringify(ajaxData),
@@ -484,11 +490,11 @@
             //定位按钮
             orientate(){
                 console.log(this.seat+this.city)
-                let url = common.path + 'store/queryBaiduMapLocation/'+this.seat+'&'+this.city;
+                let url = common.path2 + 'store/findListByBaiduMapLocation/'+this.seat+'/'+this.city;
                 this.$http.get(url).then(res=>{
                     console.log(res)
-                    this.mapData.latitude = res.data[0].location.lat;
-                    this.mapData.longitude = res.data[0].location.lng;
+                    this.mapData.latitude = res.data.data[0].location.lat;
+                    this.mapData.longitude = res.data.data[0].location.lng;
                     console.log(this.mapData.latitude+'--'+this.mapData.longitude)
                     //重新初始化地图
                    this.mapInit(this.mapData.longitude,this.mapData.latitude)
@@ -506,10 +512,10 @@
             },
             //输入关键字联想
             handleSearch (value) {
-                let url = common.path + 'store/queryBaiduMapLocation/'+value+'&'+this.city;
+                let url = common.path2 + 'store/findListByBaiduMapLocation/'+value+'/'+this.city;
                 this.$http.get(url).then(res=>{
                     let storeList = [];
-                    res.data.forEach(item=>{
+                    res.data.data.forEach(item=>{
                         storeList.push(item.name)
                     })
                     console.log(storeList)
@@ -559,7 +565,7 @@
             },
             //获取连锁品牌
             getBranch(){
-                let url = common.path+"storeChainBrand/front/findByPage";
+                let url = common.path2+"storeChainBrand/front/findByPage";
                 let ajaxData = {
                     pageNo:1,
                     pageSize:1000
@@ -621,16 +627,21 @@
         }
     }
     .boxStyle{
-        // padding:10px 5px 10px 5px; 
         border-color: #e9eaec; 
-        // .box{
-        //     background:#fff;
-        //     // padding: 5px;
-        //     border-radius: 5px;
-        // }
-        // .box:hover{
-        //     box-shadow: 0px 0px 5px rgba(0,0,0,0.2);
-        // }
+    }
+    .divBox{
+        flex:1;
+    }
+    .divBox:nth-of-type(1){
+        margin-right:5px;
+    }
+    .divBox:nth-of-type(2){
+        margin-left:5px;
+    }
+    .ivu-row{
+        display: flex;
+        justify-content: space-between;
+        height: auto;
     }
     .boxStyle:nht-of-type(2){
         border-left:6px solid #dddee1;
@@ -648,5 +659,24 @@
     }
     .textAlign{
         text-align: center;
+    }
+    .ivu-upload{
+        img{
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            line-height: 60px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #fff;
+            position: relative;
+            box-shadow: 0 1px 1px rgba(0,0,0,.2);
+            margin-right: 4px;
+        }
+    }
+    .ivu-upload-list{
+        display: none;
     }
 </style>

@@ -129,7 +129,7 @@
             //获取数据
             getData(id){
                 let vm = this
-                let url = common.path+'financialTrade/findDetailById/'+id
+                let url = common.path2+'financialTrade/findDetailById/'+id
                 this.$http.get(url).then(res=>{
                     console.log(res)
                     vm.financialTrade = res.data.data.financialTrade

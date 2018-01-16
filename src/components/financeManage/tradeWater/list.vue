@@ -164,20 +164,18 @@
                         value:'3',
                         label:'退款完成'
                     },{
-                        value:'4',
+                        value:'7',
                         label:'购卡完成'
                     },{
-                        value:'5',
+                        value:'8',
                         label:'充值成功'
                     },
                 ],//订单状态
                 cd:{
                     payTime:[],//评论时间范围
-                    balanceTime:[],//评论时间范围
+                    balanceTime:[],//结算时间范围
                     inputVal:'',
                     selectType:'storeName',
-                    storeStatus:'', //店铺状态下拉框
-                    text:'', //地区
                     transactionType:'',//交易类型
                     payType:'',//支付类型
                     orderStatus:'',//订单状态
@@ -222,7 +220,7 @@
                                 str = '订单退款'
                             }else if(params.row.tradeType==3){
                                 str = '会员卡售卡'
-                            }else{
+                            }else if(params.row.tradeType==4){
                                 str = '会员卡充值'
                             }
                             return h('div',str)
@@ -263,7 +261,7 @@
                             let str = ''
                             if(params.row.payType=='wechatpay'){
                                 str = '微信支付'
-                            }else {
+                            }else if(params.row.payType=='alipay') {
                                 str = '支付宝支付'
                             }
                             return h('div',str)
@@ -370,21 +368,37 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path+"financialTrade/front/findByPage?pageNo="+start+'&pageSize='+size;
-                let ajaxData = {
-                    pageNo:start,
-                    pageSize: size,
-                    tradeType:vm.cd.transactionType,//交易类型
-                    payType:vm.cd.payType,//支付类型
-                    tradeStatus:vm.cd.orderStatus,//订单状态
-                    payTime:vm.cd.payTime,//付款时间
-                    settlementAmount:vm.cd.balanceTime,//结算时间
+                let url = common.path2+"financialTrade/front/findByPage?pageNo="+start+'&pageSize='+size;
+                let ajaxData = {}
+                if(vm.cd.transactionType){
+                    ajaxData.tradeType = vm.cd.transactionType
+                }
+                if(vm.cd.payType){
+                    ajaxData.payType = vm.cd.payType
+                }
+                if(vm.cd.orderStatus){
+                    ajaxData.tradeStatus = vm.cd.orderStatus
+                }
+                if(vm.cd.payTime[0]){
+                    ajaxData.beginPayTime = vm.cd.payTime[0]
+                }
+                if(vm.cd.payTime[1]){
+                    ajaxData.endPayTime = vm.cd.payTime[1]
+                }
+                if(vm.cd.balanceTime[0]){
+                    ajaxData.beginSettlementTime = vm.cd.payTime[0]
+                }
+                if(vm.cd.balanceTime[1]){
+                    ajaxData.endSettlementTime = vm.cd.payTime[1]
+                }
+                if(vm.cd.inputVal){
+                    ajaxData[vm.cd.selectType] = vm.cd.inputVal;
                 }
                 console.log(ajaxData)
                 vm.table.loading = true;
                 this.$http.post(
                     url,
-                    ajaxData,
+                    JSON.stringify(ajaxData),
                     {
                         headers: {
                             'Content-type': 'application/json;charset=UTF-8'
@@ -406,12 +420,11 @@
                 vm.table.size = 10;//页数
                 vm.cd.payTime = [];//支付时间
                 vm.cd.balanceTime = [];//结算时间
-                vm.cd.selectType = 'storeName';// 状态
-                vm.cd.storeStatus = '';// 输入框类型
                 vm.cd.orderStatus = '';//订单状态
-                vm.cd.inputVal = "";// 输入框的值
                 vm.cd.transactionType = '';//订单来源
                 vm.cd.payType = '';//支付类型
+                vm.cd.selectType = 'storeName';// 状态
+                vm.cd.inputVal = "";// 输入框的值
             },
             //导出Excel
             exportData(){

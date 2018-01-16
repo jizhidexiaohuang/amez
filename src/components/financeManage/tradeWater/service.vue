@@ -4,7 +4,7 @@
         <h3 class="transactionTitle">交易详情</h3>
         <div class="transactionDetail">
             <Row>
-                <Col span="8">付款时间：{{common.formatDate(financialTrade.payTime)}}</Col>
+                <Col span="8">付款时间：{{financialTrade.payTime?common.formatDate(financialTrade.payTime):''}}</Col>
                 <Col span="8">订单号：{{financialTrade.orderNo}}</Col>
                 <Col span="8">交易流水号：{{financialTrade.tradeNo}}</Col>
             </Row>
@@ -146,7 +146,7 @@
             //获取数据
             getData(id){
                 let vm = this
-                let url = common.path+'financialTrade/findDetailById/'+id
+                let url = common.path2+'financialTrade/findDetailById/'+id
                 this.$http.get(url).then(res=>{
                     console.log(res)
                     vm.financialTrade = res.data.data.financialTrade

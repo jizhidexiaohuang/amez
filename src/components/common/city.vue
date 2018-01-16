@@ -27,6 +27,7 @@
                 cityList:[],
                 districtList:[],
                 flag:false,
+                exist:false
             }
         },
         props: ["cityConfig"],
@@ -54,25 +55,42 @@
                         // 省
                         let oData = res.data.data.list
                         vm.provinceList = oData;
-                        if(vm.flag){
-                            this.cityArr = []
+                        if(vm.exist){
+                            this.province = vm.cityConfig.cityList[0].value
+                            this.cityArr.splice(num,1,{value:vm.cityConfig.cityList[0].value,label:vm.cityConfig.cityList[0].label})
                         }else{
-                            vm.cityArr.splice(num,1,{value:oData[0].regionId,label:oData[0].regionName})
+                            if(vm.flag){
+                                this.cityArr = []
+                            }else{
+                                vm.cityArr.splice(num,1,{value:oData[0].regionId,label:oData[0].regionName})
+                            }
                         }
                     }
                     if(num==1){
                         // 市
                         let oData = res.data.data.list
                         vm.cityList = oData;
-                        vm.city = oData[0].regionId
-                        vm.cityArr.splice(num,1,{value:oData[0].regionId,label:oData[0].regionName})
+                        if(vm.exist){
+                            vm.city = vm.cityConfig.cityList[1].value
+                            vm.cityArr.splice(num,1,{value:vm.cityConfig.cityList[1].value,label:vm.cityConfig.cityList[1].label})
+                        }else{
+                            vm.city = oData[0].regionId
+                            vm.cityArr.splice(num,1,{value:oData[0].regionId,label:oData[0].regionName})
+                        }
                     }
                     if(num==2){
                         // 区
                         let oData = res.data.data.list
                         vm.districtList = oData;
-                        vm.district = oData[0].regionId
-                        vm.cityArr.splice(num,1,{value:oData[0].regionId,label:oData[0].regionName})
+                        if(vm.exist){
+                            vm.district = vm.cityConfig.cityList[2].value
+                            vm.cityArr.splice(num,1,{value:vm.cityConfig.cityList[2].value,label:vm.cityConfig.cityList[2].label})
+                            vm.exist = false;
+                            vm.cityConfig.cityList = []
+                        }else{
+                            vm.district = oData[0].regionId
+                            vm.cityArr.splice(num,1,{value:oData[0].regionId,label:oData[0].regionName})
+                        }
                     }
                 })
             },
@@ -127,7 +145,7 @@
                         this.cityArr.splice(type-1,1,value)
                     }
                     console.log(this.cityArr)
-                    if(type==3){
+                    if(this.cityArr.length==3){
                         this.$emit('listenCity',this.cityArr)
                     }
                 }else{
@@ -141,9 +159,16 @@
                 this.provinceList = []
                 this.cityList = []
                 this.districtList = []
-            }
+            },
         },
         beforeMount:function(){
+           console.log(this.cityConfig.cityList)
+           if(this.cityConfig.cityList){
+                this.exist = true;
+                this.provinceAndCity(1,0);
+            }          
+        },
+        beforeCreated:function(){
             
         },
         mounted: function(){
