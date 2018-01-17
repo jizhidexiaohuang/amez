@@ -1,36 +1,116 @@
 <template>
   <div class="testWrap">
       <div class="addPage boxStyle">
-           <Table
-                :loading="table.loading" 
-                :data="table.tableData1" 
-                :columns="tableColumns1" 
-                ref="table"
-                stripe
-                border
-                @on-select="fnSelect"
-                @on-select-all="fnSelectAll">
-            </Table>
-            <div style="margin: 10px;overflow: hidden">
-                <div style="float: right;">
-                    <Page 
-                        :total="table.recordsTotal" 
-                        :current="table.pageNun"
-                        show-sizer 
-                        @on-change="changePage"
-                        @on-page-size-change="changeSize">
-                    </Page>
-                </div>
-                <Button style="float:left;" type="success" @click.native="returnHome('list')">返回</Button>
-            </div>
+          <h3>新增商家分组</h3>
+          <Form  ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="100">
+              <FormItem label="分组名称" prop="groupName">
+                  <Input style="width:300px;" v-model="formValidate.groupName"></Input>
+              </FormItem>
+              <FormItem label="选择商家" prop="selectBusiness">
+                  <div class="box">
+                      <div class="header">选择商家</div>
+                      <div class="body">
+                          <div class="leftTable">
+                              <h4>待选门店</h4>
+                              <Form :model="cd" inline>
+                                <FormItem style="margin-bottom:10px; width:480px;">
+                                    <Row>
+                                        <Col span="18">
+                                            <CityLinkage :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
+                                        </Col>
+                                        <Col span="4">
+                                            <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
+                                        </Col>
+                                    </Row>
+                                </FormItem>
+                              </Form>
+                              <Table
+                                :loading="table.loading" 
+                                :data="table.tableData1" 
+                                :columns="tableColumns1" 
+                                ref="table"
+                                stripe
+                                border
+                                @on-select="fnSelect"
+                                @on-select-all="fnSelectAll">
+                              </Table>
+                              <div style="margin: 10px;overflow: hidden">
+                                <div style="float: right;">
+                                    <Page 
+                                    :total="table.recordsTotal" 
+                                    :current="table.pageNun"
+                                    show-sizer 
+                                    @on-change="changePage"
+                                    @on-page-size-change="changeSize">
+                                    </Page>
+                                </div>
+                              </div>
+                          </div>
+                          <div class="rightTable">
+                              <h4>已选门店</h4>
+                              <Form :model="cd" inline>
+                                <FormItem style="margin-bottom:10px; width:480px;">
+                                    <Row>
+                                        <Col span="18">
+                                            <CityLinkage :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
+                                        </Col>
+                                        <Col span="4">
+                                            <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
+                                        </Col>
+                                    </Row>
+                                </FormItem>
+                              </Form>
+                              <Table
+                                :loading="table.loading" 
+                                :data="table.tableData1" 
+                                :columns="tableColumns1" 
+                                ref="table"
+                                stripe
+                                border
+                                @on-select="fnSelect"
+                                @on-select-all="fnSelectAll">
+                              </Table>
+                              <div style="margin: 10px;overflow: hidden">
+                                <div style="float: right;">
+                                    <Page 
+                                    :total="table.recordsTotal" 
+                                    :current="table.pageNun"
+                                    show-sizer 
+                                    @on-change="changePage"
+                                    @on-page-size-change="changeSize">
+                                    </Page>
+                                </div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="footer">
+                          <Button type="primary">确定</Button>
+                          <Button type="ghost">取消</Button>
+                      </div>
+                  </div>
+              </FormItem>
+              <FormItem label="" prop="">
+                  <Button type="primary" @click="handleSubmit('formValidate')" style="margin:0px 8px;">确定</Button>
+                  <Button type="success" @click.native="returnHome('list')">取消</Button>
+              </FormItem>
+          </Form>
       </div>
   </div>
 </template>
 <script>
     import common from '../../../base.js'
+    import CityLinkage from '../../common/city.vue'
     export default {
         data (){
             return {
+                cityConfig:{
+                    key:false,
+                    title:'区域',
+                    type:'select'
+                },
+                cd:{
+
+                },
                 tableColumns1: [
                     {
                         type: 'selection',
@@ -47,7 +127,7 @@
                         render:(h,params)=>{
                             return h('div',params.row.beginUpgradeValue+'--'+params.row.endUpgradeValue)
                         }
-                    },
+                    }
                 ],
                 table:{
                     recordsTotal:0,
@@ -55,6 +135,13 @@
                     loading: false,
                     size: 10,
                     tableData1: [],
+                },
+                formValidate:{
+                    groupName:'',//分组名称
+                    selectBusiness:'',//商家
+                },
+                ruleValidate:{
+
                 }
             }
         },
@@ -70,13 +157,15 @@
                 vm.getData();             
                 // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
             },
+            getCity(data){
+                console.log(data)
+            },
             /* 数据获取 */
             getData () {
                 let vm = this;
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
                 let url = common.path+"storeLevel/findList?pageNo="+start+'&pageSize='+size;
-                // let url = "http://172.16.20.151:8080/product/front/findByPage?pageNo=1&pageSize=1";
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size
@@ -99,7 +188,6 @@
                 }).catch(function(err){
                 })
             },
-            
             /* 页码改变的回掉函数 */
             changeSize (size) {
                 console.log(size);
@@ -153,8 +241,42 @@
             let vm = this;
             vm.fnExistTabList()
         },
+        components:{
+            CityLinkage
+        }
     }
 </script>
 <style lang="scss" scoped>
-
+    h3{
+        padding-bottom:8px;
+        border-bottom:1px solid #dddee1;
+    }
+    form{
+        margin-top:10px;
+    }
+    .box{
+        border:1px solid #dddee1;
+        .header{
+            background: #afb3bd;
+            padding-left:10px;
+            font-size:16px;
+            line-height: 34px;
+        }
+        .footer{
+            background: #afb3bd;
+            text-align: center;
+            height: 45px;
+            line-height: 45px;
+            Button{
+                margin:0 10px;
+            }
+        }
+        .body{
+            display: flex;
+            .leftTable,.rightTable{
+                flex: 1;
+                padding:0px 5px;
+            }
+        }
+    }
 </style>

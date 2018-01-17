@@ -433,7 +433,7 @@
                     storeExtend:{
                         id:this.extendId,
                         companyName:this.formValidate.companyName,//公司名称
-                        businessLicenseUmber:this.formValidate.BusinessLicenseNumber,//营业执照号码
+                        businessLicenseNumber:this.formValidate.BusinessLicenseNumber,//营业执照号码
                         legalPersonName:this.formValidate.LegalPersonName,//法人姓名
                         legalPersonIdcard:this.formValidate.IdCardNum,//身份证号码
                         praBank:this.formValidate.AccountOpeningBank,//商户--开户银行
@@ -456,7 +456,7 @@
                         storeDoorPhoto:this.storeDoorPhoto,//店门照
                         storeCashierPhoto:this.storeCashierPhoto,//收银照
                         storeInPhoto:this.storeInPhoto,//店内照
-                        contract:this.contract,//合同            
+                        contract:this.contract//合同            
                     }
                 }
                 console.log(JSON.stringify(ajaxData))
@@ -657,7 +657,7 @@
                     // if(storeExtend.businessLicense){
                     //     this.businessLicense = true;
                     // }
-                    this.formValidate.BusinessLicenseNumber = storeExtend.businessLicenseUmber?storeExtend.businessLicenseUmber:'532465454554545343'; //营业执照号码
+                    this.formValidate.BusinessLicenseNumber = storeExtend.businessLicenseNumber?storeExtend.businessLicenseNumber:'532465454553'; //营业执照号码
                     this.formValidate.LegalPersonName = storeExtend.legalPersonName?storeExtend.legalPersonName:'艾小美'; //法人姓名
                     this.formValidate.IdCardNum = storeExtend.legalPersonIdcard?storeExtend.legalPersonIdcard:'532465454554545343'; //身份证号码
                     this.formValidate.AccountOpeningBank = storeExtend.praBank?storeExtend.praBank:'工商银行'; //开户银行

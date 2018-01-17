@@ -2,7 +2,7 @@
   <div class="testWrap">
     <div class="infoPage boxStyle">
     <Steps :current="progress">
-        <Step title="提交订单" :content="common.formatDate(orderBase.applyTime)"></Step>
+        <Step title="提交订单" :content="orderBase.applyTime?common.formatDate(orderBase.applyTime):''"></Step>
         <Step title="付款时间" :content="showTime(orderBase.applyTime)"></Step>
         <Step title="服务开始时间" :content="showTime(orderBase.applyTime)"></Step>
         <Step title="服务完成" :content="showTime(orderBase.applyTime)"></Step>

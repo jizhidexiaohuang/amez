@@ -306,10 +306,10 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path+"orderReturn/front/findByPage";
+                let url = common.path+"orderReturn/front/findByPage?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
-                    pageNo:start,
-                    pageSize: size,
+                    // pageNo:start,
+                    // pageSize: size,
                 }
                 if(vm.cd.orderType){
                     ajaxData.returnType = vm.cd.orderType //类型
@@ -368,7 +368,7 @@
                         //申请状态
                         if(data.returnStatus=='2'){
                             data.returnStatus = '申请中'
-                        }else{
+                        }else if(data.returnStatus=='3'){
                             data.returnStatus = '申请成功'
                         }
                         //退换货类型

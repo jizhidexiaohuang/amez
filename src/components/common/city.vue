@@ -94,6 +94,7 @@
                     }
                 })
             },
+            //省市区筛选
             provinceAndCitySelect(parentId,num){
                 if(!parentId){
                     return false;
@@ -114,8 +115,9 @@
                 ).then(res=>{
                     if(num==0){
                         // 省
-                        let oData = res.data.data.list
-                        vm.provinceList = oData;
+                        let oData = res.data.data.list;
+                        oData.unshift({regionId:'',regionName:'全部'});
+                        vm.provinceList = oData
                         if(vm.flag){
                             this.cityArr = []
                         }else{
@@ -125,6 +127,7 @@
                     if(num==1){
                         // 市
                         let oData = res.data.data.list
+                        oData.unshift({regionId:'',regionName:'全部'});
                         vm.cityList = oData;
                         this.district = ''
                         this.districtList = []
@@ -132,10 +135,12 @@
                     if(num==2){
                         // 区
                         let oData = res.data.data.list
+                        oData.unshift({regionId:'',regionName:'全部'});
                         vm.districtList = oData;
                     }
                 })
             },
+            //select改变的事件
             getValue(value,type){
                 console.log(value)
                 console.log(type)
@@ -155,6 +160,7 @@
                     this.$emit('listenCity',this.cityArr)
                 }
             },
+            //清除选中项
             clearCity(){
                 this.provinceList = []
                 this.cityList = []
