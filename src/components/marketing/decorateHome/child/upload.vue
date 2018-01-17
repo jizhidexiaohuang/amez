@@ -1,24 +1,30 @@
 <template>
     <div>
-        <div class="demo-upload-list" v-for="(item,index) in uploadList" v-dragging="{ item: item, list:uploadList,group:'myId'}" :key="item.myId">
+        <div class="demo-upload-list clear" v-for="(item,index) in uploadList" v-dragging="{ item: item, list:uploadList,group:'myId'}" :key="item.myId">
+            <div style="position: absolute; right:20px; top:1px; font-size:20px; z-index:999; cursor: pointer;">
+                <Icon type="ios-trash-outline" @click.native="handleRemove(item,index)"></Icon>
+            </div>
             <template v-if="item.status === 'finished'">
                 <img style="width:60px; height:60px;" :src="item.url">
-                <div class="demo-upload-list-cover">
-                    <Icon type="ios-eye-outline" @click.native="handleView(item,index)"></Icon>
-                    <Icon type="ios-trash-outline" @click.native="handleRemove(item,index)"></Icon>
-                </div>
                 <div class="demo-upload-text" style="">
-                    <!--
-                    <div>
-                        <input type="text" placeholder="请输入链接地址"/>
-                    </div>
-                    <div>
-                        <input type="text" placeholder="请输入链接地址"/>
-                    </div>
-                    -->
-                    <Form label-position="left">
+                    <Form label-position="left" v-if="!!uploadConfig.src">
                         <FormItem label="链接">
                             <Input class="aText" v-model="item.src" placeholder="请输入链接地址"></Input>
+                        </FormItem>
+                    </Form>
+                    <Form label-position="left" v-if="!!uploadConfig.name">
+                        <FormItem label="名称">
+                            <Input class="aText" v-model="item.name" placeholder="请输入名称"></Input>
+                        </FormItem>
+                    </Form>
+                    <Form label-position="left" v-if="!!uploadConfig.title1">
+                        <FormItem label="一级">
+                            <Input class="aText" v-model="item.title1" placeholder="请输入名称"></Input>
+                        </FormItem>
+                    </Form>
+                    <Form label-position="left" v-if="!!uploadConfig.title2">
+                        <FormItem label="二级">
+                            <Input class="aText" v-model="item.title2" placeholder="请输入名称"></Input>
                         </FormItem>
                     </Form>
                 </div>
@@ -39,7 +45,7 @@
             :before-upload="handleBeforeUpload"
             multiple
             type="drag"
-            action="http://120.79.42.13:8080/system/api/file/uploadFile"
+            action="http://120.79.42.13:8081/system/api/file/uploadFile"
             style="display: inline-block;width:58px;">
             <div style="width: 58px;height:58px;line-height: 58px;">
                 <Icon type="camera" size="20"></Icon>
@@ -70,14 +76,6 @@
             },
             handleRemove (file,i) {
                 let vm = this;
-                /* let curArrs = [];
-                let oldArrs = vm.uploadList;
-                oldArrs.forEach(function(item,index){
-                    if(i!=index){
-                        curArrs.push(item)
-                    }
-                });
-                vm.uploadList = curArrs; */
                 const fileList = this.$refs.upload.fileList;
                 this.$refs.upload.fileList.splice(fileList.indexOf(file), 1);
                 this.$emit("listenUpload",this.uploadList);
@@ -85,7 +83,7 @@
             handleSuccess (res, file) {
                 // file.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar';
                 file.url = res.data;
-                file.name = '7eb99afb9d5f317c912f08b5212fd69a';
+                file.name = '';
                 file.src = '';
                 file.myId = +(new Date());
                 this.$emit("listenUpload",this.uploadList);
@@ -134,7 +132,6 @@
         width:100%;
         border: 1px solid transparent;
         border-radius: 4px;
-        overflow: hidden;
         position: relative;
         margin-right: 4px;
         box-shadow: 0 1px 1px rgba(0,0,0,.2);
@@ -144,32 +141,12 @@
     .demo-upload-list img{
         width: 100%;
         height: 100%;
-    }
-    .demo-upload-list-cover{
-        line-height: 60px;
-        display: none;
-        position: absolute;
-        height: 60px;
-        top: 0px;
-        left: 0;
-        right: 0;
-        background: rgba(0,0,0,.6);
-        width: 60px; text-align:center;
-    }
-    .demo-upload-list:hover .demo-upload-list-cover{
-        display: block;
-    }
-    .demo-upload-list-cover i{
-        color: #fff;
-        font-size: 20px;
-        cursor: pointer;
-        margin: 0 2px;
+        float: left;
     }
     .demo-upload-text{
-        position:absolute;
-        height: 60px; 
-        left: 70px; right: 0px; 
-        top: 0px;
+        height: auto;
+        overflow: hidden;
+        padding-left: 15px;
     }
     .demo-upload-text div input{
         background: #fff;

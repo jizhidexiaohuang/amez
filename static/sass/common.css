@@ -27,3 +27,22 @@
   z-index: 1;
   padding: 10px 10px 10px 10px;
 }
+
+.clear:after {
+  content: '';
+  display: block;
+  clear: both;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.clear {
+  zoom: 1;
+}
+
+.line {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

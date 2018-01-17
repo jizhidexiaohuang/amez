@@ -1,6 +1,17 @@
 <template>
-    <div :class="['item','banner-item',curIndex == index?'active':'']">
+    <div :class="['item','clear','banner-item',curIndex == index?'active':'']">
         <!-- 显示区域 {{ oData.data.text }} -->
+        <div class="aServerItem" v-for="(item,index) in uploadList">
+            <div class="severIcon">
+                <img :src="imgArrs[index]" />
+            </div>
+            <div class="severName line">
+                {{ item.name }}
+            </div>
+        </div>
+      
+
+        <!--
         <div class="title">
             <div class="aItem">
                 <img v-for="(item,index) in imgArrs" :src="item" v-show="curImg == index"/>
@@ -9,10 +20,11 @@
                 </ul>
             </div>
         </div>
+        -->
         <!-- 编辑区域 -->
         <div class="item-edit-box" v-if="curIndex == index">
             <div class="edit-box-inner">
-                <h3 style="width:90%; margin-left:5%; line-height: 30px;">轮播图</h3>
+                <h3 style="width:90%; margin-left:5%; line-height: 30px;">服务类型图</h3>
                 <Form style="padding:15px 10px;">
                     <FormItem label="" v-if="testCode">
                         <MyUpload :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
@@ -41,9 +53,9 @@
             return {
                 /* 属于改编辑模块的数据风格，根据父组件的数据 */
                 oData:{
-                    type: 'Banner', // 编辑类型
+                    type: 'Server', // 编辑类型
                     data: {
-                        text: '区域1',
+                        text: '区域2',
                         imgList: [],
                     }, // 数据
                 }, 
@@ -54,9 +66,9 @@
                 defaultList: [], // 上传控件默认显示的图片
                 /* 上传控件的配置 */
                 uploadConfig: { 
-                    num:6,// 上传图片的数量限制
-                    name: false, // 是否显示名称
-                    src: true, // 是否显示链接
+                    num:8,// 上传图片的数量限制
+                    name: true,// 是否显示名称
+                    src: true,// 是否显示链接
                 },
                 uploadList:[],// 用来保存图片上传之后的数据，最终提交的时候，是根据这个变量来拿的
                 testCode: false, 
@@ -68,8 +80,6 @@
             /* 根据父组件传递过来的数据初始化数据 */
             fnInitData () {
                 let vm = this;
-                console.log(1111111111);
-                console.log(vm.datas);
                 vm.oData = !!!vm.datas?vm.oData:vm.datas;
                 vm.fnInitBox();
             },
@@ -78,9 +88,9 @@
                 let vm = this;
                 let oData = vm.oData.data;
                 vm.edit.value = oData.text;
-                vm.defaultList = [];
-                vm.defaultList = oData.imgList;
-                vm.uploadList = oData.imgList;
+                vm.defaultList = []; // 默认滞空
+                vm.defaultList = oData.imgList; // 传过来的数据赋值给默认数组
+                vm.uploadList = oData.imgList; // 保存要提交的数据
                 vm.fnGetArrs();
                 vm.testCode = true;
             },
@@ -90,14 +100,14 @@
                 // vm.oData.data.text = vm.edit.value;
                 vm.oData.data.imgList = vm.uploadList;
             },
-            /* 确定替换数据 */
+            /* 确定替换数据,也就是更新左侧的视图,并且把数据返回给父组件 */
             fnHandleSubmit () {
                 let vm = this;
                  /* 把编辑区域的数据替换到要提交的数据里边 */
                 vm.changeData();
                 let obj = vm.oData;
                 vm.fnGetArrs();
-                vm.curImg = 0;
+                vm.curImg = 0; // 默认轮播图显示第一张
                 vm.$emit('getData', obj); 
             },
             /* 删除模块 */
@@ -105,12 +115,13 @@
                 let vm = this;
                 vm.$emit('deleteModal');
             },
-            // 获取图片列表
+            // 上传成功之后,把数组赋值给uploadList;
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = data;
-                vm.fnHandleSubmit();
+                vm.fnHandleSubmit(); // 上传成功之后就刷新实时区域的显示效果
             },
+            // 重新组织数据,因为img遍历不出是数组元素是对象的图片路径
             fnGetArrs () {
                 let vm = this;
                 vm.imgArrs = [];
@@ -120,6 +131,7 @@
                     })
                 }
             },
+            // 轮播图的控制
             fnChangeImg (index) {
                 let vm = this;
                 vm.curImg = index;
@@ -143,17 +155,40 @@
     };
 </script>
 <style lang='scss' scoped>
-    .item{
+.item{
     position: relative;
+    clear:both;
 }
 .banner-item{
     width: 100%;
-    height: 150px;
+    min-height: 94px;
+    clear: both;
     border: 2px solid #ccc;
     .title{
         width: 100%; height: 100%;
         text-align:center;
-        line-height: 150px;
+        line-height: 70px;
+    }
+    .aServerItem{
+        width: 25%;
+        float: left;
+        height: 90px;
+        .severIcon{
+            width: 55px; height: 55px; 
+            margin: 0 auto;
+            margin-top: 5px;
+            img{
+                border-radius: 50%;
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+        }
+        .severName{
+            text-align: center;
+            height: 28px; line-height: 28px;
+            width: 100%;
+        }
     }
 }
 .item-edit-box{

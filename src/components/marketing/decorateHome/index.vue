@@ -1,5 +1,5 @@
 <template>
-    <div class="boxStyle">
+    <div class="">
         <div style="position:fixed; right:50px; bottom:20px;">
             <Button @click="fnDoSome" type="primary">添加模块</Button> 
         </div>
@@ -8,7 +8,7 @@
                 <div></div>
             </div>
             <div class="body">
-                <div class="aItem" v-for="(item,index) in list">
+                <div class="aItem" v-for="(item,index) in list"  :class="['aItem',item.type == 'Footer'?'footerItem':'']">
                     <component v-on:getData="fnGetDataFromChild" v-on:deleteModal="fnDeleteModal" :index="index" :curIndex="curIndex" :datas="item" v-bind:is="item.type" @click.native="fnTest(index)"></component>
                 </div>
             </div>
@@ -21,6 +21,10 @@
 </template>
 <script>
     import Banner from './child/banner.vue'
+    import Server from './child/server.vue'
+    import Activity from './child/activity.vue'
+    import Footer from './child/footer.vue'
+    import Shop from './child/shop.vue'
     export default {
         data () {
             return {
@@ -34,10 +38,11 @@
             fnGeData () {
                 let vm = this;
                 let arrs = [
+                    /* 轮播图 */
                     {
                         type: 'Banner', // 编辑类型
                         data: {
-                            text: '区域1',
+                            text: '轮播图',
                             imgList:[
                                 {
                                     url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg",
@@ -57,24 +62,118 @@
                             ]
                         }, // 数据
                     },
+                    /* 服务分类图 */
                     {
-                        type: 'Banner', // 编辑类型
+                        type: 'Server', // 编辑类型
                         data: {
-                            text: '区域2',
+                            text: '服务分类图',
                             imgList:[
                                 {
                                     url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg",
                                     src:"http://www.baidu.com",
+                                    name: '美容',
                                     myId: 4,
                                 },
                                 {
                                     url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg",
                                     src:"http://www.baidu.com",
+                                    name: '养生',
                                     myId: 5
+                                },
+                            ]
+                        }, // 数据 
+                    },
+                    /* 活动区 */
+                    {
+                        type: 'Activity', // 编辑类型
+                        data: {
+                            text: '活动类型图',
+                            imgList:[
+                                {
+                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg",
+                                    src:"http://www.baidu.com",
+                                    title1: '智能测肤',
+                                    title2: '智能测肤等你来体验',
+                                    myId: 6,
+                                },
+                                {
+                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg",
+                                    src:"http://www.baidu.com",
+                                    title1: '钟意TA',
+                                    title2: '智能测肤中意的那个ta',
+                                    myId: 7
+                                },
+                                {
+                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg",
+                                    src:"http://www.baidu.com",
+                                    title1: '闺蜜团购',
+                                    title2: '和闺蜜一起变美吧',
+                                    myId: 8
+                                },
+                                {
+                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg",
+                                    src:"http://www.baidu.com",
+                                    title1: '会员卡',
+                                    title2: '超多优惠等你来拿',
+                                    myId: 9
                                 }
                             ]
-                        }, // 数据
+                        }, // 数据 
                     },
+                    /* 商品区 */
+                    {
+                        type: 'Shop', // 
+                        data: {
+                            text: '商品区',
+                            imgList:[
+                                {
+                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg",
+                                    src:"http://www.baidu.com",
+                                    name: '美容',
+                                    myId: 11,
+                                },
+                                {
+                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg",
+                                    src:"http://www.baidu.com",
+                                    name: '养生',
+                                    myId: 12
+                                },
+                            ]
+                        }, // 数据 
+                    },
+                    /* 底部菜单 */
+                    {
+                        type: 'Footer', // 编辑类型
+                        data: {
+                            text: '底部菜单',
+                            imgList:[
+                                {
+                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg",
+                                    src:"http://www.baidu.com",
+                                    name: '美容',
+                                    myId: 4,
+                                },
+                                {
+                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg",
+                                    src:"http://www.baidu.com",
+                                    name: '美店',
+                                    myId: 5
+                                },
+                                {
+                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg",
+                                    src:"http://www.baidu.com",
+                                    name: '订单',
+                                    myId: 5
+                                },
+                                {
+                                    url:"http://120.79.42.13:82/group1/M00/00/0A/rBJ85FpZ0AiAVyu2AAHptOKNRTE839.jpg",
+                                    src:"http://www.baidu.com",
+                                    name: '我的',
+                                    myId: 5
+                                },
+                            ]
+                        }, // 数据 
+                    }
                 ]
                 vm.list = arrs;
             },
@@ -156,6 +255,10 @@
         },
         components:{
             Banner,
+            Server,
+            Activity,
+            Footer,
+            Shop
         }
     }
 </script>
@@ -165,6 +268,7 @@
     margin-top: 50px;
     width: 320px; min-height: 500px;
     position:relative;
+    background: #fff;
     .header{
         height: 50px; line-height: 50px; 
         width: 100%;
@@ -198,10 +302,18 @@
         border-left: 9px solid #000;
         border-right: 9px solid #000;
         min-height: 500px;
+        padding-bottom: 60px;
     }
 }
 .aItem{
     position: relative;
     width: 100%;
+}
+.footerItem{
+    position: absolute;
+    bottom: 50px;
+    right: 9px;
+    left: 9px;
+    width: unset;
 }
 </style>

@@ -1,12 +1,30 @@
 <template>
     <div>
-        <!-- 模态框 -->
+        <!-- 上下架 模态框 -->
         <Modal
             v-model="modal.mineModal"
             title="修改状态"
             :loading="modal.loading"
             @on-ok="fnAsyncOK">
             {{ modal.info }}
+        </Modal>
+        <!-- 审核 模态框 -->
+        <Modal
+            v-model="audit.mineModal"
+            title="审核品牌"
+            :loading="audit.loading"
+            @on-ok="fnAsyncOK1">
+            <Form>
+                <FormItem label="审核状态">
+                    <RadioGroup v-model="audit.auditStatus">
+                        <Radio label="1">已审核</Radio>
+                        <Radio label="2">不通过</Radio>
+                    </RadioGroup>
+                </FormItem>
+                <FormItem label="审核原因">
+                    <Input v-model="audit.auditReason" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入审核原因"></Input>
+                </FormItem>
+            </Form>
         </Modal>
         <!-- 新增容器 -->
         <AddPage v-if="pageType == 'add'" :sendChild="sendChild"  class="testWrap" v-on:returnList="changePageType"/>
@@ -54,7 +72,7 @@
 		                <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     </Col>
                     <Col span="3" offset="11" >
-                        <Button style="float:right;" @click.native="changePageType('add')" type="success" icon="android-add">发布服务</Button>
+                        <Button style="float:right;" v-if="!!!storeId" @click.native="changePageType('add')" type="success" icon="android-add">发布服务</Button>
                     </Col>
                 </Row>
                 <Table
@@ -94,6 +112,13 @@
                     info: '确定要上架？',
                     id:"",
                     storeId:"",//店铺id
+                },
+                audit:{
+                    mineModal: false,
+                    loading: true,
+                    auditStatus: '0', // 审核状态
+                    auditReason: '', // 审核原因
+                    id: '' 
                 },
                 cd:{
                     time:[],//评论时间范围
@@ -179,7 +204,7 @@
                         {
                             title: '操作',
                             key: 'action',
-                            width: 180,
+                            width: 220,
                             // align: 'center',
                             // fixed: 'right',
                             render: (h, params) => {
@@ -205,7 +230,26 @@
                                                 this.fnShowModal();
                                             }
                                         }
-                                    }, text)
+                                    }, text),
+                                    h('Button', {
+                                        props: {
+                                            type: 'primary',
+                                            size: 'small'
+                                        },
+                                        style: {
+                                            marginRight: '5px'
+                                        },
+                                        on: {
+                                            click: () => {
+                                                let row = params.row;
+                                                this.audit.id = row.id;
+                                                this.audit.auditStatus = row.auditStatus;
+                                                this.audit.auditReason = row.auditReason;
+                                                this.fnShowModal1();
+                                                // this.fnDeleteItem(params.row.id);
+                                            }
+                                        }
+                                    }, '审核')
                                 ]
                                 let obj1 = h('Button', {
                                     props: {
@@ -278,7 +322,6 @@
             },
             /* 数据获取 */
             getData (init) {
-                
                 let beginReleaseTime = this.common.formatDate(new Date(this.cd.time[0]));
                 let endReleaseTime = this.common.formatDate(new Date(this.cd.time[1]));
                 let vm = this;
@@ -411,13 +454,15 @@
                 }
                 vm.modal.mineModal = true;
             },
+            fnShowModal1 () {
+                let vm = this;
+                vm.audit.mineModal = true;
+            },
             /* 模态框的点击确定事件 */
             fnAsyncOK () {
                 let vm = this;
                 let id = vm.modal.id;
                 let type = vm.modal.type;
-                
-                
                 (function(){
                     let saleStatus = type == 0?1:0;
                     let url = vm.common.path2 + "product/modify/saleStatus/brand/"+id+"/"+saleStatus;
@@ -432,60 +477,29 @@
                         console.log(err);
                         vm.getData();
                     })
-                })()
-                
-
-                return false;
-                if(!!!vm.storeId){
-                    /* 平台管理员上下架 */
-                    let url = vm.common.path2 + "products/update";
-                    let ajaxData = {
-                        saleStatus : type == 0?1:0,
-                        // productId: id,
-                        id: id,
-                        isEnabled: 0,
-                    }
-                    console.log(ajaxData);
-                    vm.$http.put(
-                        url,
-                        ajaxData,
-                        {
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        }
-                    ).then(function(res){
-                        console.log(res);
-                        vm.getData();
-                        vm.modal.loading = true;
-                        vm.modal.mineModal = false;
-                    }).catch(function(err){
-                        console.log(err);
-                        vm.getData();
-                    })
-                }else{
-                    /* 店长上下架 */
-                    let url = vm.common.path2 + "productStoreRefs/updateProductStoreRef"
-                    let ajaxData = {
-                        saleStatus : type == 0?1:0,
-                        id: id,
-                        // productId: id,
-                        isEnabled: 0,
-                        storeId: vm.storeId
-                    }
-                    vm.$http.post(
-                        url,
-                        ajaxData
-                    ).then(function(res){
-                        console.log(res);
-                        vm.getData();
-                        vm.modal.loading = true;
-                        vm.modal.mineModal = false;
-                    }).catch(function(err){
-                        console.log(err);
-                        vm.getData();
-                    })
+                })();
+            },
+            /* 审核的模态框点击确定事件 */
+            fnAsyncOK1 () {
+                let vm = this;
+                let id = vm.audit.id;
+                let auditStatus = vm.audit.auditStatus;
+                let ajaxData = {
+                    "auditReason": vm.audit.auditReason
                 }
+                let url = vm.common.path2 + "product/modify/auditStatus/"+id+"/"+auditStatus+"?auditReason="+vm.audit.auditReason;
+                console.log(url);
+                vm.$http.put(
+                    url,
+                    ajaxData,
+                ).then(function(res){
+                    console.log(res);
+                    vm.getData();
+                    vm.audit.loading = true;
+                    vm.audit.mineModal = false;
+                }).catch(function(err){
+                    console.log(err);
+                })
             },
             // 服务分类接口数据
             fnGetProductCategory () {
@@ -546,8 +560,8 @@
         mounted: function(){
             let vm = this;
             /* 模拟身份 */
-            vm.storeId = 4;// 店长
-            // vm.storeId = "";// 管理员
+            // vm.storeId = 4;// 店长
+            vm.storeId = "";// 管理员
             this.fnGetProductCategory();
             this.fnGetStoreChainBrand();
             this.getData();
@@ -564,5 +578,7 @@
     }
 </script>
 <style scoped>
-
+.margin-bottom{
+    margin-bottom: 0px;
+}
 </style>

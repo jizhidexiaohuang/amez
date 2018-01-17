@@ -40,8 +40,10 @@ const common = {
         } 
     })(3),
     /* 富文本 */
-    // path1:"http://172.16.20.151:8080/",
-    path1:"http://120.79.42.13:8080/",
+    
+    path1:"http://172.16.20.151:8081/",
+    // path1:"http://app.tnzyclub.com/ftp/bg/uploadForKindeditor/",
+    // path1:"http://120.79.42.13:8081/",
     /* 用户信息 */
     u: (function(){
         let data = JSON.parse(window.localStorage.getItem("userInfo"));

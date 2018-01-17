@@ -107,7 +107,7 @@
                     tableData1: [],//数据
                     //table头
                     tableColumns: [
-                         {
+                         /* {
                             type: 'expand',
                             width: 50,
                             render: (h, params) => {
@@ -117,7 +117,7 @@
                                     }
                                 })
                             }
-                        }, 
+                        },  */
                         {
                             title: '分类名称',
                             key: 'categoryName',
@@ -152,7 +152,7 @@
                             // fixed: 'right',
                             render: (h, params) => {
                                 return h('div', [
-                                     h('Button', {
+                                     /* h('Button', {
                                         props: {
                                             type: 'primary',
                                             size: 'small'
@@ -167,7 +167,7 @@
                                                 this.changePageType('addChild');
                                             }
                                         }
-                                    }, '添加子分类'), 
+                                    }, '添加子分类'),  */
                                     h('Button', {
                                         props: {
                                             type: 'primary',

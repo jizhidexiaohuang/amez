@@ -163,7 +163,7 @@
                                 }, text);
                             }
                         },
-                        {
+                        /* {
                             title: '审核结果',
                             key: 'auditStatus',
                             render: (h,params) => {
@@ -177,7 +177,7 @@
                                     }
                                 }, text);
                             }
-                        },
+                        }, */
                         {
                             title: '门店（e）',
                             key: 'salePrice',

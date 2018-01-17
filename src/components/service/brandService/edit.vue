@@ -65,7 +65,7 @@
                     <Checkbox label="补水">补水</Checkbox>
                 </CheckboxGroup>
             </FormItem>
-            <FormItem label="审核结果">
+            <FormItem label="审核结果" v-if="false">
                 <RadioGroup v-model="formValidate.auditStatus">
                     <Radio label="0">待审核</Radio>
                     <Radio label="1">通过</Radio>
@@ -153,24 +153,6 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         //添加品牌服务
-                        /* let ajaxData = {
-                            storeId:vm.storeId,
-                            type: vm.formValidate.type, // 服务分类
-                            brandId: vm.formValidate.brandId, // 服务所属品牌
-                            serverName: vm.formValidate.serverName, // 服务名称
-                            originalPrice: vm.formValidate.originalPrice, // 市场价
-                            salePrice: vm.formValidate.salePrice, // 服务销售价
-                            serverBookType: vm.formValidate.serverBookType,// 预约方式 1上门 2到店
-                            visitPrice: vm.formValidate.serverBookType == 2?vm.formValidate.visitPrice:"",// 上门费
-                            coverImg: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
-                            serverAttention: vm.formValidate.serverAttention, // 注意事项
-                            serverNeedTime: vm.formValidate.serverNeedTime, // 服务总时长
-                            serverEffect: JSON.stringify(vm.formValidate.serverEffect), // 功效
-                            serverIntroduce: vm.formValidate.serverIntroduce, // 服务详情
-                            id:vm.sendChild.itemId, // id
-                            isBrand: vm.sendChild.isBrand,// 服务分类
-                            auditStatus: vm.formValidate.auditStatus, // 审核结果
-                        } */
                         let ajaxData = {};
                         /* 商品 */
                         ajaxData.product = {

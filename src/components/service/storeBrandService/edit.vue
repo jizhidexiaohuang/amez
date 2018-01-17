@@ -65,7 +65,7 @@
                     <Checkbox label="补水">补水</Checkbox>
                 </CheckboxGroup>
             </FormItem>
-            <FormItem label="审核结果">
+            <FormItem label="审核结果" v-if="false">
                 <RadioGroup v-model="formValidate.auditStatus">
                     <Radio label="0">待审核</Radio>
                     <Radio label="1">通过</Radio>
@@ -78,6 +78,7 @@
                     :loadStyleMode="false"
                     @on-content-change="onContentChange"
                     v-model="formValidate.serverIntroduce"
+                    type="post"
                 ></editor>
             </FormItem>
             <FormItem>
@@ -137,7 +138,7 @@
                 },
                 uploadList:[],//图片列表
                 // path:"http://172.16.20.151:8009/system/api/file/uploadForKindeditor"
-                path:this.common.path21+"system/api/file/uploadForKindeditor",
+                path:this.common.path1+"system/api/file/uploadForKindeditor",
                 testCode: false,
                 serviceList:[],// 产品分类
                 brandList:[],// 品牌分类
