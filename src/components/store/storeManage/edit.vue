@@ -459,7 +459,7 @@
                         contract:this.contract//合同            
                     }
                 }
-                console.log(JSON.stringify(ajaxData))
+                // console.log(JSON.stringify(ajaxData))
                 let url = common.path2 + 'store/modify'
                 this.$http.put(
                     url,
@@ -657,21 +657,21 @@
                     // if(storeExtend.businessLicense){
                     //     this.businessLicense = true;
                     // }
-                    this.formValidate.BusinessLicenseNumber = storeExtend.businessLicenseNumber?storeExtend.businessLicenseNumber:'532465454553'; //营业执照号码
-                    this.formValidate.LegalPersonName = storeExtend.legalPersonName?storeExtend.legalPersonName:'艾小美'; //法人姓名
-                    this.formValidate.IdCardNum = storeExtend.legalPersonIdcard?storeExtend.legalPersonIdcard:'532465454554545343'; //身份证号码
-                    this.formValidate.AccountOpeningBank = storeExtend.praBank?storeExtend.praBank:'工商银行'; //开户银行
-                    this.formValidate.OpeningArea = storeExtend.praArea?storeExtend.praArea:'广东省深圳市罗湖区'; //开户地区
-                    this.formValidate.bankBranch = storeExtend.praBankBranch?storeExtend.praBankBranch:'东门支行'; //支行名称
-                    this.formValidate.accountName = storeExtend.praAccountName?storeExtend.praAccountName:'美业一店'; //开户名称
-                    this.formValidate.BankCardNumber = storeExtend.praBankCardNumber?storeExtend.praBankCardNumber:'420621789652526656'; //银行卡号
-                    this.formValidate.eraBank = storeExtend.eraBank?storeExtend.eraBank:'工商银行'; //企业--开户银行
-                    this.formValidate.eraArea = storeExtend.eraArea?storeExtend.eraArea:'广东省深圳市罗湖区'; //企业--开户地区
-                    this.formValidate.eraBankBranch = storeExtend.eraBankBranch?storeExtend.eraBankBranch:'东门支行'; //企业--支行名称
-                    this.formValidate.eraCompanyName = storeExtend.eraCompanyName?storeExtend.eraCompanyName:'美业一店'; //企业--公司名称
-                    this.formValidate.eraBankCardNumber = storeExtend.eraBankCardNumber?storeExtend.eraBankCardNumber:'420621789652526656'; //企业--银行卡号
+                    this.formValidate.BusinessLicenseNumber = storeExtend.businessLicenseNumber; //营业执照号码
+                    this.formValidate.LegalPersonName = storeExtend.legalPersonName; //法人姓名
+                    this.formValidate.IdCardNum = storeExtend.legalPersonIdcard; //身份证号码
+                    this.formValidate.AccountOpeningBank = storeExtend.praBank; //开户银行
+                    this.formValidate.OpeningArea = storeExtend.praArea; //开户地区
+                    this.formValidate.bankBranch = storeExtend.praBankBranch; //支行名称
+                    this.formValidate.accountName = storeExtend.praAccountName; //开户名称
+                    this.formValidate.BankCardNumber = storeExtend.praBankCardNumber; //银行卡号
+                    this.formValidate.eraBank = storeExtend.eraBank; //企业--开户银行
+                    this.formValidate.eraArea = storeExtend.eraArea; //企业--开户地区
+                    this.formValidate.eraBankBranch = storeExtend.eraBankBranch; //企业--支行名称
+                    this.formValidate.eraCompanyName = storeExtend.eraCompanyName; //企业--公司名称
+                    this.formValidate.eraBankCardNumber = storeExtend.eraBankCardNumber; //企业--银行卡号
                     this.marginPaymentStatus = storeExtend.marginPaymentStatus?'1':'0'; //保证金缴纳状态
-                    this.formValidate.premiumReceived = storeExtend.paymentAmount?storeExtend.paymentAmount:'1000'; //缴纳金额
+                    this.formValidate.premiumReceived = storeExtend.paymentAmount; //缴纳金额
                 })
             },
             //获取连锁品牌

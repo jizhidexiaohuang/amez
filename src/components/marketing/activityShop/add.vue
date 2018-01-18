@@ -16,7 +16,7 @@
                                 <FormItem style="margin-bottom:10px; width:480px;">
                                     <Row>
                                         <Col span="18">
-                                            <CityLinkage :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
+                                            <CityLinkage :cityConfig="cityConfig" v-on:listenCity="v=>{getCity(v,1)}"></CityLinkage>
                                         </Col>
                                         <Col span="4">
                                             <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
@@ -52,7 +52,7 @@
                                 <FormItem style="margin-bottom:10px; width:480px;">
                                     <Row>
                                         <Col span="18">
-                                            <CityLinkage :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
+                                            <CityLinkage :cityConfig="cityConfig" v-on:listenCity="v=>{getCity(v,2)}"></CityLinkage>
                                         </Col>
                                         <Col span="4">
                                             <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
@@ -109,7 +109,8 @@
                     type:'select'
                 },
                 cd:{
-
+                    cityArr1:[],
+                    cityArr2:[]
                 },
                 tableColumns1: [
                     {
@@ -157,8 +158,14 @@
                 vm.getData();             
                 // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
             },
-            getCity(data){
+            getCity(data,type){
                 console.log(data)
+                console.log(type)
+                if(type==1){
+                    this.cityArr1 = data;
+                }else if(type==2){
+                    this.cityArr2 = data;
+                }
             },
             /* 数据获取 */
             getData () {

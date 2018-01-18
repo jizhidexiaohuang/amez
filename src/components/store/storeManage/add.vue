@@ -6,25 +6,25 @@
             <h2>新增门店基本资料</h2>          
             <div class="box">
                 <FormItem label="门店名称" prop="storeName">
-                    <Input v-model="formValidate.storeName"></Input>
+                    <Input v-model="formValidate.storeName" placeholder="请输入门店名称"></Input>
                 </FormItem>
                 <FormItem label="门店电话" prop="storeTel">
-                    <Input v-model="formValidate.storeTel"></Input>
+                    <Input v-model="formValidate.storeTel" placeholder="请输入门店电话"></Input>
                 </FormItem>
                 <FormItem label="营业时间" prop="storeTime">
-                    <Input v-model="formValidate.storeTime"></Input>
+                    <Input v-model="formValidate.storeTime" placeholder="请输入营业时间"></Input>
                 </FormItem>
                 <FormItem label="老板姓名" prop="sellerAccount">
-                    <Input v-model="formValidate.sellerAccount"></Input>
+                    <Input v-model="formValidate.sellerAccount" placeholder="请输入老板真实姓名"></Input>
                 </FormItem>
                 <FormItem label="老板账号" prop="bossPhone">
-                    <Input v-model="formValidate.bossPhone"></Input>
+                    <Input v-model="formValidate.bossPhone" placeholder="请填写注册手机号，非常重要！！"></Input>
                 </FormItem>
                 <FormItem label="店长姓名" prop="storeManagerAccount">
-                    <Input v-model="formValidate.storeManagerAccount"></Input>
+                    <Input v-model="formValidate.storeManagerAccount" placeholder="请输入店长真实姓名"></Input>
                 </FormItem>
                 <FormItem label="店长账号" prop="sellerPhone">
-                    <Input v-model="formValidate.sellerPhone"></Input>
+                    <Input v-model="formValidate.sellerPhone" placeholder="请填写注册手机号，非常重要！！"></Input>
                 </FormItem>
                 <FormItem label="所属品牌" prop="branch">
                     <Select v-model="formValidate.branch">
@@ -38,7 +38,7 @@
                 </FormItem>
                 <FormItem label="" prop="">
                     <Row type="flex" justify="start">
-                        <Col span="8"><Input v-model="project" class="addProject"></Input></Col>
+                        <Col span="8"><Input v-model="project" class="addProject" placeholder="新增主营项目"></Input></Col>
                         <Button type="primary" class="addBtn" @click="addProject">新增</Button>
                         <Button type="ghost" @click="resetProject">取消</Button>
                     </Row>
@@ -204,52 +204,52 @@
             <div class="box">
                 <h3>商户信息</h3>
                 <FormItem label="公司名称" prop="companyName">
-                    <Input v-model="formValidate.companyName"></Input>
+                    <Input v-model="formValidate.companyName" placeholder="请输入公司名称"></Input>
                 </FormItem>
                 <FormItem label="营业执照号码" prop="BusinessLicenseNumber">
-                    <Input v-model="formValidate.BusinessLicenseNumber"></Input>
+                    <Input v-model="formValidate.BusinessLicenseNumber" placeholder="请输入营业执照号码"></Input>
                 </FormItem>
                 <FormItem label="法人姓名" prop="LegalPersonName">
-                    <Input v-model="formValidate.LegalPersonName"></Input>
+                    <Input v-model="formValidate.LegalPersonName" placeholder="请输入法人姓名"></Input>
                 </FormItem>
                 <FormItem label="身份证号码" prop="IdCardNum">
-                    <Input v-model="formValidate.IdCardNum"></Input>
+                    <Input v-model="formValidate.IdCardNum" placeholder="请输入身份证号码"></Input>
                 </FormItem>
             </div>
             <div class="box">
                 <h3>企业收款账号</h3>
                 <FormItem label="开户银行" prop="eraBank">
-                    <Input v-model="formValidate.eraBank"></Input>
+                    <Input v-model="formValidate.eraBank" placeholder="请输入开户银行"></Input>
                 </FormItem>
                 <FormItem label="开户地区" prop="eraArea">
-                    <Input v-model="formValidate.eraArea"></Input>
+                    <Input v-model="formValidate.eraArea" placeholder="请输入开户地区"></Input>
                 </FormItem>
                 <FormItem label="支行名称" prop="eraBankBranch">
-                    <Input v-model="formValidate.eraBankBranch"></Input>
+                    <Input v-model="formValidate.eraBankBranch" placeholder="请输入支行名称"></Input>
                 </FormItem>
                 <FormItem label="公司名称" prop="eraCompanyName">
-                    <Input v-model="formValidate.eraCompanyName"></Input>
+                    <Input v-model="formValidate.eraCompanyName" placeholder="请输入公司名称"></Input>
                 </FormItem>
                 <FormItem label="银行卡号" prop="eraBankCardNumber">
-                    <Input v-model="formValidate.eraBankCardNumber"></Input>
+                    <Input v-model="formValidate.eraBankCardNumber" placeholder="请输入银行卡号"></Input>
                 </FormItem>
             </div>
             <div class="box">
                 <h3>商户个人收款账号</h3>
                 <FormItem label="开户银行" prop="AccountOpeningBank">
-                    <Input v-model="formValidate.AccountOpeningBank"></Input>
+                    <Input v-model="formValidate.AccountOpeningBank" placeholder="请输入开户银行"></Input>
                 </FormItem>
                 <FormItem label="开户地区" prop="OpeningArea">
-                    <Input v-model="formValidate.OpeningArea"></Input>
+                    <Input v-model="formValidate.OpeningArea" placeholder="请输入开户地区"></Input>
                 </FormItem>
                 <FormItem label="支行名称" prop="bankBranch">
-                    <Input v-model="formValidate.bankBranch"></Input>
+                    <Input v-model="formValidate.bankBranch" placeholder="请输入支行名称"></Input>
                 </FormItem>
                 <FormItem label="开户名称" prop="accountName">
-                    <Input v-model="formValidate.accountName"></Input>
+                    <Input v-model="formValidate.accountName" placeholder="请输入开户名称"></Input>
                 </FormItem>
                 <FormItem label="银行卡号" prop="BankCardNumber">
-                    <Input v-model="formValidate.BankCardNumber"></Input>
+                    <Input v-model="formValidate.BankCardNumber" placeholder="请输入银行卡号"></Input>
                 </FormItem>
             </div>
             <div class="box">
@@ -262,7 +262,7 @@
                     </Select>
                 </FormItem>
                 <FormItem label="缴纳金额" prop="premiumReceived">
-                <Col span="4"><Input v-model="formValidate.premiumReceived"></Input></Col>
+                <Col span="4"><Input v-model="formValidate.premiumReceived" placeholder="缴纳金额"></Input></Col>
                 </FormItem>
             </div>
           </div> 

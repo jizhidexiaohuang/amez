@@ -8,11 +8,20 @@
                     <FormItem label="账户名称" prop="accountName">
                         <Input type="text" v-model="formCustom.accountName" placeholder="3-15位字符，可由中文、英文、数字及“_”、“-”组成"></Input>
                     </FormItem>
+                    <FormItem label="昵称" prop="nickName">
+                        <Input type="text" v-model="formCustom.nickName" placeholder="3-15位字符，可由中文、英文、数字及“_”、“-”组成"></Input>
+                    </FormItem>
                     <FormItem label="登陆密码" prop="passwd">
                         <Input type="password" v-model="formCustom.passwd" placeholder="6-20位字符，可由英文、数字及标点符号组成"></Input>
                     </FormItem>
                     <FormItem label="确认密码" prop="passwdCheck">
                         <Input type="password" v-model="formCustom.passwdCheck" placeholder="再次确认密码"></Input>
+                    </FormItem>
+                    <FormItem label="用户类型" prop="userType">
+                        <RadioGroup v-model="formCustom.userType">
+                            <Radio label="admin">后台用户</Radio>
+                            <Radio label="front">前台用户</Radio>
+                        </RadioGroup>
                     </FormItem>
                     <FormItem label="账号状态">
                         <i-switch v-model="formCustom.accountStatus">
@@ -60,9 +69,11 @@
                 formCustom:{
                     userGroup:'',//用户组
                     accountName:'',//账号名称
+                    nickName:'',//昵称
                     passwd:'',//登陆密码
                     passwdCheck:'',//确认密码
                     accountStatus:true,//账号状态
+                    userType:'admin'
                 },
                 ruleCustom: {
                     passwd: [
@@ -72,6 +83,9 @@
                         { validator: validatePassCheck, trigger: 'blur' }
                     ],
                     accountName: [
+                        { require:true,min:3,max:15,message: '请输入3-15位字符！', trigger: 'blur'  }
+                    ],
+                    nickName: [
                         { require:true,min:3,max:15,message: '请输入3-15位字符！', trigger: 'blur'  }
                     ]
                 }
@@ -93,9 +107,11 @@
                         loginName:this.formCustom.accountName,//登陆名
                         password:this.formCustom.passwd,//登陆密码
                         isDisabled:this.status,//用户状态 0 启用 1 禁用
+                        nickName:this.formCustom.nickName,//昵称
+                        userType:this.formCustom.userType,//用户类型
                     }
                     let url = common.path2+'baseUsers/insert';
-                    console.log(ajaxData)
+                    console.log(JSON.stringify(ajaxData))
                     this.$http.post(
                         url,
                         ajaxData,
@@ -115,6 +131,9 @@
                     }
                 })
             },
+            handleReset(name){
+                this.$refs[name].resetFields();
+            }
         },
         watch: {
            

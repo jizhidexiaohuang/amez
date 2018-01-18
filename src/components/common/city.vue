@@ -154,6 +154,15 @@
                         this.$emit('listenCity',this.cityArr)
                     }
                 }else{
+                    if(value.value==''&&type==1){
+                        this.city = ''
+                        this.cityList = []
+                        this.district = ''
+                        this.districtList = []
+                    }else if(value.value==''&&type==2){
+                        this.district = ''
+                        this.districtList = []
+                    }
                     this.cityArr.splice(type-1,1,value)
                     this.provinceAndCitySelect(value.value,type)
                     console.log(this.cityArr)
@@ -170,9 +179,11 @@
         beforeMount:function(){
            console.log(this.cityConfig.cityList)
            if(this.cityConfig.cityList){
-                this.exist = true;
-                this.provinceAndCity(1,0);
-            }          
+               if(this.cityConfig.cityList[0].value){
+                    this.exist = true;
+                    this.provinceAndCity(1,0);
+                } 
+           }
         },
         beforeCreated:function(){
             
