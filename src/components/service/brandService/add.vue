@@ -139,7 +139,7 @@
                 path:this.common.path2+"system/api/file/uploadForKindeditor",
                 serviceList:[],// 产品分类
                 brandList:[],// 品牌分类
-                storeId: 4,//店铺id
+                storeId: '',//店铺id
             }
         },
         props: ["sendChild"],
@@ -265,6 +265,11 @@
             },
         },
         mounted: function(){
+            let storeId = JSON.parse(window.localStorage.getItem("userInfo")).storeId;
+            let vm = this;
+            if(storeId!='null'){
+                vm.storeId = storeId;
+            }
             this.fnGetProductCategory();
             // this.fnGetStoreChainBrand();
         },

@@ -142,7 +142,7 @@
                 serviceList:[],// 产品分类
                 brandList:[],// 品牌分类
                 spinShow: false,// 加载开关
-                storeId:4,//店铺id
+                storeId:'',//店铺id
             }
         },
         props: ["sendChild"],

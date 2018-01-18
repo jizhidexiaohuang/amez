@@ -269,7 +269,7 @@
                     itemId: "", // 编辑选项的id
                     isBrand: 1,// 服务分类
                 },
-                storeId:4,//店铺id
+                storeId:'',//店铺id
             }
         },
         methods: {
@@ -421,28 +421,6 @@
                         vm.getData();
                     })
                 })()
-
-
-                return false
-                let url = vm.common.path2 + "productStoreRefs/updateProductStoreRef"
-                let ajaxData = {
-                    saleStatus : type == 0?1:0,
-                    productId: id,
-                    // storeId: vm.modal.storeId
-                    storeId:4
-                }
-                vm.$http.post(
-                    url,
-                    ajaxData
-                ).then(function(res){
-                    console.log(res);
-                    vm.getData();
-                    vm.modal.loading = true;
-                    vm.modal.mineModal = false;
-                }).catch(function(err){
-                    console.log(err);
-                    vm.getData();
-                })
             },
             // 服务分类接口数据
             fnGetProductCategory () {
@@ -502,6 +480,11 @@
             },
         },
         mounted: function(){
+            let storeId = JSON.parse(window.localStorage.getItem("userInfo")).storeId;
+            let vm = this;
+            if(storeId!=null){
+                vm.storeId = storeId;
+            }
             this.fnGetProductCategory();
             this.fnGetStoreChainBrand();
             this.getData();

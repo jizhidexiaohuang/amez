@@ -1,5 +1,5 @@
 <template>
-    <div class="login" @keydown.enter="fnHandleSubmit">
+    <div class="login" :style="backgroundDiv" @keydown.enter="fnHandleSubmit">
         <div class="longin-box">
             <div class="inner">
                 <div class="title">美容邦管理后台</div>
@@ -22,11 +22,6 @@
                 </div>
                 <div class="btn" @click="fnHandleSubmit">登录</div>
                 <div class="footer">账号、密码及权限问题请与超级管理员联系</div>
-
-
-
-                <button @click="fnDoSome('test1')">test1</button>
-                <button @click="fnDoSome('test2')">test2</button>
             </div>
         </div>
     </div>
@@ -44,21 +39,9 @@ export default {
             },
             type:1, // 登录类型
             codeText: '获取验证码',//获取验证码的文字变化
-
-
-
-            baseList:[
-                {
-                    "code":0,
-                    "name":"test1"
-                },
-                {
-                    "code":0,
-                    "name":"test2"
-                }
-            ],
-            menuList:[],
-            mytype: 'test1'
+            backgroundDiv: {
+               backgroundImage: 'url(' + require('../../static/images/web_bg.png') + ')',
+            }
         };
     },
     activated:function(){
@@ -211,28 +194,6 @@ export default {
                 })
             }
         },
-
-        fnDoSome (type) {
-            let vm = this;
-            vm.mytype = type;
-            vm.changeData();
-        },
-        changeData () {
-            let vm = this;
-            let arrs = [];
-            vm.baseList.forEach(function(item,index){
-                var obj = {};
-                obj = JSON.parse((JSON.stringify(item)));
-                // obj = item;
-                if(vm.mytype == 'test1'){
-                    obj.code = 1;
-                }
-                arrs.push(obj);
-            });
-            vm.menuList = arrs;
-            console.log(vm.menuList);
-        },
-
     },
     components:{
         
@@ -243,12 +204,13 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <!--
 background-image: url('http://mrb.amez999.com/group1/M00/00/0E/rBJ85FpgOfOAbljGAAYauz6GYKE102.png');
+
+background-image: url('../../static/images/web_bg.png');
 -->
 <style scoped>
 .login{
     width: 100%;
     height: 100%;
-    background-image: url('../../static/images/web_bg.png');
     background-size: cover;
     background-position: center;
     position: relative;

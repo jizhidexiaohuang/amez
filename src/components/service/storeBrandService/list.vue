@@ -72,7 +72,7 @@
 		                <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     </Col>
                     <Col span="3" offset="11" >
-                        <Button style="float:right;" v-if="!!!storeId" @click.native="changePageType('add')" type="success" icon="android-add">发布服务</Button>
+                        <Button style="float:right;" v-if="!!isShow" @click.native="changePageType('add')" type="success" icon="android-add">发布服务</Button>
                     </Col>
                 </Row>
                 <Table
@@ -281,7 +281,7 @@
                                             }
                                         }
                                     }, '编辑');
-                                if(!!!this.storeId){
+                                if(!!this.isShow){
                                     arrs.unshift(obj);
                                     arrs.push(obj1);
                                 }
@@ -300,7 +300,9 @@
                     isBrand: 0,// 服务分类
                 },
                 // 店铺ID
-                storeId:""
+                storeId:"",
+                // 如果是店长进来，就不显示一些按钮
+                isShow:true,
             }
         },
         methods: {
@@ -345,9 +347,10 @@
                     pageSize: size,
                     isBrand: vm.cd.isBrand
                 }
-                if(!!vm.storeId){
+                /* 需要传storeId 就放开 */
+                /* if(!!!vm.isShow){
                     ajaxData.storeId = vm.storeId
-                }
+                } */
                 if(!!vm.cd.saleStatus){
                     ajaxData.saleStatus = vm.cd.saleStatus;
                 }
@@ -559,9 +562,14 @@
         },
         mounted: function(){
             let vm = this;
-            /* 模拟身份 */
-            // vm.storeId = 4;// 店长
-            vm.storeId = "";// 管理员
+            let storeId = JSON.parse(window.localStorage.getItem("userInfo")).storeId;
+            // let storeId = null;
+            if(storeId!=null){
+                vm.storeId = storeId;
+                vm.isShow = false; // 隐藏
+            }else{
+                vm.isShow = true;
+            }
             this.fnGetProductCategory();
             this.fnGetStoreChainBrand();
             this.getData();
