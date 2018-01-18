@@ -73,8 +73,8 @@
                                     <DropdownItem>
                                         <a @click="changePassWord">修改密码</a>
                                     </DropdownItem>
-                                    <DropdownItem>
-                                        <a @click="backHome">退出</a>
+                                    <DropdownItem @click.native="backHome">
+                                        <a>退出</a>
                                     </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
@@ -226,7 +226,7 @@ export default {
         this.addItem();
         this.fnBreadcrumb();//更新面包屑
         if(!!window.localStorage.getItem("userInfo")){
-            let userName = JSON.parse(window.localStorage.getItem("userInfo")).user.loginName;
+            let userName = JSON.parse(window.localStorage.getItem("userInfo")).user.nickName;
             this.user.name = userName;
         }
     },
@@ -312,9 +312,9 @@ export default {
             let arrs = common.menuList;
             let vm = this;
             console.log(vm.$store.getters.adminInfo.menu);
+            vm.menu.menuList = arrs;  // 不走存储拿菜拿菜单数据
             if(window.localStorage.getItem("userInfo")){
                 // vm.menu.menuList = JSON.parse(window.localStorage.getItem("userInfo")).menu;
-                vm.menu.menuList = arrs;
                 vm.fnMenuChange();
             }
         },

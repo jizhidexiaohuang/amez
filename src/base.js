@@ -41,8 +41,8 @@ const common = {
     })(3),
     /* 富文本 */
     
-    path1:"http://172.16.20.151:8081/",
-    // path1:"http://app.tnzyclub.com/ftp/bg/uploadForKindeditor/",
+    // path1:"http://172.16.20.151:8081/",
+    path1:"http://mrb.amez999.com/pc/",
     // path1:"http://120.79.42.13:8081/",
     /* 用户信息 */
     u: (function(){
@@ -194,6 +194,11 @@ const common = {
                     name:"角色管理",
                     hasChildList: false,
                     href:"/manage/departmentManage"
+                },
+                {
+                    name:"菜单权限管理",
+                    hasChildList: false,
+                    href:"/manage/menuManage"
                 },
                 {
                     name:"操作日志",
