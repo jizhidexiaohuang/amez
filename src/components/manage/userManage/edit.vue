@@ -8,11 +8,20 @@
                     <FormItem label="账户名称" prop="accountName">
                         <Input type="text" v-model="formCustom.accountName" placeholder="3-15位字符，可由中文、英文、数字及“_”、“-”组成"></Input>
                     </FormItem>
+                     <FormItem label="昵称" prop="nickName">
+                        <Input type="text" v-model="formCustom.nickName" placeholder="3-15位字符，可由中文、英文、数字及“_”、“-”组成"></Input>
+                    </FormItem>
                     <FormItem label="登陆密码" prop="passwd">
                         <Input type="password" v-model="formCustom.passwd" placeholder="6-20位字符，可由英文、数字及标点符号组成"></Input>
                     </FormItem>
                     <FormItem label="确认密码" prop="passwdCheck">
                         <Input type="password" v-model="formCustom.passwdCheck" placeholder="再次确认密码"></Input>
+                    </FormItem>
+                    <FormItem label="用户类型" prop="userType">
+                        <RadioGroup v-model="formCustom.userType">
+                            <Radio label="admin">后台用户</Radio>
+                            <Radio label="front">前台用户</Radio>
+                        </RadioGroup>
                     </FormItem>
                     <FormItem label="账号状态">
                         <i-switch v-model="formCustom.accountStatus">
@@ -55,15 +64,23 @@
                     callback();
                 }
             };
+            const validateAge = (rule, value, callback) => {
+                if (!value) {
+                    return callback(new Error('不能为空!'));
+                }
+                callback()
+            };
             return {
                 data:'',//渲染的数据
                 status:0,//状态
                 formCustom:{
                     userGroup:'',//用户组
                     accountName:'',//账号名称
+                    nickName:'',//昵称
                     passwd:'',//登陆密码
                     passwdCheck:'',//确认密码
                     accountStatus:true,//账号状态
+                    userType:'', //用户类型
                 },
                 ruleCustom: {
                     passwd: [
@@ -73,7 +90,10 @@
                         { validator: validatePassCheck, trigger: 'blur' }
                     ],
                     accountName: [
-                        { require:true,min:3,max:15,message: '请输入3-15位字符！', trigger: 'blur'  }
+                        { validator: validateAge, require:true,min:3,max:15,message: '请输入3-15位字符！', trigger: 'blur'  }
+                    ],
+                    nickName: [
+                        { validator: validateAge, require:true,min:3,max:15,message: '请输入3-15位字符！', trigger: 'blur'  }
                     ]
                 }
             }
@@ -86,15 +106,17 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         if(this.formCustom.accountStatus==true){
-                        this.status = 0
-                    }else{
-                        this.status = 1
-                    }
+                            this.status = 0
+                        }else{
+                            this.status = 1
+                        }
                     let ajaxData = {
                         userId:this.message,
                         loginName:this.formCustom.accountName,//登陆名
                         password:this.formCustom.passwd,//登陆密码
                         isDisabled:this.status,//用户状态 0 启用 1 禁用
+                        nickName:this.formCustom.nickName,//昵称
+                        userType:this.formCustom.userType,//用户类型
                     }
                     let url = common.path2+'baseUsers/update';
                     console.log(ajaxData)
@@ -122,11 +144,13 @@
             let url = common.path2+'baseUsers/'+id
             this.$http.get(url).then(res=>{
                 console.log(res)
-                this.data = res.data.data
-                this.formCustom.accountName = this.data.loginName;
-                this.formCustom.passwd = this.data.password;
-                this.formCustom.passwdCheck = this.data.password;
-                if(this.data.isDisabled==0){
+                let oData = res.data.data
+                this.formCustom.accountName = oData.loginName;
+                this.formCustom.passwd = oData.password;
+                this.formCustom.passwdCheck = oData.password;
+                this.formCustom.nickName = oData.nickName;
+                this.formCustom.userType = oData.userType;
+                if(oData.isDisabled==0){
                     this.formCustom.accountStatus = true
                 }else{
                     this.formCustom.accountStatus = false

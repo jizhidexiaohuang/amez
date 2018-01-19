@@ -64,6 +64,12 @@
                     callback();
                 }
             };
+            const validateAge = (rule, value, callback) => {
+                if (!value) {
+                    return callback(new Error('不能为空!'));
+                }
+                callback()
+            };
             return {
                 status:0,//状态
                 formCustom:{
@@ -73,7 +79,7 @@
                     passwd:'',//登陆密码
                     passwdCheck:'',//确认密码
                     accountStatus:true,//账号状态
-                    userType:'admin'
+                    userType:'admin' //用户类型
                 },
                 ruleCustom: {
                     passwd: [
@@ -83,10 +89,10 @@
                         { validator: validatePassCheck, trigger: 'blur' }
                     ],
                     accountName: [
-                        { require:true,min:3,max:15,message: '请输入3-15位字符！', trigger: 'blur'  }
+                        { validator: validateAge, require:true,min:3,max:15,message: '请输入3-15位字符！', trigger: 'blur'  }
                     ],
                     nickName: [
-                        { require:true,min:3,max:15,message: '请输入3-15位字符！', trigger: 'blur'  }
+                        { validator: validateAge, require:true,min:3,max:15,message: '请输入3-15位字符！', trigger: 'blur'  }
                     ]
                 }
             }
@@ -98,11 +104,11 @@
             handleSubmit (name) {
                 this.$refs[name].validate((valid) => {
                     if (valid) {
-                         if(this.formCustom.accountStatus==true){
-                        this.status = 0
-                    }else{
-                        this.status = 1
-                    }
+                        if(this.formCustom.accountStatus==true){
+                            this.status = 0
+                        }else{
+                            this.status = 1
+                        }
                     let ajaxData = {
                         loginName:this.formCustom.accountName,//登陆名
                         password:this.formCustom.passwd,//登陆密码
