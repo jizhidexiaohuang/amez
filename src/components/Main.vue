@@ -312,9 +312,9 @@ export default {
             let arrs = common.menuList;
             let vm = this;
             console.log(vm.$store.getters.adminInfo.menu);
-            vm.menu.menuList = arrs;  // 不走存储拿菜拿菜单数据
+            // vm.menu.menuList = arrs;  // 不走存储拿菜拿菜单数据
             if(window.localStorage.getItem("userInfo")){
-                // vm.menu.menuList = JSON.parse(window.localStorage.getItem("userInfo")).menu;
+                vm.menu.menuList = JSON.parse(window.localStorage.getItem("userInfo")).menu;
                 vm.fnMenuChange();
             }
         },

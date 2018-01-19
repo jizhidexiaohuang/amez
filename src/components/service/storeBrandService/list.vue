@@ -303,6 +303,7 @@
                 storeId:"",
                 // 如果是店长进来，就不显示一些按钮
                 isShow:true,
+                brandId:'', // 品牌id
             }
         },
         methods: {
@@ -346,6 +347,9 @@
                     pageNo:start,
                     pageSize: size,
                     isBrand: vm.cd.isBrand
+                }
+                if(!!vm.brandId){
+                    ajaxData.brandId = vm.brandId;
                 }
                 /* 需要传storeId 就放开 */
                 /* if(!!!vm.isShow){
@@ -562,10 +566,11 @@
         },
         mounted: function(){
             let vm = this;
-            let storeId = JSON.parse(window.localStorage.getItem("userInfo")).storeId;
+            let store = JSON.parse(window.localStorage.getItem("userInfo")).store;
             // let storeId = null;
-            if(storeId!=null){
-                vm.storeId = storeId;
+            if(store!=null){
+                vm.storeId = store.storeId;
+                vm.brandId = store.brandId;
                 vm.isShow = false; // 隐藏
             }else{
                 vm.isShow = true;

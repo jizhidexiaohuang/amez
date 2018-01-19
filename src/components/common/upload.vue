@@ -24,7 +24,7 @@
             :before-upload="handleBeforeUpload"
             multiple
             type="drag"
-            action="http://120.79.42.13:8080/system/api/file/uploadFile"
+            action="http://mrb.amez999.com/pc/system/api/file/uploadFile"
             style="display: inline-block;width:58px;">
             <div style="width: 58px;height:58px;line-height: 58px;">
                 <Icon type="camera" size="20"></Icon>

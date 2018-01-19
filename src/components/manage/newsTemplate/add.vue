@@ -14,6 +14,9 @@
                     <Radio label="2">短信推广</Radio>
                 </RadioGroup>
             </FormItem>
+            <FormItem label="短信模板" prop="">
+                <Input v-model="formValidate.smsTemplate" type="textarea" :autosize="{minRows: 3,maxRows: 5}" placeholder="请填写短信模板..."></Input>
+            </FormItem>
             <FormItem label="备注" prop="">
                 <Input v-model="formValidate.remarks" type="textarea" :autosize="{minRows: 3,maxRows: 5}" placeholder="请填写备注..."></Input>
             </FormItem>
@@ -36,6 +39,7 @@
                     smsCode: '',// 短信编码
                     smsType: '0',// 短信类型
                     remarks: '',// 备注
+                    smsTemplate: '', // 模板
                 },
                 ruleValidate: {
                 },
@@ -55,6 +59,7 @@
                             smsCode: vm.formValidate.smsCode, // 短信编码
                             smsType: vm.formValidate.smsType, // 短信类型
                             remarks: vm.formValidate.remarks, // 备注
+                            smsTemplate: vm.formValidate.smsTemplate, // 备注
                         }
                         console.log(ajaxData);
                         let url = vm.common.path2+"baseSmsTemplates/insert";

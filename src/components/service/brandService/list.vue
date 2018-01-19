@@ -270,6 +270,7 @@
                     isBrand: 1,// 服务分类
                 },
                 storeId:'',//店铺id
+                brandId: '', // 品牌id
             }
         },
         methods: {
@@ -310,7 +311,9 @@
                     pageNo:start,
                     pageSize: size,
                     isBrand: vm.cd.isBrand,
-                    storeId:vm.storeId
+                }
+                if(!!vm.storeId){
+                    ajaxData.storeId = vm.storeId;
                 }
                 if(!!vm.cd.saleStatus){
                     ajaxData.saleStatus = vm.cd.saleStatus;
@@ -480,10 +483,10 @@
             },
         },
         mounted: function(){
-            let storeId = JSON.parse(window.localStorage.getItem("userInfo")).storeId;
+            let store = JSON.parse(window.localStorage.getItem("userInfo")).store;
             let vm = this;
-            if(storeId!=null){
-                vm.storeId = storeId;
+            if(store!=null){
+                vm.storeId = store.id;
             }
             this.fnGetProductCategory();
             this.fnGetStoreChainBrand();
