@@ -32,16 +32,14 @@
                         <InputNumber :max="10" :min="1" v-model="item.sort"></InputNumber>
                     </Col>
                     <Col span="3" style="text-align:center;padding-top:10px;">
-                        <!-- <MyUpload :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList">
-                            <button @click="getIndex(item.index)"></button>
-                        </MyUpload> -->
-                        <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="getUploadList">
+                        <MyUpload v-if="logoCtrl" :defaultList="defaultList[index]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,index)}"></MyUpload>
+                        <!-- <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="getUploadList">
                             <Button v-if="!item.levelLogo" type="ghost" icon="ios-cloud-upload-outline" @click="getIndex(index)">上传Logo</Button>
                             <div class="imgBox">
                                 <img v-if="item.levelLogo" :src="item.levelLogo" alt=""  @click="getIndex(index)">
                                 <div class="cover" @click="getIndex(index)"><Icon type="ios-cloud-upload-outline"></Icon></div>
                             </div>
-                        </Upload>
+                        </Upload> -->
                     </Col>
                     <Col span="2" offset="1">
                         <Button type="error" @click="handleRemove(index)">删除</Button>
@@ -70,6 +68,7 @@
     export default {
         data () {
             return {
+                logoCtrl:false,
                 defaultList:[],//默认图片
                 index: 1,
                 ajaxArr:[],//提交的数据
@@ -127,18 +126,21 @@
                 })
             },
             //照片上传
-            getUploadList(data){
+            getUploadList(data,index){
                 let vm = this;
-                vm.formDynamic.items[vm.logoIndex].status = 0
-                vm.formDynamic.items[vm.logoIndex].levelLogo = data.data;
-                console.log(data.data)
-                vm.formDynamic.items[vm.logoIndex].status = 1
+                console.log(data)
+                console.log(index)
+                vm.formDynamic.items[index].status = 0
+                if(data[0]){
+                    vm.formDynamic.items[index].levelLogo = data[0].url;
+                }
+                vm.formDynamic.items[index].status = 1
             },
             //获取index
-            getIndex(index){
-                this.logoIndex = index;
-                console.log(index)
-            },
+            // getIndex(index){
+            //     this.logoIndex = index;
+            //     console.log(index)
+            // },
             //取消
             handleReset (name) {
                 this.$refs[name].resetFields();
@@ -180,6 +182,9 @@
                     console.log(data)
                     this.formDynamic.items = []
                     for(var i=0;i<data.length;i++){
+                        let levelLogoArr = [];
+                        levelLogoArr.push({url:data[i].levelLogo});
+                        this.defaultList.push(levelLogoArr);
                         this.formDynamic.items.push({
                             gradeName:data[i].levelName,
                             startValue:data[i].beginUpgradeValue,
@@ -191,6 +196,8 @@
                         })
                         this.index = i+1
                     }
+                    this.logoCtrl = true
+                    console.log(this.defaultList)
                 })
             }
         },

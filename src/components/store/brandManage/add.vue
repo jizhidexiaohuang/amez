@@ -97,8 +97,10 @@
             },
             getUploadList(data){
                 let vm = this;
-                vm.brandLogo = data[0].response.data;
-                console.log(data[0].response.data);
+                console.log(data)
+                if(data[0]){
+                    vm.brandLogo = data[0].response.data;
+                }
             }
         },
         components:{

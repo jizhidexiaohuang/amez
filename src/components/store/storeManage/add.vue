@@ -256,7 +256,6 @@
                 <h3>保证金缴纳</h3>
                 <FormItem label="保证金缴纳状态" prop="">
                     <Select style="width:80px" v-model="marginPaymentStatus">
-                        <!-- <Option v-for="item in storeStatus" :value="item.value" :key="item.value">{{ item.label }}</Option> -->
                         <Option value="true">已缴纳</Option>
                         <Option value="false">未缴纳</Option>
                     </Select>

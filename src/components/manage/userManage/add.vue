@@ -123,12 +123,12 @@
                     ).then(res=>{
                         if(res.status==200){
                             this.$Message.success('提交成功!');
+                            this.returnHome()
+                        }else{
+                            this.$Message.error('失败!');
                         }
                     })
-                        this.returnHome()
-                    } else {
-                        this.$Message.error('失败!');
-                    }
+                    } 
                 })
             },
             handleReset(name){
