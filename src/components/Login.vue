@@ -177,7 +177,7 @@ export default {
                 },1000);
 
                 // ajax
-                let url = vm.common.path2 + "sms/sendSms";
+                let url = vm.common.path2 + "sms/sendSmsCode";
                 let ajaxData = {
                     phone:vm.form.phone,
                     smsCode:'SMS_116815244',
