@@ -2,6 +2,8 @@
     <div>
         <!-- 新增 -->
         <AddPage v-if="pageType == 'add'"  class="testWrap" v-on:returnList="changePageType"></AddPage>
+        <!-- 编辑 -->
+        <EditPage v-if="pageType == 'edit'" :sendChild="sendChild"  class="testWrap" v-on:returnList="changePageType"></EditPage>
         <div v-if="pageType == 'info'" class="testWrap">详情</div>
         <!-- 列表容器 -->
         <div v-if="pageType == 'list'" class="testWrap">
@@ -54,6 +56,7 @@
 <script>
     import MyUpload from '../../common/upload.vue'
     import AddPage from './add.vue'
+    import EditPage from './edit.vue'
     export default {
         data () {
             return {
@@ -245,10 +248,10 @@
             fnDeleteItem (id) {
                 let vm = this;
                 this.$Modal.confirm({
-                    title: '删除分类',
-                    content: '确定要删除此分类吗？',
+                    title: '删除美容师',
+                    content: '确定要删除此美容师吗？',
                     onOk: function(){
-                        let url = vm.common.path+"productCategory/deleteById/"+id;
+                        let url = vm.common.path+"storeBeautician/deleteById/"+id;
                         this.$http.delete(
                             url
                         ).then(function(res){
@@ -259,12 +262,6 @@
                                 setTimeout(function(){
                                     vm.$Message.success('删除成功');
                                 },500)
-                                /* // 解决删除第(10n+1)个时，页数没有往后跳一页
-                                let total = vm.table.recordsTotal;
-                                console.log(total);
-                                if(total>10&&total%10 == 1){
-                                    vm.table.pageNun = vm.table.pageNun - 1;
-                                } */
                                 vm.getData();
                             }else{
                                 vm.$Message.error(oData.message);
@@ -322,7 +319,8 @@
         },
         components:{
             MyUpload,
-            AddPage
+            AddPage,
+            EditPage
         }
     }
 </script>

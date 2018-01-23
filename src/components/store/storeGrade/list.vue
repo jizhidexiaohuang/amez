@@ -117,7 +117,6 @@
                 activatedType: false,//主要解决mounted和activated重复调用
                 pageType: 'list',
                 openPage: false,
-                tableData1: [],
                 tableColumns1: [
                     {
                         type: 'index',
@@ -159,7 +158,7 @@
                     },
                    
                 ],
-                test:1,
+                tableData1: [],
                 recordsTotal:0,
                 pageNun:1,
                 loading: false,
@@ -204,7 +203,6 @@
                 }).catch(function(err){
                 })
             },
-            
             /* 页码改变的回掉函数 */
             changeSize (size) {
                 console.log(size);

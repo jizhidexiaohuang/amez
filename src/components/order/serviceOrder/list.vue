@@ -209,7 +209,7 @@
                         }
                     },
                     {
-                        title: '服务状态',
+                        title: '订单状态',
                         key: 'status',
                         render:(h,params) =>{
                            let status = params.row.status;

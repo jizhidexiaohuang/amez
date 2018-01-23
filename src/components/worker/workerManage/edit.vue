@@ -8,7 +8,7 @@
                 <Input v-model="formValidate.beauticianNickName" placeholder="请填写员工姓名"></Input>
             </FormItem>
             <FormItem label="员工照片">
-                <MyUpload :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
+                <MyUpload v-if="imgCtrl" :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
             </FormItem>
             <FormItem  label="工牌号" prop="workCardNo">
                 <Input v-model="formValidate.workCardNo" placeholder="请填写工牌号"></Input>
@@ -27,7 +27,7 @@
                 <Row>
                     <Col span="11">
                         <FormItem prop="birthday">
-                            <DatePicker type="date" v-model="formValidate.birthday" placeholder="请选择出生年月"></DatePicker>
+                            <DatePicker type="date" v-model="formValidate.birthday"></DatePicker>
                         </FormItem>
                     </Col>
                 </Row>
@@ -36,60 +36,35 @@
                 <Row>
                     <Col span="11">
                         <FormItem prop="joinTime">
-                            <DatePicker type="date" v-model="formValidate.joinTime" placeholder="请选择入职时间"></DatePicker>
+                            <DatePicker type="date" v-model="formValidate.joinTime"></DatePicker>
                         </FormItem>
                     </Col>
                 </Row>
             </FormItem>
             <FormItem  label="从业经验" prop="experience">
-                <Input v-model="formValidate.experience" placeholder="请填写从业时间"></Input>
+                <Input v-model="formValidate.experience" placeholder=""></Input>
             </FormItem>
             <FormItem label="员工住址" prop="">
                 <Row>
                     <Col span="20">
-                        <CityLinkage :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
+                        <CityLinkage v-if="cityCtrl" :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
                     </Col>
                 </Row>
             </FormItem>
             <FormItem  label="详细地址" prop="address">
-                <Input v-model="formValidate.address" placeholder="请填写详细地址"></Input>
+                <Input v-model="formValidate.address" placeholder=""></Input>
             </FormItem>
             <FormItem label="员工状态" prop="beauticianStatus">
                 <RadioGroup v-model="formValidate.beauticianStatus">
                     <Radio label="0">离职</Radio>
                     <Radio label="1">在职</Radio>
+                    <Radio label="2">休息</Radio>
                 </RadioGroup>
             </FormItem>
-            <FormItem label="所属门店" prop="storeName" style="width:500px;">
-                <Input v-model="formValidate.storeName" placeholder="请选择所属门店" @click.native="selectStore"></Input>
-                <div class="tableBox" v-show="tableCtrl">
-                    <Table
-                        :loading="table.loading" 
-                        :data="table.tableData1" 
-                        :columns="tableColumns1" 
-                        stripe
-                        border
-                        size="small"
-                        @on-select="fnSelect"
-                        @on-select-all="fnSelectAll"
-                        @on-current-change="fnHighlight"
-                        :show-header="false"
-                        :stripe="false"
-                        highlight-row
-                        height="150"
-                    ></Table>
-                    <div style="overflow: hidden">
-                        <div style="float: right;">
-                            <Page 
-                                size="small"
-                                :total="table.recordsTotal" 
-                                :current="table.pageNun"
-                                @on-change="changePage"
-                                @on-page-size-change="changeSize"
-                            ></Page>
-                        </div>
-                    </div>
-                </div>
+            <FormItem label="所属门店" prop="store">
+                <Select v-model="formValidate.store">
+                    <Option :value="item.value" v-for='(item ,index) in formValidate.storeList' :key="index">{{item.label}}</Option>
+                </Select>
             </FormItem>
             <FormItem label="员工等级" prop="workerGrade">
                 <Select v-model="formValidate.workerGrade">
@@ -112,9 +87,11 @@
                 cityConfig:{
                     key:false,
                     title:'',
-                    type:'linkage'
+                    type:'linkage',
+                    cityList:[],
                 },
-                tableCtrl:false,
+                cityCtrl:false, //控制子组件是否创建
+                imgCtrl:false,
                 province:'',//城市级联的值
                 city:'',//城市级联的值
                 area:'',//城市级联的值
@@ -125,14 +102,12 @@
                     beauticianName:"",//员工名称
                     beauticianNickName:"",//员工昵称
                     workCardNo:"",//员工编号
-                    mobile:"", //注册手机
+                    mobile:"",//注册手机
                     position:"1",//员工类型
-                    beauticianStatus:"1",//员工状态
+                    beauticianStatus:"0",//员工状态
                     birthday:'',//出生年月
                     joinTime:'',//入职时间
-                    experience:'', //从业经验
-                    storeName:'', //店铺名称
-                    storeId:'',//店铺id
+                    storeId:'', //店铺id
                     storeList:[
                         {
                             value:'',
@@ -168,26 +143,13 @@
                 },
                 ruleValidate: {
                 },
-                defaultList: [], //默认图片
+                defaultList: [], //默认列表
                 uploadList:[],//图片列表
                 path:this.common.path1+"system/api/file/uploadForKindeditor",
                 switch1: false,
                 uploadConfig: {
                     num:1
-                },
-                table:{
-                    tableData1: [],
-                    recordsTotal:0,
-                    pageNun:1,
-                    loading: false,
-                    size: 10,
-                },
-                tableColumns1: [
-                    {
-                        title: '店铺名称',
-                        key: 'storeName'
-                    }
-                ]
+                }
             }
         },
         methods: {
@@ -198,14 +160,15 @@
                     if (valid) {
                         //添加品牌服务
                         let ajaxData = {
+                            id:vm.sendChild.id, //id
                             beauticianName: vm.formValidate.beauticianName, // 员工姓名
                             beauticianNickName: vm.formValidate.beauticianNickName, // 员工昵称
                             headImgUrl: vm.uploadList.length>0?vm.uploadList[0].url:"", // 员工头像
                             workCardNo: vm.formValidate.workCardNo, // 员工编号
                             phone:vm.formValidate.mobile, //注册手机
                             beauticianType:vm.formValidate.position, //员工类型
-                            birthDate:vm.common.simpleFormatDate(vm.formValidate.birthday), //出生年月
-                            entryDate:vm.common.simpleFormatDate(vm.formValidate.joinTime), //入职时间
+                            birthDate:vm.formValidate.birthday, //出生年月
+                            entryDate:vm.formValidate.joinTime, //入职时间
                             years:vm.formValidate.experience, //从业经验
                             provinceName:vm.province,
                             provinceId:vm.provinceId,
@@ -218,8 +181,8 @@
                             beauticianLevel:vm.formValidate.workerGrade, //员工等级
                             storeId:vm.formValidate.storeId //店铺id
                         }
-                        console.log(JSON.stringify(ajaxData))
-                        let url = vm.common.path2+"storeBeautician/insert";
+                        console.log(ajaxData)
+                        let url = vm.common.path+"storeBeautician/insert";
                         vm.$http.post(
                             url,
                             JSON.stringify(ajaxData),
@@ -256,64 +219,6 @@
                 this.$Message.info('开关状态：' + status);
                 console.log(this.switch1);
             },
-            selectStore(){
-                this.tableCtrl = true;
-            },
-            /* 分页回掉函数 */
-            changePage (page) {
-                console.log(page)
-                let vm = this;
-                vm.table.pageNun = page;   
-                vm.getData();             
-            },
-            /* 页码改变的回掉函数 */
-            changeSize (size) {
-                console.log(size);
-                let vm = this;
-                vm.table.size = size;
-                vm.getData();
-            },
-            /* 选中某一项的回掉函数 */
-            fnSelect (selection,row) {
-                console.log(row);
-                console.log(selection);
-            },
-            /* 全选时的回调函数 */
-            fnSelectAll (selection) {
-                console.log(selection);
-            },
-            /*表格选中高亮显示*/
-            fnHighlight(currentRow,oldCurrentRow){
-                this.formValidate.storeName = currentRow.storeName;
-                this.formValidate.storeId = currentRow.id;
-                this.tableCtrl = false;
-            },
-            /* 数据获取 */
-            getData () {
-                let vm = this;
-                let start = vm.table.pageNun;//从第几个开始
-                let size = vm.table.size;//每页条数
-                let url = vm.common.path2+"store/front/findByPage?pageNo="+start+'&pageSize='+size;
-                let ajaxData = {
-                }
-                vm.loading = true;
-                vm.$http.post(
-                    url,
-                    // ajaxData,
-                    {
-                        headers: {
-                            'Content-type': 'application/json;charset=UTF-8'
-                        },
-                    }
-                ).then(function(res){
-                    console.log(res.data);
-                    let oData = res.data
-                    vm.table.recordsTotal = oData.data.total;
-                    vm.table.tableData1 = oData.data.list;
-                    vm.table.loading = false;
-                }).catch(function(err){
-                })
-            },
             //省市联动选择的值
             onSelected(data) {
                 this.province = data.province.value
@@ -329,25 +234,54 @@
                 this.area = data[2].label
                 this.areaId = data[2].value
             },
+            getDataById(id){
+                let vm = this;
+                let url = this.common.path2 +'storeBeautician/queryById/'+id
+                vm.$http.get(url).then(res=>{
+                    console.log(res.data.data)
+                    let oData = res.data.data;
+                    vm.formValidate.beauticianName = oData.beauticianName;
+                    vm.formValidate.beauticianNickName = oData.beauticianNickName;
+                    vm.defaultList.push({
+                        url:oData.headImgUrl
+                    }); //员工头像
+                    vm.imgCtrl = true;
+                    vm.formValidate.workCardNo = oData.workCardNo;
+                    vm.formValidate.mobile = oData.phone;
+                    vm.formValidate.position = oData.beauticianType;
+                    vm.formValidate.birthday = oData.birthDate;
+                    vm.formValidate.joinTime = oData.entryDate;
+                    vm.formValidate.experience = oData.years;
+                    vm.formValidate.address = oData.address;
+                    vm.formValidate.beauticianStatus = oData.beauticianStatus;
+                    vm.formValidate.workerGrade = oData.beauticianLevel;
+                    vm.cityConfig.cityList.push({
+                        value:oData.provinceId,
+                        label:oData.provinceName
+                    },{
+                        value:oData.cityId,
+                        label:oData.cityName
+                    },{
+                        value:oData.areaId,
+                        label:oData.areaName
+                    });
+                    vm.cityCtrl = true;
+                })
+            }
+        },
+        beforeMount:function(){
+            this.getDataById(this.sendChild.id)
         },
         mounted: function(){
-            this.getData()
         },
         components:{
             MyUpload,
             CityLinkage
-        }
+        },
+        props:['sendChild']
     }
 </script>
 <style scoped>
-.tableBox{
-    width:380px;
-    position: absolute;
-    top:-185px;
-    left: 0;
-    z-index: 2;
-    border:1px solid #e9eaec;
-    border-radius: 5px;
-}
 </style>
+
 
