@@ -230,9 +230,15 @@
                             categoryId:vm.formValidate.type, // 商品分类id
                         }
                         /* 商品轮播图 */
+                        let arrs = [];
+                        if(vm.uploadList.length > 0){
+                            vm.uploadList.forEach(function(item,index){
+                                arrs.push(item.url);
+                            })
+                        }
                         ajaxData.productImg = {
                             type:1, // 图片类型，1轮播图
-                            url:"" // 存储图片地址
+                            url: !!!arrs?"":arrs.join() // 存储图片地址
                         }
                         /* 店铺 */
                         ajaxData.productStoreRef = {
