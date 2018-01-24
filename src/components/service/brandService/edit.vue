@@ -72,6 +72,38 @@
                     <Radio label="2">不通过</Radio>
                 </RadioGroup>
             </FormItem>
+            <!-- 店铺选择  只有管理员可以看到 -->
+            <FormItem label="所属门店" prop="storeName" style="width:500px;" v-if="loginName=='admin'">
+                <Input v-model="formValidate.storeName" placeholder="请选择所属门店" @click.native="selectStore"></Input>
+                <div class="tableBox" v-show="tableCtrl">
+                    <Table
+                        :loading="table.loading" 
+                        :data="table.tableData1" 
+                        :columns="tableColumns1" 
+                        stripe
+                        border
+                        size="small"
+                        @on-select="fnSelect"
+                        @on-select-all="fnSelectAll"
+                        @on-current-change="fnHighlight"
+                        :show-header="false"
+                        :stripe="false"
+                        highlight-row
+                        height="150"
+                    ></Table>
+                    <div style="overflow: hidden;" class="pageBox">
+                        <div style="float: right;">
+                            <Page 
+                                size="small"
+                                :total="table.recordsTotal" 
+                                :current="table.pageNun"
+                                @on-change="changePage"
+                                @on-page-size-change="changeSize"
+                            ></Page>
+                        </div>
+                    </div>
+                </div>
+            </FormItem>
             <FormItem label="服务详情" prop="serverIntroduce">
                 <editor id="editor_id" height="700px" width="100%;" :content="formValidate.serverIntroduce"
                     :uploadJson="path"
@@ -93,6 +125,19 @@
     export default {
         data () {
             return {
+                table:{
+                    tableData1: [],
+                    recordsTotal:0,
+                    pageNun:1,
+                    loading: false,
+                    size: 10,
+                },
+                tableColumns1: [
+                    {
+                        title: '店铺名称',
+                        key: 'storeName'
+                    }
+                ],
                 formValidate: {
                     type: '',//服务分类
                     brandId: '',//服务所属品牌
@@ -143,6 +188,8 @@
                 brandList:[],// 品牌分类
                 spinShow: false,// 加载开关
                 storeId:'',//店铺id
+                loginName:'', // 管理员身份
+                tableCtrl:false,
             }
         },
         props: ["sendChild"],
@@ -293,6 +340,9 @@
                 vm.formValidate.serverAttention = data.product.serverAttention; // 注意事项
                 vm.formValidate.serverNeedTime = data.product.serverNeedTime; // 服务总时长
                 // serverEffect: JSON.stringify(vm.formValidate.serverEffect), // 功效
+                if(vm.loginName == 'admin'&&!!data.product.storeId){
+                    vm.formValidate.storeName = data.product.storeId
+                }
                 if(!!!data.product.serverEffect){
                     vm.formValidate.serverEffect = [];
                 }else{
@@ -321,12 +371,76 @@
                 }
                 vm.testCode = true;
                 vm.uploadList = vm.defaultList;
-            }
+            },
+            changePage (page) {
+                console.log(page)
+                let vm = this;
+                vm.table.pageNun = page;   
+                vm.getData();             
+            },
+            /* 页码改变的回掉函数 */
+            changeSize (size) {
+                console.log(size);
+                let vm = this;
+                vm.table.size = size;
+                vm.getData();
+            },
+            /* 选中某一项的回掉函数 */
+            fnSelect (selection,row) {
+                console.log(row);
+                console.log(selection);
+            },
+            /* 全选时的回调函数 */
+            fnSelectAll (selection) {
+                console.log(selection);
+            },
+             /*表格选中高亮显示*/
+            fnHighlight(currentRow,oldCurrentRow){
+                this.formValidate.storeName = currentRow.storeName;
+                this.formValidate.storeId = currentRow.id;
+                this.storeId = currentRow.id;
+                this.tableCtrl = false;
+            },
+            /* 数据获取 */
+            getData () {
+                let vm = this;
+                let start = vm.table.pageNun;//从第几个开始
+                let size = vm.table.size;//每页条数
+                let url = vm.common.path2+"store/front/findByPage?pageNo="+start+'&pageSize='+size;
+                let ajaxData = {
+                }
+                vm.loading = true;
+                vm.$http.post(
+                    url,
+                    // ajaxData,
+                    {
+                        headers: {
+                            'Content-type': 'application/json;charset=UTF-8'
+                        },
+                    }
+                ).then(function(res){
+                    console.log(res.data);
+                    let oData = res.data
+                    vm.table.recordsTotal = oData.data.total;
+                    vm.table.tableData1 = oData.data.list;
+                    vm.table.loading = false;
+                }).catch(function(err){
+                })
+            },
+            // 点击所属门店输入框，显示或隐藏table
+            selectStore(){
+                if(this.tableCtrl){
+                    this.tableCtrl = false;
+                }else{
+                    this.tableCtrl = true;
+                }
+            },
         },
         mounted: function(){
-            console.log(this.sendChild);
-            console.log(1);
-            console.log(this.sendChild.serviceList);
+            let user = JSON.parse(window.localStorage.getItem("userInfo"));
+            let vm = this;
+            vm.loginName = user.user.loginName;
+            this.getData()
             this.serviceList = this.sendChild.serviceList;
             // this.brandList = this.sendChild.brandList;
             this.fnGetProductCategory();
