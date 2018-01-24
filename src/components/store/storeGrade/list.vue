@@ -54,18 +54,14 @@
                 </FormItem>
             </Form>
             <Row style="margin-bottom:10px;">
-                <!-- <Col span="5">
-                    <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
-                    <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">重置</Button>
-                </Col> -->
                 <Col span="10">
                     <Button style="float:left;margin-right:10px;" @click.native="changePageType('grade')" type="success" icon="android-add">新增店铺等级</Button>
                     <Button style="float:left;" @click.native="changePageType('rules')" type="primary" icon="android-add">成长规则设置</Button>
                 </Col>
             </Row>
             <Table
-                :loading="loading" 
-                :data="tableData1" 
+                :loading="table.loading" 
+                :data="table.tableData1" 
                 :columns="tableColumns1" 
                 stripe
                 border
@@ -75,8 +71,8 @@
             <div style="margin: 10px;overflow: hidden">
                 <div style="float: right;">
                     <Page 
-                        :total="recordsTotal" 
-                        :current="pageNun"
+                        :total="table.recordsTotal" 
+                        :current="table.pageNun"
                         show-sizer 
                         @on-change="changePage"
                         @on-page-size-change="changeSize"
@@ -158,11 +154,13 @@
                     },
                    
                 ],
-                tableData1: [],
-                recordsTotal:0,
-                pageNun:1,
-                loading: false,
-                size: 10,
+                table:{
+                    tableData1: [],
+                    recordsTotal:0,
+                    pageNun:1,
+                    loading: false,
+                    size: 10
+                }
             }
         },
         methods: {
@@ -170,22 +168,22 @@
             changePage (page) {
                 console.log(page)
                 let vm = this;
-                vm.pageNun = page;   
+                vm.table.pageNun = page;   
                 vm.getData();             
                 // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
             },
             /* 数据获取 */
             getData () {
                 let vm = this;
-                let start = (vm.pageNun-1)*vm.size;//从第几个开始
-                let size = vm.size;//每页条数
-                let url = common.path+"storeLevel/findList?pageNo="+this.pageNun+'&pageSize='+this.size;
+                let start = vm.table.pageNun;//从第几个开始
+                let size = vm.table.size;//每页条数
+                let url = common.path+"storeLevel/findList?pageNo="+start+'&pageSize='+size;
                 // let url = "http://172.16.20.151:8080/product/front/findByPage?pageNo=1&pageSize=1";
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size
                 }
-                vm.loading = true;
+                vm.table.loading = true;
                 this.$http.get(
                     url,
                     // ajaxData,
@@ -197,9 +195,9 @@
                 ).then(function(res){
                     console.log(res.data);
                     let oData = res.data
-                    vm.recordsTotal = oData.data.length;
-                    vm.tableData1 = res.data.data;
-                    vm.loading = false;
+                    vm.table.recordsTotal = oData.data.length;
+                    vm.table.tableData1 = res.data.data;
+                    vm.table.loading = false;
                 }).catch(function(err){
                 })
             },
@@ -207,7 +205,7 @@
             changeSize (size) {
                 console.log(size);
                 let vm = this;
-                vm.size = size;
+                vm.table.size = size;
                 vm.getData();
             },
             /* 选中某一项的回掉函数 */
@@ -229,8 +227,8 @@
             /* 刷新 */
             refreshTable () {
                 var vm = this;
-                vm.pageNun = 1;
-                vm.size = 10;
+                vm.table.pageNun = 1;
+                vm.table.size = 10;
                 vm.getData();
             },
             /* 判断页签中是否有该模块，如果有则使用缓存，如果没有则重新加载数据 */
@@ -240,8 +238,8 @@
                     let arrs = [];
                     let type = vm.$store.getters.tabTrue;
                     if(!!!type){
-                        vm.tableData1 = [];//为了处理进来的时候看到之前缓存的页面
-                        vm.loading = true;//进一步模拟第一次进来时的页面效果
+                        vm.table.tableData1 = [];//为了处理进来的时候看到之前缓存的页面
+                        vm.table.loading = true;//进一步模拟第一次进来时的页面效果
                         vm.pageType = 'list'//显示列表页，放在这里是给上边的处理留点时间，也就是初始化放在这段代码上边
                         vm.getData();//再次请求数据
                     }

@@ -92,7 +92,7 @@
                         },
                         {
                             title: '注册账号',
-                            key: 'mobile',
+                            key: 'phone',
                         },
                         {
                             title: '性别',
@@ -100,7 +100,7 @@
                             render: (h,params) => {
                                 const row = params.row;
                                 const color = row.sex == 1 ? 'red' : 'blue';
-                                const text = !!!row.sex == 1 ? '女' : '男';
+                                const text = row.sex == 1 ? '女' : '男';
                                 return h('Tag', {
                                     props: {
                                         type: 'border',
@@ -111,14 +111,24 @@
                         },
                         {
                             title: '职位',
-                            key: 'position',
+                            key: 'beauticianLevel',
+                            render:(h,params)=>{
+                                let str = ''
+                                if(params.row.beauticianLevel==1){
+                                    str = '初级美容师'
+                                }else if(params.row.beauticianLevel==2){
+                                    str = '中级美容师'
+                                }else if(params.row.beauticianLevel==3){
+                                    str = '高级美容师'
+                                }else if(params.row.beauticianLevel==4){
+                                    str = '资深美容师'
+                                }
+                                return str
+                            }
                         },
                         {
                             title: '所属门店',
-                            key: 'storeId',
-                            render: (h,params) => {
-                                return "美业一店"
-                            }
+                            key: 'storeName',
                         },
                         {
                             title: '创建时间',
@@ -220,8 +230,7 @@
                 let size = vm.table.size;//每页条数
                 let url = vm.common.path+"storeBeautician/front/findByPage?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
-                    pageNo:start,
-                    pageSize: size,
+                   
                 }
                 if(!!vm.cd.inputval){
                     ajaxData[vm.cd.inputType] = vm.cd.inputval;
