@@ -225,20 +225,6 @@
                            return h('div',text)
                         }
                     },
-                     {
-                        title: '退换货类型',
-                        key: 'returnType',
-                        render:(h,params) =>{
-                           let status = params.row.returnType;
-                           let text = ''
-                            if(status==1){
-                                text = '换货'
-                            }else if(status==2){
-                                text = '退款'
-                            }
-                           return h('div',text)
-                        }
-                    },
                     {
                         title: '操作',
                         key: 'action',

@@ -56,8 +56,8 @@
             </FormItem>
             <FormItem label="员工状态" prop="beauticianStatus">
                 <RadioGroup v-model="formValidate.beauticianStatus">
-                    <Radio label="0">离职</Radio>
                     <Radio label="1">在职</Radio>
+                    <Radio label="0">离职</Radio>
                 </RadioGroup>
             </FormItem>
             <FormItem label="所属门店" prop="storeName" style="width:500px;">
@@ -78,7 +78,7 @@
                         highlight-row
                         height="150"
                     ></Table>
-                    <div style="overflow: hidden">
+                    <div style="overflow: hidden;" class="pageBox">
                         <div style="float: right;">
                             <Page 
                                 size="small"
@@ -133,18 +133,6 @@
                     experience:'', //从业经验
                     storeName:'', //店铺名称
                     storeId:'',//店铺id
-                    storeList:[
-                        {
-                            value:'',
-                            label:'请选择所属店铺'
-                        },{
-                            value:0,
-                            label:'美业一店'
-                        },{
-                            value:1,
-                            label:'美业二店'
-                        }
-                    ],
                     workerGrade:'', //员工等级
                     workerGradeList:[
                         {
@@ -216,7 +204,8 @@
                             address:vm.formValidate.address, //详细地址
                             beauticianStatus:vm.formValidate.beauticianStatus, //员工状态
                             beauticianLevel:vm.formValidate.workerGrade, //员工等级
-                            storeId:vm.formValidate.storeId //店铺id
+                            storeId:vm.formValidate.storeId, //店铺id
+                            storeName:vm.formValidate.storeName //店铺名称
                         }
                         console.log(JSON.stringify(ajaxData))
                         let url = vm.common.path2+"storeBeautician/insert";
@@ -256,8 +245,13 @@
                 this.$Message.info('开关状态：' + status);
                 console.log(this.switch1);
             },
+            // 点击所属门店输入框，显示或隐藏table
             selectStore(){
-                this.tableCtrl = true;
+                if(this.tableCtrl){
+                    this.tableCtrl = false;
+                }else{
+                    this.tableCtrl = true;
+                }
             },
             /* 分页回掉函数 */
             changePage (page) {
@@ -315,11 +309,6 @@
                 })
             },
             //省市联动选择的值
-            onSelected(data) {
-                this.province = data.province.value
-                this.city = data.city.value
-                this.area = data.area.value
-            },
             getCity(data){
                 console.log(data)
                 this.province = data[0].label
@@ -339,15 +328,20 @@
         }
     }
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .tableBox{
     width:380px;
     position: absolute;
     top:-185px;
     left: 0;
     z-index: 2;
-    border:1px solid #e9eaec;
     border-radius: 5px;
+    .pageBox{
+        background: #fff;
+        border:1px solid #e9eaec;
+        border-top:none;
+        border-radius:0 0 5px 5px;
+    }
 }
 </style>
 

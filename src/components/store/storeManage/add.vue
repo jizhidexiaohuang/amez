@@ -26,8 +26,8 @@
                 <FormItem label="店长账号" prop="sellerPhone">
                     <Input v-model="formValidate.sellerPhone" placeholder="请填写注册手机号，非常重要！！"></Input>
                 </FormItem>
-                <FormItem label="所属品牌" prop="branch">
-                    <Select v-model="formValidate.branch">
+                <FormItem label="所属品牌" prop="branchId">
+                    <Select v-model="formValidate.branchId" label-in-value @on-change="getBranchName">
                         <Option :value="item.id" v-for='(item ,index) in branchList' :key="index">{{item.brandName}}</Option>
                     </Select>
                 </FormItem>
@@ -61,7 +61,6 @@
                 <FormItem label="店铺地址" prop="">
                     <Row type="flex" justify="start">
                         <Col span="20">
-                            <!-- <v-distpicker :placeholders="placeholders" @selected="onSelected"></v-distpicker> -->
                             <CityLinkage :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
                         </Col>
                     </Row>
@@ -306,7 +305,6 @@
                 managerYear:1,   //经营年限
                 disabled:false,  //实际经营年限控制变量
                 storeLabel:'',//店铺标签(店铺标签)
-                branchName:'',//品牌名称
                 contract:'',//合同
                 businessLicense:'',//营业执照
                 idcardPositivePhoto:'',//正面照
@@ -326,7 +324,8 @@
                     bossPhone:'',//老板账号
                     storeManagerAccount:'',//店长姓名
                     sellerPhone:'',//店长账号
-                    branch:'',             //品牌
+                    branchId:'',    //品牌id
+                    branchName:'',    //品牌名称
                     mainProject:[],   //主营特色项目
                     companyName:'',//公司名称
                     BusinessLicenseNumber:"",//营业执照号码
@@ -358,14 +357,6 @@
                 //         this.$Message.error('Fail!');
                 //     }
                 // })
-                //处理所属品牌
-                if(this.formValidate.branch==1){
-                    this.branchName = '韵美'
-                }else if(this.formValidate.branch==2){
-                    this.branchName = '面子'
-                }else if(this.formValidate.branch==3){
-                    this.branchName = '金斯露'
-                }
                 //处理几年老店
                 if(this.oldStore=='1'){
                     this.storeLabel = this.managerYear + '年老店'
@@ -399,8 +390,8 @@
                         bossPhone:this.formValidate.bossPhone,//老板账号
                         sellerName:this.formValidate.storeManagerAccount,//店长姓名
                         sellerPhone:this.formValidate.sellerPhone,//店长账号
-                        brandName:this.branchName,//品牌名
-                        brandId:this.formValidate.branch, //品牌Id
+                        brandName:this.formValidate.branchName,//品牌名
+                        brandId:this.formValidate.branchId, //品牌Id
                         scId:this.oldStore,//老店
                         manageYear:this.managerYear,//实际经营年限
                         storeLabel:this.storeLabel,//店铺标签(五年老店)
@@ -456,6 +447,12 @@
             },
             handleReset (name) {
                 this.$refs[name].resetFields();
+            },
+            // 获取品牌名
+            getBranchName(data){
+                console.log(data)
+                this.formValidate.brandId = data.value;
+                this.formValidate.brandName = data.label;
             },
             //添加新的特色项目
             addProject(){
