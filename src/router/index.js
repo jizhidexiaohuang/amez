@@ -54,6 +54,10 @@ import MenuManage from '@/components/manage/menuManage/list'
 /*=====================================财务管理=========================*/
 //交易流水
 import TradeWater from '@/components/financeManage/tradeWater/list'
+//店铺交易统计
+import StoreCount from '@/components/financeManage/storeCount/list'
+//提现管理
+import CashManage from '@/components/financeManage/cashManage/list'
 /*=====================================员工管理=========================*/
 //员工管理
 import WorkerManage from '@/components/worker/workerManage/list'
@@ -307,6 +311,26 @@ const menuRouter = [
         meta:{
           type:"菜单",
           name:"交易流水"
+        }
+      },
+      {
+        path: '/financeManage/storeCount',
+        name: '店铺交易统计',
+        title: '店铺交易统计',
+        component: StoreCount,
+        meta:{
+          type:"菜单",
+          name:"店铺交易统计"
+        }
+      },
+      {
+        path: '/financeManage/cashManage',
+        name: '提现管理',
+        title: '提现管理',
+        component: CashManage,
+        meta:{
+          type:"菜单",
+          name:"提现管理"
         }
       }
     ]

@@ -158,6 +158,16 @@ const common = {
                     name:"交易流水",
                     hasChildList: false,
                     href:"/financeManage/tradeWater"
+                },
+                {
+                    name:"店铺交易统计",
+                    hasChildList: false,
+                    href:"/financeManage/storeCount"
+                },
+                {
+                    name:"提现管理",
+                    hasChildList: false,
+                    href:"/financeManage/cashManage"
                 }
             ]
         },

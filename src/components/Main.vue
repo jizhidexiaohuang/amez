@@ -312,11 +312,22 @@ export default {
             let arrs = common.menuList;
             let vm = this;
             console.log(vm.$store.getters.adminInfo.menu);
-            // vm.menu.menuList = arrs;  // 不走存储拿菜拿菜单数据
-            if(window.localStorage.getItem("userInfo")){
-                vm.menu.menuList = JSON.parse(window.localStorage.getItem("userInfo")).menu;
-                vm.fnMenuChange();
-            }
+            (function(type){
+                let _type = type||1;
+                switch (_type) {
+                    case 1:
+                        vm.menu.menuList = arrs;  // 不走存储拿菜拿菜单数据
+                        break;
+                    case 2:
+                        if(window.localStorage.getItem("userInfo")){
+                            vm.menu.menuList = JSON.parse(window.localStorage.getItem("userInfo")).menu;
+                            vm.fnMenuChange();
+                        }
+                        break;
+                    default:
+                        vm.menu.menuList = arrs;  // 不走存储拿菜拿菜单数据
+                }
+            })(1)
         },
         /* 激活菜单 */
         fnMenuChange () {
