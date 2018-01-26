@@ -1,82 +1,51 @@
 <template>
   <div class="testWrap">
       <div class="boxStyle infoPage">
-        <h3 class="transactionTitle">交易详情</h3>
+        <h3 class="transactionTitle">提现详情</h3>
         <div class="transactionDetail">
             <Row>
-                <Col span="8">付款时间：{{financialTrade.payTime?common.formatDate(financialTrade.payTime):''}}</Col>
-                <Col span="8">订单号：{{financialTrade.orderNo}}</Col>
-                <Col span="8">交易流水号：{{financialTrade.tradeNo}}</Col>
-            </Row>
-            <Row>
-                <Col span="8">交易类型：{{tradeType}}</Col>
+                <Col span="8">申请时间：{{financialTrade.payTime?common.formatDate(financialTrade.payTime):''}}</Col>
                 <Col span="8"></Col>
                 <Col span="8"></Col>
             </Row>
             <Row>
-                <Col span="8">卖家信息：{{financialTrade.storeName}}</Col>
-                <Col span="8">老板姓名：{{financialTradeDetail.bossName}}</Col>
-                <Col span="8">老板手机：{{financialTradeDetail.bossPhone}}</Col>
-            </Row>
-            <Row>
-                <Col span="8">美容师：{{financialTradeDetail.beauticianName}}</Col>
-                <Col span="8">注册手机：{{financialTradeDetail.beauticianPhone}}</Col>
+                <Col span="8">用户信息：{{financialTrade.orderNo}}</Col>
+                <Col span="8">所属门店：{{financialTrade.tradeNo}}</Col>
                 <Col span="8"></Col>
             </Row>
             <Row>
-                <Col span="8">买家昵称：{{financialTradeDetail.buyersNickName}}</Col>
-                <Col span="8">注册手机：{{financialTradeDetail.buyersPhone}}</Col>
+                <Col span="8">开户人：{{tradeType}}</Col>
                 <Col span="8"></Col>
+                <Col span="8"></Col>
+            </Row>
+            <Row>
+                <Col span="8">开户银行：{{financialTrade.storeName}}</Col>
+                <Col span="8">开户支行：{{financialTradeDetail.bossName}}</Col>
+                <Col span="8"></Col>
+            </Row>
+            <Row>
+                <Col span="8">银行账号：{{financialTradeDetail.bossPhone}}</Col>
+                <Col span="8"></Col>
+                <Col span="8"></Col>
+            </Row>
+            <Row>
+                <Col span="8">提现金额：{{financialTradeDetail.beauticianName}}</Col>
+                <Col span="8">手续费：{{financialTradeDetail.beauticianPhone}}</Col>
+                <Col span="8">打款金额：{{financialTradeDetail.buyersNickName}}</Col>
+            </Row>
+            <Row>
+                <Col span="8">打款状态：{{financialTradeDetail.buyersPhone}}</Col>
+                <Col span="8"></Col>
+                <Col span="8"></Col>
+            </Row>
+            <Row>
+                <Col span="20">打款时间：2017-11-28 18:32：20 (具体以银行到账时间为准) / 预计打款时间为2017-11-28</Col>
+                <Col span="2"></Col>
+                <Col span="2"></Col>
             </Row>
         </div>
-        <div class="service_info">
-            <h3>服务信息</h3>
-            <div class="table">
-                <div class="title">
-                <Row>
-                    <Col span="3">服务</Col>
-                    <Col span="3">单价</Col>
-                    <Col span="3">总价</Col>
-                    <Col span="3">支付方式</Col>
-                    <Col span="3">优惠券优惠</Col>
-                    <Col span="3">会员卡优惠</Col>
-                    <Col span="3">一卡通优惠</Col>
-                    <Col span="3">实付金额</Col>
-                </Row>
-                </div>
-                <div class="content">
-                <Row>
-                    <Col span="3"><span>{{detailInfo.productName}}</span></Col>
-                    <Col span="3">{{detailInfo.productPrice}}</Col>
-                    <Col span="3">{{detailInfo.productPrice*detailInfo.nums}}</Col>
-                    <Col span="3">{{payType}}</Col>
-                    <Col span="3">{{detailInfo.couponReduce}}</Col>
-                    <Col span="3">{{detailInfo.memberCardReduce}}</Col>
-                    <Col span="3">-</Col>
-                    <Col span="3">{{financialTrade.payAmount/100}}</Col>
-                </Row>
-                </div>
-            </div>
-        </div>
-        <h3 class="transactionTitle">结算信息</h3>
-        <div class="transactionDetail">
-            <Row>
-                <Col span="8">交易状态：{{tradeStatus}}</Col>
-                <Col span="8"></Col>
-                <Col span="8">结算时间：{{common.formatDate(financialTrade.settlementTime)}}</Col>
-            </Row>
-            <Row>
-                <Col span="8">平台佣金：{{financialTrade.platformCommission/100}}</Col>
-                <Col span="8">结算金额：{{financialTrade.settlementAmount/100}}</Col>
-                <Col span="8"></Col>
-            </Row>
-            <Row>
-                <Col span="8">平台实收：{{settlementInfo.storeReceiptsAmount/100}}</Col>
-                <Col span="8">美容师提成：{{settlementInfo.beauticianCommission/100}}</Col>
-                <Col span="8"></Col>
-            </Row>
-        </div>
-        <Button type="success" @click.native="returnHome('list')">返回</Button>
+        <Button type="primary" style="margin-right:20px;">确认打款</Button>
+        <Button type="ghost" @click.native="returnHome('list')">返回</Button>
       </div>
   </div>
 </template>
@@ -158,9 +127,9 @@
             }
         },
         beforeMount:function(){
-            this.getData(this.serviceId)
+            this.getData(this.infoId)
         },
-        props:['serviceId']
+        props:['infoId']
     }
 </script>
 <style lang="scss" scoped>
@@ -174,7 +143,7 @@
         margin:20px 0px;
         border:1px solid #dddee1;
         border-bottom:none;
-        .ivu-col-span-8{
+        .ivu-row{
             height: 50px;
             line-height: 50px;
             border-bottom:1px solid #dddee1;
@@ -229,9 +198,6 @@
           font-size: 20px;
         }
       }
-    }
-    button{
-        margin-top:20px;
     }
 }
 </style>

@@ -172,7 +172,7 @@
     .service_info,.service_info_1{
         .table{
             border:1px solid #dddee1;
-            margin:20px 20px;
+            margin:20px 0px;
             .title{
                 background:#dddee1;
                 .ivu-col{

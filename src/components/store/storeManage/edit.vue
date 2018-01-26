@@ -6,7 +6,7 @@
             <h2>编辑门店基本资料</h2>          
             <div class="box">
                 <FormItem label="门店名称" prop="storeName">
-                    <Input v-model="formValidate.storeName"></Input>
+                    <Input v-model="formValidate.storeName" disabled></Input>
                 </FormItem>
                 <FormItem label="开店时间">
                     <Row type="flex" justify="start">
@@ -407,7 +407,7 @@
                         areaId:this.areaId,//区
                         storeLatitude:this.mapData.latitude, //纬度
                         storeLongitude:this.mapData.longitude, //经度
-                        storeName:this.formValidate.storeName, //店铺名称
+                        // storeName:this.formValidate.storeName, //店铺名称
                         storeTel:this.formValidate.storeTel, //店铺电话
                         storeTime:this.formValidate.storeTime, //营业时间
                         bossName:this.formValidate.sellerAccount,//老板姓名

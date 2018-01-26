@@ -99,8 +99,8 @@
                             key: 'sex',
                             render: (h,params) => {
                                 const row = params.row;
-                                const color = row.sex == 1 ? 'red' : 'blue';
-                                const text = row.sex == 1 ? '女' : '男';
+                                const color = row.sex == 1 ? 'blue' : 'red';
+                                const text = row.sex == 1 ? '男' : '女';
                                 return h('Tag', {
                                     props: {
                                         type: 'border',
