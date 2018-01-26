@@ -210,11 +210,11 @@
                         /* 商品 */
                         ajaxData.product = {
                             serverName: vm.formValidate.serverName, // 商品名称
-                            originalPrice: vm.formValidate.originalPrice, // 原价
-                            salePrice: vm.formValidate.salePrice, // 销售价
+                            originalPrice: +vm.formValidate.originalPrice*100, // 原价
+                            salePrice: +vm.formValidate.salePrice*100, // 销售价
                             saleVolume: vm.formValidate.saleVolume, // 销量
                             serverBookType: vm.formValidate.serverBookType, // 销量
-                            visitPrice: vm.formValidate.serverBookType == 2?vm.formValidate.visitPrice:"", // 上门费
+                            visitPrice: vm.formValidate.serverBookType == 2?+vm.formValidate.visitPrice*100:"", // 上门费
                             coverImg: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
                             serverAttention: vm.formValidate.serverAttention, // 注意事项
                             serverNeedTime: vm.formValidate.serverNeedTime, // 服务总时长

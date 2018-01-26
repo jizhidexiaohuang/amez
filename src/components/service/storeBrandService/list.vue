@@ -156,7 +156,7 @@
                             key: 'salePrice',
                             render: (h,params) => {
                                 const row = params.row;
-                                return !!!row.salePrice?0:row.salePrice
+                                return !!!row.salePrice?0:+row.salePrice/100
                             }
                         },
                         {

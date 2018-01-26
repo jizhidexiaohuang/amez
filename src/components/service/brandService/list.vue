@@ -124,6 +124,10 @@
                         {
                             title: '价格',
                             key: 'salePrice',
+                            render: (h,params) => {
+                                const row = params.row;
+                                return +row.salePrice/100
+                            }
                         },
                         {   
                             title: '是否支持上门',
@@ -145,7 +149,7 @@
                             key: 'visitPrice',
                             render: (h,params) => {
                                 const row = params.row;
-                                return !!row.visitPrice?row.visitPrice:"0"
+                                return !!row.visitPrice?+row.visitPrice/100:"0"
                             }
                         },
                         {

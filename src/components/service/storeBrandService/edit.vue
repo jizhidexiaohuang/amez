@@ -157,11 +157,11 @@
                         /* 商品 */
                         ajaxData.product = {
                             serverName: vm.formValidate.serverName, // 商品名称
-                            originalPrice: vm.formValidate.originalPrice, // 原价
-                            salePrice: vm.formValidate.salePrice, // 销售价
+                            originalPrice: +vm.formValidate.originalPrice*100, // 原价
+                            salePrice: +vm.formValidate.salePrice*100, // 销售价
                             saleVolume: vm.formValidate.saleVolume, // 销量
                             serverBookType: vm.formValidate.serverBookType, // 销量
-                            visitPrice: vm.formValidate.serverBookType == 2?vm.formValidate.visitPrice:"", // 上门费
+                            visitPrice: vm.formValidate.serverBookType == 2?+vm.formValidate.visitPrice*100:"", // 上门费
                             coverImg: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
                             serverAttention: vm.formValidate.serverAttention, // 注意事项
                             serverNeedTime: vm.formValidate.serverNeedTime, // 服务总时长
@@ -278,10 +278,10 @@
                 vm.formValidate.type = !!!data.productCategoryRef?"":data.productCategoryRef.categoryId;// 服务分类
                 vm.formValidate.brandId = data.product.brandId; // 服务所属品牌
                 vm.formValidate.serverName = data.product.serverName; // 服务名称
-                vm.formValidate.originalPrice = data.product.originalPrice; // 市场价
-                vm.formValidate.salePrice = data.product.salePrice; // 服务销售价
+                vm.formValidate.originalPrice = +data.product.originalPrice/100; // 市场价
+                vm.formValidate.salePrice = +data.product.salePrice/100; // 服务销售价
                 vm.formValidate.serverBookType = data.product.serverBookType;// 预约方式 1上门 2到店
-                vm.formValidate.visitPrice = data.product.visitPrice;// 上门费
+                vm.formValidate.visitPrice = +data.product.visitPrice/100;// 上门费
                 vm.formValidate.coverImg = data.product.coverImg;//封面图
                 vm.formValidate.serverAttention = data.product.serverAttention; // 注意事项
                 vm.formValidate.serverNeedTime = data.product.serverNeedTime; // 服务总时长
