@@ -317,6 +317,7 @@ export default {
                 switch (_type) {
                     case 1:
                         vm.menu.menuList = arrs;  // 不走存储拿菜拿菜单数据
+                        vm.fnMenuChange();
                         break;
                     case 2:
                         if(window.localStorage.getItem("userInfo")){

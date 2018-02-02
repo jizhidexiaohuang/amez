@@ -267,4 +267,5 @@ const common = {
         return time;
     },
 }
+
 export default common
