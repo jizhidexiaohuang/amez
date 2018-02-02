@@ -66,6 +66,13 @@ import WorkerManage from '@/components/worker/workerManage/list'
 import DecorateHome from '@/components/marketing/decorateHome/index'
 //活动商家分组
 import ActivityShop from '@/components/marketing/activityShop/list'
+/*=====================================会员卡=========================*/
+//会员卡列表
+import CardManage from '@/components/memberCard/cardManage/list'
+//售卡记录
+import CardHistory from '@/components/memberCard/cardHistory/list'
+//卡面模板
+import CardTpl from '@/components/memberCard/cardTpl/list'
 
 Vue.use(Router)
 
@@ -361,6 +368,44 @@ const menuRouter = [
           name:"活动商家分组"
         }
       }
+    ]
+  },
+  {
+    path: '/memberCard',
+    name: '会员卡',
+    title: '会员卡',
+    component: Main,
+    children: [
+      {
+        path: '/memberCard/cardManage',
+        name: '会员卡列表',
+        title: '会员卡列表',
+        component: CardManage,
+        meta:{
+          type:"菜单",
+          name:"会员卡列表"
+        }
+      },
+      {
+        path: '/memberCard/cardHistory',
+        name: '售卡记录',
+        title: '售卡记录',
+        component: CardHistory,
+        meta:{
+          type:"菜单",
+          name:"售卡记录"
+        }
+      },
+      {
+        path: '/memberCard/cardTpl',
+        name: '卡面模板',
+        title: '卡面模板',
+        component: CardTpl,
+        meta:{
+          type:"菜单",
+          name:"卡面模板"
+        }
+      },
     ]
   }
 ]

@@ -172,6 +172,29 @@ const common = {
             ]
         },
         {
+            name:"会员卡",
+            hasChildList:true,
+            href:"",
+            type:"social-python",
+            childList: [
+                {
+                    name:"会员卡列表",
+                    hasChildList: false,
+                    href:"/memberCard/cardManage"
+                },
+                {
+                    name:"售卡记录",
+                    hasChildList: false,
+                    href:"/memberCard/cardHistory"
+                },
+                {
+                    name:"卡面模板",
+                    hasChildList: false,
+                    href:"/memberCard/cardTpl"
+                }
+            ]
+        },
+        {
             name:"营销管理",
             hasChildList:true,
             href:"",

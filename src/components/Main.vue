@@ -494,7 +494,6 @@ export default {
         }  
     },
     beforeDestory(){
-        alert(1);
     } 
 }
 </script>
