@@ -10,14 +10,22 @@
                 打钩即是分配权限，请谨慎操作。
             </Alert>  
         </div>
-        <div class="boxStyle">
-            <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
-                <Tree @on-check-change="fnCheckMenuList" :data="treeList" show-checkbox multiple style="margin-left:30px; margin-bottom:20px;"></Tree>
-                <FormItem style="margin-left:5px;">
-                    <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
-                    <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
-                </FormItem>        
-            </Form>
+        <div class="boxStyle" style="padding-top: 0px; padding-bottom: 0px;">
+            <Row>
+                <Col span="12">
+                    <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
+                        <Tree @on-check-change="fnCheckMenuList" @on-select-change="fnDoSome" :data="treeList" show-checkbox style="margin-left:30px; margin-bottom:20px;"></Tree>
+                        <FormItem style="margin-left:5px;">
+                            <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+                            <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
+                        </FormItem>        
+                    </Form>
+                </Col>
+                <Col span="12" style="min-height: 200px;">
+                    <Table class="editTable" :columns="columns" :data="menuList" v-if="show"></Table>
+                </Col>
+                <div class="example-split"></div>
+            </Row>
         </div>
     </div>
 </template>
@@ -39,6 +47,48 @@
                 allList:[],//所有权限
                 mineList:[],//该角色拥有的权限
                 resourcesIds:"",//权限id数组
+                columns:[
+                    {
+                        title: '按钮名称',
+                        key: 'name'
+                    },
+                    {
+                        title: '描述',
+                        key: 'age'
+                    },
+                    {
+                        title: '操作',
+                        key: 'address',
+                        width: 180,
+                        render: (h, params) => {
+                            return h('div', [
+                                h('i-switch', {
+                                    props: {
+                                        type: 'primary',
+                                        value: params.row.code === 1
+                                    },
+                                    on: {
+                                        'on-change': (code) => {
+                                            const row = params.row;
+                                            this.rowIndex = row.index;
+                                            this.rowCode = code;
+                                            this.changeData();
+                                        }
+                                    }
+                                }, '删除')
+                            ]);
+                        }
+                    }
+                ],
+                menuList: [],
+                btnType:0,// 0是新增，1是编辑
+                show: false, // 控制按钮表格是否显示
+                menuId: '',// 菜单id
+                operId: '',// 按钮id
+                spinShow1: false,// 表格的加载开关
+                selectData:'',// 树节点回调函数的返回值
+                rowIndex:'',
+                rowCode:'',
             }
         },
         methods: {
@@ -267,6 +317,354 @@
                 }).catch(function(err){
                     vm.spinShow = false;
                 })
+            },
+            // 点击树节点的回调函数
+            fnDoSome (data) {
+                console.log(this.roleId)
+                let vm = this;
+                vm.selectData = data;
+                vm.spinShow1 = true;// 出现加载条
+                // 0.判断是一级还是二级菜单
+                /* 一级或者重复点 */
+                if(data.length == 0||data[0].parentId == 0){
+                    vm.menuList = [];
+                    vm.spinShow1 = false;
+                    vm.show = false;
+                }else{
+                    vm.show = true;
+                    /* 二级 */
+                    // 1.显示对应的按钮列表
+                    vm.menuId = data[0].menuId;
+                    /* let arrs = [];
+                    arrs = vm.fnBaseList(data[0].title);
+                    if(data[0].title == '门店审核'){
+                        arrs.push({
+                            name: '品牌审核',
+                            age: '编辑操作',
+                            code: 0,
+                            index:arrs.length,
+                            operCode: 'examine'
+                        })
+                    } */
+                    // 2.判断是新增还是编辑
+                    vm.fnAddOrEdit();
+                    return false;
+
+
+
+                    let url = vm.common.path2+"baseOperators/selectListByConditions?pageSize=10";
+                    let ajaxData = {
+                        menuId: vm.menuId,
+                        roleId: vm.roleId, // 角色id
+                    }
+                    this.$http.post(
+                        url,
+                        JSON.stringify(ajaxData),
+                        {
+                            headers:{
+                                'Content-type':'application/json;charset=UTF-8'
+                            }
+                        }
+                    ).then(function(res){
+                        let oData = res.data.data
+                        if(oData.list.length>0){
+                            /* 是编辑 */
+                            vm.btnType = 1;
+                            vm.operId = oData.list[0].operId;
+                            if(oData.list[0].operCode!=null){
+                                let operCodeList = oData.list[0].operCode.split(",");
+                                if(operCodeList.length>0){
+                                    vm.changeTableList(operCodeList,arrs);
+                                }
+                            }
+                        }else{
+                            vm.spinShow1 = false;
+                            vm.menuList = arrs;
+                            /* 是新增 */
+                            vm.btnType = 0;
+                        }
+                    }).catch(function(err){
+                    })
+                }
+            },
+            // 判断是新增还是编辑
+            fnAddOrEdit (fnCallback) {
+                let vm = this;
+                let arrs = [];
+                arrs = vm.fnBaseList(vm.selectData[0].title);
+                if(vm.selectData[0].title == '门店审核'){
+                    arrs.push({
+                        name: '品牌审核',
+                        age: '编辑操作',
+                        code: 0,
+                        index:arrs.length,
+                        operCode: 'examine'
+                    })
+                }
+                let url = vm.common.path2+"baseOperators/selectListByConditions?pageSize=10";
+                let ajaxData = {
+                    menuId: vm.selectData[0].menuId,
+                    roleId: vm.roleId, // 角色id
+                }
+                this.$http.post(
+                    url,
+                    JSON.stringify(ajaxData),
+                    {
+                        headers:{
+                            'Content-type':'application/json;charset=UTF-8'
+                        }
+                    }
+                ).then(function(res){
+                    let oData = res.data.data
+                    if(oData.list.length>0){
+                        /* 是编辑 */
+                        vm.btnType = 1;
+                        vm.operId = oData.list[0].operId;
+                        if(oData.list[0].operCode!=null){
+                            let operCodeList = oData.list[0].operCode.split(",");
+                            if(operCodeList.length>0){
+                                vm.changeTableList(operCodeList,arrs);
+                            }
+                        }
+                    }else{
+                        vm.spinShow1 = false;
+                        vm.menuList = arrs;
+                        /* 是新增 */
+                        vm.btnType = 0;
+                    }
+
+                    if(!!fnCallback){
+                        fnCallback(vm);
+                    }
+
+                }).catch(function(err){
+                })
+            },
+            // 切换开关的回调函数
+            changeData () {
+                let vm = this;
+                function fnCallback (vm){
+                    let operCode = [];
+                    // 修改数据
+                    vm.menuList[vm.rowIndex].code = !!!vm.rowCode?0:1;
+                    vm.menuList.forEach(function(item,index){
+                        if(item.code == 1){
+                            operCode.push(item.operCode);
+                        }
+                    })
+                    // 判断是新增还是编辑
+                    let url = "";
+                    let ajaxData = {};
+                    if(vm.btnType == 0){
+                        /* 新增 */
+                        url = vm.common.path2+"baseOperators/insert";
+                        ajaxData = {
+                            menuId: vm.menuId,
+                            operCode: operCode.join(), // 操作码
+                            roleId: vm.roleId,// 角色id
+                        }
+                        vm.$http.post(
+                            url,
+                            JSON.stringify(ajaxData),
+                            {
+                                headers:{
+                                    'Content-type':'application/json;charset=UTF-8'
+                                }
+                            }
+                        ).then(function(res){
+                            console.log(res);
+                            vm.btnType = 1;
+
+                            // 获取按钮id
+                            let url1 = vm.common.path2+"baseOperators/selectListByConditions?pageSize=10";
+                            let ajaxData1 = {
+                                menuId: vm.menuId
+                            }
+                            vm.$http.post(
+                                url1,
+                                JSON.stringify(ajaxData1),
+                                {
+                                    headers:{
+                                        'Content-type':'application/json;charset=UTF-8'
+                                    }
+                                }
+                            ).then(function(res){
+                                let oData = res.data.data;
+                                vm.operId = oData.list[0].operId;
+                            })
+
+                        }).catch(function(err){
+                            console.log(err);
+                        })
+                    }else if(vm.btnType == 1){
+                        /* 编辑 */
+                        url = vm.common.path2+"baseOperators/update";
+                        ajaxData = {
+                            menuId: vm.menuId,
+                            operCode: operCode.join(), // 操作码
+                            operId: vm.operId,
+                            // roleId: vm.roleId,// 角色id
+                        }
+                        vm.$http.put(   
+                            url,
+                            ajaxData
+                        ).then(function(res){
+                            console.log(res);
+                        }).catch(function(err){
+                            console.log(err);
+                        })
+                    }
+                }
+                this.fnAddOrEdit(fnCallback);
+            },
+            // 基础的表格数据
+            fnBaseList (type) {
+                let arrs = [];
+                console.log(type);
+                if(type!="店铺等级"&&type!="连锁品牌管理"){
+                    arrs.push({
+                        name: '新增',
+                        age: '新增操作',
+                        code: 0,
+                        index:0,
+                        operCode:'add'
+                    });
+                }
+                arrs.push({
+                    name: '编辑',
+                    age: '编辑操作',
+                    code: 0,
+                    index:1,
+                    operCode:'edit'
+                });
+                arrs.push({
+                    name: '删除',
+                    age: '删除操作',
+                    code: 0,
+                    index:2,
+                    operCode:'delete'
+                })
+                if(type!="退款订单客服介入"){
+                    arrs.push({
+                        name: '查看',
+                        age: '查看操作',
+                        code: 0,
+                        index:3,
+                        operCode:'see'
+                    })
+                }
+                arrs.push({
+                    name: '刷新',
+                    age: '刷新操作',
+                    code: 0,
+                    index:4,
+                    operCode:'refresh'
+                })
+                switch(type){
+                    case "品牌服务":
+                        arrs.push({
+                            name: '审核',
+                            age: '审核操作',
+                            code: 0,
+                            index:arrs.length,
+                            operCode:'examine'
+                        });
+                        arrs.push({
+                            name: '上下架',
+                            age: '上下架操作',
+                            code: 0,
+                            index:arrs.length,
+                            operCode:'updown'
+                        });
+                        return arrs;
+                    break;
+                    case "门店自营服务":
+                        arrs.push({
+                            name: '上下架',
+                            age: '上下架操作',
+                            code: 0,
+                            index:arrs.length,
+                            operCode:'updown'
+                        });
+                        return arrs;
+                    break;
+                    case "门店管理":
+                        arrs.push({
+                            name: '开启关闭',
+                            age: '开启关闭操作',
+                            code: 0,
+                            index:arrs.length,
+                            operCode:'openclose'
+                        });
+                        arrs.push({
+                            name: '冻结激活',
+                            age: '冻结激活操作',
+                            code: 0,
+                            index:arrs.length,
+                            operCode:'frozen'
+                        });
+                        return arrs;
+                    break;
+                    case "店铺等级":
+                        arrs.push({
+                            name: '新增店铺等级',
+                            age: '新增店铺等级操作',
+                            code: 0,
+                            index:arrs.length,
+                            operCode:'storeGrade'
+                        });
+                        arrs.push({
+                            name: '成长规则设置',
+                            age: '成长规则设置操作',
+                            code: 0,
+                            index:arrs.length,
+                            operCode:'storeRules'
+                        });
+                        return arrs;
+                    break;
+                    case "连锁品牌管理":
+                        arrs.push({
+                            name: '新增连锁品牌',
+                            age: '新增连锁品牌操作',
+                            code: 0,
+                            index:arrs.length,
+                            operCode:'addBrand'
+                        });
+                        return arrs;
+                    break;
+                    case "退款订单客服介入":
+                        arrs.push({
+                            name: '订单详情',
+                            age: '订单详情查看',
+                            code: 0,
+                            index:arrs.length,
+                            operCode:'orderInfo'
+                        });
+                        arrs.push({
+                            name: '退款详情',
+                            age: '退款详情查看',
+                            code: 0,
+                            index:arrs.length,
+                            operCode:'backInfo'
+                        });
+                        return arrs;
+                    break;
+                    default:
+                        return arrs;
+                }
+            }, 
+             /* 如果是编辑，则去修改table */
+            changeTableList (list,oldArrs) {
+                let vm = this;
+                for(let i = 0;i<oldArrs.length;i++){
+                    for(var j = 0;j<list.length;j++){
+                        if(oldArrs[i].operCode == list[j]){
+                            oldArrs[i].code= 1 ;
+                        }
+                    }
+                }
+                vm.menuList = oldArrs;
+                vm.spinShow = false;
             }
         },
         mounted: function(){
@@ -282,5 +680,16 @@
     }
 </script>
 <style scoped>
+.example-split{
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    border: 1px dashed #eee;
+}
+.editTable{
+    margin: 5px 10px 5px 10px;
+}
 </style>
 

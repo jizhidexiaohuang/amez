@@ -68,11 +68,11 @@
                         </Input>
                     </Col>
                     <Col span="5">
-                        <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
-		                <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
+                        <Button v-if="!!operators.see" style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
+		                <Button v-if="!!operators.refresh" style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     </Col>
                     <Col span="3" offset="11" >
-                        <Button style="float:right;" v-if="!!isShow" @click.native="changePageType('add')" type="success" icon="android-add">发布服务</Button>
+                        <Button style="float:right;" v-if="!!isShow&&!!operators.add" @click.native="changePageType('add')" type="success" icon="android-add">发布服务</Button>
                     </Col>
                 </Row>
                 <Table
@@ -105,6 +105,21 @@
     export default {
         data () {
             return {
+                operators: {
+                    add: false, // 新增
+                    edit: false, // 编辑
+                    delete: false, // 删除
+                    see: false, // 查看
+                    refresh: false, // 刷新
+                    updown: false, // 上下架
+                    examine: false, // 审核
+                    openclose: false, // 开启关闭
+                    frozen: false, // 冻结激活
+                    storeGrade: false, // 新增店铺等级
+                    storeRules: false, // 新增规则
+                    orderInfo: false, // 订单详情
+                    backInfo: false, // 退款详情
+                },
                 modal:{
                     mineModal: false,
                     loading: true,
@@ -211,46 +226,51 @@
                                 const row = params.row;
                                 const color = row.saleStatus === 0 ? 'success' : 'warning';
                                 const text = row.saleStatus === 0 ? '上架' : '下架';
-                                let arrs = [
-                                    h('Button', {
-                                        props: {
-                                            type: color,
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                // this.fnDeleteItem(params.row.id);
-                                                let row = params.row;
-                                                this.modal.id = row.id;
-                                                this.modal.type = row.saleStatus;
-                                                this.modal.storeId = row.storeId;
-                                                this.fnShowModal();
-                                            }
+                                let arrs = [];
+                                let obj2 = h('Button', {
+                                    props: {
+                                        type: color,
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            // this.fnDeleteItem(params.row.id);
+                                            let row = params.row;
+                                            this.modal.id = row.id;
+                                            this.modal.type = row.saleStatus;
+                                            this.modal.storeId = row.storeId;
+                                            this.fnShowModal();
                                         }
-                                    }, text),
-                                    h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                let row = params.row;
-                                                this.audit.id = row.id;
-                                                this.audit.auditStatus = row.auditStatus;
-                                                this.audit.auditReason = row.auditReason;
-                                                this.fnShowModal1();
-                                                // this.fnDeleteItem(params.row.id);
-                                            }
+                                    }
+                                }, text)
+                                if(!!this.operators.updown){
+                                    arrs.push(obj2);
+                                }
+                                let obj3 = h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            let row = params.row;
+                                            this.audit.id = row.id;
+                                            this.audit.auditStatus = row.auditStatus;
+                                            this.audit.auditReason = row.auditReason;
+                                            this.fnShowModal1();
+                                            // this.fnDeleteItem(params.row.id);
                                         }
-                                    }, '审核')
-                                ]
+                                    }
+                                }, '审核')
+                                if(!!this.operators.examine){
+                                    arrs.push(obj3);
+                                }
                                 let obj1 = h('Button', {
                                     props: {
                                         type: 'error',
@@ -282,8 +302,12 @@
                                         }
                                     }, '编辑');
                                 if(!!this.isShow){
-                                    arrs.unshift(obj);
-                                    arrs.push(obj1);
+                                    if(!!this.operators.edit){
+                                        arrs.unshift(obj);
+                                    }
+                                    if(!!this.operators.delete){
+                                        arrs.push(obj1);
+                                    }
                                 }
                                 return h('div',arrs);
                             }
@@ -328,7 +352,6 @@
                 let beginReleaseTime = this.common.formatDate(new Date(this.cd.time[0]));
                 let endReleaseTime = this.common.formatDate(new Date(this.cd.time[1]));
                 let vm = this;
-                console.log(vm.cd.time);
                 if(!!init&&init=='init'){
                     vm.fnInit();
                 }
@@ -359,7 +382,6 @@
                     ajaxData.saleStatus = vm.cd.saleStatus;
                 }
                 if(!!vm.cd.inputval){
-                    console.log(1);
                     ajaxData[vm.cd.inputType] = vm.cd.inputval
                 }
                 if(!!vm.cd.time&&!!vm.cd.time[0]){
@@ -376,19 +398,16 @@
                         }
                     }
                 ).then(function(res){
-                    console.log(res);
                     let oData = res.data
                     vm.table.recordsTotal = oData.data.total;
                     vm.table.tableData1 = res.data.data.list;
                     vm.table.loading = false;
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             /* 删除一条列表 */
             fnDeleteItem (id) {
                 let vm = this;
-                console.log(id);
                 this.$Modal.confirm({
                     title: '删除产品',
                     content: '确定要删除此产品吗？',
@@ -397,14 +416,12 @@
                         this.$http.delete(
                             url,
                         ).then(function(res){
-                            console.log(res.data);
                             if(res.data.code == 200){
                                 setTimeout(function(){
                                     vm.$Message.success('删除成功');
                                 },500)
                                 // 解决删除第(10n+1)个时，页数没有往后跳一页
                                 let total = vm.table.recordsTotal;
-                                console.log(total);
                                 if(total>10&&total%10 == 1){
                                     vm.table.pageNun = vm.table.pageNun - 1;
                                 }
@@ -413,7 +430,6 @@
                                 vm.$Message.error(res.data.message);
                             }
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.error(err);
                         })
                     }
@@ -428,19 +444,15 @@
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {
-                console.log(size);
                 let vm = this;
                 vm.table.size = size;
                 vm.getData();
             },
             /* 选中某一项的回掉函数 */
             fnSelect (selection,row) {
-                console.log(row);
-                console.log(selection);
             },
             /* 全选时的回调函数 */
             fnSelectAll (selection) {
-                console.log(selection);
             },
             changePageType (type) {
                 this.pageType = type;
@@ -452,7 +464,6 @@
             /* 模态框 */
             fnShowModal () {
                 let vm = this;
-                console.log(vm.modal.type);
                 if(vm.modal.type == 0){
                     //下架状态中
                     vm.modal.info = "确定要上架？"
@@ -476,12 +487,10 @@
                     vm.$http.put(
                         url,
                     ).then(function(res){
-                        console.log(res);
                         vm.getData();
                         vm.modal.loading = true;
                         vm.modal.mineModal = false;
                     }).catch(function(err){
-                        console.log(err);
                         vm.getData();
                     })
                 })();
@@ -495,17 +504,14 @@
                     "auditReason": vm.audit.auditReason
                 }
                 let url = vm.common.path2 + "product/modify/auditStatus/"+id+"/"+auditStatus+"?auditReason="+vm.audit.auditReason;
-                console.log(url);
                 vm.$http.put(
                     url,
                     ajaxData,
                 ).then(function(res){
-                    console.log(res);
                     vm.getData();
                     vm.audit.loading = true;
                     vm.audit.mineModal = false;
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             // 服务分类接口数据
@@ -521,9 +527,7 @@
                 ).then(function(res){
                     let oData = res.data.data.list;
                     vm.sendChild.serviceList = oData;
-                    console.log(vm.sendChild);
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             // 服务所属品牌接口数据
@@ -543,7 +547,6 @@
                     let oData = res.data.data.list;
                     vm.sendChild.brandList = oData
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             /* 判断页签中是否有该模块，如果有则使用缓存，如果没有则重新加载数据 */
@@ -563,6 +566,62 @@
                 }
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
+
+
+            /*===================== 菜单权限配置 start ====================*/
+            /* 获取该菜单拥有的权限 */
+            fnGetOperators () {
+                let vm = this;
+                function fnGetDatas (id,vm) {
+                    let list = [];
+                    let menuArrs = []; // 相同menuId的数组
+                    let strArrs = []; // 权限数组 ["add","edit"]
+                    /* 菜单对应的权限组 */
+                    if(!!JSON.parse(window.localStorage.getItem("userInfo")).operator.list){
+                        list = JSON.parse(window.localStorage.getItem("userInfo")).operator.list;
+                    }
+                    /* 每个用户有可能被分配了多个角色，所以需要合并相同menuId的权限组 */
+                    for(var c = 0;c<list.length;c++){
+                        if(list[c].menuId == id){
+                            menuArrs.push(list[c]);
+                        }
+                    }
+
+                    console.log('zzzzzzzzz')
+                    console.log(menuArrs);
+                    for(var j = 0;j<menuArrs.length;j++){
+                        if(!!menuArrs[j].operCode){
+                            vm.fnChangeOperators(menuArrs[j].operCode.split(","));
+                        }
+                    }
+                }
+                /* 得到所有的菜单 */
+                let arrs = JSON.parse(window.localStorage.getItem("userInfo")).menu;
+                for(var i = 0;i<arrs.length;i++){
+                    if(!!arrs[i].hasChildList){
+                        for(var j = 0;j<arrs[i].childList.length;j++){
+                            if(arrs[i].childList[j].href == this.$route.path){
+                                fnGetDatas(arrs[i].childList[j].menuId,vm)
+                            }
+                        }
+                    }else{
+                        if(arrs[i].href == this.$route.path){
+                            fnGetDatas(arrs[i].menuId,vm)
+                        }
+                    }
+                }
+            },
+            /* 权限的遍历 */
+            fnChangeOperators (arrs) {
+                // operators{}是开关对象
+                let vm = this;
+                arrs.forEach(function(item,index){
+                    vm.operators[item] = true;
+                })
+                console.log('zzzzzzzzzz')
+                console.log(vm.operators);
+            }
+            /*=================== 菜单权限配置 end ===========================*/
         },
         mounted: function(){
             let vm = this;
@@ -575,10 +634,10 @@
             }else{
                 vm.isShow = true;
             }
+            this.fnGetOperators();
             this.fnGetProductCategory();
             this.fnGetStoreChainBrand();
             this.getData();
-            console.log(this.common);
         },
         activated: function(){
             let vm = this;

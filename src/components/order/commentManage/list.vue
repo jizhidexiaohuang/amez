@@ -23,10 +23,10 @@
                 </Form>
                 <Row style="margin-bottom:10px;">
                     <Col span="5">
-                        <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
-		                <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
+                        <Button v-if="!!operators.see" style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
+		                <Button v-if="!!operators.refresh" style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     </Col>
-                    <Col span="3" offset="16" v-show="false">
+                    <Col span="3" offset="16" v-if="!!operators.add">
                         <Button style="float:right;" @click.native="changePageType('list')" type="success" icon="android-add">新增</Button>
                     </Col>
                 </Row>
@@ -35,8 +35,6 @@
                     :data="table.tableData1" 
                     :columns="table.tableColumns" 
                     border
-                    @on-select="fnSelect"
-                    @on-select-all="fnSelectAll"
                 ></Table>
                 <div style="margin: 10px;overflow: hidden">
                     <div style="float: right;">
@@ -59,6 +57,21 @@
     export default {
         data () {
             return {
+                operators: {
+                    add: false, // 新增
+                    edit: false, // 编辑
+                    delete: false, // 删除
+                    see: false, // 查看
+                    refresh: false, // 刷新
+                    updown: false, // 上下架
+                    examine: false, // 审核
+                    openclose: false, // 开启关闭
+                    frozen: false, // 冻结激活
+                    storeGrade: false, // 新增店铺等级
+                    storeRules: false, // 新增规则
+                    orderInfo: false, // 订单详情
+                    backInfo: false, // 退款详情
+                },
                 cd:{
                     time:[],//评论时间范围
                     operType:"1"//评论类型、不用重置
@@ -95,7 +108,6 @@
                             key: 'payTime',
                             render: (h,params) =>{
                                 return "2017/12/16 12:16"
-                                //return h('div', this.formatDate(params.time));
                             }
                         },
                         {   
@@ -109,19 +121,22 @@
                             // align: 'center',
                             // fixed: 'right',
                             render: (h, params) => {
-                                return h('div', [
-                                    h('Button', {
-                                        props: {
-                                            type: 'error',
-                                            size: 'small'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                this.fnDeleteItem(params.row.id);
-                                            }
+                                let arrs = [];
+                                let obj1 = h('Button', {
+                                    props: {
+                                        type: 'error',
+                                        size: 'small'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.fnDeleteItem(params.row.id);
                                         }
-                                    }, '删除')
-                                ]);
+                                    }
+                                }, '删除')
+                                if(!!this.operators.delete){
+                                    arrs.push(obj1);
+                                }
+                                return h('div',arrs);
                             }
                         }
                     ],
@@ -147,7 +162,6 @@
                             key: 'payTime',
                             render: (h,params) =>{
                                 return "2017/12/16 12:16"
-                                //return h('div', this.formatDate(params.time));
                             }
                         },
                         {
@@ -161,19 +175,23 @@
                             // align: 'center',
                             // fixed: 'right',
                             render: (h, params) => {
-                                return h('div', [
-                                    h('Button', {
-                                        props: {
-                                            type: 'error',
-                                            size: 'small'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                // this.test(params.index)
-                                            }
+                                let arrs = [];
+                                let obj1 = h('Button', {
+                                    props: {
+                                        type: 'error',
+                                        size: 'small'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            // this.test(params.index)
                                         }
-                                    }, '删除')
-                                ]);
+                                    }
+                                }, '删除');
+                                if(!!this.operators.delete){
+                                    arrs.push(obj1);
+                                }
+
+                                return h('div',arrs);
                             }
                         }
                     ],
@@ -265,28 +283,12 @@
                     }
                 })
             },
-            /* 查看详情 */
-            show (index) {
-                this.$Modal.info({
-                    title: '老师活动详情',
-                    content: `老师名称：${this.table.tableData1[index].teacherName}<br>老师类型：${this.table.tableData1[index].typeName}<br>活动类型：${this.table.tableData1[index].typeName}`
-                })
-            },
             /* 页码改变的回掉函数 */
             changeSize (size) {
                 console.log(size);
                 let vm = this;
                 vm.table.size = size;
                 vm.getData();
-            },
-            /* 选中某一项的回掉函数 */
-            fnSelect (selection,row) {
-                console.log(row);
-                console.log(selection);
-            },
-            /* 全选时的回调函数 */
-            fnSelectAll (selection) {
-                console.log(selection);
             },
             changePageType (type) {
                 this.pageType = type;
@@ -308,22 +310,59 @@
                 }
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
-            /* 时间转化 */
-            formatDate (date) {
-                const y = date.getFullYear();
-                let m = date.getMonth() + 1;
-                m = m < 10 ? '0' + m : m;
-                let d = date.getDate();
-                d = d < 10 ? ('0' + d) : d;
-                return y + '-' + m + '-' + d;
+            /*===================== 菜单权限配置 start ====================*/
+            /* 获取该菜单拥有的权限 */
+            fnGetOperators () {
+                let vm = this;
+                function fnGetDatas (id,vm) {
+                    let list = [];
+                    let menuArrs = []; // 相同menuId的数组
+                    let strArrs = []; // 权限数组 ["add","edit"]
+                    /* 菜单对应的权限组 */
+                    if(!!JSON.parse(window.localStorage.getItem("userInfo")).operator.list){
+                        list = JSON.parse(window.localStorage.getItem("userInfo")).operator.list;
+                    }
+                    /* 每个用户有可能被分配了多个角色，所以需要合并相同menuId的权限组 */
+                    for(var c = 0;c<list.length;c++){
+                        if(list[c].menuId == id){
+                            menuArrs.push(list[c]);
+                        }
+                    }
+
+                    for(var j = 0;j<menuArrs.length;j++){
+                        if(!!menuArrs[j].operCode){
+                            vm.fnChangeOperators(menuArrs[j].operCode.split(","));
+                        }
+                    }
+                }
+                /* 得到所有的菜单 */
+                let arrs = JSON.parse(window.localStorage.getItem("userInfo")).menu;
+                for(var i = 0;i<arrs.length;i++){
+                    if(!!arrs[i].hasChildList){
+                        for(var j = 0;j<arrs[i].childList.length;j++){
+                            if(arrs[i].childList[j].href == this.$route.path){
+                                fnGetDatas(arrs[i].childList[j].menuId,vm)
+                            }
+                        }
+                    }else{
+                        if(arrs[i].href == this.$route.path){
+                            fnGetDatas(arrs[i].menuId,vm)
+                        }
+                    }
+                }
             },
-            baseFormatDate (date) {
-                let d = new Date(date);
-                let time = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds(); 
-                return time;
+            /* 权限的遍历 */
+            fnChangeOperators (arrs) {
+                // operators{}是开关对象
+                let vm = this;
+                arrs.forEach(function(item,index){
+                    vm.operators[item] = true;
+                })
             }
+            /*=================== 菜单权限配置 end ===========================*/
         },
         mounted: function(){
+            this.fnGetOperators();
             this.getData();
         },
         activated: function(){

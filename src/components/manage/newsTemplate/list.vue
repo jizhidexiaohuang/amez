@@ -1,6 +1,5 @@
 <template>
     <div>
-      
         <!-- 详情容器 -->
         <div v-if="pageType == 'info'" class="testWrap">详情</div>
         <!-- 新增 -->
@@ -19,9 +18,9 @@
                 <Row style="margin-bottom:10px;">
                     <Col span="5">
                         <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search" v-if="false">查询</Button>
-		                <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
+		                <Button v-if="!!operators.refresh" style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     </Col>
-                    <Col span="3" offset="16" v-show="true">
+                    <Col span="3" offset="16" v-if="!!operators.add">
                         <Button style="float:right;" @click.native="changePageType('add')" type="success" icon="android-add">新增模板</Button>
                     </Col>
                 </Row>
@@ -54,6 +53,21 @@
     export default {
         data () {
             return {
+                operators: {
+                    add: false, // 新增
+                    edit: false, // 编辑
+                    delete: false, // 删除
+                    see: false, // 查看
+                    refresh: false, // 刷新
+                    updown: false, // 上下架
+                    examine: false, // 审核
+                    openclose: false, // 开启关闭
+                    frozen: false, // 冻结激活
+                    storeGrade: false, // 新增店铺等级
+                    storeRules: false, // 新增规则
+                    orderInfo: false, // 订单详情
+                    backInfo: false, // 退款详情
+                },
                 table:{
                     pageSize:10,//每页显示的数量
                     recordsTotal:0,//总数量
@@ -105,36 +119,42 @@
                             // align: 'center',
                             // fixed: 'right',
                             render: (h, params) => {
-                                return h('div', [
-                                    h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                let row = params.row;
-                                                this.sendChild.id = row.id;
-                                                this.changePageType('edit');
-                                            }
+                                let arrs = [];
+                                let obj1 = h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            let row = params.row;
+                                            this.sendChild.id = row.id;
+                                            this.changePageType('edit');
                                         }
-                                    }, '编辑'),
-                                    h('Button', {
-                                        props: {
-                                            type: 'error',
-                                            size: 'small'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                let row = params.row;
-                                                this.fnDeleteItem(row.id);
-                                            }
+                                    }
+                                }, '编辑');
+                                if(!!this.operators.edit){
+                                    arrs.push(obj1);
+                                }
+                                let obj2 = h('Button', {
+                                    props: {
+                                        type: 'error',
+                                        size: 'small'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            let row = params.row;
+                                            this.fnDeleteItem(row.id);
                                         }
-                                    }, '删除')
-                                ]);
+                                    }
+                                }, '删除');
+                                if(!!this.operators.delete){
+                                    arrs.push(obj2);
+                                }
+                                return h('div', arrs);
                             }
                         }
                     ],
@@ -203,9 +223,7 @@
                         this.$http.delete(
                             url
                         ).then(function(res){
-                            console.log(res);
                             let oData = res.data;
-                            console.log(oData);
                             if(oData.code == 200){
                                 setTimeout(function(){
                                     vm.$Message.success('删除成功');
@@ -215,7 +233,6 @@
                                 vm.$Message.error(oData.message);
                             }
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.error(err);
                         })
                     }
@@ -252,8 +269,59 @@
                 }
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
+            /*===================== 菜单权限配置 start ====================*/
+            /* 获取该菜单拥有的权限 */
+            fnGetOperators () {
+                let vm = this;
+                function fnGetDatas (id,vm) {
+                    let list = [];
+                    let menuArrs = []; // 相同menuId的数组
+                    let strArrs = []; // 权限数组 ["add","edit"]
+                    /* 菜单对应的权限组 */
+                    if(!!JSON.parse(window.localStorage.getItem("userInfo")).operator.list){
+                        list = JSON.parse(window.localStorage.getItem("userInfo")).operator.list;
+                    }
+                    /* 每个用户有可能被分配了多个角色，所以需要合并相同menuId的权限组 */
+                    for(var c = 0;c<list.length;c++){
+                        if(list[c].menuId == id){
+                            menuArrs.push(list[c]);
+                        }
+                    }
+
+                    for(var j = 0;j<menuArrs.length;j++){
+                        if(!!menuArrs[j].operCode){
+                            vm.fnChangeOperators(menuArrs[j].operCode.split(","));
+                        }
+                    }
+                }
+                /* 得到所有的菜单 */
+                let arrs = JSON.parse(window.localStorage.getItem("userInfo")).menu;
+                for(var i = 0;i<arrs.length;i++){
+                    if(!!arrs[i].hasChildList){
+                        for(var j = 0;j<arrs[i].childList.length;j++){
+                            if(arrs[i].childList[j].href == this.$route.path){
+                                fnGetDatas(arrs[i].childList[j].menuId,vm)
+                            }
+                        }
+                    }else{
+                        if(arrs[i].href == this.$route.path){
+                            fnGetDatas(arrs[i].menuId,vm)
+                        }
+                    }
+                }
+            },
+            /* 权限的遍历 */
+            fnChangeOperators (arrs) {
+                // operators{}是开关对象
+                let vm = this;
+                arrs.forEach(function(item,index){
+                    vm.operators[item] = true;
+                })
+            }
+            /*=================== 菜单权限配置 end ===========================*/
         },
         mounted: function(){
+            this.fnGetOperators();
             this.getData();
         },
         activated: function(){
