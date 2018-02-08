@@ -30,7 +30,7 @@
                     </FormItem>
                     <FormItem label="">
                         <Button v-if="false" type="primary" @click="fnHandleSubmit">确定</Button>
-                        <Button type="error" @click="fnHandleDelete">删除</Button>
+                        <Button type="error" @click="fnHandleDelete" v-if="false">删除</Button>
                     </FormItem>
                 </Form>
             </div>
@@ -89,6 +89,8 @@
                 vm.defaultList = []; // 默认滞空
                 vm.defaultList = oData.imgList; // 传过来的数据赋值给默认数组
                 vm.uploadList = oData.imgList; // 保存要提交的数据
+                console.log(vm.uploadList);
+                console.log(111111111111111);
                 vm.fnGetArrs();
                 vm.testCode = true;
             },
@@ -116,7 +118,7 @@
             // 上传成功之后,把数组赋值给uploadList;
             getUploadList (data) {
                 let vm = this;
-                vm.uploadList = data;
+                vm.uploadList = vm.fnFilterDatas(data);
                 vm.fnHandleSubmit(); // 上传成功之后就刷新实时区域的显示效果
             },
             // 重新组织数据,因为img遍历不出是数组元素是对象的图片路径
@@ -129,10 +131,19 @@
                     })
                 }
             },
-            // 轮播图的控制
-            fnChangeImg (index) {
-                let vm = this;
-                vm.curImg = index;
+            /* 数据过滤 */
+            fnFilterDatas (data) {
+                let arrs = [];
+                data.forEach(function(item,index){
+                    var obj = {};
+                    obj.url = item.url;
+                    obj.myId = item.myId;
+                    obj.src = item.src;
+                    obj.name = item.name;
+                    arrs.push(obj);
+                })
+                console.log(arrs);
+                return arrs;
             }
         },
         mounted: function(){

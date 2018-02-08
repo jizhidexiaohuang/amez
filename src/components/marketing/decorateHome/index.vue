@@ -1,7 +1,8 @@
 <template>
     <div class="">
         <div style="position:fixed; right:50px; bottom:20px;">
-            <Button @click="fnDoSome" type="primary">添加模块</Button> 
+            <Button v-if="false" @click="fnDoSome" type="primary">添加模块</Button> 
+            <Button @click="fnSendData" type="primary">确定</Button> 
         </div>
         <div class="phone-box">
             <div class="header">
@@ -31,10 +32,101 @@
                 activatedType: false,//主要解决mounted和activated重复调用
                 list:[],// 最后提交的数据
                 curIndex: 0,// 传递给子组件的数据
+                typeArrs:['test','Banner','Server','Activity','Shop','Footer'],
+                fnIsShow: false,
             }
         },
         methods: {
+            /* 模板类型选择 */
+            fnSelectType (type) {
+                switch (type) {
+                    case '1':
+                        return "Banner"
+                        break;
+                    case '2':
+                        return "Server"
+                        break;
+                    case '3':
+                        return "Activity"
+                        break;
+                    case '4':
+                        return "Shop"
+                        break;
+                    case '5':
+                        return "Footer"
+                        break;
+                    default:
+                        return "Banner"  
+                }
+            },
+            /* 模板类型选择 */
+            fnSelectType1 (type) {
+                switch (type) {
+                    case 'Banner':
+                        return 1
+                        break;
+                    case 'Server':
+                        return 2
+                        break;
+                    case 'Activity':
+                        return 3
+                        break;
+                    case 'Shop':
+                        return 4
+                        break;
+                    case 'Footer':
+                        return 5
+                        break;
+                    default:
+                        return 1  
+                }
+            },
             /* 获取数据 */
+            fnajaxData () {
+                let vm = this;
+                let url = "http://120.79.42.13:8005/app/baseHomeTemplate/front/findByPage?pageSize=1000";
+                this.$http.post(
+                    url,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                ).then(function(res){
+                    let oData = res.data.data.list
+                    oData.reverse();
+                    // console.log(oData);
+                    let myArrs = [];
+                    for(var i = 0;i<oData.length;i++){
+                        var obj = {};
+                        obj.id = oData[i].id;
+                        obj.type = vm.fnSelectType(oData[i].templateType);
+                        obj.data = {};
+                        obj.data.text = vm.fnSelectType(oData[i].templateType);
+                        obj.data.imgList = JSON.parse(oData[i].templateContent);
+                        obj.templateCode = oData[i].templateCode;
+                        myArrs.push(obj);
+                    }
+                    console.log('llllllkk');
+                    console.log(myArrs);
+                    vm.list = myArrs;
+
+                    /* 制造数据 */
+                    /* if(oData.length > 0){
+                        oData.forEach(function(item,index){
+                            let obj = {};
+                            obj.type = vm.fnSelectType(1); // 模板类型
+                            obj.data.text = vm.fnSelectType(1); // 模板名称
+                            obj.data.imgList = JSON.parse(item.templateContent); // 模板内容
+                            myArrs.push(obj);
+                        })
+                    }
+                    console.log(122222222)
+                    console.log(myArrs);
+                     */
+                }).catch(function(err){
+                })
+            },
             fnGeData () {
                 let vm = this;
                 let arrs = [
@@ -194,14 +286,13 @@
                     }
                 })
                 vm.list = arrs;
-                console.log('ssssssssssssssss')
-                console.log(vm.list);
             },
             /* 添加模块 */
             fnDoSome () {
                 let vm = this;
                 let obj = {
-                    type: 'Banner', // 编辑类型
+                    templateCode: 'INDEX_ONE',
+                    type: 'Footer', // 编辑类型
                     data: {
                         text: '测试区域'
                     }, // 数据
@@ -239,15 +330,79 @@
                     let type = vm.$store.getters.tabTrue;
                     if(!!!type){
                         // 模拟再次进来时的界面
-                        vm.fnGeData();
+                        // vm.fnGeData();
+                        this.fnajaxData();
                         vm.curIndex = 0;
                     }
                 }
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
+            /* 确定提交 */
+            fnSendData () {
+                let vm = this;
+                let arrs = vm.list;
+                arrs.forEach(function(item,index){
+                    vm.fnAjaxBySend(item);
+                });
+            },
+            /* 确定提交的ajax */
+            fnAjaxBySend (data) {
+                let vm = this;
+                var data = vm.fnRefreshData(data);
+                console.log(22222222222);
+                console.log(data);
+                if(!!data.id){
+                    // 这是编辑
+                    console.log('编辑');
+                    let url = "http://120.79.42.13:8005/app/baseHomeTemplate/edit";
+                    vm.$http.put(
+                        url,
+                        data,
+                    ).then(function(res){
+                        console.log(res);
+                        // vm.$Message.success('成功');
+                    }).catch(function(err){
+                        console.log(err);
+                        // vm.$Message.success(err);
+                    })
+                }else{
+                    // 这是新增
+                    console.log('新增');
+                    let url = "http://120.79.42.13:8005/app/baseHomeTemplate/insert";
+                    vm.$http.post(
+                        url,
+                        data,
+                        {
+                            headers:{
+                                'Content-type':'application/json;charset=UTF-8'
+                            }
+                        }
+                    ).then(function(res){
+                        console.log(res);
+                        vm.$Message.success('成功');
+                    }).catch(function(err){
+                        console.log(err);
+                        vm.$Message.success(err);
+                    })
+                }
+            },
+            /* 提交ajax之前,需要对传过去的参数进行还原处理 */
+            fnRefreshData (data) {
+                console.log(data.data.imgList);
+                let vm = this;
+                var ajaxData = {};
+                if(!!data.id){
+                    ajaxData.id = data.id;
+                }
+                ajaxData.templateType = vm.fnSelectType1(data.type);
+                ajaxData.templateContent = JSON.stringify(data.data.imgList);
+                ajaxData.templateCode = data.templateCode;
+                return ajaxData;
+            }
         },
         mounted: function(){
-            this.fnGeData();
+            this.fnajaxData();
+            // this.fnGeData();
         },
         activated: function(){
             let vm = this;

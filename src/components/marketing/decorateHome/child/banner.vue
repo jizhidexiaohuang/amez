@@ -20,7 +20,7 @@
                     </FormItem>
                     <FormItem label="">
                         <Button v-if="false" type="primary" @click="fnHandleSubmit">确定</Button>
-                        <Button type="error" @click="fnHandleDelete">删除</Button>
+                        <Button type="error" @click="fnHandleDelete" v-if="false">删除</Button>
                     </FormItem>
                 </Form>
             </div>
@@ -68,8 +68,6 @@
             /* 根据父组件传递过来的数据初始化数据 */
             fnInitData () {
                 let vm = this;
-                console.log(1111111111);
-                console.log(vm.datas);
                 vm.oData = !!!vm.datas?vm.oData:vm.datas;
                 vm.fnInitBox();
             },
@@ -108,7 +106,9 @@
             // 获取图片列表
             getUploadList (data) {
                 let vm = this;
-                vm.uploadList = data;
+                vm.uploadList = vm.fnFilterDatas(data);
+                console.log(1111111)
+                console.log(vm.uploadList)
                 vm.fnHandleSubmit();
             },
             fnGetArrs () {
@@ -123,6 +123,19 @@
             fnChangeImg (index) {
                 let vm = this;
                 vm.curImg = index;
+            },
+            /* 数据过滤 */
+            fnFilterDatas (data) {
+                let arrs = [];
+                data.forEach(function(item,index){
+                    var obj = {};
+                    obj.url = item.url;
+                    obj.myId = item.myId;
+                    obj.src = item.src;
+                    arrs.push(obj);
+                })
+                console.log(arrs);
+                return arrs;
             }
         },
         mounted: function(){

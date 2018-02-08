@@ -9,22 +9,22 @@
                 <div class="demo-upload-text" style="">
                     <Form label-position="left" v-if="!!uploadConfig.src">
                         <FormItem label="链接">
-                            <Input class="aText" v-model="item.src" placeholder="请输入链接地址"></Input>
+                            <Input class="aText" @change.native="fnDoSome" v-model="item.src" placeholder="请输入链接地址"></Input>
                         </FormItem>
                     </Form>
                     <Form label-position="left" v-if="!!uploadConfig.name">
                         <FormItem label="名称">
-                            <Input class="aText" v-model="item.name" placeholder="请输入名称"></Input>
+                            <Input class="aText" @change.native="fnDoSome" v-model="item.name" placeholder="请输入名称"></Input>
                         </FormItem>
                     </Form>
                     <Form label-position="left" v-if="!!uploadConfig.title1">
                         <FormItem label="一级">
-                            <Input class="aText" v-model="item.title1" placeholder="请输入名称"></Input>
+                            <Input class="aText" @change.native="fnDoSome" v-model="item.title1" placeholder="请输入名称"></Input>
                         </FormItem>
                     </Form>
                     <Form label-position="left" v-if="!!uploadConfig.title2">
                         <FormItem label="二级">
-                            <Input class="aText" v-model="item.title2" placeholder="请输入名称"></Input>
+                            <Input class="aText" @change.native="fnDoSome" v-model="item.title2" placeholder="请输入名称"></Input>
                         </FormItem>
                     </Form>
                 </div>
@@ -86,6 +86,7 @@
                 file.name = '';
                 file.src = '';
                 file.myId = +(new Date());
+                console.log(this.uploadList)
                 this.$emit("listenUpload",this.uploadList);
             },
             handleFormatError (file) {
@@ -112,10 +113,14 @@
                 return check;
             },
             /*======================上传图片  end=======================*/
+            /* 输入框的值变化时,要更新数据, */
+            fnDoSome () {
+                this.$emit("listenUpload",this.uploadList);
+            }
         },
         mounted: function(){
             this.uploadList = this.$refs.upload.fileList;
-            console.log(this.uploadList);
+            // console.log(this.uploadList);
         },
         watch:{
             uploadList (curVal,oldVal) {
