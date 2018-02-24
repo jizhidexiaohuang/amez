@@ -12,7 +12,7 @@
         </div>
         <div class="boxStyle" style="padding-top: 0px; padding-bottom: 0px;">
             <Row>
-                <Col span="12">
+                <Col span="6">
                     <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
                         <Tree @on-check-change="fnCheckMenuList" @on-select-change="fnDoSome" :data="treeList" show-checkbox style="margin-left:30px; margin-bottom:20px;"></Tree>
                         <FormItem style="margin-left:5px;">
@@ -21,10 +21,10 @@
                         </FormItem>        
                     </Form>
                 </Col>
-                <Col span="12" style="min-height: 200px;">
+                <Col span="18" style="min-height: 200px;">
                     <Table class="editTable" :columns="columns" :data="menuList" v-if="show"></Table>
                 </Col>
-                <div class="example-split"></div>
+                <div class="example-split" v-if="false"></div>
             </Row>
         </div>
     </div>
@@ -391,8 +391,8 @@
             fnAddOrEdit (fnCallback) {
                 let vm = this;
                 let arrs = [];
-                arrs = vm.fnBaseList(vm.selectData[0].title);
-                if(vm.selectData[0].title == '门店审核'){
+                arrs = vm.fnNewList(vm.selectData[0].title);
+                /* if(vm.selectData[0].title == '门店审核'){
                     arrs.push({
                         name: '品牌审核',
                         age: '编辑操作',
@@ -400,7 +400,7 @@
                         index:arrs.length,
                         operCode: 'examine'
                     })
-                }
+                } */
                 let url = vm.common.path2+"baseOperators/selectListByConditions?pageSize=10";
                 let ajaxData = {
                     menuId: vm.selectData[0].menuId,
@@ -653,6 +653,203 @@
                         return arrs;
                 }
             }, 
+            fnNewList (type) {
+                let arrs = [];
+                let newArr = new Array();
+                newArr[0] = {
+                    name: '新增',
+                    age: '新增操作',
+                    code: 0,
+                    index:0,
+                    operCode:'add'
+                };
+                newArr[1] = {
+                    name: '编辑',
+                    age: '编辑操作',
+                    code: 0,
+                    index:1,
+                    operCode:'edit'
+                };
+                newArr[2] = {
+                    name: '删除',
+                    age: '删除操作',
+                    code: 0,
+                    index:2,
+                    operCode:'delete'
+                };
+                newArr[3] = {
+                    name: '查看',
+                    age: '查看操作',
+                    code: 0,
+                    index:3,
+                    operCode:'see'
+                };
+                newArr[4] = {
+                    name: '刷新',
+                    age: '刷新操作',
+                    code: 0,
+                    index:4,
+                    operCode:'refresh'
+                };
+                newArr[5] = {
+                    name: '审核',
+                    age: '审核操作',
+                    code: 0,
+                    index:5,
+                    operCode:'examine'
+                };
+                newArr[6] = {
+                    name: '上下架',
+                    age: '上下架操作',
+                    code: 0,
+                    index:6,
+                    operCode:'updown'
+                };
+                newArr[7] = {
+                    name: '开启关闭',
+                    age: '开启关闭操作',
+                    code: 0,
+                    index:7,
+                    operCode:'openclose'
+                };
+                newArr[8] = {
+                    name: '冻结激活',
+                    age: '冻结激活操作',
+                    code: 0,
+                    index:8,
+                    operCode:'frozen'
+                };
+                newArr[9] = {
+                    name: '新增店铺等级',
+                    age: '新增店铺等级操作',
+                    code: 0,
+                    index:9,
+                    operCode:'storeGrade'
+                };
+                newArr[10] = {
+                    name: '成长规则设置',
+                    age: '成长规则设置操作',
+                    code: 0,
+                    index:10,
+                    operCode:'storeRules'
+                };
+                newArr[11] = {
+                    name: '新增连锁品牌',
+                    age: '新增连锁品牌操作',
+                    code: 0,
+                    index:11,
+                    operCode:'addBrand'
+                };
+                newArr[12] = {
+                    name: '订单详情',
+                    age: '订单详情查看',
+                    code: 0,
+                    index:12,
+                    operCode:'orderInfo'
+                };
+                newArr[13] = {
+                    name: '退款详情',
+                    age: '退款详情查看',
+                    code: 0,
+                    index:13,
+                    operCode:'backInfo'
+                };
+                newArr[14] = {
+                    name: '导出',
+                    age: '导出操作',
+                    code: 0,
+                    index:14,
+                    operCode:'export'
+                };
+                newArr[15] = {
+                    name: '分配权限',
+                    age: '分配权限',
+                    code: 0,
+                    index:15,
+                    operCode:'power'
+                };
+                /*
+                0.新增  1.编辑  2.删除  3.查看  4.刷新  5.审核  6.上下架  7.开启关闭  8.冻结激活  9.新增店铺等级  10.成长规则设置  11.新增连锁品牌  12.订单详情  13.退款详情  14.导出  15.分配权限
+                */
+                switch (type) {
+                    case "门店审核":
+                        var iArrs = [1,3,4];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "门店管理":
+                        var iArrs = [0,1,3,4,7,8];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "店铺等级":
+                        var iArrs = [9,10];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "连锁品牌管理":
+                        var iArrs = [0,1,3];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "门店自营服务":
+                        var iArrs = [0,1,2,3,4,6];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "品牌服务":
+                        var iArrs = [0,4,1,6,2];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "分类管理":
+                        var iArrs = [0,4,1,2];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "服务订单":
+                        var iArrs = [3,4,12,14];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "退款订单客服介入":
+                        var iArrs = [3,4,12,13,14];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "评论管理":
+                        var iArrs = [0,2,3,4];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "员工管理":
+                        var iArrs = [0,1,2,3,4];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "交易流水":
+                        var iArrs = [3,4,14];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "用户管理":
+                        var iArrs = [0,3,4,15,1,2];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "角色管理":
+                        var iArrs = [4,0,15,1,2];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "操作日志":
+                        var iArrs = [3,4];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "短信模板":
+                        var iArrs = [4,0,1,2];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    default:
+                        return arrs;
+                }
+                /*
+                0.新增  1.编辑  2.删除  3.查看  4.刷新  5.审核  6.上下架  7.开启关闭  8.冻结激活  9.新增店铺等级  10.成长规则设置  11.新增连锁品牌  12.订单详情  13.退款详情  14.导出  15.分配权限
+                */
+                function fnBackItem (iArrs,newArr,arrs) {
+                    for(var i = 0;i<iArrs.length;i++){
+                        newArr[iArrs[i]].index = i;
+                        arrs.push(newArr[iArrs[i]]);
+                    }
+                    return arrs;
+                }
+            },
              /* 如果是编辑，则去修改table */
             changeTableList (list,oldArrs) {
                 let vm = this;

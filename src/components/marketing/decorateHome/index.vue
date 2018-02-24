@@ -331,8 +331,13 @@
                     if(!!!type){
                         // 模拟再次进来时的界面
                         // vm.fnGeData();
+                        // debugger
+                        vm.curIndex = null;
                         this.fnajaxData();
-                        vm.curIndex = 0;
+                        setTimeout(function(){
+                            vm.curIndex = 0;    
+                        },200)
+                        // vm.curIndex = 0;
                     }
                 }
                 vm.activatedType = true;//主要解决mounted和activated重复调用
