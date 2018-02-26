@@ -95,6 +95,11 @@ const common = {
                     hasChildList: false,
                     href:"/service/storeBrandService"
                 },
+                {
+                    name:"平台自营服务",
+                    hasChildList: false,
+                    href:"/service/platformPlan"
+                },
                 /* {
                     name:"审核服务",
                     hasChildList: false,

@@ -33,6 +33,8 @@ import ExamineService from '@/components/service/examineService/list'
 import ClassifyManage from '@/components/service/classifyManage/list'
 //平台佣金方案
 import CommissionPlan from '@/components/service/commissionPlan/list'
+//平台自营服务
+import PlatformPlan from '@/components/service/platformPlan/list'
 /*==================================订单管理============================*/
 //服务订单
 import ServiceOrder from '@/components/order/serviceOrder/list'
@@ -186,6 +188,16 @@ const menuRouter = [
         meta:{
           type:"菜单",
           name:"平台佣金方案"
+        }
+      },
+      {
+        path: '/service/platformPlan',
+        name: '平台自营服务',
+        title: '平台自营服务',
+        component: PlatformPlan,
+        meta:{
+          type:"菜单",
+          name:"平台自营服务"
         }
       },
     ]
