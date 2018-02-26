@@ -12,12 +12,12 @@
       <Row>
         <Col span="8">订单号：{{orderBase.orderNo}}</Col>
         <Col span="8">订单状态：{{orderType}}</Col>
-        <Col span="8">订单来源：微信商城que</Col>
+        <Col span="8">订单来源：{{orderBase.orderSource==0?'APP商城':'微信商城'}}</Col>
       </Row>
       <Row>
         <Col span="8">订单类型：{{orderBase.type==0?'到店订单':'上门订单'}}</Col>
         <Col span="8">支付单号：{{orderBase.tradeNo}}</Col>
-        <Col span="8">付款方式：{{orderBase.payType=='wechatpay'?'微信支付':'支付宝支付'}}</Col>
+        <Col span="8">付款方式：{{payType}}</Col>
       </Row>
     </div>
     <div class="order_info">
@@ -28,7 +28,7 @@
         <Col span="8"></Col>
       </Row>
       <Row>
-        <Col span="8">上门地址：{{orderBase.address}}</Col>
+        <Col span="8">上门地址：{{orderBase.memberAddress}}</Col>
       </Row>
       <Row>
         <Col span="8">备注：{{orderBase.remark?orderBase.remark:'无'}}</Col>
@@ -38,12 +38,12 @@
       <h4>美容院信息</h4>
       <Row>
         <Col span="8">门店：{{orderBase.storeName}}</Col>
-        <Col span="8">老板姓名：que</Col>
-        <Col span="8">注册手机：{{orderBase.addressPhone}}</Col>
+        <Col span="8">老板姓名：{{orderBase.storeOwnerName}}</Col>
+        <Col span="8">注册手机：{{orderBase.storeTel}}</Col>
       </Row>
       <Row>
-        <Col span="8">地址：{{orderBase.address}}</Col>
-        <Col span="8">服务美容师：{{orderBeautician.beauticianName}}</Col>
+        <Col span="8">地址：{{orderBase.storeAddress}}</Col>
+        <Col span="8">服务美容师：{{orderBase.beauticianName}}</Col>
       </Row>
     </div>
     <div class="service_info">
@@ -59,24 +59,24 @@
         </div>
         <div class="content">
           <Row>
-            <Col span="6"><img :src="orderProduct.productImg" alt=""><span>{{orderProduct.productName}}</span></Col>
-            <Col span="6">￥{{unitPrice/100}}</Col>
+            <Col span="6"><img :src="orderBase.productImg" alt=""><span>{{orderBase.productName}}</span></Col>
+            <Col span="6">￥{{orderBase.productPrice/100}}</Col>
             <Col span="6">{{orderBase.amountTotal/100}}(含上门费：￥30.00)</Col>
-            <Col span="6">{{customerService}}</Col>
+            <Col span="6">{{returnStatus}}</Col>
           </Row>
         </div>
       </div>
     </div>
     <div class="discount">
-      <div class="ticket">
-        优惠券：-￥20.00 <span>满100减20</span>
+      <div class="ticket" v-if="orderBase.couponReduce">
+        优惠券：-￥{{orderBase.couponReduce}} <span>满100减{{orderBase.couponReduce}}</span>
       </div>
-      <div class="member_card">
-        会员卡：-￥20.00 <span>一卡通折扣</span>
+      <div class="member_card" v-if="orderBase.memberCardReduce">
+        会员卡：-￥{{orderBase.memberCardReduce}} <span>一卡通折扣</span>
       </div>
       <div class="total_pay">
         <Button style="float:left;" type="success" @click.native="returnHome('list')">返回</Button>
-        实付金额：<strong>{{(orderBase.amountTotal-orderBase.amountReduce)/100}}</strong>
+        实付金额：<strong>￥{{orderBase.amountPay/100}}.00</strong>
       </div>
     </div>
     </div>
@@ -89,8 +89,6 @@ export default {
     return {
       src:'../../../static/images/footer/1_1.png',
       orderBase:"",
-      orderBeautician:"",
-      orderProduct:"",
       progress:0,
     };
   },
@@ -107,25 +105,35 @@ export default {
       }else if(this.orderBase.status == 2){
         str = '待服务'
         this.progress = 2;
-      }else if(this.orderBase.status == 3){
-        str = '服务中'
-        this.progress = 2;
       }else if(this.orderBase.status == 4){
-        str = '待评价';
+        str = '服务中'
         this.progress = 3;
       }else if(this.orderBase.status == 5){
+        str = '待评价';
+        this.progress = 4;
+      }else if(this.orderBase.status == 6){
         str = '评价完成';
         this.progress = 4;
       }
       return str
     },
+    // 支付方式
+    payType:function(){
+      let str = '';
+      if(this.orderBase.payType=='wechatpay'){
+        str = '微信支付'
+      }else if(this.orderBase.payType=='alipay'){
+        str = '支付宝支付'
+      }
+      return str;
+    },
     //售后状态
-    customerService:function(){
+    returnStatus:function(){
       let str = '';
       if(this.orderBase.returnStatus==0){
         str = '-'
       }else if(this.orderBase.returnStatus==1){
-        str = '退款'
+        str = '退款中'
       }else{
         str = '退款完成'
       }
@@ -138,13 +146,10 @@ export default {
   methods: {
     getData(id){
       let vm = this;
-      let url = common.path+'orderBase/queryOrderDetailsInfO/'+id;
+      let url = common.path2+'orderBase/queryOrderInfoById/'+id;
       this.$http.get(url).then(res=>{
-        console.log(res)
-        vm.orderBase = res.data.data.orderBase;
-        vm.orderBeautician = res.data.data.orderBeautician;
-        vm.orderProduct = res.data.data.orderProduct;
-        console.log(vm.orderBase.orderNo);
+        console.log(res.data.data)
+        vm.orderBase = res.data.data;
       }).catch(err=>{
         console.log(err)
       })

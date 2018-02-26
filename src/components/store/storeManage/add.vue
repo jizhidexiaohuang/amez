@@ -46,7 +46,7 @@
                 <FormItem label="是否属于老店" prop="oldStore">
                     <Row type="flex" justify="start">
                         <Col span="8">
-                             <RadioGroup v-model="oldStore" @on-change="disabled = !disabled">
+                            <RadioGroup v-model="oldStore" @on-change="disabled = !disabled">
                                 <Radio label="1">是</Radio>
                                 <Radio label="0">否</Radio>
                             </RadioGroup>

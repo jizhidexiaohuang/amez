@@ -12,6 +12,10 @@ const state = {
 	TabType:true,
 	//用户登录信息
 	adminInfo:"",
+	businessId:[],
+	serviceId:[],
+	tabCtrl:'',
+	cardName:'',
 };
 /* =========================改变状态的唯一方法======================= */
 const mutations = {
@@ -62,6 +66,22 @@ const mutations = {
 		console.log(adminInfo);
 		state.adminInfo = adminInfo;
 	},
+	[types.BUSINESS_ID](state,businessId){
+		console.log(businessId);
+		state.businessId = businessId;
+	},
+	[types.SERVICE_ID](state,serviceId){
+		console.log(serviceId);
+		state.serviceId = serviceId;
+	},
+	[types.TAB_CTRL](state,tabCtrl){
+		console.log(tabCtrl);
+		state.tabCtrl = tabCtrl;
+	},
+	[types.CARD_NAME](state,cardName){
+		console.log(cardName);
+		state.cardName = cardName;
+	},
 }
 /* ====================对状态进行处理再输出=========================== */
 const getters = {
@@ -91,6 +111,18 @@ const getters = {
 	},
 	adminInfo(state){
 		return state.adminInfo
+	},
+	businessId(state){
+		return state.businessId
+	},
+	serviceId(state){
+		return state.serviceId
+	},
+	tabCtrl(state){
+		return state.tabCtrl
+	},
+	cardName(state){
+		return state.cardName
 	},
 }
 export default{

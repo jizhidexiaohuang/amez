@@ -55,4 +55,20 @@ export default{
 	adminInfo:({commit},data)=>{
 		commit(types.ADMIN_INFO,data.adminInfo);
 	},
+	businessId:({commit},data)=>{
+		console.log(data)
+		commit(types.BUSINESS_ID,data.businessId);
+	},
+	serviceId:({commit},data)=>{
+		console.log(data)
+		commit(types.SERVICE_ID,data.serviceId);
+	},
+	tabCtrl:({commit},data)=>{
+		console.log(data)
+		commit(types.TAB_CTRL,data.tabCtrl);
+	},
+	cardName:({commit},data)=>{
+		console.log(data)
+		commit(types.CARD_NAME,data.cardName);
+	},
 }

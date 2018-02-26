@@ -119,15 +119,20 @@
                         align: 'center'
                     },
                     {
-                        title: '店铺等级',
-                        key: 'levelName',
+                        title: '品牌',
+                        key: 'brandName',
+                    },
+                    {
+                        title: '所属公司',
+                        key: 'storeCompanyName',
+                    },
+                    {
+                        title: '店铺名称',
+                        key: 'storeName',
                     },
                     {   
-                        title: '成长值范围',
-                        key: 'beginUpgradeValue',
-                        render:(h,params)=>{
-                            return h('div',params.row.beginUpgradeValue+'--'+params.row.endUpgradeValue)
-                        }
+                        title: '注册电话',
+                        key: 'bossPhone',
                     }
                 ],
                 table:{
@@ -172,13 +177,13 @@
                 let vm = this;
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path+"storeLevel/findList?pageNo="+start+'&pageSize='+size;
+                let url = common.path2+"store/front/findByPage?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size
                 }
                 vm.loading = true;
-                this.$http.get(
+                this.$http.post(
                     url,
                     // ajaxData,
                     {
@@ -189,8 +194,8 @@
                 ).then(function(res){
                     console.log(res.data);
                     let oData = res.data
-                    vm.table.recordsTotal = oData.data.length;
-                    vm.table.tableData1 = res.data.data;
+                    vm.table.recordsTotal = oData.data.total;
+                    vm.table.tableData1 = oData.data.list;
                     vm.table.loading = false;
                 }).catch(function(err){
                 })

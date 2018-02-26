@@ -261,11 +261,15 @@ const common = {
         let time = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds(); 
         return time;
     },
-    simpleFormatDate: function(date){
+    simpleFormatDate: function(date,num){
         let d = new Date(date);
-        let time = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); 
+        let time = ''
+        if(num==1){
+            time = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); 
+        }else if(num==2){
+            time = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate();
+        }
         return time;
     },
 }
-
 export default common

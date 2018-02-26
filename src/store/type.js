@@ -22,3 +22,7 @@ export const TAB_TRUE = 'TAB_TRUE';
 export const TAB_FALSE = 'TAB_FALSE';
 /* adminInfo */
 export const ADMIN_INFO = 'ADMIN_INFO';
+export const BUSINESS_ID = 'BUSINESS_ID';
+export const SERVICE_ID = 'SERVICE_ID';
+export const TAB_CTRL = 'TAB_CTRL';
+export const CARD_NAME = 'CARD_NAME';

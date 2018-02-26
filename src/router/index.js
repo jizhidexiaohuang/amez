@@ -68,7 +68,7 @@ import DecorateHome from '@/components/marketing/decorateHome/index'
 import ActivityShop from '@/components/marketing/activityShop/list'
 /*=====================================会员卡=========================*/
 //会员卡列表
-import CardManage from '@/components/memberCard/cardManage/list'
+import CardManage from '@/components/memberCard/cardManage/card/list'
 //售卡记录
 import CardHistory from '@/components/memberCard/cardHistory/list'
 //卡面模板
