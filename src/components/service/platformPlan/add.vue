@@ -33,12 +33,12 @@
                     <Radio label="2">上门服务</Radio>
                 </RadioGroup>
             </FormItem>
+            <FormItem label="上门费" prop="visitPrice" number='true' v-if="formValidate.serverBookType == 2">
+                <Input v-model="formValidate.visitPrice" placeholder="请填写上门费，单位元"></Input>
+            </FormItem>
             <FormItem label="到店服务员工">
                 <businessTable></businessTable>
                 <!--<businessList></businessList>-->
-            </FormItem>
-            <FormItem label="上门费" prop="visitPrice" number='true' v-if="formValidate.serverBookType == 2">
-                <Input v-model="formValidate.visitPrice" placeholder="请填写上门费，单位元"></Input>
             </FormItem>
             <FormItem label="正式员工服务提成" prop="formalWorker" v-if="false">
                 <Input v-model="formValidate.formalWorker" placeholder="请填写正式员工服务提成"></Input>
