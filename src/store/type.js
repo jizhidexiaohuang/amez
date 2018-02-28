@@ -26,3 +26,16 @@ export const BUSINESS_ID = 'BUSINESS_ID';
 export const SERVICE_ID = 'SERVICE_ID';
 export const TAB_CTRL = 'TAB_CTRL';
 export const CARD_NAME = 'CARD_NAME';
+
+
+/* 到店员工 */
+export const STORE_LIST = 'STORE_LIST';
+/* 上门员工 */
+// export const HOME_LIST = 'HOME_LIST';
+export const TOHOME_LIST = 'TOHOME_LIST';
+/* 招募员工 */
+export const RECRUIT_LIST = 'RECRUIT_LIST';
+/* 添加城市 */
+export const CITY_LIST = 'CITY_LIST';
+/* 服务支持商家 */
+export const SERVICE_STORE_LIST = 'SERVICE_STORE_LIST';

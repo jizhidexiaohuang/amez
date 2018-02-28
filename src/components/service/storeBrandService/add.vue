@@ -15,6 +15,13 @@
             <FormItem label="服务名称" prop="serverName">
                 <Input v-model="formValidate.serverName" placeholder="请填写服务名称"></Input>
             </FormItem>
+
+            <FormItem label="服务支持城市">
+                <cityTable></cityTable>
+            </FormItem>
+
+
+
             <FormItem label="市场价" prop="originalPrice" number='true'>
                 <Input v-model="formValidate.originalPrice" placeholder="请填写市场价，单位元"></Input>
             </FormItem>
@@ -89,6 +96,8 @@
 </template>
 <script>
     import MyUpload from '../../common/upload.vue'
+    import cityTable from './cityTable.vue'
+
     export default {
         data () {
             return {
@@ -158,7 +167,9 @@
                             originalPrice: +vm.formValidate.originalPrice*100, // 原价
                             salePrice: +vm.formValidate.salePrice*100, // 销售价
                             saleVolume: vm.formValidate.saleVolume, // 销量
-                            serverBookType: vm.formValidate.serverBookType, // 销量
+                            // serverBookType: vm.formValidate.serverBookType, // 预约方式
+                            isSupportHome: vm.formValidate.serverBookType == 2?1:0, // 是否支持上门
+                            isSupportStore: vm.formValidate.serverBookType == 1?1:0, // 是否支持到店
                             visitPrice: vm.formValidate.serverBookType == 2?+vm.formValidate.visitPrice*100:"", // 上门费
                             coverImg: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
                             serverAttention: vm.formValidate.serverAttention, // 注意事项
@@ -188,8 +199,13 @@
                         ajaxData.productStoreRef = {
                             storeId:vm.storeId // 店铺id
                         }
+
+                        /* 商品城市集合 */
+                        ajaxData.productCityList = vm.$store.getters.cityList;
+                        console.log(ajaxData.productCityList);
+
                         console.log(ajaxData);
-                        let url = vm.common.path2+"product/add";
+                        let url = vm.common.path2+"product/add/brand";
                         vm.$http.post(
                             url,
                             JSON.stringify(ajaxData),
@@ -200,7 +216,6 @@
                             }
                         ).then(function(res){
                             let oData = res.data
-                            console.log(1111111111);
                             console.log(oData);
                             /* vm.table.recordsTotal = oData.data.total;
                             vm.table.tableData1 = res.data.data.list;
@@ -284,7 +299,8 @@
             this.fnGetStoreChainBrand();
         },
         components:{
-            MyUpload
+            MyUpload,
+            cityTable
         }
     }
 </script>

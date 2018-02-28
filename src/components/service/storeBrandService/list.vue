@@ -460,6 +460,9 @@
                     this.table.pageSize = this.table.size;
                     this.getData();
                 }
+                if(type == "add"){
+                    this.$store.commit('CITY_LIST',[]);
+                }
             },
             /* 模态框 */
             fnShowModal () {

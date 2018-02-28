@@ -13,9 +13,14 @@ const state = {
 	//用户登录信息
 	adminInfo:"",
 	businessId:[],
+	storeList:[],
+	tohomeList:[],
+	recruitList:[],
 	serviceId:[],
 	tabCtrl:'',
 	cardName:'',
+	cityList:[],
+	serviceStoreList:[],
 };
 /* =========================改变状态的唯一方法======================= */
 const mutations = {
@@ -70,6 +75,25 @@ const mutations = {
 		console.log(businessId);
 		state.businessId = businessId;
 	},
+	[types.STORE_LIST](state,storeList){
+		console.log(storeList);
+		state.storeList = storeList;
+	},
+	[types.TOHOME_LIST](state,tohomeList){
+		state.tohomeList = tohomeList;
+	},
+	[types.RECRUIT_LIST](state,recruitList){
+		console.log(recruitList);
+		state.recruitList = recruitList;
+	},
+	[types.CITY_LIST](state,cityList){
+		console.log(cityList);
+		state.cityList = cityList;
+	},
+	[types.SERVICE_STORE_LIST](state,serviceStoreList){
+		console.log(serviceStoreList);
+		state.serviceStoreList = serviceStoreList;
+	},
 	[types.SERVICE_ID](state,serviceId){
 		console.log(serviceId);
 		state.serviceId = serviceId;
@@ -114,6 +138,21 @@ const getters = {
 	},
 	businessId(state){
 		return state.businessId
+	},
+	storeList(state){
+		return state.storeList
+	},
+	tohomeList(state){
+		return state.tohomeList
+	},
+	recruitList(state){
+		return state.recruitList
+	},
+	cityList(state){
+		return state.cityList
+	},
+	serviceStoreList(state){
+		return state.serviceStoreList
 	},
 	serviceId(state){
 		return state.serviceId

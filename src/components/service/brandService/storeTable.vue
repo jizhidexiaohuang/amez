@@ -56,12 +56,12 @@
                 </div>
             </Modal>
         </div>
-        <businessList></businessList>
+        <storeList></storeList>
     </div>
 </template>
 <script>
     import common from '../../../base.js'
-    import businessList from './businessList.vue'
+    import storeList from './storeList.vue'
     export default {
         data () {
             return {
@@ -287,10 +287,10 @@
             ok () {
                 console.log(this.listId);
                 this.$Message.info('Clicked ok');
-                this.$store.commit('BUSINESS_ID',this.listId);
+                this.$store.commit('STORE_LIST',this.listId);
             },
             fnOpenModal () {
-                this.listId = this.$store.getters.businessId;
+                this.listId = this.$store.getters.storeList;
                 console.log(this.listId);
                 this.getData();
                 this.usingRange = true;
@@ -305,7 +305,7 @@
             vm.fnExistTabList()
         },
         components:{
-            businessList
+            storeList
         },
         /* watch:{
             getBusinessId:{

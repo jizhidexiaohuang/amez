@@ -36,9 +36,9 @@
             <FormItem label="上门费" prop="visitPrice" number='true' v-if="formValidate.serverBookType == 2">
                 <Input v-model="formValidate.visitPrice" placeholder="请填写上门费，单位元"></Input>
             </FormItem>
-            <FormItem label="到店服务员工">
-                <businessTable></businessTable>
-                <!--<businessList></businessList>-->
+            
+            <FormItem label="服务支持商家">
+                <storeTable></storeTable>
             </FormItem>
             <FormItem label="正式员工服务提成" prop="formalWorker" v-if="false">
                 <Input v-model="formValidate.formalWorker" placeholder="请填写正式员工服务提成"></Input>
@@ -132,8 +132,7 @@
 </template>
 <script>
     import MyUpload from '../../common/upload.vue'
-    import businessTable from './businessTable.vue'
-    import businessList from './businessList.vue'
+    import storeTable from './storeTable.vue'
     export default {
         data () {
             return {
@@ -209,7 +208,7 @@
         methods: {
             // 提交验证
             handleSubmit (name) {
-                console.log(this.$store.getters.businessId);
+                // console.log(this.$store.getters);
 
 
                 let vm = this;
@@ -223,7 +222,9 @@
                             originalPrice: +vm.formValidate.originalPrice*100, // 原价
                             salePrice: +vm.formValidate.salePrice*100, // 销售价
                             saleVolume: vm.formValidate.saleVolume, // 销量
-                            serverBookType: vm.formValidate.serverBookType, // 销量
+                            // serverBookType: vm.formValidate.serverBookType, // 预约方式
+                            isSupportHome: vm.formValidate.serverBookType == 2?1:0, // 是否支持上门
+                            isSupportStore: vm.formValidate.serverBookType == 1?1:0, // 是否支持到店
                             visitPrice: vm.formValidate.serverBookType == 2?+vm.formValidate.visitPrice*100:"", // 上门费
                             coverImg: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
                             serverAttention: vm.formValidate.serverAttention, // 注意事项
@@ -254,6 +255,22 @@
                         ajaxData.productStoreRef = {
                             storeId:vm.storeId // 店铺id
                         }
+                        
+                        /* 服务支持商家 */
+                        ajaxData.productStoreRefList = [];
+                        var serviceStoreList = vm.$store.getters.serviceStoreList;
+                        for(var i = 0;i<serviceStoreList.length;i++){
+                            var obj = {};
+                            obj.storeId = serviceStoreList[i];
+                            ajaxData.productStoreRefList.push(obj);
+                        }
+
+                        console.log(ajaxData.productStoreRefList);
+                        return false;
+
+
+
+
                         console.log(ajaxData);
                         let url = vm.common.path2+"product/add";
                         vm.$http.post(
@@ -418,8 +435,7 @@
         },
         components:{
             MyUpload,
-            businessTable,
-            businessList
+            storeTable,
         }
     }
 </script>

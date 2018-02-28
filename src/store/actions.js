@@ -71,4 +71,24 @@ export default{
 		console.log(data)
 		commit(types.CARD_NAME,data.cardName);
 	},
+	storeList:({commit},data)=>{
+		console.log(data)
+		commit(types.STORE_LIST,data.storeList);
+	},
+	tohomeList:({commit},data)=>{
+		console.log(data)
+		commit(types.TOHOME_LIST,data.tohomeList);
+	},
+	recruitList:({commit},data)=>{
+		console.log(data)
+		commit(types.RECRUIT_LIST,data.recruitList);
+	},
+	cityList:({commit},data)=>{
+		console.log(data)
+		commit(types.CITY_LIST,data.cityList);
+	},
+	serviceStoreList:({commit},data)=>{
+		console.log(data)
+		commit(types.SERVICE_STORE_LIST,data.serviceStoreList);
+	},
 }

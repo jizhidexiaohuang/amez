@@ -73,7 +73,7 @@
         },
         computed:{
             getBusinessId(){
-                return this.$store.getters.businessId;
+                return this.$store.getters.recruitList;
             }
         },
         methods:{

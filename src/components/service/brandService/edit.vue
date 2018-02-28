@@ -31,6 +31,24 @@
             <FormItem label="上门费" prop="visitPrice" number='true' v-if="formValidate.serverBookType == 2">
                 <Input v-model="formValidate.visitPrice" placeholder="请填写上门费，单位元"></Input>
             </FormItem>
+
+
+            <FormItem label="到店服务员工">
+                <storeTable></storeTable>
+                <!--<businessList></businessList>-->
+            </FormItem>
+            <FormItem label="上门服务员工">
+                <homeTable></homeTable>
+                <!--<businessList></businessList>-->
+            </FormItem>
+            <FormItem label="招募员工">
+                <recruitTable></recruitTable>
+                <!--<businessList></businessList>-->
+            </FormItem>
+
+
+
+
             <FormItem label="正式员工服务提成" prop="formalWorker" v-if="false">
                 <Input v-model="formValidate.formalWorker" placeholder="请填写正式员工服务提成"></Input>
             </FormItem>
@@ -122,6 +140,9 @@
 </template>
 <script>
     import MyUpload from '../../common/upload.vue'
+    import storeTable from './storeTable.vue'
+    import homeTable from './homeTable.vue'
+    import recruitTable from './recruitTable.vue'
     export default {
         data () {
             return {
@@ -201,13 +222,17 @@
                     if (valid) {
                         //添加品牌服务
                         let ajaxData = {};
+
+            
                         /* 商品 */
                         ajaxData.product = {
                             serverName: vm.formValidate.serverName, // 商品名称
                             originalPrice: +vm.formValidate.originalPrice*100, // 原价
                             salePrice: +vm.formValidate.salePrice*100, // 销售价
                             saleVolume: vm.formValidate.saleVolume, // 销量
-                            serverBookType: vm.formValidate.serverBookType, // 销量
+                            // serverBookType: vm.formValidate.serverBookType, // 销量
+                            isSupportHome: vm.formValidate.serverBookType == 2?1:0, // 是否支持上门
+                            isSupportStore: vm.formValidate.serverBookType == 1?1:0, // 是否支持到店
                             visitPrice: vm.formValidate.serverBookType == 2?+vm.formValidate.visitPrice*100:"", // 上门费
                             coverImg: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
                             serverAttention: vm.formValidate.serverAttention, // 注意事项
@@ -233,6 +258,32 @@
                         ajaxData.productImg = {
                             type:1, // 图片类型，1轮播图
                             url: !!!arrs?"":arrs.join() // 存储图片地址
+                        }
+                        function doTest () {
+                            /*  商品-美容师-关联集合（到店） storeProductBeauticianRefList*/
+                            ajaxData.storeProductBeauticianRefList = [];
+                            var storeList = vm.$store.getters.storeList;
+                            for(var i = 0;i<storeList.length;i++){
+                                var obj = {};
+                                obj.beauticianId = storeList[i];
+                                ajaxData.storeProductBeauticianRefList.push(obj);
+                            }
+                            /* 商品-美容师-关联集合（上门） homeProductBeauticianRefList */
+                            ajaxData.homeProductBeauticianRefList = [];
+                            var homeList = vm.$store.getters.homeList;
+                            for(var j = 0;j<homeList.length;j++){
+                                var obj = {};
+                                obj.beauticianId = homeList[j];
+                                ajaxData.homeProductBeauticianRefList.push(obj);
+                            }
+                            /* 商品-美容师-关联集合（招募） recruitProductBeauticianRefList */
+                            ajaxData.recruitProductBeauticianRefList = [];
+                            var recruitList = vm.$store.getters.recruitList;
+                            for(var b = 0;b<recruitList.length;b++){
+                                var obj = {};
+                                obj.beauticianId = recruitList[b];
+                                ajaxData.recruitProductBeauticianRefList.push(obj);
+                            }
                         }
                         console.log(ajaxData);
                         let url = vm.common.path2 + "product/modify"
@@ -329,12 +380,23 @@
             // 产品的信息遍历出来
             fnInitQuery (data) {
                 let vm = this;
+                // 商品关联
+                vm.$store.commit('STORE_LIST',[1]);
+                vm.$store.commit('TOHOME_LIST',[2,3]);
+                vm.$store.commit('RECRUIT_LIST',[4,5,6]);
+
+
                 vm.formValidate.type = !!!data.productCategoryRef?"":data.productCategoryRef.categoryId;// 服务分类
                 // vm.formValidate.brandId = data.product.brandId; // 服务所属品牌
                 vm.formValidate.serverName = data.product.serverName; // 服务名称
                 vm.formValidate.originalPrice = +data.product.originalPrice/100; // 市场价
                 vm.formValidate.salePrice = +data.product.salePrice/100; // 服务销售价
-                vm.formValidate.serverBookType = data.product.serverBookType;// 预约方式 1上门 2到店
+                // vm.formValidate.serverBookType = data.product.serverBookType;// 预约方式 1上门 2到店
+
+                vm.formValidate.serverBookType = !!data.product.isSupportHome?1:2;
+
+
+
                 vm.formValidate.visitPrice = +data.product.visitPrice/100;// 上门费
                 vm.formValidate.coverImg = data.product.coverImg;//封面图
                 vm.formValidate.serverAttention = data.product.serverAttention; // 注意事项
@@ -371,6 +433,10 @@
                 }
                 vm.testCode = true;
                 vm.uploadList = vm.defaultList;
+
+                
+
+                
             },
             changePage (page) {
                 console.log(page)
@@ -448,7 +514,10 @@
             this.fnQueryById();
         },
         components:{
-            MyUpload
+            MyUpload,
+            storeTable,
+            homeTable,
+            recruitTable
         }
     }
 </script>

@@ -36,6 +36,22 @@
             <FormItem label="上门费" prop="visitPrice" number='true' v-if="formValidate.serverBookType == 2">
                 <Input v-model="formValidate.visitPrice" placeholder="请填写上门费，单位元"></Input>
             </FormItem>
+
+            <FormItem label="到店服务员工">
+                <storeTable></storeTable>
+                <!--<businessList></businessList>-->
+            </FormItem>
+            <FormItem label="上门服务员工">
+                <homeTable></homeTable>
+                <!--<businessList></businessList>-->
+            </FormItem>
+            <FormItem label="招募员工">
+                <recruitTable></recruitTable>
+                <!--<businessList></businessList>-->
+            </FormItem>
+
+
+
             <FormItem label="正式员工服务提成" prop="formalWorker" v-if="false">
                 <Input v-model="formValidate.formalWorker" placeholder="请填写正式员工服务提成"></Input>
             </FormItem>
@@ -128,6 +144,9 @@
 </template>
 <script>
     import MyUpload from '../../common/upload.vue'
+    import storeTable from './storeTable.vue'
+    import homeTable from './homeTable.vue'
+    import recruitTable from './recruitTable.vue'
     export default {
         data () {
             return {
@@ -203,6 +222,8 @@
             // 提交验证
             handleSubmit (name) {
                 let vm = this;
+
+                
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         //添加品牌服务
@@ -213,7 +234,9 @@
                             originalPrice: +vm.formValidate.originalPrice*100, // 原价
                             salePrice: +vm.formValidate.salePrice*100, // 销售价
                             saleVolume: vm.formValidate.saleVolume, // 销量
-                            serverBookType: vm.formValidate.serverBookType, // 销量
+                            // serverBookType: vm.formValidate.serverBookType, // 预约方式
+                            isSupportHome: vm.formValidate.serverBookType == 2?1:0, // 是否支持上门
+                            isSupportStore: vm.formValidate.serverBookType == 1?1:0, // 是否支持到店
                             visitPrice: vm.formValidate.serverBookType == 2?+vm.formValidate.visitPrice*100:"", // 上门费
                             coverImg: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
                             serverAttention: vm.formValidate.serverAttention, // 注意事项
@@ -244,8 +267,34 @@
                         ajaxData.productStoreRef = {
                             storeId:vm.storeId // 店铺id
                         }
-                        console.log(ajaxData);
-                        let url = vm.common.path2+"product/add";
+                        /*  商品-美容师-关联集合（到店） storeProductBeauticianRefList*/
+                        ajaxData.storeProductBeauticianRefList = [];
+                        var storeList = vm.$store.getters.storeList;
+                        for(var i = 0;i<storeList.length;i++){
+                            var obj = {};
+                            obj.beauticianId = storeList[i];
+                            ajaxData.storeProductBeauticianRefList.push(obj);
+                        }
+                        /* 商品-美容师-关联集合（上门） homeProductBeauticianRefList */
+                        ajaxData.homeProductBeauticianRefList = [];
+                        var homeList = vm.$store.getters.homeList;
+                        for(var j = 0;j<homeList.length;j++){
+                            var obj = {};
+                            obj.beauticianId = homeList[j];
+                            ajaxData.homeProductBeauticianRefList.push(obj);
+                        }
+                        /* 商品-美容师-关联集合（招募） recruitProductBeauticianRefList */
+                        ajaxData.recruitProductBeauticianRefList = [];
+                        var recruitList = vm.$store.getters.recruitList;
+                        for(var b = 0;b<recruitList.length;b++){
+                            var obj = {};
+                            obj.beauticianId = recruitList[b];
+                            ajaxData.recruitProductBeauticianRefList.push(obj);
+                        }
+                        console.log(vm.$store.getters);
+                        // console.log(ajaxData);
+                        // return false;
+                        let url = vm.common.path2+"product/add/self";
                         vm.$http.post(
                             url,
                             JSON.stringify(ajaxData),
@@ -402,7 +451,10 @@
             // this.fnGetStoreChainBrand();
         },
         components:{
-            MyUpload
+            MyUpload,
+            storeTable,
+            homeTable,
+            recruitTable
         }
     }
 </script>

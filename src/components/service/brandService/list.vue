@@ -132,11 +132,14 @@
                         },
                         {   
                             title: '是否支持上门',
-                            key: 'serverBookType',
+                            key: 'isSupportHome',
                             render: (h,params) => {
                                 const row = params.row;
-                                const color = row.serverBookType === 0 ? 'blue' : row.serverBookType === 1 ? 'green' : 'yellow';
-                                const text = row.serverBookType === 0 ? '默认' : row.serverBookType === 1 ? '到店' : '上门';
+                                // const color = !!!row.isSupportHome ? 'blue' : row.isSupportHome === 1 ? 'green' : 'yellow';
+                                // const text = !!!row.isSupportHome ? '默认' : row.isSupportHome === 1 ? '到店' : '上门';
+
+                                const color = !!!row.isSupportHome ? 'yellow' : 'blue';
+                                const text = !!!row.isSupportHome ? '到店' : '上门';
                                 return h('Tag', {
                                     props: {
                                         type: 'border',
@@ -309,11 +312,13 @@
                 }
                 let start = vm.table.pageNun;//从第几页开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path2+"product/findByPageForBrand?pageNo="+start+"&pageSize="+size;
+                ///product/front/findByPage
+                let url = vm.common.path2+"product/front/findByPage?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
-                    isBrand: vm.cd.isBrand,
+                    isBrand: !!!vm.cd.isBrand,
+                    isPlatform: false,
                 }
                 if(!!vm.storeId){
                     ajaxData.storeId = vm.storeId;
@@ -385,6 +390,9 @@
                 if(type == "list"){
                     this.table.pageSize = this.table.size;
                     this.getData();
+                }
+                if(type == "add"){
+                    this.$store.commit('STORE_LIST',[]);
                 }
             },
             /* 模态框 */
