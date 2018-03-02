@@ -115,6 +115,11 @@ const common = {
                     hasChildList: false,
                     href:"/service/commissionPlan"
                 }, */
+                {
+                    name:"产品管理",
+                    hasChildList: false,
+                    href:"/service/productManage"
+                },
             ]
         },
         {

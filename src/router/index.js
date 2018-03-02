@@ -35,6 +35,8 @@ import ClassifyManage from '@/components/service/classifyManage/list'
 import CommissionPlan from '@/components/service/commissionPlan/list'
 //平台自营服务
 import PlatformPlan from '@/components/service/platformPlan/list'
+// 产品管理
+import ProductManage from '@/components/service/productManage/list'
 /*==================================订单管理============================*/
 //服务订单
 import ServiceOrder from '@/components/order/serviceOrder/list'
@@ -198,6 +200,16 @@ const menuRouter = [
         meta:{
           type:"菜单",
           name:"平台自营服务"
+        }
+      },
+      {
+        path: '/service/productManage',
+        name: '产品管理',
+        title: '产品管理',
+        component: ProductManage,
+        meta:{
+          type:"菜单",
+          name:"产品管理"
         }
       },
     ]

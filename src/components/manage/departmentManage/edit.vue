@@ -796,6 +796,10 @@
                         var iArrs = [0,3,4,1,6,2];
                         return fnBackItem(iArrs,newArr,arrs);
                     break;
+                    case "产品管理":
+                        var iArrs = [0,3,4,1,6,2];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
                     case "分类管理":
                         var iArrs = [0,4,1,2];
                         return fnBackItem(iArrs,newArr,arrs);
