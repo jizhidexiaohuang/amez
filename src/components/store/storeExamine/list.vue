@@ -40,7 +40,7 @@
                     </Select>
                     </Input>
                 </FormItem>
-                <FormItem style="margin-bottom:10px; width:480px;">
+                <FormItem style="margin-bottom:10px; width:380px;">
                     <Row>
                         <CityLinkage :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
                     </Row>

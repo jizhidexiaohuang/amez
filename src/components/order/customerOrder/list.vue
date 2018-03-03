@@ -170,6 +170,7 @@
                     {
                         title: '退款订单',
                         key: 'orderNo',
+                        width:180
                     },
                     {
                         title: '退款总金额',
@@ -181,6 +182,7 @@
                     {
                         title: '退货物流单号',
                         key: 'deliveryCode',
+                        width:160,
                         render:(h,params)=>{
                             if(params.row.deliveryCode){
                                 return params.row.deliveryCode 
@@ -203,6 +205,7 @@
                     {
                         title: '申请时间',
                         key: 'applyTime',
+                        width:170,
                         render:(h,params)=>{
                             if(params.row.applyTime){
                                 return common.formatDate(params.row.applyTime) 
@@ -292,7 +295,7 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path+"orderReturn/front/findByPage?pageNo="+start+"&pageSize="+size;
+                let url = common.path2+"orderReturn/front/findByPage?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     // pageNo:start,
                     // pageSize: size,

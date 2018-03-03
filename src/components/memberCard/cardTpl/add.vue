@@ -1,33 +1,25 @@
 <template>
   <div class="testWrap">
       <div class="boxStyle editPage">
-        <h2>编辑连锁品牌</h2>
+        <h2>新建模板组</h2>
         <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120">
             <Row>
                 <Col span="8">
-                    <FormItem label="品牌名称" prop="brandName">
+                    <FormItem label="模板组名" prop="brandName">
                         <Input v-model="formValidate.brandName"></Input>
                     </FormItem>
                 </Col>
             </Row>
             <Row>
-                <Col span="8">
-                    <FormItem label="品牌Logo" prop="brandLogo" v-if="testCode">
+                <Col span="24">
+                    <FormItem label="模板图片" prop="brandLogo">
                         <MyUpload :uploadConfig="uploadConfig" :defaultList="defaultList" v-on:listenUpload="getUploadList"></MyUpload>
                     </FormItem>
                 </Col>
             </Row>
-            <Row>
-                <Col span="8">
-                    <FormItem label="品牌所属公司" prop="brandOwnershipCompany">
-                        <Input v-model="formValidate.brandOwnershipCompany"></Input>
-                    </FormItem>
-                </Col>
-            </Row>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
-                <Button v-show="false" type="ghost" @click="handleReset('formValidate')" style="margin:0px 8px">取消</Button>
-                <Button type="success" @click.native="returnHome('list')">返回</Button>
+                <Button type="primary" @click="handleSubmit('formValidate')" style="margin-right:8px">保存</Button>
+                <Button type="ghost" @click.native="returnHome('list')">返回</Button>
             </FormItem>
         </Form>
       </div>
@@ -39,24 +31,19 @@
     export default {
         data () {
             return {
-                testCode: false,
                 defaultList:[],//默认图片
                 uploadConfig:{
-                    num:1
+                    num:1000
                 },
-                brandLogo:'',//图片途径
+                brandLogo:[],//图片途径
                 formValidate: {
                     brandName: '',
-                    brandOwnershipCompany: '',
                 },
-                ruleValidate: {
+                 ruleValidate: {
                     brandName: [
                         { required: true, message: '品牌名称不能为空', trigger: 'blur' }
                     ],
-                    brandOwnershipCompany: [
-                        { required: true, message: '品牌所属公司不能为空', trigger: 'blur' }
-                    ],
-                },
+                 },
             }
         },
         methods:{
@@ -66,17 +53,16 @@
             handleSubmit (name) {
                 this.$refs[name].validate((valid) => {
                     if (valid) {
-                        let url = common.path+'storeChainBrand/edit';
+                        let url = common.path+'storeChainBrand/insert';
                         let ajaxData = {
-                            id:this.editId,
                             brandName:this.formValidate.brandName,
                             brandOwnershipCompany:this.formValidate.brandOwnershipCompany,
-                            brandLogo:this.brandLogo[0].response.data,
+                            brandLogo:this.brandLogo,
                         }
                         console.log(ajaxData)
-                        this.$http.put(
+                        this.$http.post(
                             url,
-                            JSON.stringify(ajaxData),
+                            ajaxData,
                             {
                                 headers:{
                                     'Content-type':'application/json;charset=UTF-8'
@@ -99,35 +85,15 @@
             },
             getUploadList(data){
                 let vm = this;
-                vm.brandLogo = data;
-                console.log(data);
-            },
-            //根据id查数据
-            getDataById(id){
-                let url = common.path+'storeChainBrand/queryById/'+id;
-                this.$http.get(url).then(res=>{
-                    let data = res.data.data;
-                    console.log(data)
-                    this.formValidate.brandName = data.brandName;
-                    this.formValidate.brandOwnershipCompany = data.brandOwnershipCompany;
-                    this.defaultList.push({
-                        'url':data.brandLogo
-                    });
-                    this.testCode = true;
-                })
+                console.log(data)
+                if(data[0]){
+                    vm.brandLogo = data[0].response.data;
+                }
             }
-        },
-        
-        beforeMount:function(){
-            this.getDataById(this.editId);
-        },
-        mounted: function(){
-            
         },
         components:{
             MyUpload
-        },
-        props:['editId']
+        }
     }
 </script>
 <style lang="scss" scoped>

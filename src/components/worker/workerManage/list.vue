@@ -8,30 +8,40 @@
         <!-- 列表容器 -->
         <div v-if="pageType == 'list'" class="testWrap">
             <div class="boxStyle">
-                <Form :model="cd" inline v-if="false">
+                <Form :model="cd" inline>
+                    <Button style="float:left;margin-right:5px;" @click.native="changePageType('add')" type="success" icon="android-add">新增员工</Button>
                     <FormItem style="margin-bottom:10px;">
-                        评价时间
-                        <DatePicker v-model="cd.time" type="date" placeholder="请选择评价时间" style="width:200px;"></DatePicker>
+                        审核状态
+                        <Select v-model="cd.auditStatus" style="width:100px">
+                            <Option v-for="item in auditStatusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem style="margin-bottom:10px;">
+                        员工类型
+                        <Select v-model="cd.beauticianType" style="width:100px">
+                            <Option v-for="item in beauticianTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem style="margin-bottom:10px;">
+                        员工状态
+                        <Select v-model="cd.beauticianStatus" style="width:100px">
+                            <Option v-for="item in beauticianStatusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem style="margin-bottom:10px;">
+                        <Input v-model="cd.inputVal">
+                        <Select v-model="cd.selectType" slot="prepend" style="width: 100px">
+                            <Option value="beauticianName">员工姓名</Option>
+                            <Option value="storeName">店铺名称</Option>
+                            <Option value="phone">注册手机</Option>
+                        </Select>
+                        </Input>
+                    </FormItem>
+                    <FormItem style="margin-bottom:10px;">
+                        <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
+                        <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     </FormItem>
                 </Form>
-                <Row style="margin-bottom:10px;">
-                    <Col span="5">
-                        <Input v-model="cd.inputval">
-                            <Select v-model="cd.inputType" slot="prepend" style="width: 80px">
-                                <Option value="beauticianName">员工姓名</Option>
-                                <Option value="storeName">店铺名称</Option>
-                                <Option value="phone">注册手机</Option>
-                            </Select>
-                        </Input>
-                    </Col>
-                    <Col span="5">
-                        <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
-		                <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
-                    </Col>
-                    <Col span="3" offset="11" v-show="true">
-                        <Button style="float:right;" @click.native="changePageType('add')" type="success" icon="android-add">新增员工</Button>
-                    </Col>
-                </Row>
                 <Table
                     :loading="table.loading" 
                     :data="table.tableData1" 
@@ -60,9 +70,58 @@
     export default {
         data () {
             return {
+                auditStatusList:[
+                    {
+                        value:'',
+                        label:'全部'
+                    },
+                    {
+                        value:'0',
+                        label:'待审核'
+                    },
+                    {
+                        value:'1',
+                        label:'审核通过'
+                    },
+                    {
+                        value:'2',
+                        label:'不通过'
+                    },
+                ],
+                beauticianTypeList:[
+                    {
+                        value:'',
+                        label:'全部'
+                    },
+                    {
+                        value:'2',
+                        label:'正式员工'
+                    },
+                    {
+                        value:'3',
+                        label:'兼职员工'
+                    },
+                ],
+                beauticianStatusList:[
+                    {
+                        value:'',
+                        label:'全部'
+                    },
+                    {
+                        value:'1',
+                        label:'在职'
+                    },
+                    {
+                        value:'0',
+                        label:'离职'
+                    },
+                ],
                 cd: {
+                    auditStatus:'', //审核状态
+                    beauticianType:'', //员工类型
+                    beauticianStatus:'', //员工状态
                     inputval: '', //选择的值
-                    inputType:'beauticianName',//input类型
+                    selectType:'beauticianName',//input类型
                 },
                 formValidate: {
                     roleName: '',//角色名称
@@ -83,20 +142,41 @@
                     //table头
                     tableColumns: [
                         {
-                            title: '员工名称',
+                            type: 'index',
+                            width: 50,
+                            align: 'center'
+                        },
+                        {
+                            title: '员工信息',
+                            width:140,
                             key: 'beauticianName',
+                            render:(h,params)=>{
+                                return h('div',[
+                                    h('img',{
+                                        attrs:{src:params.row.headImgUrl},
+                                        style:{
+                                            width:'32px',
+                                            height:'32px',
+                                            borderRadius:'50%',
+                                            marginRight:'8px',
+                                            marginTop:'5px',
+                                            marginBottom:'5px',
+                                            verticalAlign:'middle'
+                                        }
+                                    }),
+                                    h('span',params.row.beauticianName)
+                                ])
+                            }
                         },
                         {
-                            title: '工号',
-                            key: 'workCardNo',
-                        },
-                        {
-                            title: '注册账号',
+                            title: '注册手机',
                             key: 'phone',
+                            width:120
                         },
                         {
                             title: '性别',
                             key: 'sex',
+                            width:70,
                             render: (h,params) => {
                                 const row = params.row;
                                 const color = row.sex == 1 ? 'blue' : 'red';
@@ -110,29 +190,48 @@
                             }
                         },
                         {
-                            title: '职位',
-                            key: 'beauticianLevel',
+                            title: '员工类型',
+                            key: 'beauticianType',
+                            width:90,
                             render:(h,params)=>{
-                                let str = ''
-                                if(params.row.beauticianLevel==1){
-                                    str = '初级美容师'
-                                }else if(params.row.beauticianLevel==2){
-                                    str = '中级美容师'
-                                }else if(params.row.beauticianLevel==3){
-                                    str = '高级美容师'
-                                }else if(params.row.beauticianLevel==4){
-                                    str = '资深美容师'
+                                let str = '';
+                                if(params.row.beauticianType==0){
+                                    str = '老板'
+                                }else if(params.row.beauticianType==1){
+                                    str = '店长'
+                                }else if(params.row.beauticianType==2){
+                                    str = '正式员工'
+                                }else if(params.row.beauticianType==3){
+                                    str = '兼职员工'
                                 }
-                                return str
+                                return str;
+                            }
+                        },
+                        {
+                            title: '员工状态',
+                            key: 'beauticianStatus',
+                            width:70,
+                            render:(h,params)=>{
+                                let str = '';
+                                if(params.row.beauticianStatus==0){
+                                    str = '离职'
+                                }else if(params.row.beauticianStatus==1){
+                                    str = '在职'
+                                }else if(params.row.beauticianStatus==2){
+                                    str = '休息'
+                                }
+                                return str;
                             }
                         },
                         {
                             title: '所属门店',
                             key: 'storeName',
+                            width:120
                         },
                         {
                             title: '创建时间',
                             key: 'createTime',
+                            width:150,
                             render: (h,params) => {
                                 const row = params.row;
                                 const time = this.common.formatDate(row.createTime);
@@ -140,16 +239,23 @@
                             }
                         },
                         {   
-                            title: '收银权限',
-                            key: 'isEnabled',
+                            title: '审核状态',
+                            key: 'auditStatus',
+                            width:110,
                             render: (h,params) => {
-                                const row = params.row;
-                                const color = !!!row.isEnabled ? 'red' : 'blue';
-                                const text = !!!row.isEnabled ? '关闭' : '开启';
+                                const auditStatus = params.row.auditStatus;
+                                let color = '';
+                                let text = '';
+                                switch (auditStatus){
+                                    case 0:color = 'yellow';text = '待审核';break;
+                                    case 1:color = 'green';text = '审核通过';break;
+                                    case 2:color = 'red';text = '不通过';break;
+                                }
                                 return h('Tag', {
                                     props: {
                                         type: 'border',
-                                        color: color
+                                        color: color,
+                                        size:'small'
                                     }
                                 }, text);
                             }
@@ -157,40 +263,74 @@
                         {
                             title: '操作',
                             key: 'action',
-                            width: 210,
-                            // align: 'center',
-                            // fixed: 'right',
+                            width: 130,
                             render: (h, params) => {
-                                return h('div', [
-                                    h('Button', {
-                                        props: {
-                                            type: 'primary',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                let row = params.row;
-                                                this.sendChild.id = row.id;
-                                                this.changePageType('edit');
+                                if(params.row.auditStatus==0){
+                                    return h('div', [
+                                        h('Button', {
+                                            props: {
+                                                type: 'error',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                marginRight: '5px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    let row = params.row;
+                                                    this.sendChild.id = row.id;
+                                                    this.changePageType('edit');
+                                                }
                                             }
-                                        }
-                                    }, '编辑'),
-                                    h('Button', {
-                                        props: {
-                                            type: 'error',
-                                            size: 'small'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                let row = params.row;
-                                                this.fnDeleteItem(row.id);
+                                        }, '审核')
+                                    ]);
+                                }else if(params.row.auditStatus==1){
+                                    return h('div', [
+                                        h('Button', {
+                                            props: {
+                                                type: 'primary',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                marginRight: '5px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    let row = params.row;
+                                                    this.sendChild.id = row.id;
+                                                    this.changePageType('edit');
+                                                }
                                             }
-                                        }
-                                    }, '删除')
-                                ]);
+                                        }, '编辑'),
+                                        h('Button', {
+                                            props: {
+                                                type: 'error',
+                                                size: 'small'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    let row = params.row;
+                                                    this.changePageType('info');
+                                                }
+                                            }
+                                        }, '查看')
+                                    ]);
+                                }else if(params.row.auditStatus==2){
+                                    return h('div', [
+                                        h('Button', {
+                                            props: {
+                                                type: 'error',
+                                                size: 'small'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    let row = params.row;
+                                                    this.changePageType('info');
+                                                }
+                                            }
+                                        }, '查看')
+                                    ]);
+                                }
                             }
                         }
                     ],
@@ -216,9 +356,11 @@
                 let vm = this;
                 vm.table.size = 10;//页数
                 vm.table.pageNun = 1;//索引
-                vm.cd.saleStatus = "";// 状态
-                vm.cd.inputType = "serviceName";// 输入框类型
-                vm.cd.inputval = "";// 输入框的值
+                vm.cd.auditStatus = "";// 审核状态
+                vm.cd.beauticianType = "";// 员工类型
+                vm.cd.beauticianStatus = "";// 员工状态
+                vm.cd.inputType = "beauticianName";// 输入框类型
+                vm.cd.inputVal = "";// 输入框的值
             },
             /* 数据获取 */
             getData (init) {
@@ -232,8 +374,17 @@
                 let ajaxData = {
                    
                 }
-                if(!!vm.cd.inputval){
-                    ajaxData[vm.cd.inputType] = vm.cd.inputval;
+                if(vm.cd.auditStatus){
+                    ajaxData.auditStatus = vm.cd.auditStatus
+                }
+                if(vm.cd.beauticianType){
+                    ajaxData.beauticianType = vm.cd.beauticianType
+                }
+                if(vm.cd.beauticianStatus){
+                    ajaxData.beauticianStatus = vm.cd.beauticianStatus
+                }
+                if(!!vm.cd.inputVal){
+                    ajaxData[vm.cd.inputType] = vm.cd.inputVal;
                 }
                 vm.table.loading = true;
                 this.$http.post(

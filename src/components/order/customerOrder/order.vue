@@ -124,7 +124,7 @@ export default {
   methods: {
     getData(id){
       let vm = this;
-      let url = common.path+'orderReturn/queryById/'+id;
+      let url = common.path2+'orderReturn/queryById/'+id;
       this.$http.get(url).then(res=>{
         console.log(res)
         vm.orderBase = res.data.data;

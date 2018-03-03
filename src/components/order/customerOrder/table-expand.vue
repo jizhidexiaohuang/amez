@@ -5,7 +5,7 @@
                 <span class="expand-key">订单类型: </span>
                 <span class="expand-value">{{ row.type ==0?'到店服务':'上门服务'}}</span>
             </Col>
-            <Col span="4">
+            <Col span="6">
                 <span class="expand-key">订单编号: </span>
                 <span class="expand-value">{{ row.orderNo }}</span>
             </Col>

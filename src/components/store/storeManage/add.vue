@@ -439,8 +439,8 @@
                     }
                 ).then(res=>{
                     console.log(res)
-                    if(res.status==200){
-                        this.$Message.success('Success!');
+                    this.$Message.error(res.data.message);
+                    if(res.data.code==200){
                         this.returnHome('list')
                     }
                 })

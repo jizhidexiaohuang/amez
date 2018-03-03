@@ -88,7 +88,7 @@
       </Row>
       <Row style="margin:10px 0px;">
         <Col span="8" style="padding-left:60px;">
-          <Button @click.native="returnHome('list')">确定</Button>
+          <Button>确定</Button>
           <Button style="margin-left:20px;">取消</Button>
         </Col>
         <Col span="8"></Col>
@@ -174,7 +174,7 @@ export default {
   methods: {
     getData(id){
       let vm = this;
-      let url = common.path+'orderReturn/queryById/'+id;
+      let url = common.path2+'orderReturn/queryById/'+id;
       this.$http.get(url).then(res=>{
         console.log(res)
         vm.orderBase = res.data.data;

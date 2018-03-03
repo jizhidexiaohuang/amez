@@ -14,7 +14,7 @@
                 <Input v-model="formValidate.workCardNo" placeholder="请填写工牌号"></Input>
             </FormItem>
             <FormItem  label="注册手机" prop="mobile">
-                <Input v-model="formValidate.mobile" placeholder="请填写注册手机"></Input>
+                <Input v-model="formValidate.mobile" disabled placeholder="请填写注册手机"></Input>
             </FormItem>
             <FormItem label="员工类型" prop="position">
                 <RadioGroup v-model="formValidate.position">

@@ -65,6 +65,8 @@ import CashManage from '@/components/financeManage/cashManage/list'
 /*=====================================员工管理=========================*/
 //员工管理
 import WorkerManage from '@/components/worker/workerManage/list'
+//员工等级
+import WorkerGrade from '@/components/worker/workerGrade/list'
 /*=====================================营销管理=========================*/
 //首页装修
 import DecorateHome from '@/components/marketing/decorateHome/index'
@@ -228,6 +230,16 @@ const menuRouter = [
         meta:{
           type:"菜单",
           name:"员工管理"
+        }
+      },
+      {
+        path: '/worker/workerGrade',
+        name: '员工等级',
+        title: '员工等级',
+        component: WorkerGrade,
+        meta:{
+          type:"菜单",
+          name:"员工等级"
         }
       }
     ]

@@ -1,9 +1,13 @@
 <template>
     <div>
         <!-- 新增容器 -->
-        <AddPage v-if="pageType == 'add'"  class="testWrap" v-on:returnList="fnBackformAdd"/>
+        <GradePage v-if="pageType == 'grade'"  class="testWrap" v-on:returnList="fnBackformAdd"/>
+        <!--成长值设置-->
+        <RulesPage v-if="pageType == 'rules'"  class="testWrap" v-on:returnList="fnBackformAdd"/>
         <!-- 编辑容器 -->
-        <EditPage v-if="pageType == 'edit'" :editId="editId"  class="testWrap" v-on:returnList="fnBackformAdd"/>
+        <div v-if="pageType == 'edit'" class="testWrap">
+            编辑
+        </div>
         <!-- 详情容器 -->
         <div v-if="pageType == 'info'" class="testWrap">详情</div>
         <!-- 列表容器 -->
@@ -51,7 +55,8 @@
             </Form>
             <Row style="margin-bottom:10px;">
                 <Col span="10">
-                    <Button style="float:left;margin-right:10px;" @click.native="changePageType('add')" type="success" icon="android-add">新建模板组</Button>
+                    <Button style="float:left;margin-right:10px;" @click.native="changePageType('grade')" type="success" icon="android-add">新增店铺等级</Button>
+                    <Button style="float:left;" @click.native="changePageType('rules')" type="primary" icon="android-add">成长规则设置</Button>
                 </Col>
             </Row>
             <Table
@@ -79,13 +84,12 @@
     </div>
 </template>
 <script>
-    import AddPage from './add.vue'
-    import EditPage from './edit.vue'
+    import GradePage from './grade.vue'
+    import RulesPage from './rules.vue'
     import common from '../../../base.js'
     export default {
         data () {
             return {
-                editId:0,
                 value:'',
                 selectType:'门店名称',
                 storeStatus:'', //店铺状态下拉框
@@ -117,55 +121,37 @@
                         align: 'center'
                     },
                     {
-                        title: '模板组名',
+                        title: '店铺等级',
                         key: 'levelName',
                     },
                     {   
-                        title: '图片数量',
+                        title: '成长值范围',
                         key: 'beginUpgradeValue',
                         render:(h,params)=>{
                             return h('div',params.row.beginUpgradeValue+'--'+params.row.endUpgradeValue)
                         }
                     },
                     {
-                        title: '操作',
-                        key: 'action',
-                        align: 'center',
-                        width: '200px' ,
-                        render: (h, params) => {
-                            return h('div', [
-                                h('Button', {
-                                    props: {
-                                        type: 'primary',
-                                        size: 'small'
-                                    },
-                                    style: {
-                                        marginRight: '5px'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            this.editId = params.row.id
-                                            this.changePageType('edit');
+                        title: '图标',
+                        key: 'levelLogo',
+                        render:(h,params)=>{
+                            if(params.row.levelLogo){
+                                return h('div',[
+                                    h('img',{
+                                        attrs:{
+                                            src:params.row.levelLogo
+                                        },
+                                        style:{
+                                            width:'36px',
+                                            height:'40px'
                                         }
-                                    }
-                                }, '编辑'),
-                                h('Button', {
-                                    props: {
-                                        type: 'error',
-                                        size: 'small'
-                                    },
-                                    style: {
-                                        marginRight: '5px'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            this.deleteTpl(params.row.id);
-                                        }
-                                    }
-                                }, '删除'),
-                            ]);
+                                    })
+                                ])
+                            }else{
+                                h('div','无图标')
+                            }
                         }
-                    }
+                    },
                    
                 ],
                 table:{
@@ -191,7 +177,7 @@
                 let vm = this;
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path2+"storeLevel/findList?pageNo="+start+'&pageSize='+size;
+                let url = common.path+"storeLevel/findList?pageNo="+start+'&pageSize='+size;
                 // let url = "http://172.16.20.151:8080/product/front/findByPage?pageNo=1&pageSize=1";
                 let ajaxData = {
                     pageNo:start,
@@ -259,22 +245,6 @@
                     }
                 }
                 vm.activatedType = true;//主要解决mounted和activated重复调用
-            },
-            deleteTpl(id){
-                let vm = this
-                this.$Modal.confirm({
-                    title:'删除模板组',
-                    content:'你确定删除此模板？',
-                    onOk(){
-                        let url = common.path2+'store/close/'+id;
-                        this.$http.put(url).then(res=>{
-                            if(res.status==200){
-                                this.$Message.success('删除成功！')
-                                vm.getData()
-                            }
-                        })
-                    }
-                });
             }
         },
         mounted: function(){
@@ -285,8 +255,8 @@
             vm.fnExistTabList()
         },
         components:{
-            AddPage,
-            EditPage
+            GradePage,
+            RulesPage
         }
     }
 </script>

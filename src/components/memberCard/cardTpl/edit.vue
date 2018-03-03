@@ -1,33 +1,25 @@
 <template>
   <div class="testWrap">
       <div class="boxStyle editPage">
-        <h2>编辑连锁品牌</h2>
+        <h2>编辑模板组</h2>
         <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120">
             <Row>
                 <Col span="8">
-                    <FormItem label="品牌名称" prop="brandName">
+                    <FormItem label="模板组名" prop="brandName">
                         <Input v-model="formValidate.brandName"></Input>
                     </FormItem>
                 </Col>
             </Row>
             <Row>
                 <Col span="8">
-                    <FormItem label="品牌Logo" prop="brandLogo" v-if="testCode">
+                    <FormItem label="模板图片" prop="brandLogo" v-if="testCode">
                         <MyUpload :uploadConfig="uploadConfig" :defaultList="defaultList" v-on:listenUpload="getUploadList"></MyUpload>
                     </FormItem>
                 </Col>
             </Row>
-            <Row>
-                <Col span="8">
-                    <FormItem label="品牌所属公司" prop="brandOwnershipCompany">
-                        <Input v-model="formValidate.brandOwnershipCompany"></Input>
-                    </FormItem>
-                </Col>
-            </Row>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
-                <Button v-show="false" type="ghost" @click="handleReset('formValidate')" style="margin:0px 8px">取消</Button>
-                <Button type="success" @click.native="returnHome('list')">返回</Button>
+                <Button type="primary" @click="handleSubmit('formValidate')" style="margin-right:8px">保存</Button>
+                <Button type="ghost" @click.native="returnHome('list')">返回</Button>
             </FormItem>
         </Form>
       </div>
@@ -42,20 +34,16 @@
                 testCode: false,
                 defaultList:[],//默认图片
                 uploadConfig:{
-                    num:1
+                    num:1000
                 },
                 brandLogo:'',//图片途径
                 formValidate: {
                     brandName: '',
-                    brandOwnershipCompany: '',
                 },
                 ruleValidate: {
                     brandName: [
                         { required: true, message: '品牌名称不能为空', trigger: 'blur' }
-                    ],
-                    brandOwnershipCompany: [
-                        { required: true, message: '品牌所属公司不能为空', trigger: 'blur' }
-                    ],
+                    ]
                 },
             }
         },

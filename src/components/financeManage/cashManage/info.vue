@@ -4,47 +4,47 @@
         <h3 class="transactionTitle">提现详情</h3>
         <div class="transactionDetail">
             <Row>
-                <Col span="8">申请时间：{{financialTrade.payTime?common.formatDate(financialTrade.payTime):''}}</Col>
+                <Col span="8">申请时间：{{data.addTime?common.formatDate(data.addTime):''}}</Col>
                 <Col span="8"></Col>
                 <Col span="8"></Col>
             </Row>
             <Row>
-                <Col span="8">用户信息：{{financialTrade.orderNo}}</Col>
-                <Col span="8">所属门店：{{financialTrade.tradeNo}}</Col>
+                <Col span="8">用户信息：{{data.memberRealName}}</Col>
+                <Col span="8">所属门店：{{data.memberPhone}}</Col>
                 <Col span="8"></Col>
             </Row>
             <Row>
-                <Col span="8">开户人：{{tradeType}}</Col>
-                <Col span="8"></Col>
-                <Col span="8"></Col>
-            </Row>
-            <Row>
-                <Col span="8">开户银行：{{financialTrade.storeName}}</Col>
-                <Col span="8">开户支行：{{financialTradeDetail.bossName}}</Col>
-                <Col span="8"></Col>
-            </Row>
-            <Row>
-                <Col span="8">银行账号：{{financialTradeDetail.bossPhone}}</Col>
+                <Col span="8">开户人：{{data.memberRealName}}</Col>
                 <Col span="8"></Col>
                 <Col span="8"></Col>
             </Row>
             <Row>
-                <Col span="8">提现金额：{{financialTradeDetail.beauticianName}}</Col>
-                <Col span="8">手续费：{{financialTradeDetail.beauticianPhone}}</Col>
-                <Col span="8">打款金额：{{financialTradeDetail.buyersNickName}}</Col>
+                <Col span="8">开户银行：{{data.storeName}}</Col>
+                <Col span="8">开户支行：{{data.bossName}}</Col>
+                <Col span="8"></Col>
             </Row>
             <Row>
-                <Col span="8">打款状态：{{financialTradeDetail.buyersPhone}}</Col>
+                <Col span="8">银行账号：{{data.bankCardNo}}</Col>
                 <Col span="8"></Col>
                 <Col span="8"></Col>
             </Row>
             <Row>
-                <Col span="20">打款时间：2017-11-28 18:32：20 (具体以银行到账时间为准) / 预计打款时间为2017-11-28</Col>
+                <Col span="8">提现金额：{{data.withdrawAmount}}</Col>
+                <Col span="8">手续费：{{data.withdrawAmount-data.actualAmount}}</Col>
+                <Col span="8">打款金额：{{data.actualAmount}}</Col>
+            </Row>
+            <Row>
+                <Col span="8">打款状态：{{playAmountStatus}}</Col>
+                <Col span="8"></Col>
+                <Col span="8"></Col>
+            </Row>
+            <Row>
+                <Col span="20">打款时间：{{payMoneyStatus}}</Col>
                 <Col span="2"></Col>
                 <Col span="2"></Col>
             </Row>
         </div>
-        <Button type="primary" style="margin-right:20px;">确认打款</Button>
+        <Button type="primary" style="margin-right:20px;" @click="makeMoney(infoId)">确认打款</Button>
         <Button type="ghost" @click.native="returnHome('list')">返回</Button>
       </div>
   </div>
@@ -55,56 +55,32 @@
         data () {
             return {
                 src:'../../../static/images/footer/1_1.png',
-                financialTrade:'',
-                financialTradeDetail:'',
-                detailInfo:'',
-                settlementInfo:''
+                data:''
             }
         },
         computed:{
             //交易类型
-            tradeType:function(){
+            playAmountStatus:function(){
                 let str = ''
-                if(this.financialTrade.tradeType=='1'){
-                    str = '服务订单'
-                }else if(this.financialTrade.tradeType=='2'){
-                    str = '订单退款'
-                }else if(this.financialTrade.tradeType=='3'){
-                    str = '会员卡售卡'
-                }else if(this.financialTrade.tradeType=='4'){
-                    str = '会员卡充值'
+                if(this.data.playAmountStatus){
+                    str = '已打款'
+                }else if(this.data.playAmountStatus==1){
+                    str = '未打款'
                 }
                 return str
             },
-            tradeStatus:function(){
+            payMoneyStatus:function(){
                 let str = ''
-                if(this.financialTrade.tradeStatus==0){
-                    str = '待付款'
-                }else if(this.financialTrade.tradeStatus==1){
-                    str = '交易关闭'
-                }else if(this.financialTrade.tradeStatus==2){
-                    str = '待服务'
-                }else if(this.financialTrade.tradeStatus==4){
-                    str = '服务中'
-                }else if(this.financialTrade.tradeStatus==5){
-                    str = '待评价'
-                }else if(this.financialTrade.tradeStatus==6){
-                    str = '评价完成'
-                }else if(this.financialTrade.tradeStatus==7){
-                    str = '购卡成功'
-                }else if(this.financialTrade.tradeStatus==8){
-                    str = '充值成功'
+                if(this.data.playAmountTime){
+                    if(this.data.playAmountStatus){
+                        str = this.common.formatDate(this.data.playAmountTime)+'(具体以银行到账时间为准)'
+                    }else if(this.data.playAmountStatus==1){
+                        str = this.common.formatDate(this.data.playAmountTime);
+                    }
+                }else{
+                    str = ''
                 }
-                return str
-            },
-            payType:function(){
-                let str = ''
-                if(this.financialTrade.payType=='alipay'){
-                    str = '支付宝'
-                }else if(this.financialTrade.payType=='wechatpay'){
-                    str = '微信支付'
-                }
-                return str  
+                return str;
             }
         },
         methods:{
@@ -115,15 +91,28 @@
             //获取数据
             getData(id){
                 let vm = this
-                let url = common.path2+'financialTrade/findDetailById/'+id
+                let url = common.path2+'memberWithdraws/queryById/'+id
                 this.$http.get(url).then(res=>{
                     console.log(res)
-                    vm.financialTrade = res.data.data.financialTrade
-                    vm.financialTradeDetail = res.data.data.financialTradeDetail
-                    vm.detailInfo = JSON.parse(res.data.data.financialTradeDetail.detailInfo)
-                    vm.settlementInfo = JSON.parse(res.data.data.financialTradeDetail.settlementInfo)
-                    console.log(vm.detailInfo)
+                    vm.data = res.data.data;
                 })
+            },
+            makeMoney(id){
+                console.log(this.infoId)
+                let vm = this
+                this.$Modal.confirm({
+                    title:'确认打款',
+                    content:'确认给此会员打款？',
+                    onOk(){
+                        let url = common.path2+'...'+id;
+                        this.$http.put(url).then(res=>{
+                            if(res.code==200){
+                                this.$Message.success('打款成功！')
+                                vm.getData()
+                            }
+                        })
+                    }
+                });
             }
         },
         beforeMount:function(){

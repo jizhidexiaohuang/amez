@@ -334,7 +334,7 @@
                 handler(val){
                     console.log(val)
                     this.listId = val;
-                    this.getData();
+                    // this.getData();
                 }
             }
         }

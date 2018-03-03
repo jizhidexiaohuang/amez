@@ -99,150 +99,110 @@
                     {
                         type: 'selection',
                         // title:'序号',
-                        width: 80,
+                        width: 60,
                         align: 'center'
                     },
                     {
-                        title: '订单号',
-                        key: 'orderNo',
-                    },
-                    {
-                        title: '交易流水号',
-                        key: 'tradeNo',
-                    },
-                    {
-                        title: '付款时间',
-                        key: 'payTime',
+                        title: '申请时间',
+                        width:150,
+                        key: 'addTime',
                         render:(h,params)=>{
-                            if(params.row.payTime){
-                                return h('div',common.formatDate(params.row.payTime))
-                            }else{
-                                return h('div','无')
-                            }
+                            return h('div',common.formatDate(params.row.addTime))
                         }
                     },
                     {
-                        title: '交易类型',
-                        key: 'tradeType',
+                        title: '提现人',
+                        key: 'memberRealName',
                         render:(h,params)=>{
-                            let str = ''
-                            if(params.row.tradeType==1){
-                                str = '服务订单'
-                            }else if(params.row.tradeType==2){
-                                str = '订单退款'
-                            }else if(params.row.tradeType==3){
-                                str = '会员卡售卡'
-                            }else if(params.row.tradeType==4){
-                                str = '会员卡充值'
-                            }
-                            return h('div',str)
+                            return h('div',[
+                                h('div',params.row.memberRealName),
+                                h('div',params.row.memberPhone),
+                            ])
                         }
                     },
                     {
-                        title: '订单金额',
-                        key: 'orderAmount',
-                        render:(h,params)=>{
-                            return h('div',params.row.orderAmount/100)
-                        }
+                        title: '所属门店',
+                        key: 'belongStoreName',
                     },
                     {
-                        title: '实付金额',
-                        key: 'payAmount',
-                        render:(h,params)=>{
-                            return h('div',params.row.payAmount/100)
-                        }
+                        title: '提现金额',
+                        key: 'withdrawAmount',
                     },
                     {
-                        title: '结算金额',
-                        key: 'settlementAmount',
-                        render:(h,params)=>{
-                            return h('div',params.row.settlementAmount/100)
-                        }
+                        title: '手续费',
+                        key: 'taxRate',
                     },
                     {
-                        title: '平台佣金',
-                        key: 'platformCommission',
-                        render:(h,params)=>{
-                            return h('div',params.row.platformCommission/100)
-                        }
+                        title: '打款金额',
+                        key: 'actualAmount',
                     },
                     {
-                        title: '支付方式',
-                        key: 'payType',
+                        title: '开户名',
+                        key: 'memberRealName',
+                    },
+                    {
+                        title: '提现账户',
+                        key: 'bankCardNo',
+                    },
+                    {
+                        title: '打款状态',
+                        key: 'playAmountStatus',
                         render:(h,params)=>{
                             let str = ''
-                            if(params.row.payType=='wechatpay'){
-                                str = '微信支付'
-                            }else if(params.row.payType=='alipay') {
-                                str = '支付宝支付'
-                            }
-                            return h('div',str)
-                        }
-                    },
-                    {
-                        title: '交易状态',
-                        key: 'tradeStatus',
-                        render:(h,params)=>{
-                            let str = '';
-                            if(params.row.tradeStatus==0){
-                                str = '待付款'
-                            }else if(params.row.tradeStatus==1){
-                                str = '交易关闭'
-                            }else if(params.row.tradeStatus==2){
-                                str = '待服务'
-                            }else if(params.row.tradeStatus==4){
-                                str = '服务中'
-                            }else if(params.row.tradeStatus==5){
-                                str = '待评价'
-                            }else if(params.row.tradeStatus==6){
-                                str = '评价完成'
-                            }else if(params.row.tradeStatus==7){
-                                str = '购卡成功'
-                            }else if(params.row.tradeStatus==8){
-                                str = '充值成功'
-                            }
-                            return h('div',str)
-                        }
-                    },
-                    {
-                        title: '结算时间',
-                        key: 'beginSettlementTime',
-                        render:(h,params)=>{
-                            if(params.row.beginSettlementTime){
-                                return h('div',common.formatDate(params.row.beginSettlementTime))
+                            if(params.row.playAmountStatus){
+                                str = '已打款'
                             }else{
-                                return h('div','无')
+                                str = '未打款'
                             }
+                            return h('div',str)
                         }
                     },
                     {
-                        title: '门店信息',
-                        key: 'storeName',
+                        title: '打款时间',
+                        key: 'playAmountTime',
+                        width:150,
+                        render:(h,params)=>{
+                            return h('div',params.row.playAmountTime?common.formatDate(params.row.playAmountTime):'')
+                        }
                     },
                     {
                         title: '操作',
                         key: 'action',
-                        width: 180,
-                        // align: 'center',
-                        // fixed: 'right',
-                        render: (h, params) => {
-                            return h('div', [
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small'
-                                },
-                                style: {
-                                    marginRight: '5px'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.infoId = params.row.id;
-                                        this.changePageType('info');
-                                    }
-                                }
-                               }, '详情')
-                             ]);
+                        width: 80,
+                        align: 'center',
+                        render:(h,params)=>{
+                            if(params.row.playAmountStatus){
+                                return h('Button', {
+                                        props: {
+                                            type: 'info',
+                                            size: 'small'
+                                        },
+                                        style: {
+                                            marginRight: '5px'
+                                        },
+                                        on: {
+                                            click: () => {
+                                                this.infoId = params.row.id
+                                                this.changePageType('info');
+                                            }
+                                        }
+                                    }, '查看')
+                            }else{
+                                return h('Button', {
+                                        props: {
+                                            type: 'info',
+                                            size: 'small'
+                                        },
+                                        style: {
+                                            marginRight: '5px'
+                                        },
+                                        on: {
+                                            click: () => {
+                                                this.makeMoney(params.row.id);
+                                            }
+                                        }
+                                    }, '打款')
+                            }
                         }
                     }
                 ],
@@ -272,7 +232,7 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path2+"financialTrade/front/findByPage?pageNo="+start+'&pageSize='+size;
+                let url = common.path2+"memberWithdraws/front/findByPage?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {}
                 console.log(ajaxData)
                 vm.table.loading = true;
@@ -285,7 +245,7 @@
                         },
                     }
                 ).then(function(res){
-                    console.log(res);
+                    console.log(res.data.data.list);
                     let oData = res.data
                     vm.table.recordsTotal = oData.data.total;
                     vm.table.tableData1 = oData.data.list;
@@ -386,6 +346,22 @@
                     }
                 }
                 vm.activatedType = true;//主要解决mounted和activated重复调用
+            },
+            makeMoney(id){
+                let vm = this
+                this.$Modal.confirm({
+                    title:'确认打款',
+                    content:'确认给此会员打款？',
+                    onOk(){
+                        let url = common.path2+'...'+id;
+                        this.$http.put(url).then(res=>{
+                            if(res.code==200){
+                                this.$Message.success('打款成功！')
+                                vm.getData()
+                            }
+                        })
+                    }
+                });
             }
         },
         mounted: function(){

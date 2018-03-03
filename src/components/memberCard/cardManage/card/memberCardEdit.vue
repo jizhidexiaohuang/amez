@@ -71,7 +71,7 @@
             <FormItem label="卡面预览" prop="">
                 <div class="memberCard">
                     <img :src="src" alt="">
-                    <div class="brand" v-if="formValidate.brandId">{{formValidate.brandName}}·会员卡（下单享{{formValidate.discount}}折）</div>
+                    <div class="brand" v-if="formValidate.brandName">{{formValidate.brandName}}·会员卡（下单享{{formValidate.discount}}折）</div>
                     <div class="quota" v-if="formValidate.cardValue">￥{{formValidate.cardValue}} （全国通用）</div>
                     <div class="periodOfValidity">有效期 {{getPeriod}}</div>
                 </div>
@@ -158,8 +158,10 @@
             // 获取品牌名
             getBrandName(data){
                 console.log(data)
-                this.formValidate.brandId = data.value;
-                this.formValidate.brandName = data.label;
+                if(data.label){
+                    this.formValidate.brandId = data.value;
+                    this.formValidate.brandName = data.label;
+                }
             },
             //获取连锁品牌
             getBrand(){
