@@ -21,6 +21,7 @@ const state = {
 	cardName:'',
 	cityList:[],
 	serviceStoreList:[],
+	productList: [],
 };
 /* =========================改变状态的唯一方法======================= */
 const mutations = {
@@ -106,6 +107,10 @@ const mutations = {
 		console.log(cardName);
 		state.cardName = cardName;
 	},
+	[types.PRODUCT_LIST](state,productList){
+		console.log(productList);
+		state.productList = productList;
+	},
 }
 /* ====================对状态进行处理再输出=========================== */
 const getters = {
@@ -162,6 +167,9 @@ const getters = {
 	},
 	cardName(state){
 		return state.cardName
+	},
+	productList(state){
+		return state.productList
 	},
 }
 export default{

@@ -91,4 +91,8 @@ export default{
 		console.log(data)
 		commit(types.SERVICE_STORE_LIST,data.serviceStoreList);
 	},
+	productList:({commit},data)=>{
+		console.log(data)
+		commit(types.PRODUCT_LIST,data.productList);
+	},
 }

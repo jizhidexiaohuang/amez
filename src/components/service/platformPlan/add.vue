@@ -40,6 +40,9 @@
             <FormItem label="服务支持商家">
                 <storeTable></storeTable>
             </FormItem>
+             <FormItem label="服务产品">
+                <productTable></productTable>
+            </FormItem>
             <FormItem label="正式员工服务提成" prop="formalWorker" v-if="false">
                 <Input v-model="formValidate.formalWorker" placeholder="请填写正式员工服务提成"></Input>
             </FormItem>
@@ -133,6 +136,7 @@
 <script>
     import MyUpload from '../../common/upload.vue'
     import storeTable from './storeTable.vue'
+    import productTable from './productTable.vue'
     export default {
         data () {
             return {
@@ -436,6 +440,7 @@
         components:{
             MyUpload,
             storeTable,
+            productTable,
         }
     }
 </script>

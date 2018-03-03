@@ -39,3 +39,5 @@ export const RECRUIT_LIST = 'RECRUIT_LIST';
 export const CITY_LIST = 'CITY_LIST';
 /* 服务支持商家 */
 export const SERVICE_STORE_LIST = 'SERVICE_STORE_LIST';
+/* 服务产品 */
+export const PRODUCT_LIST = 'PRODUCT_LIST';
