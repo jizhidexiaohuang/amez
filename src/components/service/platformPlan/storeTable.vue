@@ -1,10 +1,10 @@
 <template>
     <div>
         <div>
-            <Button @click="fnOpenModal">选择商家</Button>
+            <Button @click="fnOpenModal">选择员工</Button>
             <Modal
                 v-model="usingRange"
-                title="选择商家"
+                title="选择员工"
                 @on-ok="ok"
                 width="700">
                 <div v-if="pageType == 'list'">
@@ -14,7 +14,6 @@
                                 员工类型
                                 <Select v-model="cd.beauticianType" style="width:100px">
                                     <!--<Option v-for="item in branchList" :value="item.id" :key="item.id">{{ item.brandName }}</Option>-->
-                                    <Option :value="1" :key="1">店长</Option>
                                     <Option :value="2" :key="2">正式员工</Option>
                                     <Option :value="3" :key="3">兼职员工</Option>
                                 </Select>
@@ -56,12 +55,10 @@
                 </div>
             </Modal>
         </div>
-        <storeList></storeList>
     </div>
 </template>
 <script>
     import common from '../../../base.js'
-    import storeList from './storeList.vue'
     export default {
         data () {
             return {
@@ -90,16 +87,32 @@
                         align: 'center'
                     },
                     {
-                        title: '店铺名称',
-                        key: 'storeName',
+                        title: '员工姓名',
+                        key: 'beauticianName',
                     },
                     {
-                        title: '联系电话',
-                        key: 'storeTel',
+                        title: '昵称',
+                        key: 'beauticianNickName',
                     },
                     {
-                        title: '负责人',
-                        key: 'sellerName',
+                        title: '联系方式',
+                        key: 'phone',
+                    },
+                    {
+                        title: '员工类型',
+                        key: 'beauticianType',
+                        render: (h,params) =>{
+                            const row = params.row
+                            if(row.beauticianType == 1){
+                                return '店长'
+                            }
+                            if(row.beauticianType == 2){
+                                return '正式员工'
+                            }
+                            if(row.beauticianType == 3){
+                                return '兼职员工'
+                            }
+                        }
                     },
                 ],
                 table:{
@@ -112,11 +125,11 @@
                 }
             }
         },
-        /* computed:{
+        computed:{
             getBusinessId(){
-                return this.$store.getters.businessId;
+                return this.$store.getters.storeList;
             }
-        }, */
+        },
         methods: {
             /* 分页回掉函数 */
             changePage (page) {
@@ -133,13 +146,13 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path2+"store/front/findByPage?pageNo="+start+'&pageSize='+size;
+                let url = common.path2+"storeBeautician/front/findByPage?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {
 
                 }
-                /* if(!!vm.cd.beauticianType){
+                if(!!vm.cd.beauticianType){
                     ajaxData.beauticianType = vm.cd.beauticianType;
-                } */
+                }
                 
                 console.log(ajaxData)
                 vm.table.loading = true;
@@ -271,10 +284,10 @@
             ok () {
                 console.log(this.listId);
                 this.$Message.info('Clicked ok');
-                this.$store.commit('SERVICE_STORE_LIST',this.listId);
+                this.$store.commit('STORE_LIST',this.listId);
             },
             fnOpenModal () {
-                this.listId = this.$store.getters.serviceStoreList;
+                this.listId = this.$store.getters.storeList;
                 console.log(this.listId);
                 this.getData();
                 this.usingRange = true;
@@ -289,18 +302,18 @@
             vm.fnExistTabList()
         },
         components:{
-            storeList
         },
-        /* watch:{
-            getBusinessId:{
+        watch:{
+            /* getBusinessId:{
                 deep:true,
                 handler(val){
                     console.log(val)
                     this.listId = val;
                     this.getData();
+                    alert("变化")
                 }
-            }
-        }, */
+            } */
+        },
     }
 </script>
 <style scoped>

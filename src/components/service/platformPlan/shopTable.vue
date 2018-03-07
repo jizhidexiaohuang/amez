@@ -56,12 +56,10 @@
                 </div>
             </Modal>
         </div>
-        <productList></productList>
     </div>
 </template>
 <script>
     import common from '../../../base.js'
-    import productList from './productList.vue'
     export default {
         data () {
             return {
@@ -90,21 +88,21 @@
                         align: 'center'
                     },
                     {
-                        title: '产品名称',
-                        key: 'physicalName',
+                        title: '店铺名称',
+                        key: 'storeName',
                     },
                     {
-                        title: '单位',
-                        key: 'unit',
+                        title: '负责人',
+                        key: 'bossName',
                     },
                     {
-                        title: '价格',
-                        key: 'salePrice',
-                        render: (h,params) => {
-                            const row = params.row;
-                            return +row.salePrice/100
-                        }
+                        title: '联系方式',
+                        key: 'bossPhone',
                     },
+                    {
+                        title: '地区',
+                        key: 'storeAddress'
+                    }
                 ],
                 table:{
                     tableData1: [],
@@ -116,11 +114,11 @@
                 }
             }
         },
-        /* computed:{
+        computed:{
             getBusinessId(){
-                return this.$store.getters.businessId;
+                return this.$store.getters.serviceStoreList;
             }
-        }, */
+        },
         methods: {
             /* 分页回掉函数 */
             changePage (page) {
@@ -137,13 +135,13 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path2+"productPhysical/front/findByPage?pageNo="+start+'&pageSize='+size;
+                let url = common.path2+"store/front/findByPage?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {
 
                 }
-                /* if(!!vm.cd.beauticianType){
+                if(!!vm.cd.beauticianType){
                     ajaxData.beauticianType = vm.cd.beauticianType;
-                } */
+                }
                 
                 console.log(ajaxData)
                 vm.table.loading = true;
@@ -161,9 +159,8 @@
                     vm.table.recordsTotal = oData.data.total;
                     vm.table.tableData1 = oData.data.list;
                     vm.table.loading = false;
-                    console.log(11111111);
                     console.log(vm.listId);
-                    vm.selectOrNo(vm.listId,oData.data.list)
+                    vm.selectOrNo(vm.listId,oData.data.list);
                     vm.tempArr = res.data.data.list;
                     console.log(vm.tempArr)
                 }).catch(function(err){
@@ -275,10 +272,10 @@
             ok () {
                 console.log(this.listId);
                 this.$Message.info('Clicked ok');
-                this.$store.commit('PRODUCT_LIST',this.listId);
+                this.$store.commit('SERVICE_STORE_LIST',this.listId);
             },
             fnOpenModal () {
-                this.listId = this.$store.getters.productList;
+                this.listId = this.$store.getters.serviceStoreList;
                 console.log(this.listId);
                 this.getData();
                 this.usingRange = true;
@@ -293,18 +290,18 @@
             vm.fnExistTabList()
         },
         components:{
-            productList
         },
-        /* watch:{
-            getBusinessId:{
+        watch:{
+            /* getBusinessId:{
                 deep:true,
                 handler(val){
                     console.log(val)
                     this.listId = val;
                     this.getData();
+                    alert("变化")
                 }
-            }
-        }, */
+            } */
+        },
     }
 </script>
 <style scoped>

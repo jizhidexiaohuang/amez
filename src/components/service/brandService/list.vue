@@ -17,10 +17,6 @@
         <!-- 列表容器 -->
         <div v-if="pageType == 'list'" class="testWrap">
             <div class="boxStyle">
-                <Tabs v-if="false" type="card" v-model="cd.isBrand" @click.native="getData('init')">
-                    <TabPane label="门店自营服务" name="1"></TabPane>
-                    <TabPane label="品牌服务" name="2"></TabPane>
-                </Tabs>
                 <Form :model="cd" inline>
                     <FormItem style="margin-bottom:10px;">
                         状态
@@ -99,7 +95,7 @@
                     saleStatus:"",//上下架状态
                     inputval:'',//选择的值
                     inputType:'serverName',//input类型
-                    isBrand:'1',// 门店自营还是产品
+                    isBrand:false,// 门店自营还是产品
                 },
                 table:{
                     recordsTotal:0,//总数量
@@ -210,6 +206,7 @@
                                         click: () => {
                                             let row = params.row;
                                             this.sendChild.itemId = row.id;
+                                            // this.$store.commit('STORE_LIST',[]);
                                             this.changePageType('edit');
                                         }
                                     }
@@ -273,7 +270,7 @@
                     serviceList:"", // 产品分类
                     brandList:"", // 服务分类
                     itemId: "", // 编辑选项的id
-                    isBrand: 1,// 服务分类
+                    isBrand: false,// 服务分类
                 },
                 storeId:'',//店铺id
                 brandId: '', // 品牌id
@@ -303,12 +300,12 @@
                     vm.fnInit();
                 }
                 /* 买家和卖家的表头不一样 */
-                if(vm.cd.isBrand == "1"){
+                if(!!!vm.cd.isBrand){
                     vm.table.tableColumns = vm.table.buyerColumns;
-                    vm.cd.isBrand = "1";
+                    vm.cd.isBrand = false;
                 }else{
                     vm.table.tableColumns = vm.table.sellerColumns;
-                    vm.cd.isBrand = "2";
+                    vm.cd.isBrand = true;
                 }
                 let start = vm.table.pageNun;//从第几页开始
                 let size = vm.table.size;//每页条数
@@ -317,7 +314,7 @@
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
-                    isBrand: !!!vm.cd.isBrand,
+                    isBrand: false,
                     isPlatform: false,
                 }
                 if(!!vm.storeId){
@@ -393,6 +390,8 @@
                 }
                 if(type == "add"){
                     this.$store.commit('STORE_LIST',[]);
+                    this.$store.commit('RECRUIT_LIST',[]);
+                    this.$store.commit('TOHOME_LIST',[]);
                 }
             },
             /* 模态框 */
@@ -474,7 +473,7 @@
                         vm.table.loading = true;//进一步模拟第一次进来时的页面效果
                         vm.pageType = 'list'//显示列表页，放在这里是给上边的处理留点时间，也就是初始化放在这段代码上边
                         
-                        vm.cd.isBrand = "1"
+                        vm.cd.isBrand = false
                         vm.getData('init');//再次请求数据
                     }
                 }

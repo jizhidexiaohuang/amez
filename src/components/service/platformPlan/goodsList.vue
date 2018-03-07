@@ -32,32 +32,25 @@
                 listId:[],
                 tableColumns1: [
                     {
-                        title: '员工姓名',
-                        width:200,
-                        key: 'beauticianName',
+                        type: 'selection',
+                        title:'序号',
+                        width: 80,
+                        align: 'center'
                     },
                     {
-                        title: '昵称',
-                        key: 'beauticianNickName',
+                        title: '产品名称',
+                        key: 'physicalName',
                     },
                     {
-                        title: '联系方式',
-                        key: 'phone',
+                        title: '单位',
+                        key: 'unit',
                     },
                     {
-                        title: '员工类型',
-                        key: 'beauticianType',
-                        render: (h,params) =>{
-                            const row = params.row
-                            if(row.beauticianType == 1){
-                                return '店长'
-                            }
-                            if(row.beauticianType == 2){
-                                return '正式员工'
-                            }
-                            if(row.beauticianType == 3){
-                                return '兼职员工'
-                            }
+                        title: '批发价',
+                        key: 'salePrice',
+                        render: (h,params) => {
+                            const row = params.row;
+                            return +row.salePrice/100
                         }
                     },
                 ],
@@ -73,7 +66,7 @@
         },
         computed:{
             getBusinessId(){
-                return this.$store.getters.tohomeList;
+                return this.$store.getters.productList;
             }
         },
         methods:{
@@ -106,7 +99,7 @@
                     storeIdList:listId
                 }
                 // let url = this.common.path2+'store/findByPageForMemberCard?pageNo='+start+'&pageSize='+size;
-                let url = this.common.path2+'storeBeautician/front/findByPage?pageSize=100000';
+                let url = this.common.path2+'productPhysical/front/findByPage?pageSize=100000';
                 this.$http.post(
                     url,
                     ajaxData,
@@ -188,9 +181,9 @@
             }
         },
         mounted: function () {
-            console.log('测试：'+this.$store.getters.tohomeList);
+            console.log('测试：'+this.$store.getters.productList);
             let vm = this;
-            let arrs = vm.$store.getters.tohomeList;
+            let arrs = vm.$store.getters.productList;
             this.listId = arrs;
             if(arrs.length>0){
                 this.businessCtrl = true;

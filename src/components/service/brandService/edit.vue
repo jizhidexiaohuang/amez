@@ -3,7 +3,7 @@
         <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120" style="padding-bottom: 20px;">
             <Spin fix v-if="spinShow"></Spin>
             <FormItem label="服务分类" prop="type">
-                <Select v-model="formValidate.type" placeholder="选择服务分类">
+                <Select disabled v-model="formValidate.type" placeholder="选择服务分类">
                     <Option :value="item.id" v-for="item in serviceList" :key="item.id">{{ item.categoryName }}</Option>
                 </Select>
             </FormItem>
@@ -35,14 +35,49 @@
 
             <FormItem label="到店服务员工">
                 <storeTable></storeTable>
+                <storeList></storeList>
                 <!--<businessList></businessList>-->
             </FormItem>
             <FormItem label="上门服务员工">
                 <homeTable></homeTable>
+                <homeList></homeList>
                 <!--<businessList></businessList>-->
             </FormItem>
-            <FormItem label="招募员工">
+            <!-- 店铺选择  只有管理员可以看到 -->
+            <FormItem label="所属门店" prop="storeName" style="width:500px;" v-if="loginName=='admin'">
+                <Input v-model="formValidate.storeName" placeholder="请选择所属门店" @click.native="selectStore"></Input>
+                <div class="tableBox" v-show="tableCtrl">
+                    <Table
+                        :loading="table.loading" 
+                        :data="table.tableData1" 
+                        :columns="tableColumns1" 
+                        stripe
+                        border
+                        size="small"
+                        @on-select="fnSelect"
+                        @on-select-all="fnSelectAll"
+                        @on-current-change="fnHighlight"
+                        :show-header="false"
+                        :stripe="false"
+                        highlight-row
+                        height="150"
+                    ></Table>
+                    <div style="overflow: hidden;" class="pageBox">
+                        <div style="float: right;">
+                            <Page 
+                                size="small"
+                                :total="table.recordsTotal" 
+                                :current="table.pageNun"
+                                @on-change="changePage"
+                                @on-page-size-change="changeSize"
+                            ></Page>
+                        </div>
+                    </div>
+                </div>
+            </FormItem>
+            <FormItem label="招募员工" v-if="!!isShowBox">
                 <recruitTable></recruitTable>
+                <recruitList></recruitList>
                 <!--<businessList></businessList>-->
             </FormItem>
 
@@ -90,38 +125,7 @@
                     <Radio label="2">不通过</Radio>
                 </RadioGroup>
             </FormItem>
-            <!-- 店铺选择  只有管理员可以看到 -->
-            <FormItem label="所属门店" prop="storeName" style="width:500px;" v-if="loginName=='admin'">
-                <Input v-model="formValidate.storeName" placeholder="请选择所属门店" @click.native="selectStore"></Input>
-                <div class="tableBox" v-show="tableCtrl">
-                    <Table
-                        :loading="table.loading" 
-                        :data="table.tableData1" 
-                        :columns="tableColumns1" 
-                        stripe
-                        border
-                        size="small"
-                        @on-select="fnSelect"
-                        @on-select-all="fnSelectAll"
-                        @on-current-change="fnHighlight"
-                        :show-header="false"
-                        :stripe="false"
-                        highlight-row
-                        height="150"
-                    ></Table>
-                    <div style="overflow: hidden;" class="pageBox">
-                        <div style="float: right;">
-                            <Page 
-                                size="small"
-                                :total="table.recordsTotal" 
-                                :current="table.pageNun"
-                                @on-change="changePage"
-                                @on-page-size-change="changeSize"
-                            ></Page>
-                        </div>
-                    </div>
-                </div>
-            </FormItem>
+            
             <FormItem label="服务详情" prop="serverIntroduce">
                 <editor id="editor_id" height="700px" width="100%;" :content="formValidate.serverIntroduce"
                     :uploadJson="path"
@@ -143,6 +147,14 @@
     import storeTable from './storeTable.vue'
     import homeTable from './homeTable.vue'
     import recruitTable from './recruitTable.vue'
+
+
+    import storeList from './storeList.vue'
+    import homeList from './homeList.vue'
+    import recruitList from './recruitList.vue'
+
+
+    
     export default {
         data () {
             return {
@@ -211,6 +223,7 @@
                 storeId:'',//店铺id
                 loginName:'', // 管理员身份
                 tableCtrl:false,
+                isShowBox: true,
             }
         },
         props: ["sendChild"],
@@ -220,7 +233,7 @@
                 let vm = this;
                 this.$refs[name].validate((valid) => {
                     if (valid) {
-                        //添加品牌服务
+                        //添加品牌服务 
                         let ajaxData = {};
 
             
@@ -230,7 +243,7 @@
                             originalPrice: +vm.formValidate.originalPrice*100, // 原价
                             salePrice: +vm.formValidate.salePrice*100, // 销售价
                             saleVolume: vm.formValidate.saleVolume, // 销量
-                            // serverBookType: vm.formValidate.serverBookType, // 销量
+                            // serverBookType: vm.formValidate.serverBookType, // 预约方式
                             isSupportHome: vm.formValidate.serverBookType == 2?1:0, // 是否支持上门
                             isSupportStore: vm.formValidate.serverBookType == 1?1:0, // 是否支持到店
                             visitPrice: vm.formValidate.serverBookType == 2?+vm.formValidate.visitPrice*100:"", // 上门费
@@ -239,10 +252,12 @@
                             serverNeedTime: vm.formValidate.serverNeedTime, // 服务总时长
                             serverEffect: JSON.stringify(vm.formValidate.serverEffect), // 功效
                             serverIntroduce: vm.formValidate.serverIntroduce, // 商品介绍
-                            isBrand: vm.sendChild.isBrand,// 服务分类
+                            isBrand: false,// 服务分类
                             auditStatus: vm.formValidate.auditStatus, // 审核状态，0待审核，1通过，2不通过
                             // brandId: vm.formValidate.brandId, // 服务所属品牌
-                            id:vm.sendChild.itemId
+                            storeId:vm.storeId,//店铺id
+                            id:vm.sendChild.itemId,
+                            isPlatform: false,
                         }
                         /* 商品分类 */
                         ajaxData.productCategoryRef = {
@@ -259,35 +274,41 @@
                             type:1, // 图片类型，1轮播图
                             url: !!!arrs?"":arrs.join() // 存储图片地址
                         }
-                        function doTest () {
-                            /*  商品-美容师-关联集合（到店） storeProductBeauticianRefList*/
-                            ajaxData.storeProductBeauticianRefList = [];
-                            var storeList = vm.$store.getters.storeList;
-                            for(var i = 0;i<storeList.length;i++){
-                                var obj = {};
-                                obj.beauticianId = storeList[i];
-                                ajaxData.storeProductBeauticianRefList.push(obj);
-                            }
-                            /* 商品-美容师-关联集合（上门） homeProductBeauticianRefList */
-                            ajaxData.homeProductBeauticianRefList = [];
-                            var homeList = vm.$store.getters.homeList;
-                            for(var j = 0;j<homeList.length;j++){
-                                var obj = {};
-                                obj.beauticianId = homeList[j];
-                                ajaxData.homeProductBeauticianRefList.push(obj);
-                            }
-                            /* 商品-美容师-关联集合（招募） recruitProductBeauticianRefList */
-                            ajaxData.recruitProductBeauticianRefList = [];
-                            var recruitList = vm.$store.getters.recruitList;
-                            for(var b = 0;b<recruitList.length;b++){
-                                var obj = {};
-                                obj.beauticianId = recruitList[b];
-                                ajaxData.recruitProductBeauticianRefList.push(obj);
-                            }
+                        /* 店铺 */
+                        ajaxData.productStoreRef = {
+                            storeId:vm.storeId // 店铺id
                         }
-                        console.log(ajaxData);
-                        let url = vm.common.path2 + "product/modify"
-                        vm.$http.put(
+                        /*  商品-美容师-关联集合（到店） storeProductBeauticianRefList*/
+                        ajaxData.storeProductBeauticianRefList = [];
+                        var storeList = vm.$store.getters.storeList;
+                        for(var i = 0;i<storeList.length;i++){
+                            var obj = {};
+                            obj.beauticianId = storeList[i];
+                            obj.serverType = 0;
+                            ajaxData.storeProductBeauticianRefList.push(obj);
+                        }
+                        /* 商品-美容师-关联集合（上门） homeProductBeauticianRefList */
+                        ajaxData.homeProductBeauticianRefList = [];
+                        var homeList = vm.$store.getters.tohomeList;
+                        for(var j = 0;j<homeList.length;j++){
+                            var obj = {};
+                            obj.beauticianId = homeList[j];
+                            obj.serverType = 1;
+                            ajaxData.homeProductBeauticianRefList.push(obj);
+                        }
+                        /* 商品-美容师-关联集合（招募） recruitProductBeauticianRefList */
+                        ajaxData.recruitProductBeauticianRefList = [];
+                        var recruitList = vm.$store.getters.recruitList;
+                        for(var b = 0;b<recruitList.length;b++){
+                            var obj = {};
+                            obj.beauticianId = recruitList[b];
+                            ajaxData.recruitProductBeauticianRefList.push(obj);
+                        }
+                        console.log(vm.$store.getters);
+                        // console.log(ajaxData);
+                        let url = vm.common.path2 + "product/modify/self"
+                        console.log(ajaxData.storeProductBeauticianRefList)
+                        vm.$http.post(
                             url,
                             ajaxData,
                         ).then(function(res){
@@ -380,10 +401,38 @@
             // 产品的信息遍历出来
             fnInitQuery (data) {
                 let vm = this;
+                console.log('此时得list：'+ vm.$store.getters.storeList);
                 // 商品关联
-                vm.$store.commit('STORE_LIST',[1]);
+                // vm.$store.commit('STORE_LIST',[1]);
                 vm.$store.commit('TOHOME_LIST',[2,3]);
-                vm.$store.commit('RECRUIT_LIST',[4,5,6]);
+                // vm.$store.commit('RECRUIT_LIST',[4,5,6]);
+
+                // 到店服务员工 storeProductBeauticianRefList
+                let storeList = data.storeProductBeauticianRefList;
+                let storeArrs = [];
+                storeList.forEach(function(item,index){
+                    storeArrs.push(+item.beauticianId);
+                });
+                vm.$store.commit('STORE_LIST',storeArrs);
+                // 上门服务员工 homeProductBeauticianRefList
+                let homeList = data.homeProductBeauticianRefList;
+                let homeArrs = [];
+                homeList.forEach(function(item,index){
+                    homeArrs.push(+item.beauticianId);
+                });
+                vm.$store.commit('TOHOME_LIST',homeArrs);
+
+                // 招募员工 recruitProductBeauticianRefList
+
+                let recruitList = data.recruitProductBeauticianRefList;
+                let recruitArrs = [];
+                recruitList.forEach(function(item,index){
+                    recruitArrs.push(+item.beauticianId);
+                });
+                vm.$store.commit('RECRUIT_LIST',recruitArrs);
+
+
+
 
 
                 vm.formValidate.type = !!!data.productCategoryRef?"":data.productCategoryRef.categoryId;// 服务分类
@@ -393,10 +442,10 @@
                 vm.formValidate.salePrice = +data.product.salePrice/100; // 服务销售价
                 // vm.formValidate.serverBookType = data.product.serverBookType;// 预约方式 1上门 2到店
 
-                vm.formValidate.serverBookType = !!data.product.isSupportHome?1:2;
+                vm.formValidate.serverBookType = !!data.product.isSupportHome?2:1;
 
 
-
+                
                 vm.formValidate.visitPrice = +data.product.visitPrice/100;// 上门费
                 vm.formValidate.coverImg = data.product.coverImg;//封面图
                 vm.formValidate.serverAttention = data.product.serverAttention; // 注意事项
@@ -466,6 +515,9 @@
                 this.formValidate.storeId = currentRow.id;
                 this.storeId = currentRow.id;
                 this.tableCtrl = false;
+
+                this.$store.commit('RECRUIT_LIST',[]);
+                this.isShowBox = true;
             },
             /* 数据获取 */
             getData () {
@@ -517,7 +569,10 @@
             MyUpload,
             storeTable,
             homeTable,
-            recruitTable
+            recruitTable,
+            storeList,
+            homeList,
+            recruitList
         }
     }
 </script>

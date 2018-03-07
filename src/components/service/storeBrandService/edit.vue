@@ -3,7 +3,7 @@
         <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120" style="padding-bottom: 20px;">
             <Spin fix v-if="spinShow"></Spin>
             <FormItem label="服务分类" prop="type">
-                <Select v-model="formValidate.type" placeholder="选择服务分类">
+                <Select disabled v-model="formValidate.type" placeholder="选择服务分类">
                     <Option :value="item.id" v-for="item in serviceList" :key="item.id">{{ item.categoryName }}</Option>
                 </Select>
             </FormItem>
@@ -16,6 +16,11 @@
             <FormItem label="服务名称" prop="serverName">
                 <Input v-model="formValidate.serverName" placeholder="请填写服务名称"></Input>
             </FormItem>
+
+            <FormItem label="服务支持城市">
+                <cityTable></cityTable>
+            </FormItem>
+
             <FormItem label="市场价" prop="originalPrice" number='true'>
                 <Input v-model="formValidate.originalPrice" placeholder="请填写市场价，单位元"></Input>
             </FormItem>
@@ -31,6 +36,20 @@
             <FormItem label="上门费" prop="visitPrice" number='true' v-if="formValidate.serverBookType == 2">
                 <Input v-model="formValidate.visitPrice" placeholder="请填写上门费，单位元"></Input>
             </FormItem>
+
+            <FormItem label="到店服务员工">
+                <storeTable></storeTable>
+                <storeList></storeList>
+                <!--<businessList></businessList>-->
+            </FormItem>
+            <FormItem label="上门服务员工">
+                <homeTable></homeTable>
+                <homeList></homeList>
+                <!--<businessList></businessList>-->
+            </FormItem>
+
+
+
             <FormItem label="正式员工服务提成" prop="formalWorker" v-if="false">
                 <Input v-model="formValidate.formalWorker" placeholder="请填写正式员工服务提成"></Input>
             </FormItem>
@@ -91,6 +110,12 @@
 </template>
 <script>
     import MyUpload from '../../common/upload.vue'
+    import cityTable from './cityTable.vue'
+
+    import storeTable from './storeTable.vue'
+    import homeTable from './homeTable.vue'
+    import storeList from './storeList.vue'
+    import homeList from './homeList.vue'
     export default {
         data () {
             return {
@@ -160,17 +185,20 @@
                             originalPrice: +vm.formValidate.originalPrice*100, // 原价
                             salePrice: +vm.formValidate.salePrice*100, // 销售价
                             saleVolume: vm.formValidate.saleVolume, // 销量
-                            serverBookType: vm.formValidate.serverBookType, // 销量
+                            // serverBookType: vm.formValidate.serverBookType, // 预约方式
+                            isSupportHome: vm.formValidate.serverBookType == 2?1:0, // 是否支持上门
+                            isSupportStore: vm.formValidate.serverBookType == 1?1:0, // 是否支持到店
                             visitPrice: vm.formValidate.serverBookType == 2?+vm.formValidate.visitPrice*100:"", // 上门费
                             coverImg: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
                             serverAttention: vm.formValidate.serverAttention, // 注意事项
                             serverNeedTime: vm.formValidate.serverNeedTime, // 服务总时长
                             serverEffect: JSON.stringify(vm.formValidate.serverEffect), // 功效
                             serverIntroduce: vm.formValidate.serverIntroduce, // 商品介绍
-                            isBrand: vm.sendChild.isBrand,// 服务分类
+                            isBrand: true,// 服务分类
                             auditStatus: vm.formValidate.auditStatus, // 审核状态，0待审核，1通过，2不通过
                             brandId: vm.formValidate.brandId, // 服务所属品牌
-                            id:vm.sendChild.itemId
+                            id:vm.sendChild.itemId,
+                            isPlatform: false,
                         }
                         /* 商品分类 */
                         ajaxData.productCategoryRef = {
@@ -187,8 +215,32 @@
                             type:1, // 图片类型，1轮播图
                             url: !!!arrs?"":arrs.join() // 存储图片地址
                         }
-                        let url = vm.common.path2 + "product/modify"
-                        vm.$http.put(
+                        /* 商品城市集合 */
+                        ajaxData.productCityList = vm.$store.getters.cityList;
+
+                        /*  商品-美容师-关联集合（到店） storeProductBeauticianRefList*/
+                        ajaxData.storeProductBeauticianRefList = [];
+                        var storeList = vm.$store.getters.storeList;
+                        for(var i = 0;i<storeList.length;i++){
+                            var obj = {};
+                            obj.beauticianId = storeList[i];
+                            obj.serverType = 0;
+                            ajaxData.storeProductBeauticianRefList.push(obj);
+                        }
+                        /* 商品-美容师-关联集合（上门） homeProductBeauticianRefList */
+                        ajaxData.homeProductBeauticianRefList = [];
+                        var homeList = vm.$store.getters.tohomeList;
+                        for(var j = 0;j<homeList.length;j++){
+                            var obj = {};
+                            obj.beauticianId = homeList[j];
+                            obj.serverType = 1;
+                            ajaxData.homeProductBeauticianRefList.push(obj);
+                        }
+                        /* 商品-美容师-关联集合（招募） recruitProductBeauticianRefList */
+                        ajaxData.recruitProductBeauticianRefList = [];
+
+                        let url = vm.common.path2 + "product/modify/brand"
+                        vm.$http.post(
                             url,
                             ajaxData,
                         ).then(function(res){
@@ -275,12 +327,37 @@
             // 产品的信息遍历出来
             fnInitQuery (data) {
                 let vm = this;
+
+                // 服务支持城市
+                let cityList = data.productCityList;
+                vm.$store.commit('CITY_LIST',cityList);
+
+                // 到店服务员工 storeProductBeauticianRefList
+                let storeList = data.storeProductBeauticianRefList;
+                let storeArrs = [];
+                storeList.forEach(function(item,index){
+                    storeArrs.push(+item.beauticianId);
+                });
+                vm.$store.commit('STORE_LIST',storeArrs);
+                // 上门服务员工 homeProductBeauticianRefList
+                let homeList = data.homeProductBeauticianRefList;
+                let homeArrs = [];
+                homeList.forEach(function(item,index){
+                    homeArrs.push(+item.beauticianId);
+                });
+                vm.$store.commit('TOHOME_LIST',homeArrs);
+
+
+
                 vm.formValidate.type = !!!data.productCategoryRef?"":data.productCategoryRef.categoryId;// 服务分类
                 vm.formValidate.brandId = data.product.brandId; // 服务所属品牌
                 vm.formValidate.serverName = data.product.serverName; // 服务名称
                 vm.formValidate.originalPrice = +data.product.originalPrice/100; // 市场价
                 vm.formValidate.salePrice = +data.product.salePrice/100; // 服务销售价
-                vm.formValidate.serverBookType = data.product.serverBookType;// 预约方式 1上门 2到店
+                // vm.formValidate.serverBookType = data.product.serverBookType;// 预约方式 1上门 2到店
+                vm.formValidate.serverBookType = !!data.product.isSupportHome?2:1;
+
+
                 vm.formValidate.visitPrice = +data.product.visitPrice/100;// 上门费
                 vm.formValidate.coverImg = data.product.coverImg;//封面图
                 vm.formValidate.serverAttention = data.product.serverAttention; // 注意事项
@@ -324,7 +401,12 @@
             this.fnQueryById();
         },
         components:{
-            MyUpload
+            MyUpload,
+            cityTable,
+            storeTable,
+            homeTable,
+            storeList,
+            homeList
         }
     }
 </script>

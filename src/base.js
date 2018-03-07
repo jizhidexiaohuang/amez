@@ -120,6 +120,16 @@ const common = {
                     hasChildList: false,
                     href:"/service/productManage"
                 },
+                {
+                    name:"招募员工审核",
+                    hasChildList: false,
+                    href:"/service/workerExamine"
+                },
+                {
+                    name:"运费模板",
+                    hasChildList: false,
+                    href:"/service/freightTemplate"
+                },
             ]
         },
         {

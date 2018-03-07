@@ -37,6 +37,20 @@
             <FormItem label="上门费" prop="visitPrice" number='true' v-if="formValidate.serverBookType == 2">
                 <Input v-model="formValidate.visitPrice" placeholder="请填写上门费，单位元"></Input>
             </FormItem>
+
+            <FormItem label="到店服务员工">
+                <storeTable></storeTable>
+                <storeList></storeList>
+                <!--<businessList></businessList>-->
+            </FormItem>
+            <FormItem label="上门服务员工">
+                <homeTable></homeTable>
+                <homeList></homeList>
+                <!--<businessList></businessList>-->
+            </FormItem>
+
+
+
             <FormItem label="正式员工服务提成" prop="formalWorker" v-if="false">
                 <Input v-model="formValidate.formalWorker" placeholder="请填写正式员工服务提成"></Input>
             </FormItem>
@@ -97,6 +111,11 @@
 <script>
     import MyUpload from '../../common/upload.vue'
     import cityTable from './cityTable.vue'
+
+    import storeTable from './storeTable.vue'
+    import storeList from './storeList.vue'
+    import homeTable from './homeTable.vue'
+    import homeList from './homeList.vue'
 
     export default {
         data () {
@@ -176,9 +195,10 @@
                             serverNeedTime: vm.formValidate.serverNeedTime, // 服务总时长
                             serverEffect: JSON.stringify(vm.formValidate.serverEffect), // 功效
                             serverIntroduce: vm.formValidate.serverIntroduce, // 商品介绍
-                            isBrand: vm.sendChild.isBrand,// 服务分类
+                            isBrand: true,// 服务分类
                             auditStatus: vm.formValidate.auditStatus, // 审核状态，0待审核，1通过，2不通过
                             brandId: vm.formValidate.brandId, // 服务所属品牌
+                            isPlatform: false,
                         }
                         /* 商品分类 */
                         ajaxData.productCategoryRef = {
@@ -195,15 +215,33 @@
                             type:1, // 图片类型，1轮播图
                             url: !!!arrs?"":arrs.join() // 存储图片地址
                         }
-                        /* 店铺 */
-                        ajaxData.productStoreRef = {
-                            storeId:vm.storeId // 店铺id
-                        }
-
                         /* 商品城市集合 */
                         ajaxData.productCityList = vm.$store.getters.cityList;
-                        console.log(ajaxData.productCityList);
 
+                        /*  商品-美容师-关联集合（到店） storeProductBeauticianRefList*/
+                        ajaxData.storeProductBeauticianRefList = [];
+                        var storeList = vm.$store.getters.storeList;
+                        for(var i = 0;i<storeList.length;i++){
+                            var obj = {};
+                            obj.beauticianId = storeList[i];
+                            obj.serverType = 0;
+                            ajaxData.storeProductBeauticianRefList.push(obj);
+                        }
+                        /* 商品-美容师-关联集合（上门） homeProductBeauticianRefList */
+                        ajaxData.homeProductBeauticianRefList = [];
+                        var homeList = vm.$store.getters.tohomeList;
+                        for(var j = 0;j<homeList.length;j++){
+                            var obj = {};
+                            obj.beauticianId = homeList[j];
+                            obj.serverType = 1;
+                            ajaxData.homeProductBeauticianRefList.push(obj);
+                        }
+
+                         /* 商品-美容师-关联集合（招募） recruitProductBeauticianRefList */
+                        ajaxData.recruitProductBeauticianRefList = [];
+
+
+                        
                         console.log(ajaxData);
                         let url = vm.common.path2+"product/add/brand";
                         vm.$http.post(
@@ -300,7 +338,11 @@
         },
         components:{
             MyUpload,
-            cityTable
+            cityTable,
+            storeTable,
+            homeTable,
+            storeList,
+            homeList
         }
     }
 </script>

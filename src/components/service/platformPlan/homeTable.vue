@@ -10,16 +10,15 @@
                 <div v-if="pageType == 'list'">
                     <div>
                         <Form :model="cd" inline>
-                            <FormItem style="margin-bottom:10px;" v-if="false">
+                            <FormItem style="margin-bottom:10px;">
                                 员工类型
                                 <Select v-model="cd.beauticianType" style="width:100px">
                                     <!--<Option v-for="item in branchList" :value="item.id" :key="item.id">{{ item.brandName }}</Option>-->
-                                    <Option :value="1" :key="1">店长</Option>
                                     <Option :value="2" :key="2">正式员工</Option>
                                     <Option :value="3" :key="3">兼职员工</Option>
                                 </Select>
                             </FormItem>
-                            <FormItem style="margin-bottom:10px; width:200px;" v-if="false">
+                            <FormItem style="margin-bottom:10px; width:200px;">
                                 <Row>
                                     <Col span="20">
                                         <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
@@ -75,7 +74,7 @@
 
                 ],
                 cd:{
-                    beauticianType:2
+                    beauticianType:''
                 },
                 activatedType: false,//主要解决mounted和activated重复调用
                 pageType: 'list',
@@ -126,11 +125,11 @@
                 }
             }
         },
-        computed:{
+        /* computed:{
             getBusinessId(){
-                return this.$store.getters.storeList;
+                return this.$store.getters.businessId;
             }
-        },
+        }, */
         methods: {
             /* 分页回掉函数 */
             changePage (page) {
@@ -285,10 +284,10 @@
             ok () {
                 console.log(this.listId);
                 this.$Message.info('Clicked ok');
-                this.$store.commit('STORE_LIST',this.listId);
+                this.$store.commit('TOHOME_LIST',this.listId);
             },
             fnOpenModal () {
-                this.listId = this.$store.getters.storeList;
+                this.listId = this.$store.getters.tohomeList;
                 console.log(this.listId);
                 this.getData();
                 this.usingRange = true;
@@ -300,21 +299,20 @@
         },
         activated: function(){
             let vm = this;
-            vm.fnExistTabList()
+            vm.fnExistTabList();
         },
         components:{
         },
-        watch:{
-            /* getBusinessId:{
+        /* watch:{
+            getBusinessId:{
                 deep:true,
                 handler(val){
                     console.log(val)
                     this.listId = val;
                     this.getData();
-                    alert("变化")
                 }
-            } */
-        },
+            }
+        }, */
     }
 </script>
 <style scoped>

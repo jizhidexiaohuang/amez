@@ -17,10 +17,6 @@
         <!-- 列表容器 -->
         <div v-if="pageType == 'list'" class="testWrap">
             <div class="boxStyle">
-                <Tabs v-if="false" type="card" v-model="cd.isBrand" @click.native="getData('init')">
-                    <TabPane label="门店自营服务" name="1"></TabPane>
-                    <TabPane label="品牌服务" name="2"></TabPane>
-                </Tabs>
                 <Form :model="cd" inline>
                     <FormItem style="margin-bottom:10px;">
                         状态
@@ -99,7 +95,7 @@
                     saleStatus:"",//上下架状态
                     inputval:'',//选择的值
                     inputType:'serverName',//input类型
-                    isBrand:'1',// 门店自营还是产品
+                    isBrand:false,// 门店自营还是产品
                 },
                 table:{
                     recordsTotal:0,//总数量
@@ -132,11 +128,14 @@
                         },
                         {   
                             title: '是否支持上门',
-                            key: 'serverBookType',
+                            key: 'isSupportHome',
                             render: (h,params) => {
                                 const row = params.row;
-                                const color = row.serverBookType === 0 ? 'blue' : row.serverBookType === 1 ? 'green' : 'yellow';
-                                const text = row.serverBookType === 0 ? '默认' : row.serverBookType === 1 ? '到店' : '上门';
+                                // const color = !!!row.isSupportHome ? 'blue' : row.isSupportHome === 1 ? 'green' : 'yellow';
+                                // const text = !!!row.isSupportHome ? '默认' : row.isSupportHome === 1 ? '到店' : '上门';
+
+                                const color = !!!row.isSupportHome ? 'yellow' : 'blue';
+                                const text = !!!row.isSupportHome ? '到店' : '上门';
                                 return h('Tag', {
                                     props: {
                                         type: 'border',
@@ -270,7 +269,7 @@
                     serviceList:"", // 产品分类
                     brandList:"", // 服务分类
                     itemId: "", // 编辑选项的id
-                    isBrand: 1,// 服务分类
+                    isBrand: false,// 服务分类
                 },
                 storeId:'',//店铺id
                 brandId: '', // 品牌id
@@ -300,20 +299,22 @@
                     vm.fnInit();
                 }
                 /* 买家和卖家的表头不一样 */
-                if(vm.cd.isBrand == "1"){
+                if(!!!vm.cd.isBrand){
                     vm.table.tableColumns = vm.table.buyerColumns;
-                    vm.cd.isBrand = "1";
+                    vm.cd.isBrand = false;
                 }else{
                     vm.table.tableColumns = vm.table.sellerColumns;
-                    vm.cd.isBrand = "2";
+                    vm.cd.isBrand = true;
                 }
                 let start = vm.table.pageNun;//从第几页开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path2+"product/findByPageForBrand?pageNo="+start+"&pageSize="+size;
+                ///product/front/findByPage
+                let url = vm.common.path2+"product/front/findByPage?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
-                    isBrand: vm.cd.isBrand,
+                    isBrand: false,
+                    isPlatform: true,
                 }
                 if(!!vm.storeId){
                     ajaxData.storeId = vm.storeId;
@@ -385,6 +386,13 @@
                 if(type == "list"){
                     this.table.pageSize = this.table.size;
                     this.getData();
+                }
+                if(type == "add"){
+                    this.$store.commit('SERVICE_STORE_LIST',[]);
+                    this.$store.commit('PRODUCT_LIST',[]);
+
+                    this.$store.commit('STORE_LIST',[]);
+                    this.$store.commit('TOHOME_LIST',[]);
                 }
             },
             /* 模态框 */
@@ -466,7 +474,7 @@
                         vm.table.loading = true;//进一步模拟第一次进来时的页面效果
                         vm.pageType = 'list'//显示列表页，放在这里是给上边的处理留点时间，也就是初始化放在这段代码上边
                         
-                        vm.cd.isBrand = "1"
+                        vm.cd.isBrand = false
                         vm.getData('init');//再次请求数据
                     }
                 }

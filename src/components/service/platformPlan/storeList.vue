@@ -32,16 +32,33 @@
                 listId:[],
                 tableColumns1: [
                     {
-                        title: '店铺名称',
-                        key: 'storeName',
+                        title: '员工姓名',
+                        width:200,
+                        key: 'beauticianName',
                     },
                     {
-                        title: '联系电话',
-                        key: 'storeTel',
+                        title: '昵称',
+                        key: 'beauticianNickName',
                     },
                     {
-                        title: '负责人',
-                        key: 'sellerName',
+                        title: '联系方式',
+                        key: 'phone',
+                    },
+                    {
+                        title: '员工类型',
+                        key: 'beauticianType',
+                        render: (h,params) =>{
+                            const row = params.row
+                            if(row.beauticianType == 1){
+                                return '店长'
+                            }
+                            if(row.beauticianType == 2){
+                                return '正式员工'
+                            }
+                            if(row.beauticianType == 3){
+                                return '兼职员工'
+                            }
+                        }
                     },
                 ],
                 table:{
@@ -56,7 +73,7 @@
         },
         computed:{
             getBusinessId(){
-                return this.$store.getters.serviceStoreList;
+                return this.$store.getters.storeList;
             }
         },
         methods:{
@@ -89,7 +106,7 @@
                     storeIdList:listId
                 }
                 // let url = this.common.path2+'store/findByPageForMemberCard?pageNo='+start+'&pageSize='+size;
-                let url = this.common.path2+'store/front/findByPage?pageSize=100000';
+                let url = this.common.path2+'storeBeautician/front/findByPage?pageSize=100000';
                 this.$http.post(
                     url,
                     ajaxData,
@@ -170,6 +187,18 @@
                 }
             }
         },
+        mounted: function () {
+            console.log('测试：'+this.$store.getters.storeList);
+            let vm = this;
+            let arrs = vm.$store.getters.storeList;
+            this.listId = arrs;
+            if(arrs.length>0){
+                this.businessCtrl = true;
+            }else{
+                this.businessCtrl = false;
+            }
+            this.getData(arrs);
+        }
     }
 </script>
 <style scoped lang="scss">

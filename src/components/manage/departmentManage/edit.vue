@@ -793,7 +793,7 @@
                         return fnBackItem(iArrs,newArr,arrs);
                     break;
                     case "品牌服务":
-                        var iArrs = [0,3,4,1,6,2];
+                        var iArrs = [0,3,4,5,1,6,2];
                         return fnBackItem(iArrs,newArr,arrs);
                     break;
                     case "产品管理":

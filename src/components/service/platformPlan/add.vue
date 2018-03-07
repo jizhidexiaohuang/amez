@@ -6,7 +6,7 @@
                     <Option :value="item.id" v-for="item in serviceList" :key="item.id">{{ item.categoryName }}</Option>
                 </Select>
             </FormItem>
-            <FormItem label="服务所属品牌" prop="brandId" v-if="false">
+            <FormItem label="服务所属品牌" prop="brandId">
                 <Select v-model="formValidate.brandId" placeholder="选择服务所属品牌">
                     <Option :value="item.id" v-for="item in brandList" :key="item.id">{{ item.brandName }}</Option>
                 </Select>
@@ -36,13 +36,32 @@
             <FormItem label="上门费" prop="visitPrice" number='true' v-if="formValidate.serverBookType == 2">
                 <Input v-model="formValidate.visitPrice" placeholder="请填写上门费，单位元"></Input>
             </FormItem>
-            
-            <FormItem label="服务支持商家">
+
+            <FormItem label="到店服务员工">
                 <storeTable></storeTable>
+                <storeList></storeList>
+                <!--<businessList></businessList>-->
             </FormItem>
-             <FormItem label="服务产品">
-                <productTable></productTable>
+            <FormItem label="上门服务员工">
+                <homeTable></homeTable>
+                <homeList></homeList>
+                <!--<businessList></businessList>-->
             </FormItem>
+
+            <FormItem label="服务支持商家">
+                <shopTable></shopTable>
+                <shopList></shopList>
+                <!--<businessList></businessList>-->
+            </FormItem>
+            <FormItem label="服务产品">
+                <goodsTable></goodsTable>
+                <goodsList></goodsList>
+                <!--<businessList></businessList>-->
+            </FormItem>
+          
+
+
+
             <FormItem label="正式员工服务提成" prop="formalWorker" v-if="false">
                 <Input v-model="formValidate.formalWorker" placeholder="请填写正式员工服务提成"></Input>
             </FormItem>
@@ -85,7 +104,7 @@
                 </RadioGroup>
             </FormItem>
             <!-- 店铺选择  只有管理员可以看到 -->
-            <FormItem label="所属门店" prop="storeName" style="width:500px;" v-if="loginName=='admin'">
+            <FormItem label="所属门店" prop="storeName" style="width:500px;" v-if="false">
                 <Input v-model="formValidate.storeName" placeholder="请选择所属门店" @click.native="selectStore"></Input>
                 <div class="tableBox" v-show="tableCtrl">
                     <Table
@@ -135,8 +154,19 @@
 </template>
 <script>
     import MyUpload from '../../common/upload.vue'
+    import shopTable from './shopTable.vue'
+    import goodsTable from './goodsTable.vue'
+    import shopList from './shopList.vue'
+    import goodsList from './goodsList.vue'
+
     import storeTable from './storeTable.vue'
-    import productTable from './productTable.vue'
+    import storeList from './storeList.vue'
+    import homeTable from './homeTable.vue'
+    import homeList from './homeList.vue'
+
+
+
+
     export default {
         data () {
             return {
@@ -205,17 +235,15 @@
                 storeId: '',//店铺id
                 loginName:'', // 管理员身份
                 tableCtrl:false,
-                // idList:[], // 传递给子组件的员工id列表
             }
         },
         props: ["sendChild"],
         methods: {
             // 提交验证
             handleSubmit (name) {
-                // console.log(this.$store.getters);
-
-
                 let vm = this;
+
+                
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         //添加品牌服务
@@ -235,10 +263,10 @@
                             serverNeedTime: vm.formValidate.serverNeedTime, // 服务总时长
                             serverEffect: JSON.stringify(vm.formValidate.serverEffect), // 功效
                             serverIntroduce: vm.formValidate.serverIntroduce, // 商品介绍
-                            isBrand: vm.sendChild.isBrand,// 服务分类
+                            isBrand: false,
                             auditStatus: vm.formValidate.auditStatus, // 审核状态，0待审核，1通过，2不通过
-                            // brandId: vm.formValidate.brandId, // 服务所属品牌
-                            storeId:vm.storeId,//店铺id
+                            brandId: vm.formValidate.brandId, // 服务所属品牌
+                            isPlatform: true,
                         }
                         /* 商品分类 */
                         ajaxData.productCategoryRef = {
@@ -255,28 +283,51 @@
                             type:1, // 图片类型，1轮播图
                             url: !!!arrs?"":arrs.join() // 存储图片地址
                         }
-                        /* 店铺 */
-                        ajaxData.productStoreRef = {
-                            storeId:vm.storeId // 店铺id
-                        }
-                        
-                        /* 服务支持商家 */
+                       
+                        /*  商品-店铺-关联集合 productStoreRefList*/  
                         ajaxData.productStoreRefList = [];
-                        var serviceStoreList = vm.$store.getters.serviceStoreList;
-                        for(var i = 0;i<serviceStoreList.length;i++){
+                        var productStoreList = vm.$store.getters.serviceStoreList;
+                        for(var i = 0;i<productStoreList.length;i++){
                             var obj = {};
-                            obj.storeId = serviceStoreList[i];
+                            obj.storeId = productStoreList[i];
                             ajaxData.productStoreRefList.push(obj);
                         }
+                        /*  商品-产品-关联集合  productProductPhysicalRefList */ 
+                        ajaxData.productProductPhysicalRefList = [];
+                        var productPhysicalList = vm.$store.getters.productList;
+                        for(var j = 0;j<productPhysicalList.length;j++){
+                            var obj = {};
+                            obj.productId = productPhysicalList[j];
+                            ajaxData.productProductPhysicalRefList.push(obj);
+                        }
+
+
+                        /*  商品-美容师-关联集合（到店） storeProductBeauticianRefList*/
+                        ajaxData.storeProductBeauticianRefList = [];
+                        var storeList = vm.$store.getters.storeList;
+                        for(var i = 0;i<storeList.length;i++){
+                            var obj = {};
+                            obj.beauticianId = storeList[i];
+                            obj.serverType = 0;
+                            ajaxData.storeProductBeauticianRefList.push(obj);
+                        }
+                        /* 商品-美容师-关联集合（上门） homeProductBeauticianRefList */
+                        ajaxData.homeProductBeauticianRefList = [];
+                        var homeList = vm.$store.getters.tohomeList;
+                        for(var j = 0;j<homeList.length;j++){
+                            var obj = {};
+                            obj.beauticianId = homeList[j];
+                            obj.serverType = 1;
+                            ajaxData.homeProductBeauticianRefList.push(obj);
+                        }
+
+                         /* 商品-美容师-关联集合（招募） recruitProductBeauticianRefList */
+                        ajaxData.recruitProductBeauticianRefList = [];
+
 
                         console.log(ajaxData.productStoreRefList);
-                        return false;
-
-
-
-
-                        console.log(ajaxData);
-                        let url = vm.common.path2+"product/add";
+                        console.log(ajaxData.productProductPhysicalRefList);
+                        let url = vm.common.path2+"product/add/platformSelf";
                         vm.$http.post(
                             url,
                             JSON.stringify(ajaxData),
@@ -331,9 +382,6 @@
                 ).then(function(res){
                     let oData = res.data.data.list;
                     vm.serviceList = oData;
-
-
-                    
                 }).catch(function(err){
                     console.log(err);
                 })
@@ -412,8 +460,6 @@
                     vm.table.recordsTotal = oData.data.total;
                     vm.table.tableData1 = oData.data.list;
                     vm.table.loading = false;
-                    // vm.idList = [1,2,3];
-                    // vm.$store.commit('BUSINESS_ID',vm.idList);
                 }).catch(function(err){
                 })
             },
@@ -435,12 +481,18 @@
                 vm.storeId = user.store.storeId;
             }
             this.fnGetProductCategory();
-            // this.fnGetStoreChainBrand();
+            this.fnGetStoreChainBrand();
         },
         components:{
             MyUpload,
+            shopTable,
+            goodsTable,
+            shopList,
+            goodsList,
             storeTable,
-            productTable,
+            homeTable,
+            storeList,
+            homeList
         }
     }
 </script>

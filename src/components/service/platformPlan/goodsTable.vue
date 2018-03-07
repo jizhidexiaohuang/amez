@@ -1,16 +1,16 @@
 <template>
     <div>
         <div>
-            <Button @click="fnOpenModal">选择员工</Button>
+            <Button @click="fnOpenModal">选择产品</Button>
             <Modal
                 v-model="usingRange"
-                title="选择员工"
+                title="选择产品"
                 @on-ok="ok"
                 width="700">
                 <div v-if="pageType == 'list'">
                     <div>
                         <Form :model="cd" inline>
-                            <FormItem style="margin-bottom:10px;" v-if="false">
+                            <FormItem style="margin-bottom:10px;">
                                 员工类型
                                 <Select v-model="cd.beauticianType" style="width:100px">
                                     <!--<Option v-for="item in branchList" :value="item.id" :key="item.id">{{ item.brandName }}</Option>-->
@@ -19,7 +19,7 @@
                                     <Option :value="3" :key="3">兼职员工</Option>
                                 </Select>
                             </FormItem>
-                            <FormItem style="margin-bottom:10px; width:200px;" v-if="false">
+                            <FormItem style="margin-bottom:10px; width:200px;">
                                 <Row>
                                     <Col span="20">
                                         <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
@@ -75,7 +75,7 @@
 
                 ],
                 cd:{
-                    beauticianType:2
+                    beauticianType:''
                 },
                 activatedType: false,//主要解决mounted和activated重复调用
                 pageType: 'list',
@@ -88,31 +88,19 @@
                         align: 'center'
                     },
                     {
-                        title: '员工姓名',
-                        key: 'beauticianName',
+                        title: '产品名称',
+                        key: 'physicalName',
                     },
                     {
-                        title: '昵称',
-                        key: 'beauticianNickName',
+                        title: '单位',
+                        key: 'unit',
                     },
                     {
-                        title: '联系方式',
-                        key: 'phone',
-                    },
-                    {
-                        title: '员工类型',
-                        key: 'beauticianType',
-                        render: (h,params) =>{
-                            const row = params.row
-                            if(row.beauticianType == 1){
-                                return '店长'
-                            }
-                            if(row.beauticianType == 2){
-                                return '正式员工'
-                            }
-                            if(row.beauticianType == 3){
-                                return '兼职员工'
-                            }
+                        title: '批发价',
+                        key: 'salePrice',
+                        render: (h,params) => {
+                            const row = params.row;
+                            return +row.salePrice/100
                         }
                     },
                 ],
@@ -126,11 +114,11 @@
                 }
             }
         },
-        computed:{
+        /* computed:{
             getBusinessId(){
-                return this.$store.getters.storeList;
+                return this.$store.getters.businessId;
             }
-        },
+        }, */
         methods: {
             /* 分页回掉函数 */
             changePage (page) {
@@ -147,7 +135,7 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path2+"storeBeautician/front/findByPage?pageNo="+start+'&pageSize='+size;
+                let url = common.path2+"productPhysical/front/findByPage?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {
 
                 }
@@ -285,10 +273,10 @@
             ok () {
                 console.log(this.listId);
                 this.$Message.info('Clicked ok');
-                this.$store.commit('STORE_LIST',this.listId);
+                this.$store.commit('PRODUCT_LIST',this.listId);
             },
             fnOpenModal () {
-                this.listId = this.$store.getters.storeList;
+                this.listId = this.$store.getters.productList;
                 console.log(this.listId);
                 this.getData();
                 this.usingRange = true;
@@ -300,21 +288,20 @@
         },
         activated: function(){
             let vm = this;
-            vm.fnExistTabList()
+            vm.fnExistTabList();
         },
         components:{
         },
-        watch:{
-            /* getBusinessId:{
+        /* watch:{
+            getBusinessId:{
                 deep:true,
                 handler(val){
                     console.log(val)
                     this.listId = val;
                     this.getData();
-                    alert("变化")
                 }
-            } */
-        },
+            }
+        }, */
     }
 </script>
 <style scoped>

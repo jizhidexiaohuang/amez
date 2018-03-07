@@ -37,6 +37,12 @@ import CommissionPlan from '@/components/service/commissionPlan/list'
 import PlatformPlan from '@/components/service/platformPlan/list'
 // 产品管理
 import ProductManage from '@/components/service/productManage/list'
+// 招募员工审核
+import WorkerExamine from '@/components/service/workerExamine/list'
+// 运费模板
+import FreightTemplate from '@/components/service/freightTemplate/list'
+
+
 /*==================================订单管理============================*/
 //服务订单
 import ServiceOrder from '@/components/order/serviceOrder/list'
@@ -214,6 +220,26 @@ const menuRouter = [
           name:"产品管理"
         }
       },
+      {
+        path: '/service/workerExamine',
+        name: '招募员工审核',
+        title: '招募员工审核',
+        component: WorkerExamine,
+        meta:{
+          type:"菜单",
+          name:"招募员工审核"
+        }
+      },
+      {
+        path: '/service/freightTemplate',
+        name: '运费模板',
+        title: '运费模板',
+        component: FreightTemplate,
+        meta:{
+          type:"菜单",
+          name:"运费模板"
+        }
+      }
     ]
   },
   {
