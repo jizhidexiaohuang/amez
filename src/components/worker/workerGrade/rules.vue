@@ -2,19 +2,19 @@
   <div class="testWrap">
       <div class="addPage boxStyle">
         <h2>成长值设置</h2>
-        <Form ref="formDynamic" :model="formDynamic" :label-width="50" style="width: 100%">
+        <Form ref="formDynamic" :model="formDynamic" :label-width="20" style="width: 100%">
             <FormItem>
                 <Row>
-                    <Col span="2" style="text-align:center;">最近一次接单</Col>
+                    <Col span="2" style="text-align:center;">日接单频率</Col>
                     <Col span="2" style="text-align:center;">对应成长值</Col>
-                    <Col span="2" style="text-align:center;">接单频次</Col>
+                    <Col span="2" style="text-align:center;">月接单总金额</Col>
                     <Col span="2" style="text-align:center;">对应成长值</Col>
-                    <Col span="2" style="text-align:center;">接单金额</Col>
-                    <Col span="2" style="text-align:center;">对应成长值</Col>
-                    <Col span="2" style="text-align:center;">评价数量</Col>
+                    <Col span="2" style="text-align:center;">回复评价次数</Col>
                     <Col span="2" style="text-align:center;">对应成长值</Col>
                     <Col span="2" style="text-align:center;">好评量</Col>
-                    <Col span="2" style="text-align:center;">每个好评成长值</Col>
+                    <Col span="2" style="text-align:center;">对应成长值</Col>
+                    <Col span="2" style="text-align:center;">发帖量</Col>
+                    <Col span="2" style="text-align:center;">对应成长值</Col>
                 </Row>
             </FormItem>
             <FormItem
@@ -26,8 +26,8 @@
                 <Row>
                     <Col span="2" style="text-align:center;">
                         <Row>
-                          <Col span="12"><InputNumber style="width:50px;" :min="1" v-model="item.condition1"></InputNumber></Col>
-                          <Col span="12">天以内</Col>
+                          <Col span="14"><InputNumber style="width:50px;" :min="1" v-model="item.condition1"></InputNumber></Col>
+                          <Col span="10">笔以内</Col>
                         </Row>
                     </Col>
                     <Col span="2" style="text-align:center;">
@@ -36,7 +36,7 @@
                     <Col span="2" style="text-align:center;">
                         <Row>
                           <Col span="12"><InputNumber style="width:50px;" :min="1" v-model="item.condition2"></InputNumber></Col>
-                          <Col span="12">次以上</Col>
+                          <Col span="12">元以内</Col>
                         </Row>
                     </Col>
                     <Col span="2" style="text-align:center;">
@@ -45,7 +45,7 @@
                     <Col span="2" style="text-align:center;">
                         <Row>
                           <Col span="12"><InputNumber style="width:50px;" :min="1" v-model="item.condition3"></InputNumber></Col>
-                          <Col span="12">元以上</Col>
+                          <Col span="12">次以内</Col>
                         </Row>
                     </Col>
                     <Col span="2" style="text-align:center;">
@@ -54,7 +54,7 @@
                     <Col span="2" style="text-align:center;">
                         <Row>
                           <Col span="12"><InputNumber style="width:50px;" :min="1" v-model="item.condition4"></InputNumber></Col>
-                          <Col span="12">个以上</Col>
+                          <Col span="12">次以内</Col>
                         </Row>
                     </Col>
                     <Col span="2" style="text-align:center;">
@@ -63,7 +63,7 @@
                     <Col span="2" style="text-align:center;">
                         <Row>
                           <Col span="12"><InputNumber style="width:50px;" :min="1" v-model="item.condition5"></InputNumber></Col>
-                          <Col span="12">个以上</Col>
+                          <Col span="12">帖以内</Col>
                         </Row>
                     </Col>
                     <Col span="2" style="text-align:center;">
@@ -76,14 +76,14 @@
             </FormItem>
             <FormItem>
                 <Row>
-                    <Col span="2">
+                    <Col span="3">
                         <Button type="success" long @click="handleAdd" icon="plus-round">增加店铺等级</Button>
                     </Col>
                 </Row>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formDynamic')">保存</Button>
-                <Button type="ghost" @click="handleReset('formDynamic')" style="margin:0px 8px">取消</Button>
+                <Button type="primary" @click="handleSubmit('formDynamic')" style="margin-right:8px">保存</Button>
+                <Button v-if="false" type="ghost" @click="handleReset('formDynamic')" style="margin:0px 8px">取消</Button>
                 <Button type="success" @click.native="returnHome('list')">返回</Button>
             </FormItem>
         </Form>
@@ -125,30 +125,25 @@
             },
             //提交
             handleSubmit (name) {
-                this.$refs[name].validate((valid) => {
-                    if (valid) {
-                        let url = common.path+'storeLevelUpgradeRule/add'
-                        let ruleList = this.getAjaxData()
-                        let ajaxData = {
-                          ruleList:ruleList
-                        }
-                        this.$http.post(
-                          url,
-                          JSON.stringify(ajaxData),
-                          {
-                              headers: {
-                                  'Content-type': 'application/json;charset=UTF-8'
-                              },
-                          }
-                        ).then(res=>{
-                          console.log(res)
-                          if(res.status==200){
-                            this.$Message.success('Success!');
-                            this.returnHome('list')
-                          }
-                        })
-                    } else {
-                        this.$Message.error('Fail!');
+                let url = common.path2+'storeBeauticianLevelUpgradeRule/addByBatch'
+                let ruleList = this.getAjaxData()
+                let ajaxData = {
+                    ruleList:ruleList
+                }
+                console.log(ajaxData)
+                this.$http.post(
+                    url,
+                    JSON.stringify(ajaxData),
+                    {
+                        headers: {
+                            'Content-type': 'application/json;charset=UTF-8'
+                        },
+                    }
+                ).then(res=>{
+                    console.log(res)
+                    if(res.status==200){
+                    this.returnHome('list')
+                    this.$Message.success('提交成功!');
                     }
                 })
             },
@@ -168,6 +163,7 @@
             getAjaxData(){
               console.log(this.index)
               for(var i=0;i<this.index;i++){
+                  console.log(this.formDynamic.items[i].condition1)
                 let temp1 = {
                     sort:i+1,
                     levelUpgradeType:1,
@@ -203,6 +199,7 @@
                 this.rulesArr.push(temp3)
                 this.rulesArr.push(temp4)
                 this.rulesArr.push(temp5)
+                console.log(JSON.stringify(this.rulesArr))
               }
               console.log(this.rulesArr)
               return this.rulesArr
@@ -214,7 +211,7 @@
             },
             //获取数据
             getData(){
-              let url = common.path+'storeLevelUpgradeRule/findList'
+              let url = common.path2+'storeBeauticianLevelUpgradeRule/findListByAll'
               this.$http.get(url).then(res=>{
                 let data = res.data.data
                 console.log(data)

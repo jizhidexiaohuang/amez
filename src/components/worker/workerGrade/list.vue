@@ -55,7 +55,7 @@
             </Form>
             <Row style="margin-bottom:10px;">
                 <Col span="10">
-                    <Button style="float:left;margin-right:10px;" @click.native="changePageType('grade')" type="success" icon="android-add">新增店铺等级</Button>
+                    <Button style="float:left;margin-right:10px;" @click.native="changePageType('grade')" type="success" icon="android-add">新增技师等级</Button>
                     <Button style="float:left;" @click.native="changePageType('rules')" type="primary" icon="android-add">成长规则设置</Button>
                 </Col>
             </Row>
@@ -121,7 +121,7 @@
                         align: 'center'
                     },
                     {
-                        title: '店铺等级',
+                        title: '技师等级',
                         key: 'levelName',
                     },
                     {   
@@ -130,6 +130,10 @@
                         render:(h,params)=>{
                             return h('div',params.row.beginUpgradeValue+'--'+params.row.endUpgradeValue)
                         }
+                    },
+                    {
+                        title: '排序',
+                        key: 'sort',
                     },
                     {
                         title: '图标',
@@ -170,21 +174,19 @@
                 let vm = this;
                 vm.table.pageNun = page;   
                 vm.getData();             
-                // The simulated data is changed directly here, and the actual usage scenario should fetch the data from the server
             },
             /* 数据获取 */
             getData () {
                 let vm = this;
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path+"storeLevel/findList?pageNo="+start+'&pageSize='+size;
-                // let url = "http://172.16.20.151:8080/product/front/findByPage?pageNo=1&pageSize=1";
+                let url = common.path2+"storeBeauticianLevel/front/findByPage?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size
                 }
                 vm.table.loading = true;
-                this.$http.get(
+                this.$http.post(
                     url,
                     // ajaxData,
                     {
@@ -193,10 +195,10 @@
                         },
                     }
                 ).then(function(res){
-                    console.log(res.data);
                     let oData = res.data
-                    vm.table.recordsTotal = oData.data.length;
-                    vm.table.tableData1 = res.data.data;
+                    console.log(oData);
+                    vm.table.recordsTotal = oData.data.total;
+                    vm.table.tableData1 = oData.data.list;
                     vm.table.loading = false;
                 }).catch(function(err){
                 })

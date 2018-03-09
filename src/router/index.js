@@ -37,12 +37,6 @@ import CommissionPlan from '@/components/service/commissionPlan/list'
 import PlatformPlan from '@/components/service/platformPlan/list'
 // 产品管理
 import ProductManage from '@/components/service/productManage/list'
-// 招募员工审核
-import WorkerExamine from '@/components/service/workerExamine/list'
-// 运费模板
-import FreightTemplate from '@/components/service/freightTemplate/list'
-
-
 /*==================================订单管理============================*/
 //服务订单
 import ServiceOrder from '@/components/order/serviceOrder/list'
@@ -68,21 +62,27 @@ import TradeWater from '@/components/financeManage/tradeWater/list'
 import StoreCount from '@/components/financeManage/storeCount/list'
 //提现管理
 import CashManage from '@/components/financeManage/cashManage/list'
+//通知公告
+import NoticeBulletin from '@/components/financeManage/noticeBulletin/list'
+//佣金费用设置
+import CommissionCost from '@/components/financeManage/commissionCost/list'
 /*=====================================员工管理=========================*/
 //员工管理
 import WorkerManage from '@/components/worker/workerManage/list'
 //员工等级
 import WorkerGrade from '@/components/worker/workerGrade/list'
+//实名认证
+import RealnameCertification from '@/components/worker/realnameCertification/list'
 /*=====================================营销管理=========================*/
 //首页装修
 import DecorateHome from '@/components/marketing/decorateHome/index'
 //活动商家分组
-import ActivityShop from '@/components/marketing/activityShop/list'
+// import ActivityShop from '@/components/marketing/activityShop/list'
 /*=====================================会员卡=========================*/
 //会员卡列表
 import CardManage from '@/components/memberCard/cardManage/card/list'
 //售卡记录
-import CardHistory from '@/components/memberCard/cardHistory/list'
+// import CardHistory from '@/components/memberCard/cardHistory/list'
 //卡面模板
 import CardTpl from '@/components/memberCard/cardTpl/list'
 
@@ -220,26 +220,6 @@ const menuRouter = [
           name:"产品管理"
         }
       },
-      {
-        path: '/service/workerExamine',
-        name: '招募员工审核',
-        title: '招募员工审核',
-        component: WorkerExamine,
-        meta:{
-          type:"菜单",
-          name:"招募员工审核"
-        }
-      },
-      {
-        path: '/service/freightTemplate',
-        name: '运费模板',
-        title: '运费模板',
-        component: FreightTemplate,
-        meta:{
-          type:"菜单",
-          name:"运费模板"
-        }
-      }
     ]
   },
   {
@@ -266,6 +246,16 @@ const menuRouter = [
         meta:{
           type:"菜单",
           name:"员工等级"
+        }
+      },
+      {
+        path: '/worker/realnameCertification',
+        name: '实名认证',
+        title: '实名认证',
+        component: RealnameCertification,
+        meta:{
+          type:"菜单",
+          name:"实名认证"
         }
       }
     ]
@@ -401,6 +391,26 @@ const menuRouter = [
           type:"菜单",
           name:"提现管理"
         }
+      },
+      {
+        path: '/financeManage/noticeBulletin',
+        name: '通知公告',
+        title: '通知公告',
+        component: NoticeBulletin,
+        meta:{
+          type:"菜单",
+          name:"通知公告"
+        }
+      },
+      {
+        path: '/financeManage/commissionCost',
+        name: '佣金费用设置',
+        title: '佣金费用设置',
+        component: CommissionCost,
+        meta:{
+          type:"菜单",
+          name:"佣金费用设置"
+        }
       }
     ]
   },
@@ -420,16 +430,16 @@ const menuRouter = [
           name:"首页装修"
         }
       },
-      {
-        path: '/marketing/activityShop',
-        name: '活动商家分组',
-        title: '活动商家分组',
-        component: ActivityShop,
-        meta:{
-          type:"菜单",
-          name:"活动商家分组"
-        }
-      }
+      // {
+      //   path: '/marketing/activityShop',
+      //   name: '活动商家分组',
+      //   title: '活动商家分组',
+      //   component: ActivityShop,
+      //   meta:{
+      //     type:"菜单",
+      //     name:"活动商家分组"
+      //   }
+      // }
     ]
   },
   {
@@ -448,16 +458,16 @@ const menuRouter = [
           name:"会员卡列表"
         }
       },
-      {
-        path: '/memberCard/cardHistory',
-        name: '售卡记录',
-        title: '售卡记录',
-        component: CardHistory,
-        meta:{
-          type:"菜单",
-          name:"售卡记录"
-        }
-      },
+      // {
+      //   path: '/memberCard/cardHistory',
+      //   name: '售卡记录',
+      //   title: '售卡记录',
+      //   component: CardHistory,
+      //   meta:{
+      //     type:"菜单",
+      //     name:"售卡记录"
+      //   }
+      // },
       {
         path: '/memberCard/cardTpl',
         name: '卡面模板',
@@ -491,4 +501,3 @@ export default new Router({
     ...menuRouter
   ]
 })
-

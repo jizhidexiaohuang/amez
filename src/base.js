@@ -120,16 +120,6 @@ const common = {
                     hasChildList: false,
                     href:"/service/productManage"
                 },
-                {
-                    name:"招募员工审核",
-                    hasChildList: false,
-                    href:"/service/workerExamine"
-                },
-                {
-                    name:"运费模板",
-                    hasChildList: false,
-                    href:"/service/freightTemplate"
-                },
             ]
         },
         {
@@ -170,6 +160,11 @@ const common = {
                     name:"员工等级",
                     hasChildList: false,
                     href:"/worker/workerGrade"
+                },
+                {
+                    name:"实名认证",
+                    hasChildList: false,
+                    href:"/worker/realnameCertification"
                 }
             ]
         },
@@ -193,6 +188,16 @@ const common = {
                     name:"提现管理",
                     hasChildList: false,
                     href:"/financeManage/cashManage"
+                },
+                {
+                    name:"通知公告",
+                    hasChildList: false,
+                    href:"/financeManage/noticeBulletin"
+                },
+                {
+                    name:"佣金费用设置",
+                    hasChildList: false,
+                    href:"/financeManage/commissionCost "
                 }
             ]
         },
@@ -207,11 +212,11 @@ const common = {
                     hasChildList: false,
                     href:"/memberCard/cardManage"
                 },
-                {
-                    name:"售卡记录",
-                    hasChildList: false,
-                    href:"/memberCard/cardHistory"
-                },
+                // {
+                //     name:"售卡记录",
+                //     hasChildList: false,
+                //     href:"/memberCard/cardHistory"
+                // },
                 {
                     name:"卡面模板",
                     hasChildList: false,
@@ -230,11 +235,11 @@ const common = {
                     hasChildList: false,
                     href:"/marketing/decorateHome"
                 },
-                {
-                    name:"活动商家分组",
-                    hasChildList: false,
-                    href:"/marketing/activityShop"
-                }
+                // {
+                //     name:"活动商家分组",
+                //     hasChildList: false,
+                //     href:"/marketing/activityShop"
+                // }
             ]
         },
         {
@@ -293,6 +298,11 @@ const common = {
             time = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); 
         }else if(num==2){
             time = d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate();
+        }else if(num==3){
+            let year = date.getFullYear();
+            let month = (date.getMonth()+1)<10?'0'+(date.getMonth()+1):date.getMonth()+1;
+            let day = date.getDate()<10?'0'+date.getDate():date.getDate();
+            time = year+'-'+month+'-'+day
         }
         return time;
     },

@@ -1,7 +1,11 @@
 <template>
     <div>
+        <!-- 新增容器 -->
+        <AddPage v-if="pageType == 'add'"  class="testWrap" v-on:returnList="fnBackformAdd"/>
         <!-- 编辑容器 -->
-        <EditPage v-if="pageType == 'edit'" class="testWrap" :parent="parent" v-on:returnList="fnBackformAdd"></EditPage>
+        <EditPage v-if="pageType == 'edit'" class="testWrap" :editId="editId" v-on:returnList="fnBackformAdd"></EditPage>
+        <!-- 详情容器 -->
+        <InfoPage v-if="pageType == 'info'" class="testWrap" :infoId="infoId" v-on:returnList="fnBackformAdd"></InfoPage>
         <!-- 列表容器 -->
         <div v-if="pageType == 'list'" class="testWrap">
             <div class="boxStyle">
@@ -18,47 +22,40 @@
                 </Col>
             </Row>
             <Form :model="cd" inline v-show="false">
-                <FormItem style="margin-bottom:10px;">
-                    状态
-                    <Select v-model="storeStatus" style="width:80px">
-                        <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                    </Select>
-                </FormItem>
-                <FormItem style="margin-bottom:10px;">
-                    开店时间
-                    <DatePicker v-model="cd.time" type="date" placeholder="请选择评价时间" style="width:200px;"></DatePicker>
-                </FormItem>
-                <FormItem style="margin-bottom:10px;">
-                    <Input v-model="value">
-                    <Select v-model="selectType" slot="prepend" style="width: 80px">
-                        <Option value="门店名称">门店名称</Option>
-                        <Option value="注册手机">注册手机</Option>
-                    </Select>
-                    </Input>
-                </FormItem>
-                <FormItem style="margin-bottom:10px; width:250px;">
-                    <Row>
-                        <Col span="4">地区</Col>
-                        <Col span="20">
-                            <Input v-model="area" placeholder="全部（省-市-区）"></Input>
-                        </Col>
-                    </Row>
-                </FormItem>
+                        <FormItem style="margin-bottom:10px;">
+                            状态
+                            <Select v-model="storeStatus" style="width:80px">
+                                <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            </Select>
+                        </FormItem>
+                        <FormItem style="margin-bottom:10px;">
+                            开店时间
+                            <DatePicker v-model="cd.time" type="date" placeholder="请选择评价时间" style="width:200px;"></DatePicker>
+                        </FormItem>
+                        <FormItem style="margin-bottom:10px;">
+                           <Input v-model="value">
+                            <Select v-model="selectType" slot="prepend" style="width: 80px">
+                                <Option value="门店名称">门店名称</Option>
+                                <Option value="注册手机">注册手机</Option>
+                            </Select>
+                          </Input>
+                        </FormItem>
+                        <FormItem style="margin-bottom:10px; width:250px;">
+                            <Row>
+                                <Col span="4">地区</Col>
+                                <Col span="20">
+                                    <Input v-model="area" placeholder="全部（省-市-区）"></Input>
+                                </Col>
+                            </Row>
+                        </FormItem>
             </Form>
-            <Modal
-                v-model="modal.show"
-                :title="modal.title"
-                :loading="modal.loading"
-                @on-ok="ok">
-                <Form ref="formCustom" :model="formCustom" :rules="ruleCustom" :label-width="80">
-                    <FormItem label="模板组名" prop="name">
-                        <Input type="text" v-model="formCustom.name"></Input>
-                    </FormItem>
-                </Form>
-            </Modal>
             <Row style="margin-bottom:10px;">
+                <!-- <Col span="5">
+                    <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
+                    <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">重置</Button>
+                </Col> -->
                 <Col span="10">
-                    <Button style="float:left;margin-right:10px;" @click.native="addTemplate()" type="success" icon="android-add">新建模板组</Button>
+                    <Button style="float:left;margin-right:10px;" @click.native="changePageType('add')" type="success" icon="android-add">新建通知公告</Button>
                     <Button style="float:left;" @click.native="changePageType('list')" type="primary" icon="android-add" v-show="false">成长规则设置</Button>
                 </Col>
             </Row>
@@ -87,17 +84,16 @@
     </div>
 </template>
 <script>
+    import AddPage from './add.vue'
     import EditPage from './edit.vue'
+    import InfoPage from './info.vue'
     import common from '../../../base.js'
     export default {
         data () {
             return {
-                parent:{
-                    parentId:'',
-                    parentName:'',
-                },
                 value:'',
                 editId:'',//编辑id
+                infoId:'',//查看详情Id
                 selectType:'门店名称',
                 storeStatus:'', //店铺状态下拉框
                 area:'', //地区
@@ -117,19 +113,6 @@
                     time:[],//评论时间范围
                     operType:"1"//评论类型、不用重置
                 },
-                modal:{
-                    title:'新建模板组',
-                    show:false,
-                    loading:true
-                },
-                formCustom:{
-                    name:''
-                },
-                ruleCustom: {
-                    name: [
-                        { required: true, message: '模板组名不能为空', trigger: 'blur' }
-                    ],
-                },
                 activatedType: false,//主要解决mounted和activated重复调用
                 pageType: 'list',
                 openPage: false,
@@ -141,12 +124,24 @@
                         align: 'center'
                     },
                     {
-                        title: '模板组名',
-                        key: 'parentGroupName',
+                        title: '通告内容',
+                        key: 'brandName',
                     },
                     {
-                        title: '图片数量',
-                        key: 'parentGroupCount'
+                        title: '状态',
+                        key: 'brandOwnershipCompany'
+                    },
+                    {
+                        title: '公告时间',
+                        key: 'storeTotal'
+                    },
+                    {
+                        title: '发布时间',
+                        key: 'productTotal'
+                    },
+                    {
+                        title: '客户端',
+                        key: 'productTotal'
                     },
                     {
                         title: '操作',
@@ -164,12 +159,10 @@
                                 },
                                 on: {
                                     click: () => {
-                                        this.parent.parentId = params.row.id;
-                                        this.parent.parentName = params.row.parentGroupName;
-                                        this.changePageType('edit');
+                                        this.openOrClose(params.row.id);
                                     }
                                 }
-                            }, '添加模板'),
+                            }, '停止'),
                             h('Button', {
                                 props: {
                                     type: 'primary',
@@ -180,10 +173,11 @@
                                 },
                                 on: {
                                     click: () => {
-                                        this.editTemplate(params.row.id);
+                                        this.editId = params.row.id;
+                                        this.changePageType('edit');
                                     }
                                 }
-                               }, '编辑'),
+                            }, '编辑'),
                             h('Button', {
                                 props: {
                                     type: 'error',
@@ -194,7 +188,7 @@
                                 },
                                 on: {
                                     click: () => {
-                                        this.removeTemplate(params.row.id);
+                                        this.removeNotice(params.row.id);
                                     }
                                 }
                                }, '删除')
@@ -219,72 +213,27 @@
                 vm.table.pageNun = page;   
                 vm.getData();             
             },
-            ok(){
-                console.log(this.modal.title)
-                let vm = this;
-                if(this.modal.title=='新建模板组'){
-                    let url = common.path2+'memberCardTemplate/insert';
-                    let ajaxData = {
-                        "parentGroupName":vm.formCustom.name
-                    }
-                    this.$http.post(
-                        url,
-                        JSON.stringify(ajaxData),
-                        {
-                            headers: {
-                                'Content-type': 'application/json;charset=UTF-8'
-                            },
-                        }
-                    ).then(res=>{
-                        console.log(res);
-                        if(res.data.code==200){
-                            vm.getData();
-                        }
-                    })
-                }else if(this.modal.title=='编辑'){
-                    let url = common.path2+'memberCardTemplate/edit';
-                    let ajaxData = {
-                        "id":this.editId,
-                        "parentGroupId": 0,
-                        "parentGroupName":vm.formCustom.name
-                    }
-                    this.$http.put(
-                        url,
-                        JSON.stringify(ajaxData),
-                        {
-                            headers: {
-                                'Content-type': 'application/json;charset=UTF-8'
-                            },
-                        }
-                    ).then(res=>{
-                        console.log(res);
-                        if(res.data.code==200){
-                            vm.getData();
-                        }
-                    })
-                }
-            },
             /* 数据获取 */
             getData () {
                 let vm = this;
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path2+"memberCardTemplate/front/findByPage?pageNo="+start+'&pageSize='+size;
+                let url = common.path2+"notificationNotices/selectListByConditions?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {
-                    "parentGroupId": 0
+                    
                 }
                 vm.table.loading = true;
                 this.$http.post(
                     url,
-                    JSON.stringify(ajaxData),
+                    // ajaxData,
                     {
                         headers: {
                             'Content-type': 'application/json;charset=UTF-8'
                         },
                     }
                 ).then(function(res){
+                    console.log(res);
                     let oData = res.data
-                    console.log(oData);
                     vm.table.recordsTotal = oData.data.total;
                     vm.table.tableData1 = oData.data.list;
                     vm.table.loading = false;
@@ -337,40 +286,24 @@
                 }
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
-            removeTemplate(id){
-                let vm = this
-                this.$Modal.confirm({
-                    title:'删除模板',
-                    content:'你确定删除此模板？',
-                    onOk(){
-                        let url = common.path2+'memberCardTemplate/deleteById/'+id;
-                        this.$http.delete(url).then(res=>{
-                            if(res.status==200){
-                                this.$Message.success('删除成功！')
-                                vm.getData()
-                            }
-                        })
-                    }
-                });
+            removeNotice(id){
+              let vm = this
+              let url = common.path2+'...'+id;
+              this.$http.put(url).then(res=>{
+                  if(res.status==200){
+                      this.$Message.success('删除成功！')
+                      vm.getData()
+                  }
+              });
             },
-            editTemplate(id){
-                this.$refs['formCustom'].resetFields();
-                this.modal.title = '编辑';
-                this.editId = id;
-                let vm = this;
-                let url = common.path2+'memberCardTemplate/queryById/'+id;
-                this.$http.get(url).then(res=>{
-                    console.log(res)
-                    vm.formCustom.name = res.data.data.parentGroupName;
-                    vm.modal.show = true;
-                    vm.modal.loading = false;
-                })
-            },
-            addTemplate(){
-                this.$refs['formCustom'].resetFields();
-                this.modal.title = '新建模板组';
-                this.modal.show = true;
-                this.modal.loading = false;
+            openOrClose(id){
+              let vm = this
+              let url = common.path2+'...'+id;
+              this.$http.put(url).then(res=>{
+                  if(res.status==200){
+                      vm.getData()
+                  }
+              });
             }
         },
         mounted: function(){
@@ -381,7 +314,9 @@
             vm.fnExistTabList()
         },
         components:{
+            AddPage,
             EditPage,
+            InfoPage
         }
     }
 </script>

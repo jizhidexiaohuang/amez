@@ -1,6 +1,7 @@
 <template>
     <div>
         <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120" style="padding-bottom: 20px;">
+            <h3>审核员工信息</h3>
             <FormItem  label="员工姓名" prop="beauticianName">
                 <Input v-model="formValidate.beauticianName" placeholder="请填写员工姓名"></Input>
             </FormItem>
@@ -8,7 +9,7 @@
                 <Input v-model="formValidate.beauticianNickName" placeholder="请填写员工姓名"></Input>
             </FormItem>
             <FormItem label="员工照片">
-                <MyUpload :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
+                <MyUpload v-if="imgCtrl" :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
             </FormItem>
             <FormItem  label="工牌号" prop="workCardNo">
                 <Input v-model="formValidate.workCardNo" placeholder="请填写工牌号"></Input>
@@ -27,7 +28,7 @@
                 <Row>
                     <Col span="11">
                         <FormItem prop="birthday">
-                            <DatePicker type="date" v-model="formValidate.birthday" placeholder="请选择出生年月"></DatePicker>
+                            <DatePicker type="date" v-model="formValidate.birthday"></DatePicker>
                         </FormItem>
                     </Col>
                 </Row>
@@ -36,23 +37,23 @@
                 <Row>
                     <Col span="11">
                         <FormItem prop="joinTime">
-                            <DatePicker type="date" v-model="formValidate.joinTime" placeholder="请选择入职时间"></DatePicker>
+                            <DatePicker type="date" v-model="formValidate.joinTime"></DatePicker>
                         </FormItem>
                     </Col>
                 </Row>
             </FormItem>
             <FormItem  label="从业经验" prop="experience">
-                <Input v-model="formValidate.experience" placeholder="请填写从业时间"></Input>
+                <Input v-model="formValidate.experience" placeholder=""></Input>
             </FormItem>
             <FormItem label="员工住址" prop="">
                 <Row>
                     <Col span="20">
-                        <CityLinkage :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
+                        <CityLinkage v-if="cityCtrl" :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
                     </Col>
                 </Row>
             </FormItem>
             <FormItem  label="详细地址" prop="address">
-                <Input v-model="formValidate.address" placeholder="请填写详细地址"></Input>
+                <Input v-model="formValidate.address" placeholder=""></Input>
             </FormItem>
             <FormItem label="员工状态" prop="beauticianStatus">
                 <RadioGroup v-model="formValidate.beauticianStatus">
@@ -97,10 +98,21 @@
                 </Select>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
-                <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
+                <Button type="primary" @click="handleSubmit('formValidate')">审核通过</Button>
+                <Button type="error" @click="notPass()" style="margin-left: 8px;">审核不通过</Button>
             </FormItem>
         </Form>
+        <Modal
+            v-model="modalCtrl"
+            title="不通过原因"
+            width="360"
+            @on-ok="ok">
+            <Form ref="formCustom" :model="formCustom" :rules="ruleCustom" :label-width="0">
+                <FormItem label="" prop="auditReason">
+                    <Input v-model="formCustom.auditReason" type="textarea" :autosize="{minRows: 4,maxRows: 8}" placeholder="请说明审核不通过的原因"></Input>
+                </FormItem>
+            </Form>
+        </Modal>
     </div>
 </template>
 <script>
@@ -112,8 +124,12 @@
                 cityConfig:{
                     key:false,
                     title:'',
-                    type:'linkage'
+                    type:'linkage',
+                    cityList:[],
                 },
+                modalCtrl:false, //审核不通过的弹框
+                cityCtrl:false, //控制子组件是否创建
+                imgCtrl:false,
                 tableCtrl:false,
                 province:'',//城市级联的值
                 city:'',//城市级联的值
@@ -125,12 +141,11 @@
                     beauticianName:"",//员工名称
                     beauticianNickName:"",//员工昵称
                     workCardNo:"",//员工编号
-                    mobile:"", //注册手机
+                    mobile:"",//注册手机
                     position:"1",//员工类型
-                    beauticianStatus:"1",//员工状态
+                    beauticianStatus:"0",//员工状态
                     birthday:'',//出生年月
                     joinTime:'',//入职时间
-                    experience:'', //从业经验
                     storeName:'', //店铺名称
                     storeId:'',//店铺id
                     workerGrade:'', //员工等级
@@ -156,7 +171,15 @@
                 },
                 ruleValidate: {
                 },
-                defaultList: [], //默认图片
+                formCustom:{
+                    auditReason:''
+                },
+                ruleCustom: {
+                    auditReason: [
+                        { required: true, message: '请输入未通过审核原因', trigger: 'blur' }
+                    ],
+                },
+                defaultList: [], //默认列表
                 uploadList:[],//图片列表
                 path:this.common.path2+"system/api/file/uploadForKindeditor",
                 switch1: false,
@@ -186,9 +209,10 @@
                     if (valid) {
                         //添加品牌服务
                         let ajaxData = {
+                            id:vm.examineId, //id
                             beauticianName: vm.formValidate.beauticianName, // 员工姓名
                             beauticianNickName: vm.formValidate.beauticianNickName, // 员工昵称
-                            headImgUrl: vm.uploadList.length>0?vm.uploadList[0].url:"", // 员工头像
+                            headImgUrl: vm.uploadList.length>0?vm.uploadList[0].url:vm.defaultList[0].url, // 员工头像
                             workCardNo: vm.formValidate.workCardNo, // 员工编号
                             phone:vm.formValidate.mobile, //注册手机
                             beauticianType:vm.formValidate.position, //员工类型
@@ -205,11 +229,17 @@
                             beauticianStatus:vm.formValidate.beauticianStatus, //员工状态
                             beauticianLevel:vm.formValidate.workerGrade, //员工等级
                             storeId:vm.formValidate.storeId, //店铺id
-                            storeName:vm.formValidate.storeName //店铺名称
+                            storeName:vm.formValidate.storeName, //店铺名称
                         }
-                        console.log(JSON.stringify(ajaxData))
-                        let url = vm.common.path2+"storeBeautician/insert";
-                        vm.$http.post(
+                        if(vm.formCustom.auditReason){
+                            ajaxData.auditStatus = 2
+                            ajaxData.auditReason = vm.formCustom.auditReason;
+                        }else{
+                            ajaxData.auditStatus = 1
+                        }
+                        console.log(ajaxData)
+                        let url = vm.common.path2+"storeBeautician/edit";
+                        vm.$http.put(
                             url,
                             JSON.stringify(ajaxData),
                             {
@@ -233,6 +263,21 @@
             // 返回
             handReturn (val) {
                 this.$emit('returnList', val); 
+            },
+            notPass(){
+                this.$refs['formCustom'].resetFields();
+                this.modalCtrl = true;
+            },
+            ok(){
+                let vm = this;
+                let name = 'formCustom'
+                this.$refs[name].validate((valid) => {
+                    if (valid) {
+                        this.handleSubmit('formValidate')
+                    }else{
+                        vm.$Message.error('未填写审核未通过原因!');
+                    }
+                })
             },
             // 获取图片列表
             getUploadList (data) {
@@ -318,14 +363,55 @@
                 this.area = data[2].label
                 this.areaId = data[2].value
             },
+            // 根据id返回数据
+            getDataById(id){
+                let vm = this;
+                let url = this.common.path2 +'storeBeautician/queryById/'+id
+                vm.$http.get(url).then(res=>{
+                    console.log(res.data.data)
+                    let oData = res.data.data;
+                    vm.formValidate.beauticianName = oData.beauticianName;
+                    vm.formValidate.beauticianNickName = oData.beauticianNickName;
+                    vm.defaultList.push({
+                        url:oData.headImgUrl
+                    }); //员工头像
+                    vm.imgCtrl = true;
+                    vm.formValidate.workCardNo = oData.workCardNo;
+                    vm.formValidate.mobile = oData.phone;
+                    vm.formValidate.position = oData.beauticianType;
+                    vm.formValidate.birthday = oData.birthDate;
+                    vm.formValidate.joinTime = oData.entryDate;
+                    vm.formValidate.experience = oData.years;
+                    vm.formValidate.address = oData.address;
+                    vm.formValidate.beauticianStatus = oData.beauticianStatus;
+                    vm.formValidate.storeName = oData.storeName;
+                    vm.formValidate.storeId = oData.storeId;
+                    vm.formValidate.workerGrade = oData.beauticianLevel;
+                    vm.cityConfig.cityList.push({
+                        value:oData.provinceId,
+                        label:oData.provinceName
+                    },{
+                        value:oData.cityId,
+                        label:oData.cityName
+                    },{
+                        value:oData.areaId,
+                        label:oData.areaName
+                    });
+                    vm.cityCtrl = true;
+                })
+            }
+        },
+        beforeMount:function(){
+            this.getDataById(this.examineId)
         },
         mounted: function(){
-            this.getData()
+            this.getData();
         },
         components:{
             MyUpload,
             CityLinkage
-        }
+        },
+        props:['examineId']
     }
 </script>
 <style lang="scss" scoped>
@@ -343,5 +429,8 @@
         border-radius:0 0 5px 5px;
     }
 }
+h3{
+    margin-left:20px;
+    margin-bottom:10px;
+}
 </style>
-

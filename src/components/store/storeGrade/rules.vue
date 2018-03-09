@@ -2,7 +2,7 @@
   <div class="testWrap">
       <div class="addPage boxStyle">
         <h2>成长值设置</h2>
-        <Form ref="formDynamic" :model="formDynamic" :label-width="50" style="width: 100%">
+        <Form ref="formDynamic" :model="formDynamic" :label-width="20" style="width: 100%">
             <FormItem>
                 <Row>
                     <Col span="2" style="text-align:center;">最近一次接单</Col>
@@ -26,8 +26,8 @@
                 <Row>
                     <Col span="2" style="text-align:center;">
                         <Row>
-                          <Col span="12"><InputNumber style="width:50px;" :min="1" v-model="item.condition1"></InputNumber></Col>
-                          <Col span="12">天以内</Col>
+                          <Col span="14"><InputNumber style="width:50px;" :min="1" v-model="item.condition1"></InputNumber></Col>
+                          <Col span="10">天以内</Col>
                         </Row>
                     </Col>
                     <Col span="2" style="text-align:center;">
@@ -76,14 +76,14 @@
             </FormItem>
             <FormItem>
                 <Row>
-                    <Col span="2">
+                    <Col span="3">
                         <Button type="success" long @click="handleAdd" icon="plus-round">增加店铺等级</Button>
                     </Col>
                 </Row>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formDynamic')">保存</Button>
-                <Button type="ghost" @click="handleReset('formDynamic')" style="margin:0px 8px">取消</Button>
+                <Button type="primary" @click="handleSubmit('formDynamic')" style="margin-right:8px">保存</Button>
+                <Button v-if="false" type="ghost" @click="handleReset('formDynamic')" style="margin:0px 8px">取消</Button>
                 <Button type="success" @click.native="returnHome('list')">返回</Button>
             </FormItem>
         </Form>
@@ -127,7 +127,7 @@
             handleSubmit (name) {
                 this.$refs[name].validate((valid) => {
                     if (valid) {
-                        let url = common.path+'storeLevelUpgradeRule/add'
+                        let url = common.path2+'storeLevelUpgradeRule/addByBatch'
                         let ruleList = this.getAjaxData()
                         let ajaxData = {
                           ruleList:ruleList
@@ -143,8 +143,8 @@
                         ).then(res=>{
                           console.log(res)
                           if(res.status==200){
-                            this.$Message.success('Success!');
                             this.returnHome('list')
+                            this.$Message.success('提交成功!');
                           }
                         })
                     } else {
@@ -214,7 +214,7 @@
             },
             //获取数据
             getData(){
-              let url = common.path+'storeLevelUpgradeRule/findList'
+              let url = common.path2+'storeLevelUpgradeRule/findListByAll'
               this.$http.get(url).then(res=>{
                 let data = res.data.data
                 console.log(data)

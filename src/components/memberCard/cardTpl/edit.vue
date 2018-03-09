@@ -1,25 +1,19 @@
 <template>
   <div class="testWrap">
       <div class="boxStyle editPage">
-        <h2>编辑模板组</h2>
-        <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120">
+        <h3>{{parent.parentName}}</h3>
+        <Form ref="formValidate" :label-width="0" style="margin-left:10px;">
             <Row>
-                <Col span="8">
-                    <FormItem label="模板组名" prop="brandName">
-                        <Input v-model="formValidate.brandName"></Input>
-                    </FormItem>
-                </Col>
-            </Row>
-            <Row>
-                <Col span="8">
-                    <FormItem label="模板图片" prop="brandLogo" v-if="testCode">
+                <Col span="24">
+                    <FormItem label="图片样式" prop="brandLogo" v-if="testCode">
                         <MyUpload :uploadConfig="uploadConfig" :defaultList="defaultList" v-on:listenUpload="getUploadList"></MyUpload>
                     </FormItem>
                 </Col>
             </Row>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')" style="margin-right:8px">保存</Button>
-                <Button type="ghost" @click.native="returnHome('list')">返回</Button>
+                <Button type="primary" @click="handleSubmit('formValidate')" style="margin-left:55px">保存</Button>
+                <Button v-show="false" type="ghost" @click="handleReset('formValidate')" style="margin:0px 8px">取消</Button>
+                <Button type="success" @click.native="returnHome('list')">返回</Button>
             </FormItem>
         </Form>
       </div>
@@ -34,17 +28,10 @@
                 testCode: false,
                 defaultList:[],//默认图片
                 uploadConfig:{
-                    num:1000
+                    num:100
                 },
                 brandLogo:'',//图片途径
-                formValidate: {
-                    brandName: '',
-                },
-                ruleValidate: {
-                    brandName: [
-                        { required: true, message: '品牌名称不能为空', trigger: 'blur' }
-                    ]
-                },
+                imgList:[], //图片数组
             }
         },
         methods:{
@@ -54,15 +41,15 @@
             handleSubmit (name) {
                 this.$refs[name].validate((valid) => {
                     if (valid) {
-                        let url = common.path+'storeChainBrand/edit';
+                        let url = common.path2+'memberCardTemplate/insertByBatch';
+                        console.log(url)
                         let ajaxData = {
-                            id:this.editId,
-                            brandName:this.formValidate.brandName,
-                            brandOwnershipCompany:this.formValidate.brandOwnershipCompany,
-                            brandLogo:this.brandLogo[0].response.data,
+                            id:this.parent.parentId,
+                            parentGroupCount:this.imgList.length,
+                            bgImgList:this.imgList
                         }
-                        console.log(ajaxData)
-                        this.$http.put(
+                        console.log(JSON.stringify(ajaxData))
+                        this.$http.post(
                             url,
                             JSON.stringify(ajaxData),
                             {
@@ -87,27 +74,47 @@
             },
             getUploadList(data){
                 let vm = this;
-                vm.brandLogo = data;
+                // vm.brandLogo = data;
+                if(data.length>0){
+                    this.imgList = [];
+                    for(var i=0;i<data.length;i++){
+                        vm.imgList.push(data[i].url)
+                    }
+                }
                 console.log(data);
             },
             //根据id查数据
             getDataById(id){
-                let url = common.path+'storeChainBrand/queryById/'+id;
-                this.$http.get(url).then(res=>{
-                    let data = res.data.data;
-                    console.log(data)
-                    this.formValidate.brandName = data.brandName;
-                    this.formValidate.brandOwnershipCompany = data.brandOwnershipCompany;
-                    this.defaultList.push({
-                        'url':data.brandLogo
-                    });
-                    this.testCode = true;
+                let vm = this;
+                let url = common.path2+'memberCardTemplate/front/findByPage';
+                let ajaxData = {
+                    "parentGroupId": id
+                }
+                this.$http.post(
+                    url,
+                    JSON.stringify(ajaxData),
+                    {
+                        headers: {
+                            'Content-type': 'application/json;charset=UTF-8'
+                        },
+                    }
+                ).then(res=>{
+                    let oData = res.data;
+                    console.log(oData)
+                    var list = oData.data.list;
+                    console.log(list)
+                    for(var i=0;i<list.length;i++){
+                        vm.defaultList.push({
+                            url:list[i].bgImgUrl
+                        })
+                    }
+                    vm.testCode = true;
                 })
             }
         },
         
         beforeMount:function(){
-            this.getDataById(this.editId);
+            this.getDataById(this.parent.parentId);
         },
         mounted: function(){
             
@@ -115,13 +122,16 @@
         components:{
             MyUpload
         },
-        props:['editId']
+        props:['parent']
     }
 </script>
 <style lang="scss" scoped>
 .editPage{
-    h2{
+    h3{
         margin-bottom:10px;
+        margin-left:10px;
+        border-bottom:1px solid #e2e2e2;
+        padding-bottom:6px;
     }
 }
 </style>

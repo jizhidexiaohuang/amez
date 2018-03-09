@@ -316,5 +316,8 @@
             bottom:8px;
         }
     }
+    h2{
+        margin-left:10px;
+    }
 </style>
 

@@ -1,31 +1,23 @@
 <template>
     <div>
-        <!-- 新增 -->
-        <AddPage v-if="pageType == 'add'"  class="testWrap" v-on:returnList="changePageType"></AddPage>
-        <!-- 查看 -->
-        <InfoPage v-if="pageType == 'info'" :infoId="infoId"  class="testWrap" v-on:returnList="changePageType"></InfoPage>
-        <!-- 审核 -->
-        <ExaminePage v-if="pageType == 'examine'" :examineId="examineId"  class="testWrap" v-on:returnList="changePageType"></ExaminePage>
-        <!-- 编辑 -->
-        <EditPage v-if="pageType == 'edit'" :sendChild="sendChild"  class="testWrap" v-on:returnList="changePageType"></EditPage>
         <!-- 列表容器 -->
         <div v-if="pageType == 'list'" class="testWrap">
             <div class="boxStyle">
                 <Form :model="cd" inline>
-                    <Button style="float:left;margin-right:5px;" @click.native="changePageType('add')" type="success" icon="android-add">新增员工</Button>
-                    <FormItem style="margin-bottom:10px;">
-                        审核状态
+                    <Button v-if="false" style="float:left;margin-right:5px;" @click.native="changePageType('add')" type="success" icon="android-add">新增员工</Button>
+                    <FormItem style="margin-bottom:10px;margin-left:10px;">
+                        认证状态
                         <Select v-model="cd.auditStatus" style="width:100px">
                             <Option v-for="item in auditStatusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                         </Select>
                     </FormItem>
-                    <FormItem style="margin-bottom:10px;">
+                    <FormItem v-if="false" style="margin-bottom:10px;">
                         员工类型
                         <Select v-model="cd.beauticianType" style="width:100px">
                             <Option v-for="item in beauticianTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                         </Select>
                     </FormItem>
-                    <FormItem style="margin-bottom:10px;">
+                    <FormItem v-if="false" style="margin-bottom:10px;">
                         员工状态
                         <Select v-model="cd.beauticianStatus" style="width:100px">
                             <Option v-for="item in beauticianStatusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -35,7 +27,6 @@
                         <Input v-model="cd.inputVal">
                         <Select v-model="cd.selectType" slot="prepend" style="width: 100px">
                             <Option value="beauticianName">员工姓名</Option>
-                            <Option value="storeName">店铺名称</Option>
                             <Option value="phone">注册手机</Option>
                         </Select>
                         </Input>
@@ -67,11 +58,6 @@
     </div>
 </template>
 <script>
-    import MyUpload from '../../common/upload.vue'
-    import AddPage from './add.vue'
-    import EditPage from './edit.vue'
-    import InfoPage from './info.vue'
-    import ExaminePage from './examine.vue'
     export default {
         data () {
             return {
@@ -83,17 +69,13 @@
                         label:'全部'
                     },
                     {
-                        value:'0',
-                        label:'待审核'
-                    },
-                    {
                         value:'1',
-                        label:'审核通过'
+                        label:'认证成功'
                     },
                     {
                         value:'2',
-                        label:'不通过'
-                    },
+                        label:'认证失败'
+                    }
                 ],
                 beauticianTypeList:[
                     {
@@ -150,7 +132,7 @@
                     tableColumns: [
                         {
                             type: 'index',
-                            width: 50,
+                            width: 100,
                             align: 'center'
                         },
                         {
@@ -176,69 +158,20 @@
                             }
                         },
                         {
-                            title: '注册手机',
+                            title: '真实姓名',
                             key: 'phone',
-                            width:120
                         },
                         {
-                            title: '性别',
-                            key: 'sex',
-                            width:70,
-                            render: (h,params) => {
-                                const row = params.row;
-                                const color = row.sex == 1 ? 'blue' : 'red';
-                                const text = row.sex == 1 ? '男' : '女';
-                                return h('Tag', {
-                                    props: {
-                                        type: 'border',
-                                        color: color
-                                    }
-                                }, text);
-                            }
+                            title: '身份证号',
+                            key: 'phone',
                         },
                         {
-                            title: '员工类型',
-                            key: 'beauticianType',
-                            width:90,
-                            render:(h,params)=>{
-                                let str = '';
-                                if(params.row.beauticianType==0){
-                                    str = '老板'
-                                }else if(params.row.beauticianType==1){
-                                    str = '店长'
-                                }else if(params.row.beauticianType==2){
-                                    str = '正式员工'
-                                }else if(params.row.beauticianType==3){
-                                    str = '兼职员工'
-                                }
-                                return str;
-                            }
-                        },
-                        {
-                            title: '员工状态',
-                            key: 'beauticianStatus',
-                            width:70,
-                            render:(h,params)=>{
-                                let str = '';
-                                if(params.row.beauticianStatus==0){
-                                    str = '离职'
-                                }else if(params.row.beauticianStatus==1){
-                                    str = '在职'
-                                }else if(params.row.beauticianStatus==2){
-                                    str = '休息'
-                                }
-                                return str;
-                            }
-                        },
-                        {
-                            title: '所属门店',
+                            title: '所属店铺',
                             key: 'storeName',
-                            width:120
                         },
                         {
-                            title: '创建时间',
+                            title: '认证时间',
                             key: 'createTime',
-                            width:150,
                             render: (h,params) => {
                                 const row = params.row;
                                 const time = this.common.formatDate(row.createTime);
@@ -246,9 +179,9 @@
                             }
                         },
                         {   
-                            title: '审核状态',
+                            title: '认证状态',
                             key: 'auditStatus',
-                            width:110,
+                            width:120,
                             render: (h,params) => {
                                 const auditStatus = params.row.auditStatus;
                                 let color = '';
@@ -265,81 +198,6 @@
                                         size:'small'
                                     }
                                 }, text);
-                            }
-                        },
-                        {
-                            title: '操作',
-                            key: 'action',
-                            width: 130,
-                            render: (h, params) => {
-                                if(params.row.auditStatus==0){
-                                    return h('div', [
-                                        h('Button', {
-                                            props: {
-                                                type: 'error',
-                                                size: 'small'
-                                            },
-                                            style: {
-                                                marginRight: '5px'
-                                            },
-                                            on: {
-                                                click: () => {
-                                                    let row = params.row;
-                                                    this.examineId = row.id;
-                                                    this.changePageType('examine');
-                                                }
-                                            }
-                                        }, '审核')
-                                    ]);
-                                }else if(params.row.auditStatus==1){
-                                    return h('div', [
-                                        h('Button', {
-                                            props: {
-                                                type: 'primary',
-                                                size: 'small'
-                                            },
-                                            style: {
-                                                marginRight: '5px'
-                                            },
-                                            on: {
-                                                click: () => {
-                                                    let row = params.row;
-                                                    this.sendChild.id = row.id;
-                                                    this.changePageType('edit');
-                                                }
-                                            }
-                                        }, '编辑'),
-                                        h('Button', {
-                                            props: {
-                                                type: 'info',
-                                                size: 'small'
-                                            },
-                                            on: {
-                                                click: () => {
-                                                    let row = params.row;
-                                                    this.infoId = row.id;
-                                                    this.changePageType('info');
-                                                }
-                                            }
-                                        }, '查看')
-                                    ]);
-                                }else if(params.row.auditStatus==2){
-                                    return h('div', [
-                                        h('Button', {
-                                            props: {
-                                                type: 'info',
-                                                size: 'small'
-                                            },
-                                            on: {
-                                                click: () => {
-                                                    let row = params.row;
-                                                    this.infoId = row.id;
-                                                    this.changePageType('info');
-                                                }
-                                            }
-                                        }, '查看')
-                                    ]);
-                                }
                             }
                         }
                     ],
@@ -487,11 +345,7 @@
             vm.fnExistTabList()
         },
         components:{
-            MyUpload,
-            AddPage,
-            EditPage,
-            InfoPage,
-            ExaminePage
+            
         }
     }
 </script>

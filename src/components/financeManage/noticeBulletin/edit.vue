@@ -1,32 +1,29 @@
 <template>
   <div class="testWrap">
       <div class="boxStyle editPage">
-        <h2>编辑连锁品牌</h2>
+        <h3>新建通知公告</h3>
         <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120">
-            <Row>
-                <Col span="8">
-                    <FormItem label="品牌名称" prop="brandName">
-                        <Input v-model="formValidate.brandName"></Input>
-                    </FormItem>
+            <FormItem label="客户端" prop="client">
+                <RadioGroup v-model="formValidate.client">
+                    <Radio label="0">美容邦用户端</Radio>
+                    <Radio label="1">美容邦门店端</Radio>
+                    <Radio label="2">美容邦邦女郎端</Radio>
+                </RadioGroup>
+            </FormItem>
+            <FormItem v-if="false" label="品牌Logo" prop="brandLogo">
+                <MyUpload :uploadConfig="uploadConfig" :defaultList="defaultList" v-on:listenUpload="getUploadList"></MyUpload>
+            </FormItem>
+            <FormItem label="公告内容" prop="bulletinContent">
+                <Col span="7">
+                    <Input v-model="formValidate.bulletinContent" type="textarea" :autosize="{minRows: 6,maxRows: 8}" placeholder="输入该卡的介绍，使用须知等"></Input>
                 </Col>
-            </Row>
-            <Row>
-                <Col span="8">
-                    <FormItem label="品牌Logo" prop="brandLogo" v-if="testCode">
-                        <MyUpload :uploadConfig="uploadConfig" :defaultList="defaultList" v-on:listenUpload="getUploadList"></MyUpload>
-                    </FormItem>
-                </Col>
-            </Row>
-            <Row>
-                <Col span="8">
-                    <FormItem label="品牌所属公司" prop="brandOwnershipCompany">
-                        <Input v-model="formValidate.brandOwnershipCompany"></Input>
-                    </FormItem>
-                </Col>
-            </Row>
+            </FormItem>
+            <FormItem label="公告时间" prop="announcementTime">
+                <DatePicker v-model="formValidate.announcementTime" format="yyyy/MM/dd" type="daterange" placement="top-start" placeholder="请选择日期" style="width:280px;"></DatePicker>
+            </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
-                <Button v-show="false" type="ghost" @click="handleReset('formValidate')" style="margin:0px 8px">取消</Button>
+                <Button type="primary" @click="handleSubmit('formValidate')" style="margin:0px 8px">保存</Button>
+                <Button v-if="false" type="ghost" @click="handleReset('formValidate')" style="margin:0px 8px">取消</Button>
                 <Button type="success" @click.native="returnHome('list')">返回</Button>
             </FormItem>
         </Form>
@@ -46,16 +43,12 @@
                 },
                 brandLogo:'',//图片途径
                 formValidate: {
-                    brandName: '',
-                    brandOwnershipCompany: '',
+                    client: '0', //客户端
+                    bulletinContent: '', //公告内容
+                    announcementTime:'' //公告时间
                 },
                 ruleValidate: {
-                    brandName: [
-                        { required: true, message: '品牌名称不能为空', trigger: 'blur' }
-                    ],
-                    brandOwnershipCompany: [
-                        { required: true, message: '品牌所属公司不能为空', trigger: 'blur' }
-                    ],
+                    
                 },
             }
         },
@@ -132,8 +125,11 @@
 </script>
 <style lang="scss" scoped>
 .editPage{
-    h2{
+    h3{
         margin-bottom:10px;
+        margin-left:10px;
+        border-bottom:1px solid #eee;
+        padding-bottom:6px;
     }
 }
 </style>

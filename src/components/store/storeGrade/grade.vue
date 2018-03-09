@@ -6,9 +6,9 @@
             <FormItem style="margin-bottom:0px;">
                 <Row>
                     <Col span="3" style="text-align:center;">店铺等级</Col>
-                    <Col span="3" style="text-align:center;">成长值范围</Col>
+                    <Col span="5" style="text-align:center;">成长值范围</Col>
                     <Col span="3" style="text-align:center;">排序</Col>
-                    <Col span="3" style="text-align:center;">等级图标</Col>
+                    <Col span="6" style="text-align:center;">等级图标</Col>
                 </Row>
             </FormItem>
             <FormItem
@@ -21,7 +21,7 @@
                     <Col span="3" style="padding:10px 10px 0;">
                         <Input type="text" v-model="item.gradeName"></Input>
                     </Col>
-                    <Col span="3" style="padding-top:10px;">
+                    <Col span="5" style="padding-top:10px;">
                         <Row>
                             <Col span="10"><Input type="text" v-model="item.startValue"></Input></Col>
                             <Col span="2">---</Col>
@@ -31,7 +31,7 @@
                     <Col span="3" style="text-align:center;padding-top:10px;">
                         <InputNumber :max="10" :min="1" v-model="item.sort"></InputNumber>
                     </Col>
-                    <Col span="3" style="text-align:center;padding-top:10px;">
+                    <Col span="6" style="text-align:center;padding-top:10px;">
                         <MyUpload v-if="logoCtrl" :defaultList="defaultList[index]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,index)}"></MyUpload>
                         <!-- <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="getUploadList">
                             <Button v-if="!item.levelLogo" type="ghost" icon="ios-cloud-upload-outline" @click="getIndex(index)">上传Logo</Button>
@@ -48,14 +48,14 @@
             </FormItem>
             <FormItem>
                 <Row>
-                    <Col span="3">
+                    <Col span="4">
                         <Button type="success" long @click="handleAdd" icon="plus-round">增加店铺等级</Button>
                     </Col>
                 </Row>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formDynamic')">保存</Button>
-                <Button type="ghost" @click="handleReset('formDynamic')" style="margin:0px 8px">取消</Button>
+                <Button type="primary" @click="handleSubmit('formDynamic')" style="margin-right:8px">保存</Button>
+                <Button v-if="false" type="ghost" @click="handleReset('formDynamic')" style="margin:0px 8px">取消</Button>
                 <Button type="success" @click.native="returnHome('list')">返回</Button>
             </FormItem>
         </Form>
@@ -101,7 +101,7 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         console.log(this.index)
-                        let url = common.path+'storeLevel/add'
+                        let url = common.path2+'storeLevel/addByBatch'
                         let ajaxData = {
                             storeLevelList:this.getAjaxData()
                         }
@@ -176,7 +176,7 @@
             },
             //获取数据
             getData(){
-                let url = common.path+'storeLevel/findList'
+                let url = common.path2+'storeLevel/findListByAll'
                 this.$http.get(url).then(res=>{
                     let data = res.data.data
                     console.log(data)

@@ -132,6 +132,10 @@
                         }
                     },
                     {
+                        title: '排序',
+                        key: 'sort',
+                    },
+                    {
                         title: '图标',
                         key: 'levelLogo',
                         render:(h,params)=>{
@@ -177,7 +181,7 @@
                 let vm = this;
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path+"storeLevel/findList?pageNo="+start+'&pageSize='+size;
+                let url = common.path2+"storeLevel/findListByAll";
                 // let url = "http://172.16.20.151:8080/product/front/findByPage?pageNo=1&pageSize=1";
                 let ajaxData = {
                     pageNo:start,
@@ -193,10 +197,10 @@
                         },
                     }
                 ).then(function(res){
-                    console.log(res.data);
                     let oData = res.data
+                    console.log(oData);
                     vm.table.recordsTotal = oData.data.length;
-                    vm.table.tableData1 = res.data.data;
+                    vm.table.tableData1 = oData.data;
                     vm.table.loading = false;
                 }).catch(function(err){
                 })

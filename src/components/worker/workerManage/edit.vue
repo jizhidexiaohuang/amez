@@ -195,8 +195,8 @@
                             workCardNo: vm.formValidate.workCardNo, // 员工编号
                             phone:vm.formValidate.mobile, //注册手机
                             beauticianType:vm.formValidate.position, //员工类型
-                            birthDate:vm.common.simpleFormatDate(vm.formValidate.birthday), //出生年月
-                            entryDate:vm.common.simpleFormatDate(vm.formValidate.joinTime), //入职时间
+                            birthDate:vm.common.simpleFormatDate(vm.formValidate.birthday,1), //出生年月
+                            entryDate:vm.common.simpleFormatDate(vm.formValidate.joinTime,1), //入职时间
                             years:vm.formValidate.experience, //从业经验
                             provinceName:vm.province,
                             provinceId:vm.provinceId,
