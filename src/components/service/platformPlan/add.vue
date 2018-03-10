@@ -28,21 +28,28 @@
                 <Input v-model="formValidate.salePrice" placeholder="请填写服务销售价，单位元"></Input>
             </FormItem>
             <FormItem label="预约方式">
-                <RadioGroup v-model="formValidate.serverBookType">
-                    <Radio label="1">到店服务</Radio>
-                    <Radio label="2">上门服务</Radio>
-                </RadioGroup>
+                <CheckboxGroup v-model="formValidate.serverEffect1">
+                    <Checkbox label="store">到店服务</Checkbox>
+                    <Checkbox label="home">上门服务</Checkbox>
+                </CheckboxGroup>
             </FormItem>
-            <FormItem label="上门费" prop="visitPrice" number='true' v-if="formValidate.serverBookType == 2">
-                <Input v-model="formValidate.visitPrice" placeholder="请填写上门费，单位元"></Input>
+            <FormItem label="上门费" prop="homeFee" number='true'>
+                <Input v-model="formValidate.homeFee" placeholder="请填写上门费，单位元"></Input>
             </FormItem>
 
-            <FormItem label="到店服务员工">
+            <FormItem label="正式美容师佣金" number='true'>
+                <Input v-model="formValidate.formalBeauticianCommission" placeholder="请填写正式美容师佣金，单位元"></Input>
+            </FormItem>
+            <FormItem label="兼职美容师佣金" number='true'>
+                <Input v-model="formValidate.parttimeBeauticianCommission" placeholder="请填写兼职美容师佣金，单位元"></Input>
+            </FormItem>
+
+            <FormItem label="到店服务员工" v-if="false">
                 <storeTable></storeTable>
                 <storeList></storeList>
                 <!--<businessList></businessList>-->
             </FormItem>
-            <FormItem label="上门服务员工">
+            <FormItem label="上门服务员工" v-if="false">
                 <homeTable></homeTable>
                 <homeList></homeList>
                 <!--<businessList></businessList>-->
@@ -186,11 +193,10 @@
                 formValidate: {
                     type: '',//服务分类
                     brandId: '',//服务所属品牌
-                    serverBookType: "1",//预约方式
                     serverName: '',//服务名称
                     originalPrice: '',//市场价
                     salePrice: '',//服务销售价
-                    visitPrice: '',//上门费
+                    homeFee: '',//上门费
                     commissionType: '1',//平台佣金类型
                     commission: '',//佣金价格
                     coverImg:'',//图片地址
@@ -203,6 +209,11 @@
                     auditStatus: 0, // 审核状态，0待审核，1通过，2不通过
                     storeName: '',// 店铺名称
                     storeId: '',// 店铺ID
+                    serverEffect1: [], // 服务方式
+                    isSupportHome:0, // 是否支持上门 1支持 0不支持
+                    isSupportStore:0, // 是否支持到店 1支持 0不支持
+                    parttimeBeauticianCommission: '', // 兼职美容师佣金
+                    formalBeauticianCommission: '', // 正式美容师佣金
                 },
                 ruleValidate: {
                     teacherName: [
@@ -254,10 +265,6 @@
                             originalPrice: +vm.formValidate.originalPrice*100, // 原价
                             salePrice: +vm.formValidate.salePrice*100, // 销售价
                             saleVolume: vm.formValidate.saleVolume, // 销量
-                            // serverBookType: vm.formValidate.serverBookType, // 预约方式
-                            isSupportHome: vm.formValidate.serverBookType == 2?1:0, // 是否支持上门
-                            isSupportStore: vm.formValidate.serverBookType == 1?1:0, // 是否支持到店
-                            visitPrice: vm.formValidate.serverBookType == 2?+vm.formValidate.visitPrice*100:"", // 上门费
                             coverImg: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
                             serverAttention: vm.formValidate.serverAttention, // 注意事项
                             serverNeedTime: vm.formValidate.serverNeedTime, // 服务总时长
@@ -267,7 +274,24 @@
                             auditStatus: vm.formValidate.auditStatus, // 审核状态，0待审核，1通过，2不通过
                             brandId: vm.formValidate.brandId, // 服务所属品牌
                             isPlatform: true,
+                            homeFee: !!vm.formValidate.homeFee?+vm.formValidate.homeFee*100:"", // 上门费
+                            formalBeauticianCommission: !!vm.formValidate.formalBeauticianCommission?+vm.formValidate.formalBeauticianCommission*100:'', // 正式美容师佣金
+                            parttimeBeauticianCommission: !!vm.formValidate.parttimeBeauticianCommission?+vm.formValidate.parttimeBeauticianCommission*100:'', // 兼职美容师佣金
                         }
+                        /* 是否支持到店 isSupportStore */
+                        ajaxData.product.isSupportStore = 0;
+                        vm.formValidate.serverEffect1.forEach(function(item,index){
+                            if(item == 'store'){
+                                ajaxData.product.isSupportStore = 1;
+                            }
+                        })
+                        /* 是否支持上门 isSupportHome */
+                        ajaxData.product.isSupportHome = 0;
+                        vm.formValidate.serverEffect1.forEach(function(item,index){
+                            if(item == 'home'){
+                                ajaxData.product.isSupportHome = 1;
+                            }
+                        })
                         /* 商品分类 */
                         ajaxData.productCategoryRef = {
                             categoryId:vm.formValidate.type, // 商品分类id

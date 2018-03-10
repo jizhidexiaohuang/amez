@@ -103,7 +103,7 @@
                 let start = vm.table.pageNun;
                 let size = vm.table.size;//每页条数
                 let ajaxData = {
-                    storeIdList:listId
+                    "storeId":vm.$store.getters.storeId
                 }
                 // let url = this.common.path2+'store/findByPageForMemberCard?pageNo='+start+'&pageSize='+size;
                 let url = this.common.path2+'storeBeautician/front/findByPage?pageSize=100000';

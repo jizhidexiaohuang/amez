@@ -8,10 +8,30 @@
             @on-ok="fnAsyncOK">
             {{ modal.info }}
         </Modal>
+        <!-- 审核 模态框 -->
+        <Modal
+            v-model="audit.mineModal"
+            title="审核品牌"
+            :loading="audit.loading"
+            @on-ok="fnAsyncOK1">
+            <Form>
+                <FormItem label="审核状态">
+                    <RadioGroup v-model="audit.auditStatus">
+                        <Radio label="1">已审核</Radio>
+                        <Radio label="2">不通过</Radio>
+                    </RadioGroup>
+                </FormItem>
+                <FormItem label="审核原因">
+                    <Input v-model="audit.auditReason" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入审核原因"></Input>
+                </FormItem>
+            </Form>
+        </Modal>
         <!-- 新增容器 -->
         <AddPage v-if="pageType == 'add'" :sendChild="sendChild"  class="testWrap" v-on:returnList="changePageType"/>
         <!-- 编辑容器 -->
         <EditPage v-if="pageType == 'edit'" :sendChild="sendChild" class="testWrap" v-on:returnList="changePageType"/>
+        <!-- 上架容器 -->
+        <OnSalePage v-if="pageType == 'onSale'" :sendChild="sendChild" class="testWrap" v-on:returnList="changePageType"/>
         <!-- 详情容器 -->
         <div v-if="pageType == 'info'" class="testWrap">详情</div>
         <!-- 列表容器 -->
@@ -78,9 +98,11 @@
 <script>
     import AddPage from './add.vue'
     import EditPage from './edit.vue'
+    import OnSalePage from './onSale.vue'
     export default {
         data () {
             return {
+                isAdmin: '', // 是否店长
                 operators: {},
                 modal:{
                     mineModal: false,
@@ -89,6 +111,13 @@
                     info: '确定要上架？',
                     id:"",
                     storeId:"",//店铺id
+                },
+                audit:{
+                    mineModal: false,
+                    loading: true,
+                    auditStatus: '0', // 审核状态
+                    auditReason: '', // 审核原因
+                    id: '' 
                 },
                 cd:{
                     time:[],//评论时间范围
@@ -168,10 +197,18 @@
                             }
                         },
                         {
-                            title: '门店（e）',
-                            key: 'salePrice',
-                            render: (h,params) =>{
-                                return "艾美"
+                            title: '审核结果',
+                            key: 'auditStatus',
+                            render: (h,params) => {
+                                const row = params.row;
+                                const color = row.auditStatus === 0 ? 'blue' : row.auditStatus === 1 ? 'green':'red';
+                                const text = row.auditStatus === 0 ? '待审核' : row.auditStatus === 1 ? '通过':'未通过';
+                                return h('Tag', {
+                                    props: {
+                                        type: 'border',
+                                        color: color
+                                    }
+                                }, text);
                             }
                         },
                         {
@@ -185,14 +222,13 @@
                         {
                             title: '操作',
                             key: 'action',
-                            width: 180,
-                            // align: 'center',
-                            // fixed: 'right',
+                            width: 280,
                             render: (h, params) => {
                                 let arrs = [];
                                 const row = params.row;
                                 const color = row.saleStatus === 0 ? 'success' : 'warning';
-                                const text = row.saleStatus === 0 ? '上架' : '下架';
+                                const text = row.saleStatus === 0 ? '管理员上架' : '管理员下架';
+                                const text1 = row.saleStatus  === 0 ? '店长上架': '店长下架';
 
                                 let obj1 = h('Button', {
                                     props: {
@@ -214,6 +250,7 @@
                                 if(!!this.operators.edit){
                                     arrs.push(obj1);
                                 }
+                                /* 管理员上下架 */
                                 let obj2 = h('Button', {
                                     props: {
                                         type: color,
@@ -234,9 +271,64 @@
                                     }
                                 }, text)
                                 if(!!this.operators.updown){
-                                    arrs.push(obj2);
+                                    if(!!!this.storeId){
+                                        arrs.push(obj2);
+                                    }
                                 }
+                                /* 门店上下架 */
                                 let obj3 = h('Button', {
+                                    props: {
+                                        type: color,
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            let row = params.row;
+                                            this.fnOffShelves(row.id,row.storeId);
+                                            if(row.saleStatus  == 0){
+                                                // 商品上架
+                                                this.sendChild.itemId = row.id;
+                                                this.changePageType('onSale');
+                                            }else if(row.saleStatus  == 1){
+                                                // 商品下架
+                                                this.fnOffShelves(row.id,row.storeId);
+                                            }
+                                        }
+                                    }
+                                }, text1)
+                                if(!!this.storeId){
+                                    arrs.push(obj3);
+                                }
+
+
+                                /* 审核 */
+                                let obj6 = h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            let row = params.row;
+                                            this.audit.id = row.id;
+                                            this.audit.auditStatus = row.auditStatus;
+                                            this.audit.auditReason = row.auditReason;
+                                            this.fnShowModal1();
+                                            // this.fnDeleteItem(params.row.id);
+                                        }
+                                    }
+                                }, '审核')
+                                if(row.auditStatus == 0){
+                                    arrs.push(obj6);
+                                }   
+
+                                let obj4 = h('Button', {
                                     props: {
                                         type: 'error',
                                         size: 'small'
@@ -251,8 +343,12 @@
                                     }
                                 }, '删除')
                                 if(!!this.operators.delete){
-                                    arrs.push(obj3);
+                                    arrs.push(obj4);
                                 }
+
+
+                                
+
 
 
 
@@ -310,7 +406,7 @@
                 let start = vm.table.pageNun;//从第几页开始
                 let size = vm.table.size;//每页条数
                 ///product/front/findByPage
-                let url = vm.common.path2+"product/front/findByPage?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"product/findByPageForStore?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
@@ -388,7 +484,7 @@
                     this.table.pageSize = this.table.size;
                     this.getData();
                 }
-                if(type == "add"){
+                if(type == "add" || type == "onSale"){
                     this.$store.commit('STORE_LIST',[]);
                     this.$store.commit('RECRUIT_LIST',[]);
                     this.$store.commit('TOHOME_LIST',[]);
@@ -405,6 +501,29 @@
                 }
                 vm.modal.mineModal = true;
             },
+            fnShowModal1 () {
+                let vm = this;
+                vm.audit.mineModal = true;
+            },
+            /* 审核的模态框点击确定事件 */
+            fnAsyncOK1 () {
+                let vm = this;
+                let id = vm.audit.id;
+                let auditStatus = vm.audit.auditStatus;
+                let ajaxData = {
+                    "auditReason": vm.audit.auditReason
+                }
+                let url = vm.common.path2 + "product/modify/auditStatus/"+id+"/"+auditStatus+"?auditReason="+vm.audit.auditReason;
+                vm.$http.put(
+                    url,
+                    ajaxData,
+                ).then(function(res){
+                    vm.getData();
+                    vm.audit.loading = true;
+                    vm.audit.mineModal = false;
+                }).catch(function(err){
+                })
+            },
             /* 模态框的点击确定事件 */
             fnAsyncOK () {
                 let vm = this;
@@ -412,8 +531,9 @@
                 let type = vm.modal.type;
                 (function(){
                     let saleStatus = type == 0?1:0;
-                    let url = vm.common.path2 + "product/modify/saleStatus/self/"+id+"/"+saleStatus;
-                    vm.$http.put(
+                    // let url = vm.common.path2 + "product/modify/saleStatus/self/"+id+"/"+saleStatus;
+                    let url = type == 0?vm.common.path2 + "product/onSale/"+id:vm.common.path2 + "product/offShelves/"+id
+                    vm.$http.get(
                         url,
                     ).then(function(res){
                         vm.getData();
@@ -424,6 +544,25 @@
                         vm.getData();
                     })
                 })()
+            },
+            /* 店长下架 */
+            //product/store/offShelves
+            fnOffShelves (productId,storeId) {
+                let vm = this;
+                let url = vm.common.path2 + "product/store/offShelves";
+                let ajaxData = {
+                    'productId':productId,
+                    'storeId':storeId
+                }
+                vm.$http.post(
+                    url,
+                    ajaxData
+                ).then((res)=>{
+                    vm.modal.loading = true;
+                    vm.getData();
+                }).catch((err)=>{
+                    vm.getData();
+                })
             },
             // 服务分类接口数据
             fnGetProductCategory () {
@@ -534,6 +673,7 @@
         mounted: function(){
             let store = JSON.parse(window.localStorage.getItem("userInfo")).store;
             let vm = this;
+            // storeId 用来区分门店还是管理员
             if(store!=null){
                 vm.storeId = store.id;
             }
@@ -548,7 +688,8 @@
         },
         components:{
             AddPage,
-            EditPage
+            EditPage,
+            OnSalePage
         }
     }
 </script>

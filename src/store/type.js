@@ -41,3 +41,5 @@ export const CITY_LIST = 'CITY_LIST';
 export const SERVICE_STORE_LIST = 'SERVICE_STORE_LIST';
 /* 服务产品 */
 export const PRODUCT_LIST = 'PRODUCT_LIST';
+/* 店铺ID */
+export const STORE_ID = 'STORE_ID';

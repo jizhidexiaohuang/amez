@@ -95,4 +95,7 @@ export default{
 		console.log(data)
 		commit(types.PRODUCT_LIST,data.productList);
 	},
+	storeId:({commit},data)=>{
+		commit(types.STORE_ID,data.storeId);
+	},
 }

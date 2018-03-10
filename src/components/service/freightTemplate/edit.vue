@@ -40,51 +40,41 @@
                         <Col span="2">操作</Col>
                     </Row>
                     <!-- 指定城市运费配置 -->
-                    <Row style="border-bottom: 1px solid #dddee1; padding: 7px 10px 7px 10px;">
+                    <Row v-for="(item,index) in formValidate.lists" style="border-bottom: 1px solid #dddee1; padding: 7px 10px 7px 10px;">
                         <Col span="6">
-                            
                             <Row>
                                 <Col span="16">
-                                    <span>北京</span>
-                                    <span>天津</span>
-                                    <span>河北省</span>
-                                    <span>山西省</span>
-                                    <span>山西省</span>
-                                    <span>山西省</span>
-                                    <span>山西省</span>
-                                    <span>山西省</span>
-                                    <span>山西省</span>
-                                    <span>山西省</span>
-                                    <span>山西省</span>
-                                    <span>山西省</span>
-                                    <span>山西省</span>
+                                    <span v-for="(aItem,aIndex) in item.lists">
+                                        {{ aItem.regionName }}
+                                        <span v-if="aIndex != item.lists.length-1">、</span>
+                                    </span>
                                 </Col>
                                 <Col span="3" offset="1">
-                                    <Button>编辑</Button>
+                                    <Button @click.native="fnCityEdit('edit',item)">编辑</Button>
                                 </Col>
                             </Row>
                         </Col>
                         <Col span="4">
-                            <InputNumber :min="0" v-model="formValidate.firstNum"></InputNumber>
+                            <InputNumber :min="0" v-model="item.firstNum=0"></InputNumber>
                         </Col>
                         <Col span="4">
-                            <Input v-model="formValidate.firstPrice" style="width: 78px;"></Input>
+                            <Input v-model="item.firstPrice" style="width: 78px;"></Input>
                         </Col>
                         <Col span="4">
-                            <InputNumber :min="0" v-model="formValidate.firstNum"></InputNumber>
+                            <InputNumber :min="0" v-model="item.nextNum=0"></InputNumber>
                             
                         </Col>
                         <Col span="4">
-                            <Input v-model="formValidate.firstPrice" style="width: 78px;"></Input>
+                            <Input v-model="item.nextPrice" style="width: 78px;"></Input>
                         </Col>
                         <Col span="2">
-                            <Button type="error">删除</Button>
+                            <Button type="error" @click.native="fnDelete(index,item)">删除</Button>
                         </Col>
                     </Row>
                 </div>
             </FormItem>
             <FormItem label="">
-                <a @click="fnCityEdit">为指定城市设置运费</a>
+                <a @click="fnCityEdit('add')">为指定城市设置运费</a>
             </FormItem>
             <FormItem>
                 <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
@@ -94,29 +84,28 @@
         <Modal
             v-model="modalCode"
             title="城市列表"
-            width="700"
+            width="900"
             @on-ok="ok"
             @on-cancel="cancel">
             <div class="modalBox">
                 <Row>
-                    <Col span="14" style="border-right: 1px solid #ccc;">
-                        <div style="text-align: center; padding:10px 0px; font-size: 14px;">剩余城市</div>
-                        <Row>
+                    <Col span="12" style="border-right: 1px solid #ccc; min-height: 320px;">
+                        <div style="text-align: center; padding:0px 0px 10px 0px; font-size: 14px;">剩余城市</div>
+                        <div v-if="!!!spareList.length" style="font-size: 14px;">空空如也~</div>
+                        <Row v-if="!!spareList.length">
                             <Col span="8" v-for="(item,index) in spareList" :key="item.regionId">
-                                <Tag checkable color="blue">
+                                <Tag @click.native="selectItem(index)">
                                     {{ item.regionName }}
                                 </Tag>
                             </Col>
                         </Row>
                     </Col>
-                    <Col span="10">
-                        <div style="text-align: center; padding:10px 0px; font-size: 14px;">已选城市</div>
-                        <Row style="padding-left: 20px;">
-                            <Col span="12">
-                                <Tag v-if="show" closable @on-close="handleClose">广西</Tag>
-                            </Col>
-                            <Col span="12">
-                                <Tag v-if="show" closable @on-close="handleClose">广西</Tag>
+                    <Col span="12">
+                        <div style="text-align: center; padding:0px 0px 10px 0px; font-size: 14px;">已选城市</div>
+                        <div v-if="!!!selectList.length" style="padding-left: 20px; font-size: 14px;">空空如也~</div>
+                        <Row v-if="!!selectList.length" style="padding-left: 20px;">
+                            <Col span="8" v-for="(item,index) in selectList">
+                                <Tag closable @on-close="handleClose(index,item)">{{ item.regionName }}</Tag>
                             </Col>
                         </Row>
                     </Col>
@@ -136,39 +125,50 @@
                     firstPrice: '', // 首件价格
                     nextNum: 0, // 续件数
                     nextPrice: '', // 续件价格
-                    items: [
-                        {
-                            firstNum: 1, // 首件数
-                            firstPrice: '', // 首件价格
-                            nextNum: '', // 续件数
-                            nextPrice: '', // 续件价格
-                        }
+                    lists:[
+                        /* {
+                            lists:[
+                                {
+                                    'cityId':0,
+                                    'cityName':'北京'
+                                }
+                            ]
+                        } */
                     ]
                 },
                 ruleValidate: {
                 },
                 path:this.common.path1+"system/api/file/uploadForKindeditor",
                 modalCode: false,
-                show: true,
                 allList:[], // 省份列表
                 spareList: [], // 剩下的省份列表
                 alreadyList: [], // 已经选择的列表
+                selectList: [], // 正在选择的城市
+                hisSpareList: [], // 历史记住剩下的省份列表
+                hisSelectList: [], // 历史记住正在选择的省份列表
+
+
+
+
             }
         },
         methods: {
             // 提交验证
             handleSubmit (name) {
                 let vm = this;
+                console.log(vm.formValidate.lists);
                 this.$refs[name].validate((valid) => {
                     if (valid) {
-
-                        return false;
+                        debugger
+                        // console.log(vm.formValidate.lists)
+                        
                         //添加品牌服务
                         console.log(1)
                         let ajaxData = {
                         }
                         console.log(ajaxData);
                         let url = vm.common.path2+"baseSmsTemplates/insert";
+                        return false;
                         vm.$http.post(
                             url,
                             JSON.stringify(ajaxData),
@@ -196,9 +196,21 @@
                 this.$emit('returnList', val); 
             },
             // 新添加一个运送方式而要做的城市分配
-            fnCityEdit () {
+            fnCityEdit (type,arrs) {
                 let vm = this;
-                vm.modalCode = true;
+                vm.hisSpareList = vm.spareList;
+                console.log(vm.hisSpareList);
+                if(type == 'add'){
+                    vm.selectList = [];
+                    vm.hisSelectList = [];
+                    vm.modalCode = true;
+                };
+                if(type == 'edit'){
+                    vm.selectList = arrs.lists;
+                    vm.hisSelectList = arrs.lists;
+                    vm.modalCode = true;
+                }
+                
             },
             // 获取全国省份数据
             fnGetCityData () {
@@ -231,14 +243,120 @@
             },
             // 模态框的回调函数
             ok () {
+                let vm = this;
+                let arrs = vm.selectList;
+                let obj = {};
+                obj.lists = [];
+                for(var i = 0;i<arrs.length;i++){
+                    obj.lists.push({
+                        regionName: arrs[i].regionName,
+                        regionId: arrs[i].regionId
+                    })
+                }
+                vm.formValidate.lists.push(obj);
+                console.log(111111111);
+                console.log(vm.formValidate.lists);
             },
             // 模态框的取消回调函数
             cancel () {
+                let vm = this;
+                // 数组的合并
+                // vm.spareList = vm.spareList.concat(vm.selectList);
+                vm.spareList = vm.hisSpareList;
+                vm.selectList = vm.hisSelectList;
             },
-            handleClose () {
-                this.show = false;
+            // 取消当前选择的城市
+            handleClose (index,data) {
+                let vm = this;
+                console.log(data);
+                console.log(vm.selectList);
+                console.log(vm.spareList);
+                console.log(vm.alreadyList);
+
+
+                // 已经选择的数据变化,要减少
+                var oldArrs = vm.alreadyList;
+                var newArrs = [];
+                for(var i = 0;i<oldArrs.length;i++){
+                    if(oldArrs[i].regionId != data.regionId){
+                        newArrs.push(oldArrs[i]);
+                    }
+                }
+                vm.alreadyList = newArrs;
+                // 右侧数据的变化
+                vm.spareList.push(data);
+                // 右侧数据的变化
+                var oldArrs1 = vm.selectList;
+                var newArrs1 = [];
+                for(var i = 0;i<oldArrs1.length;i++){
+                    if(oldArrs1[i].regionId != data.regionId){
+                        newArrs1.push(oldArrs1[i]);
+                    }
+                }
+                vm.selectList = newArrs1;
+                return false;
+
+
+
+                // 右侧列表的变化
+                vm.selectList = vm.fnFilterArrs(vm.selectList,index);
+                // 左侧列表的变化
+                vm.spareList.push(vm.selectList[index]);
+                // 已经选择列表的变化
+                var oldArrs = vm.alreadyList; // 已经选择的
+                var newArrs = [];
+
+                console.log(data);
+                console.log(oldArrs);
+                /* for(var i = 0;i<oldArrs.length;i++){
+                    if(oldArrs[i].regionId!=data.regionId){
+                        newArrs.push(oldArrs[i]);
+                    }
+                }
+                vm.alreadyList = newArrs; */
+            },
+            // 点击城市的某一项的时候的回调函数
+            selectItem (index) {
+                let vm = this;
+                /* 正在选择的城市 */
+                vm.selectList.push(vm.spareList[index]);
+                /* 已经选择的城市 */
+                vm.alreadyList.push(vm.spareList[index]);
+                console.log(vm.spareList[index]);
+                console.log(vm.alreadyList);
+                // 此时需要修改展示的面板，从剩下的数据里边删除掉被点中的那一项
+                var oldArrs = vm.spareList;
+                var newArrs = [];
+                for(var i = 0;i<oldArrs.length;i++){
+                    if(i!=index){
+                        newArrs.push(oldArrs[i]);
+                    }
+                }              
+                vm.spareList = newArrs; 
+
+
+                
+
+                
+            },
+            // 删除一个城市设置选型
+            fnDelete (index,arrs) {
+                let vm = this;
+                console.log(arrs);
+                vm.spareList = vm.spareList.concat(arrs.lists);
+                vm.formValidate.lists = vm.fnFilterArrs(vm.formValidate.lists,index);
+            },
+            // 过滤数组，去掉索引值为n的选项
+            fnFilterArrs (arrs,index) {
+                var oldArrs = arrs;
+                var newArrs = [];
+                for(var i = 0;i<oldArrs.length;i++){
+                    if(i!=index){
+                        newArrs.push(oldArrs[i]);
+                    }
+                }
+                return newArrs;
             }
-            
         },
         mounted: function(){
             let vm = this;
@@ -250,8 +368,9 @@
 </script>
 <style scoped>
 .typeBox{
-    border: 1px solid #dddee1;
-    min-height: 200px;
+    border-top: 1px solid #dddee1;
+    border-left: 1px solid #dddee1;
+    border-right: 1px solid #dddee1;
     border-radius: 5px;
 }
 .modalBox{

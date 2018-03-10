@@ -147,9 +147,9 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path2+"storeBeautician/front/findByPage?pageNo="+start+'&pageSize='+size;
+                let url = common.path2+"storeBeautician/findByPageForRecruit?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {
-
+                    "storeId":vm.$store.getters.storeId
                 }
                 if(!!vm.cd.beauticianType){
                     ajaxData.beauticianType = vm.cd.beauticianType;

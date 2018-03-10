@@ -22,6 +22,7 @@ const state = {
 	cityList:[],
 	serviceStoreList:[],
 	productList: [],
+	storeId:'',
 };
 /* =========================改变状态的唯一方法======================= */
 const mutations = {
@@ -111,6 +112,9 @@ const mutations = {
 		console.log(productList);
 		state.productList = productList;
 	},
+	[types.STORE_ID](state,storeId){
+		state.storeId = storeId;
+	},
 }
 /* ====================对状态进行处理再输出=========================== */
 const getters = {
@@ -170,6 +174,9 @@ const getters = {
 	},
 	productList(state){
 		return state.productList
+	},
+	storeId(state){
+		return state.storeId
 	},
 }
 export default{

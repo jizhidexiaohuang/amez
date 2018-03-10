@@ -91,10 +91,10 @@
                 <Row>
                     <Col span="12" style="border-right: 1px solid #ccc; min-height: 320px;">
                         <div style="text-align: center; padding:0px 0px 10px 0px; font-size: 14px;">剩余城市</div>
-                        <div v-if="!!!spareList.length" style="font-size: 14px;">空空如也~</div>
-                        <Row v-if="!!spareList.length">
-                            <Col span="8" v-for="(item,index) in spareList" :key="item.regionId">
-                                <Tag @click.native="selectItem(index)">
+                        <div v-if="!!!showSpareList.length" style="font-size: 14px;">空空如也~</div>
+                        <Row v-if="!!showSpareList.length">
+                            <Col span="8" v-for="(item,index) in showSpareList" :key="item.regionId">
+                                <Tag @click.native="selectItem(index,item)">
                                     {{ item.regionName }}
                                 </Tag>
                             </Col>
@@ -102,10 +102,10 @@
                     </Col>
                     <Col span="12">
                         <div style="text-align: center; padding:0px 0px 10px 0px; font-size: 14px;">已选城市</div>
-                        <div v-if="!!!selectList.length" style="padding-left: 20px; font-size: 14px;">空空如也~</div>
-                        <Row v-if="!!selectList.length" style="padding-left: 20px;">
-                            <Col span="8" v-for="(item,index) in selectList">
-                                <Tag closable @on-close="handleClose(index)">{{ item.regionName }}</Tag>
+                        <div v-if="!!!mineList.length" style="padding-left: 20px; font-size: 14px;">空空如也~</div>
+                        <Row v-if="!!mineList.length" style="padding-left: 20px;">
+                            <Col span="8" v-for="(item,index) in mineList">
+                                <Tag closable @on-close="handleClose(index,item)">{{ item.regionName }}</Tag>
                             </Col>
                         </Row>
                     </Col>
@@ -144,6 +144,15 @@
                 spareList: [], // 剩下的省份列表
                 alreadyList: [], // 已经选择的列表
                 selectList: [], // 正在选择的城市
+                hisSpareList: [], // 历史记住剩下的省份列表
+                hisSelectList: [], // 历史记住正在选择的省份列表
+
+
+
+                showSpareList: [1], // 更新剩下省份界面用的数据
+                hideSpareList: [], // 真正用来记录剩下省份的数据
+                mineList: [], // 已经选择的省份
+                openType:'', // 打开模态框的类型，分新增和编辑
             }
         },
         methods: {
@@ -192,15 +201,31 @@
             // 新添加一个运送方式而要做的城市分配
             fnCityEdit (type,arrs) {
                 let vm = this;
+                vm.openType = type;
+                vm.hisSpareList = vm.spareList;
+                console.log(vm.hisSpareList);
                 if(type == 'add'){
                     vm.selectList = [];
-                    vm.modalCode = true;
+                    vm.hisSelectList = [];
                 };
                 if(type == 'edit'){
                     vm.selectList = arrs.lists;
-                    vm.modalCode = true;
+                    vm.hisSelectList = arrs.lists;
                 }
-                
+
+                /* 新的内容 */
+
+                // 为显示的数据赋值
+                vm.showSpareList = vm.hideSpareList;
+                // 对已经选择的省份数据进行初始化
+                if(type == 'add'){
+                    vm.mineList = [];
+                }else{
+                    vm.mineList = arrs.lists;
+                }
+                console.log('~~~~~~~~~~~~~');
+                console.log(vm.mineList);
+                vm.modalCode = true;
             },
             // 获取全国省份数据
             fnGetCityData () {
@@ -230,11 +255,12 @@
             fnGetSpareList () {
                 let vm = this;
                 vm.spareList = vm.allList;
+                vm.hideSpareList = vm.allList;
             },
             // 模态框的回调函数
             ok () {
                 let vm = this;
-                let arrs = vm.selectList;
+                let arrs = vm.mineList;
                 let obj = {};
                 obj.lists = [];
                 for(var i = 0;i<arrs.length;i++){
@@ -246,55 +272,116 @@
                 vm.formValidate.lists.push(obj);
                 console.log(111111111);
                 console.log(vm.formValidate.lists);
+                // 更新还剩省份的数据
+                vm.hideSpareList = vm.showSpareList;
+
+
+                /* 新的内容 */
+                /* debugger
+                console.log(vm.mineList);
+                // 更新还剩省份的数据
+                vm.hideSpareList = vm.showSpareList;
+                // 添加一个已经选择的运费规则
+                var arrs = vm.mineList;
+                var obj = {};
+                obj.lists = [];
+                for(var i = 0;arrs.length;i++){
+                    obj.lists.push({
+                        regionName: arrs[i].regionName,
+                        regionId: arrs[i].regionId
+                    })
+                }
+                vm.formValidate.lists.push(obj); */
             },
             // 模态框的取消回调函数
             cancel () {
                 let vm = this;
                 // 数组的合并
-                vm.spareList = vm.spareList.concat(vm.selectList);
+                // vm.spareList = vm.spareList.concat(vm.selectList);
+                vm.spareList = vm.hisSpareList;
+                vm.selectList = vm.hisSelectList;
             },
             // 取消当前选择的城市
-            handleClose (index) {
+            handleClose (index,data) {
                 let vm = this;
-                vm.spareList.push(vm.alreadyList[index]);
-                var oldArrs = vm.alreadyList;
-                var newArrs = [];
-                for(var i = 0;i<oldArrs.length;i++){
-                    if(i!=index){
-                        newArrs.push(oldArrs[i]);
+                /* 新的内容 */
+                // 修改已经选择的省份  因为编辑的时候，拿到的mineList是自己造的数据，或者编辑的时候是自己造的数据，所以不能当前的判断元素是否相等
+                // 而是应该判断元素的regionId是否相等
+                vm.mineList = vm.fnRepeatArrs(vm.mineList,data);
+                console.log('----------------------');
+                console.log(vm.mineList)
+                console.log(vm.showSpareList);
+                console.log(vm.hideSpareList);
+                debugger
+                if(vm.openType == 'add'){
+                    if(!!!vm.mineList.length){
+                        vm.showSpareList = vm.hideSpareList;
+                    }else{
+                        vm.showSpareList = vm.hideSpareList;
+                        for(var i = 0;i<vm.mineList.length;i++){
+                            vm.showSpareList = vm.fnRepeatArrs(vm.showSpareList,vm.mineList[i]);
+                        }
                     }
+                }else if(vm.openType == 'edit'){
+                    // showSpareList的变化  等于当前真实剩下的加上被删除的
+                    var arrs1 = vm.hideSpareList;
+                    arrs1.push(data);
+                    // 和所有allList省份进行过滤一下，主要是为了顺序显示省份
+                    var newArrs = [];
+                    for(var i = 0;i<vm.allList.length;i++){
+                        for(var j = 0;j<arrs1.length;j++){
+                            if(vm.allList[i].regionId == arrs1[j].regionId){
+                                newArrs.push(vm.allList[i]);
+                            }
+                        }
+                    }
+                    vm.showSpareList = newArrs;
                 }
-                vm.alreadyList = newArrs;
             },
             // 点击城市的某一项的时候的回调函数
-            selectItem (index) {
+            selectItem (index,item) {
                 let vm = this;
-                /* 正在选择的城市 */
-                vm.selectList.push(vm.spareList[index]);
-                /* 已经选择的城市 */
-                vm.alreadyList.push(vm.spareList[index]);
-                console.log(vm.spareList[index]);
-                console.log(vm.alreadyList);
-                // 此时需要修改展示的面板，从剩下的数据里边删除掉被点中的那一项
-                var oldArrs = vm.spareList;
-                var newArrs = [];
-                for(var i = 0;i<oldArrs.length;i++){
-                    if(i!=index){
-                        newArrs.push(oldArrs[i]);
-                    }
-                }              
-                vm.spareList = newArrs; 
-
-
                 
 
+
+
+                /* 新的内容 */
+                if(vm.openType == 'add'){
+                    // 已经选择的省份
+                    vm.mineList.push(item);
+                    // 显示界面剩余可见的省份
+                    vm.showSpareList = vm.fnRepeatArrs(vm.showSpareList,item);
+                }else if(vm.openType == 'edit'){
+                    // console.log(item);
+                    // console.log(vm.mineList);
+                    // console.log(vm.showSpareList);
+                    vm.mineList.push(item);
+                    vm.showSpareList = vm.fnRepeatArrs(vm.showSpareList,item);
+                }
+                console.log(vm.mineList);
+                console.log(vm.hideSpareList);
                 
             },
             // 删除一个城市设置选型
             fnDelete (index,arrs) {
                 let vm = this;
-                console.log(arrs);
-                vm.spareList = vm.spareList.concat(arrs.lists);
+                /* 新的内容 */
+                // 删除之后，需要把被删除的省份添加到剩余省份hideSpareList里边去，但是需要再和所有省份的数据进行过滤一下，所以arrs只是暂时用的
+                var arrs1 = vm.hideSpareList.concat(arrs.lists);
+                console.log('~~~~~~~~~~~~~~')
+                console.log(arrs1);
+                console.log(vm.allList);
+                // 所有省和arrs的过滤
+                var newArrs = [];
+                for(var i = 0;i<vm.allList.length;i++){
+                    for(var j = 0;j<arrs1.length;j++){
+                        if(vm.allList[i].regionId == arrs1[j].regionId){
+                            newArrs.push(vm.allList[i]);
+                        }
+                    }
+                }
+                vm.hideSpareList = newArrs;
+                // 修改要提交ajax的数据
                 vm.formValidate.lists = vm.fnFilterArrs(vm.formValidate.lists,index);
             },
             // 过滤数组，去掉索引值为n的选项
@@ -307,7 +394,21 @@
                     }
                 }
                 return newArrs;
-            }
+            },
+            // 数组去重
+            fnRepeatArrs (arrs,item) {
+                var oldArrs = arrs;
+                var newArrs = [];
+                for(var i = 0;i<oldArrs.length;i++){
+                    /* if(oldArrs[i]!=item){
+                        newArrs.push(oldArrs[i]);
+                    } */
+                    if(oldArrs[i].regionId != item.regionId){
+                        newArrs.push(oldArrs[i]);
+                    }
+                }
+                return newArrs;
+            },
         },
         mounted: function(){
             let vm = this;

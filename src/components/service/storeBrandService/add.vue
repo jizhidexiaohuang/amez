@@ -6,7 +6,7 @@
                     <Option :value="item.id" v-for="item in serviceList" :key="item.id">{{ item.categoryName }}</Option>
                 </Select>
             </FormItem>
-            <FormItem label="服务所属品牌" prop="brandId">
+            <FormItem label="服务所属品牌" prop="brandId" v-if="!!isShow">
                 <Select v-model="formValidate.brandId" placeholder="选择服务所属品牌">
                     <Option :value="item.id" v-for="item in brandList" :key="item.id">{{ item.brandName }}</Option>
                 </Select>
@@ -29,21 +29,29 @@
                 <Input v-model="formValidate.salePrice" placeholder="请填写服务销售价，单位元"></Input>
             </FormItem>
             <FormItem label="预约方式">
-                <RadioGroup v-model="formValidate.serverBookType">
-                    <Radio label="1">到店服务</Radio>
-                    <Radio label="2">上门服务</Radio>
-                </RadioGroup>
+                <CheckboxGroup v-model="formValidate.serverEffect1">
+                    <Checkbox label="store">到店服务</Checkbox>
+                    <Checkbox label="home">上门服务</Checkbox>
+                </CheckboxGroup>
             </FormItem>
-            <FormItem label="上门费" prop="visitPrice" number='true' v-if="formValidate.serverBookType == 2">
-                <Input v-model="formValidate.visitPrice" placeholder="请填写上门费，单位元"></Input>
+            <FormItem label="上门费" prop="homeFee" number='true'>
+                <Input v-model="formValidate.homeFee" placeholder="请填写上门费，单位元"></Input>
+            </FormItem>
+            <FormItem label="正式美容师佣金" number='true'>
+                <Input v-model="formValidate.formalBeauticianCommission" placeholder="请填写正式美容师佣金，单位元"></Input>
+            </FormItem>
+            <FormItem label="兼职美容师佣金" number='true'>
+                <Input v-model="formValidate.parttimeBeauticianCommission" placeholder="请填写兼职美容师佣金，单位元"></Input>
             </FormItem>
 
-            <FormItem label="到店服务员工">
+
+
+            <FormItem label="到店服务员工" v-if="false">
                 <storeTable></storeTable>
                 <storeList></storeList>
                 <!--<businessList></businessList>-->
             </FormItem>
-            <FormItem label="上门服务员工">
+            <FormItem label="上门服务员工" v-if="false">
                 <homeTable></homeTable>
                 <homeList></homeList>
                 <!--<businessList></businessList>-->
@@ -123,11 +131,10 @@
                 formValidate: {
                     type: '',//服务分类
                     brandId: '',//服务所属品牌
-                    serverBookType: "1",//预约方式
                     serverName: '',//服务名称
                     originalPrice: '',//市场价
                     salePrice: '',//服务销售价
-                    visitPrice: '',//上门费
+                    homeFee: '',//上门费
                     commissionType: '1',//平台佣金类型
                     commission: '',//佣金价格
                     coverImg:'',//图片地址
@@ -138,7 +145,11 @@
                     formalWorker: "",//正式员工提成
                     ParTtimeWorker: "",//兼职员工服务提成
                     auditStatus: '0',// 审核状态 0 待审核 1已审核 2不同过
-
+                    serverEffect1: [], // 服务方式
+                    isSupportHome:0, // 是否支持上门 1支持 0不支持
+                    isSupportStore:0, // 是否支持到店 1支持 0不支持
+                    parttimeBeauticianCommission: '', // 兼职美容师佣金
+                    formalBeauticianCommission: '', // 正式美容师佣金
                 },
                 ruleValidate: {
                     teacherName: [
@@ -169,6 +180,7 @@
                     num:5
                 },
                 storeId:"",// 店铺id
+                isShow: true,
             }
         },
         props: ["sendChild"],
@@ -186,10 +198,9 @@
                             originalPrice: +vm.formValidate.originalPrice*100, // 原价
                             salePrice: +vm.formValidate.salePrice*100, // 销售价
                             saleVolume: vm.formValidate.saleVolume, // 销量
-                            // serverBookType: vm.formValidate.serverBookType, // 预约方式
-                            isSupportHome: vm.formValidate.serverBookType == 2?1:0, // 是否支持上门
-                            isSupportStore: vm.formValidate.serverBookType == 1?1:0, // 是否支持到店
-                            visitPrice: vm.formValidate.serverBookType == 2?+vm.formValidate.visitPrice*100:"", // 上门费
+                            homeFee: !!vm.formValidate.homeFee?+vm.formValidate.homeFee*100:"", // 上门费
+                            formalBeauticianCommission: !!vm.formValidate.formalBeauticianCommission?+vm.formValidate.formalBeauticianCommission*100:'', // 正式美容师佣金
+                            parttimeBeauticianCommission: !!vm.formValidate.parttimeBeauticianCommission?+vm.formValidate.parttimeBeauticianCommission*100:'', // 兼职美容师佣金
                             coverImg: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
                             serverAttention: vm.formValidate.serverAttention, // 注意事项
                             serverNeedTime: vm.formValidate.serverNeedTime, // 服务总时长
@@ -200,6 +211,20 @@
                             brandId: vm.formValidate.brandId, // 服务所属品牌
                             isPlatform: false,
                         }
+                        /* 是否支持到店 isSupportStore */
+                        ajaxData.product.isSupportStore = 0;
+                        vm.formValidate.serverEffect1.forEach(function(item,index){
+                            if(item == 'store'){
+                                ajaxData.product.isSupportStore = 1;
+                            }
+                        })
+                        /* 是否支持上门 isSupportHome */
+                        ajaxData.product.isSupportHome = 0;
+                        vm.formValidate.serverEffect1.forEach(function(item,index){
+                            if(item == 'home'){
+                                ajaxData.product.isSupportHome = 1;
+                            }
+                        })
                         /* 商品分类 */
                         ajaxData.productCategoryRef = {
                             categoryId:vm.formValidate.type, // 商品分类id
@@ -330,9 +355,14 @@
         },
         mounted: function(){
             let vm = this;
-            /* 模拟身份 */
-            // vm.storeId = 4;// 店长
-            vm.storeId = "";// 管理员
+            let store = JSON.parse(window.localStorage.getItem("userInfo")).store;
+            if(store!=null){
+                vm.storeId = store.id;
+            }
+            if(!!vm.sendChild.brandId){
+                vm.isShow = false;
+                vm.formValidate.brandId = vm.sendChild.brandId;
+            }
             this.fnGetProductCategory();
             this.fnGetStoreChainBrand();
         },

@@ -1,58 +1,13 @@
 <template>
     <div>
         <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120" style="padding-bottom: 20px;">
-            <FormItem label="服务分类" prop="type">
-                <Select v-model="formValidate.type" placeholder="选择服务分类">
-                    <Option :value="item.id" v-for="item in serviceList" :key="item.id">{{ item.categoryName }}</Option>
-                </Select>
-            </FormItem>
-            <FormItem label="服务所属品牌" prop="brandId" v-if="false">
-                <Select v-model="formValidate.brandId" placeholder="选择服务所属品牌">
-                    <Option :value="item.id" v-for="item in brandList" :key="item.id">{{ item.brandName }}</Option>
-                </Select>
-            </FormItem>
+            <Spin fix v-if="spinShow"></Spin>
             
-            <FormItem label="服务名称" prop="serverName">
-                <Input v-model="formValidate.serverName" placeholder="请填写服务名称"></Input>
-            </FormItem>
-
-            
-
-
-
-
-            <FormItem label="市场价" prop="originalPrice" number='true'>
-                <Input v-model="formValidate.originalPrice" placeholder="请填写市场价，单位元"></Input>
-            </FormItem>
-            <FormItem label="服务销售价" prop="salePrice" number='true'>
-                <Input v-model="formValidate.salePrice" placeholder="请填写服务销售价，单位元"></Input>
-            </FormItem>
-
-            <FormItem label="预约方式">
-                <CheckboxGroup v-model="formValidate.serverEffect1">
-                    <Checkbox label="store">到店服务</Checkbox>
-                    <Checkbox label="home">上门服务</Checkbox>
-                </CheckboxGroup>
-            </FormItem>
-
-
             <FormItem label="上门费" prop="homeFee" number='true'>
                 <Input v-model="formValidate.homeFee" placeholder="请填写上门费，单位元"></Input>
             </FormItem>
-                
-            <FormItem label="正式美容师佣金" number='true'>
-                <Input v-model="formValidate.formalBeauticianCommission" placeholder="请填写正式美容师佣金，单位元"></Input>
-            </FormItem>
-            <FormItem label="兼职美容师佣金" number='true'>
-                <Input v-model="formValidate.parttimeBeauticianCommission" placeholder="请填写兼职美容师佣金，单位元"></Input>
-            </FormItem>
-
-
-
-
-
             <!-- 店铺选择  只有管理员可以看到 -->
-            <FormItem label="所属门店" prop="storeName" style="width:500px;" v-if="!!isAdmin">
+            <FormItem label="所属门店" prop="storeName" style="width:500px;" v-if="loginName=='admin'">
                 <Input v-model="formValidate.storeName" placeholder="请选择所属门店" @click.native="selectStore"></Input>
                 <div class="tableBox" v-show="tableCtrl">
                     <Table
@@ -83,92 +38,119 @@
                     </div>
                 </div>
             </FormItem>
-            <FormItem label="到店服务员工" v-if="false">
+            <FormItem label="到店服务员工" v-if="!!isShowBox">
                 <storeTable></storeTable>
                 <storeList></storeList>
                 <!--<businessList></businessList>-->
             </FormItem>
-            <FormItem label="上门服务员工" v-if="false">
+            <FormItem label="上门服务员工" v-if="!!isShowBox">
                 <homeTable></homeTable>
                 <homeList></homeList>
                 <!--<businessList></businessList>-->
             </FormItem>
-            
-            <FormItem label="招募员工" v-if="false">
+            <FormItem label="招募员工" v-if="!!isShowBox">
                 <recruitTable></recruitTable>
                 <recruitList></recruitList>
                 <!--<businessList></businessList>-->
             </FormItem>
 
+            <div v-if="false">
+                <FormItem label="服务分类" prop="type">
+                    <Select disabled v-model="formValidate.type" placeholder="选择服务分类">
+                        <Option :value="item.id" v-for="item in serviceList" :key="item.id">{{ item.categoryName }}</Option>
+                    </Select>
+                </FormItem>
+                <FormItem label="服务所属品牌" prop="brandId" v-if="false">
+                    <Select v-model="formValidate.brandId" placeholder="选择服务所属品牌">
+                        <Option :value="item.id" v-for="item in brandList" :key="item.id">{{ item.brandName }}</Option>
+                    </Select>
+                </FormItem>
+                <FormItem label="服务名称" prop="serverName">
+                    <Input v-model="formValidate.serverName" placeholder="请填写服务名称"></Input>
+                </FormItem>
+                <FormItem label="市场价" prop="originalPrice" number='true'>
+                    <Input v-model="formValidate.originalPrice" placeholder="请填写市场价，单位元"></Input>
+                </FormItem>
+                <FormItem label="服务销售价" prop="salePrice" number='true'>
+                    <Input v-model="formValidate.salePrice" placeholder="请填写服务销售价，单位元"></Input>
+                </FormItem>
+                <FormItem label="预约方式">
+                    <CheckboxGroup v-model="formValidate.serverEffect1">
+                        <Checkbox label="store">到店服务</Checkbox>
+                        <Checkbox label="home">上门服务</Checkbox>
+                    </CheckboxGroup>
+                </FormItem>
+                <FormItem label="正式员工服务提成" prop="formalWorker" v-if="false">
+                    <Input v-model="formValidate.formalWorker" placeholder="请填写正式员工服务提成"></Input>
+                </FormItem>
+                <FormItem label="兼职员工服务提成" prop="ParTtimeWorker" v-if="false">
+                    <Input v-model="formValidate.ParTtimeWorker" placeholder="请填写兼职员工服务提成"></Input>
+                </FormItem>
+                <FormItem label="平台佣金类型" prop="commissionType" v-if="false">
+                    <RadioGroup v-model="formValidate.commissionType">
+                        <Radio label="1">类目佣金</Radio>
+                        <Radio label="2">自定义佣金</Radio>
+                    </RadioGroup>
+                </FormItem>
+                <FormItem label="佣金价格" prop="commission" number='true' v-if="false">
+                    <Input v-model="formValidate.commission" placeholder="请填写佣金价格，单位元"></Input>
+                </FormItem>
+                <FormItem label="轮播图" v-if="testCode">
+                    <MyUpload :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
+                </FormItem>
+                <FormItem label="图片地址" prop="img" style="position:absolute; left:-9999px;">
+                    <Input v-model="formValidate.img" placeholder=""></Input>
+                </FormItem>
+                <FormItem label="注意事项" prop="serverAttention">
+                    <Input v-model="formValidate.serverAttention" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请填写注意事项"></Input>
+                </FormItem>
+                <FormItem label="服务总时长" prop="serverNeedTime">
+                    <Input v-model="formValidate.serverNeedTime" placeholder="请填写服务总时长"></Input>
+                </FormItem>
+                <FormItem label="功效" prop="serverEffect">
+                    <CheckboxGroup v-model="formValidate.serverEffect">
+                        <Checkbox label="美白">美白</Checkbox>
+                        <Checkbox label="补水">补水</Checkbox>
+                    </CheckboxGroup>
+                </FormItem>
+                <FormItem label="审核结果" v-if="false">
+                    <RadioGroup v-model="formValidate.auditStatus">
+                        <Radio label="0">待审核</Radio>
+                        <Radio label="1">通过</Radio>
+                        <Radio label="2">不通过</Radio>
+                    </RadioGroup>
+                </FormItem>
+                <FormItem label="服务详情" prop="serverIntroduce">
+                    <editor id="editor_id" height="700px" width="100%;" :content="formValidate.serverIntroduce"
+                        :uploadJson="path"
+                        :loadStyleMode="false"
+                        @on-content-change="onContentChange"
+                        v-model="formValidate.serverIntroduce"
+                    ></editor>
+                </FormItem>
+            </div>
 
-
-            <FormItem label="正式员工服务提成" prop="formalWorker" v-if="false">
-                <Input v-model="formValidate.formalWorker" placeholder="请填写正式员工服务提成"></Input>
-            </FormItem>
-            <FormItem label="兼职员工服务提成" prop="ParTtimeWorker" v-if="false">
-                <Input v-model="formValidate.ParTtimeWorker" placeholder="请填写兼职员工服务提成"></Input>
-            </FormItem>
-
-            <FormItem label="平台佣金类型" prop="commissionType" v-if="false">
-                <RadioGroup v-model="formValidate.commissionType">
-                    <Radio label="1">类目佣金</Radio>
-                    <Radio label="2">自定义佣金</Radio>
-                </RadioGroup>
-            </FormItem>
-            <FormItem label="佣金价格" prop="commission" number='true' v-if="false">
-                <Input v-model="formValidate.commission" placeholder="请填写佣金价格，单位元"></Input>
-            </FormItem>
-            <FormItem label="轮播图">
-                <MyUpload :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
-            </FormItem>
-            <FormItem label="图片地址" prop="img" style="position:absolute; left:-9999px;">
-                <Input v-model="formValidate.img" placeholder=""></Input>
-            </FormItem>
-            <FormItem label="注意事项" prop="serverAttention">
-                <Input v-model="formValidate.serverAttention" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请填写注意事项"></Input>
-            </FormItem>
-            <FormItem label="服务总时长" prop="serverNeedTime">
-                <Input v-model="formValidate.serverNeedTime" placeholder="请填写服务总时长"></Input>
-            </FormItem>
-            <FormItem label="功效" prop="serverEffect">
-                <CheckboxGroup v-model="formValidate.serverEffect">
-                    <Checkbox label="美白">美白</Checkbox>
-                    <Checkbox label="补水">补水</Checkbox>
-                </CheckboxGroup>
-            </FormItem>
-            <FormItem label="审核" v-if="false">
-                <RadioGroup v-model="formValidate.auditStatus">
-                    <Radio label="0">待审核</Radio>
-                    <Radio label="1">已审核</Radio>
-                    <Radio label="2">不通过</Radio>
-                </RadioGroup>
-            </FormItem>
-            
-            <FormItem label="服务详情" prop="serverIntroduce">
-                <editor id="editor_id" height="700px" width="100%;" :content="formValidate.serverIntroduce"
-                    :uploadJson="path"
-                    :loadStyleMode="false"
-                    @on-content-change="onContentChange"
-                    v-model="formValidate.serverIntroduce"
-                ></editor>
-            </FormItem>
             <FormItem>
                 <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
-                <Button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">重置</Button>
+                <Button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px" v-if="false">重置</Button>
                 <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
             </FormItem>
-            
         </Form>
     </div>
 </template>
 <script>
     import MyUpload from '../../common/upload.vue'
     import storeTable from './storeTable.vue'
-    import storeList from './storeList.vue'
     import homeTable from './homeTable.vue'
-    import homeList from './homeList.vue'
     import recruitTable from './recruitTable.vue'
+
+
+    import storeList from './storeList.vue'
+    import homeList from './homeList.vue'
     import recruitList from './recruitList.vue'
+
+
+    
     export default {
         data () {
             return {
@@ -201,14 +183,10 @@
                     serverEffect: [],//功效
                     formalWorker: "",//正式员工提成
                     ParTtimeWorker: "",//兼职员工服务提成
-                    auditStatus: 0, // 审核状态，0待审核，1通过，2不通过
-                    storeName: '',// 店铺名称
-                    storeId: '',// 店铺ID
+                    auditStatus:"",//审核结果
                     serverEffect1: [], // 服务方式
                     isSupportHome:0, // 是否支持上门 1支持 0不支持
                     isSupportStore:0, // 是否支持到店 1支持 0不支持
-                    parttimeBeauticianCommission: '', // 兼职美容师佣金
-                    formalBeauticianCommission: '', // 正式美容师佣金
                 },
                 ruleValidate: {
                     teacherName: [
@@ -233,16 +211,18 @@
                 uploadConfig: {
                     num:5
                 },
-                uploadList:[],//图片列表
+                uploadList:[],//图片列表 用来保存图片上传之后的数据
                 // path:"http://172.16.20.151:8009/system/api/file/uploadForKindeditor"
                 path:this.common.path2+"system/api/file/uploadForKindeditor",
+                testCode: false,
                 serviceList:[],// 产品分类
                 brandList:[],// 品牌分类
-                storeId: '',//店铺id
+                spinShow: false,// 加载开关
+                storeId:'',//店铺id
                 loginName:'', // 管理员身份
                 tableCtrl:false,
-                isShowBox: false,
-                isAdmin: true,
+                isShowBox: true,
+                mainStoreName: '',
             }
         },
         props: ["sendChild"],
@@ -252,63 +232,25 @@
                 let vm = this;
                 this.$refs[name].validate((valid) => {
                     if (valid) {
-                        //添加品牌服务
+                        let url = vm.common.path2 + "product/store/onSale"
+                        //添加品牌服务 
                         let ajaxData = {};
-                        /* 商品 */
-                        ajaxData.product = {
-                            serverName: vm.formValidate.serverName, // 商品名称
-                            originalPrice: +vm.formValidate.originalPrice*100, // 原价
-                            salePrice: +vm.formValidate.salePrice*100, // 销售价
-                            saleVolume: vm.formValidate.saleVolume, // 销量
-                            homeFee: !!vm.formValidate.homeFee?+vm.formValidate.homeFee*100:'', // 上门费
-                            formalBeauticianCommission: !!vm.formValidate.formalBeauticianCommission?+vm.formValidate.formalBeauticianCommission*100:'', // 正式美容师佣金
-                            parttimeBeauticianCommission: !!vm.formValidate.parttimeBeauticianCommission?+vm.formValidate.parttimeBeauticianCommission*100:'', // 兼职美容师佣金
-                            coverImg: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
-                            serverAttention: vm.formValidate.serverAttention, // 注意事项
-                            serverNeedTime: vm.formValidate.serverNeedTime, // 服务总时长
-                            serverEffect: JSON.stringify(vm.formValidate.serverEffect), // 功效
-                            serverIntroduce: vm.formValidate.serverIntroduce, // 商品介绍
-                            isBrand: false,
-                            auditStatus: vm.formValidate.auditStatus, // 审核状态，0待审核，1通过，2不通过
-                            // brandId: vm.formValidate.brandId, // 服务所属品牌
-                            storeId:vm.storeId,//店铺id
-                            isPlatform: false,
-                        }
-                        /* 是否支持到店 isSupportStore */
-                        ajaxData.product.isSupportStore = 0;
-                        vm.formValidate.serverEffect1.forEach(function(item,index){
-                            if(item == 'store'){
-                                ajaxData.product.isSupportStore = 1;
-                            }
-                        })
-                        /* 是否支持上门 isSupportHome */
-                        ajaxData.product.isSupportHome = 0;
-                        vm.formValidate.serverEffect1.forEach(function(item,index){
-                            if(item == 'home'){
-                                ajaxData.product.isSupportHome = 1;
-                            }
-                        })
-                        console.log('~~~~~~~~~~~~~~~~~~~~~~~')
-                        console.log(ajaxData.isSupportHome)
-                        console.log(ajaxData.isSupportStore)
-                        /* 商品分类 */
-                        ajaxData.productCategoryRef = {
-                            categoryId:vm.formValidate.type, // 商品分类id
-                        }
-                        /* 商品轮播图 */
-                        let arrs = [];
-                        if(vm.uploadList.length > 0){
-                            vm.uploadList.forEach(function(item,index){
-                                arrs.push(item.url);
-                            })
-                        }
-                        ajaxData.productImg = {
-                            type:1, // 图片类型，1轮播图
-                            url: !!!arrs?"":arrs.join() // 存储图片地址
-                        }
-                        /* 店铺 */
-                        ajaxData.productStoreRef = {
-                            storeId:vm.storeId // 店铺id
+                        /* 店铺名称 */
+                        ajaxData.storeName = vm.mainStoreName;
+                        /* 上门费 */ 
+                        ajaxData.homeFee = !!vm.formValidate.homeFee?+vm.formValidate.homeFee*100:"";
+                        /* 商品id */
+                        ajaxData.productId = vm.sendChild.itemId;
+                        /* 店铺id */
+                        ajaxData.storeId = vm.storeId;
+                        /* 商品-美容师-关联集合（上门） homeProductBeauticianRefList */
+                        ajaxData.homeProductBeauticianRefList = [];
+                        var homeList = vm.$store.getters.tohomeList;
+                        for(var j = 0;j<homeList.length;j++){
+                            var obj = {};
+                            obj.beauticianId = homeList[j];
+                            obj.serverType = 1;
+                            ajaxData.homeProductBeauticianRefList.push(obj);
                         }
                         /*  商品-美容师-关联集合（到店） storeProductBeauticianRefList*/
                         ajaxData.storeProductBeauticianRefList = [];
@@ -319,15 +261,6 @@
                             obj.serverType = 0;
                             ajaxData.storeProductBeauticianRefList.push(obj);
                         }
-                        /* 商品-美容师-关联集合（上门） homeProductBeauticianRefList */
-                        ajaxData.homeProductBeauticianRefList = [];
-                        var homeList = vm.$store.getters.tohomeList;
-                        for(var j = 0;j<homeList.length;j++){
-                            var obj = {};
-                            obj.beauticianId = homeList[j];
-                            obj.serverType = 1;
-                            ajaxData.homeProductBeauticianRefList.push(obj);
-                        }
                         /* 商品-美容师-关联集合（招募） recruitProductBeauticianRefList */
                         ajaxData.recruitProductBeauticianRefList = [];
                         var recruitList = vm.$store.getters.recruitList;
@@ -336,20 +269,13 @@
                             obj.beauticianId = recruitList[b];
                             ajaxData.recruitProductBeauticianRefList.push(obj);
                         }
-                        console.log(vm.$store.getters);
-                        // console.log(ajaxData);
-                        // return false;
-                        let url = vm.common.path2+"product/add/self";
+                        /* ajax提交 */
                         vm.$http.post(
                             url,
-                            JSON.stringify(ajaxData),
-                            {
-                                headers:{
-                                    'Content-type':'application/json;charset=UTF-8'
-                                }
-                            }
+                            ajaxData,
                         ).then(function(res){
                             let oData = res.data
+                            console.log(oData);
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
                         }).catch(function(err){
@@ -385,12 +311,13 @@
             fnGetProductCategory () {
                 let vm = this;
                 let url = vm.common.path2 + "productCategory/front/findByPage?pageSize=1000";
-                let ajaxData = {
-                    categoryParentId:0,
-                }
                 vm.$http.post(
                     url,
-                    ajaxData,
+                    {
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                    }
                 ).then(function(res){
                     let oData = res.data.data.list;
                     vm.serviceList = oData;
@@ -403,7 +330,6 @@
                 let vm = this;
                 let _url = "http://120.79.42.13:8080/";
                 let url = _url + "storeChainBrand/front/findByPage?pageSize=1000";
-                // let url = vm.common.path22 + "storeChainBrand/front/findByPage?pageSize=1000";
                 vm.$http.post(
                     url,
                     {
@@ -412,14 +338,124 @@
                         }
                     }
                 ).then(function(res){
-                    console.log(res);
                     let oData = res.data.data.list;
                     vm.brandList = oData
                 }).catch(function(err){
                     console.log(err);
                 })
             },
-             /* 分页回掉函数 */
+            // 获取产品信息
+            fnQueryById () {
+                let vm = this;
+                let id = vm.sendChild.itemId;
+                let url = vm.common.path2 + "product/detail/"+id;
+                vm.spinShow = true;
+                vm.$http.get(
+                    url
+                ).then(function(res){
+                    let oData = res.data.data;
+                    vm.fnInitQuery(oData);
+                    vm.spinShow = false;
+                }).catch(function(err){
+                    vm.spinShow = false;
+                })
+            },
+            // 产品的信息遍历出来
+            fnInitQuery (data) {
+                let vm = this;
+                console.log('此时得list：'+ vm.$store.getters.storeList);
+                // 商品关联
+                // vm.$store.commit('STORE_LIST',[1]);
+                vm.$store.commit('TOHOME_LIST',[2,3]);
+                // vm.$store.commit('RECRUIT_LIST',[4,5,6]);
+
+                // 到店服务员工 storeProductBeauticianRefList
+                let storeList = data.storeProductBeauticianRefList;
+                let storeArrs = [];
+                storeList.forEach(function(item,index){
+                    storeArrs.push(+item.beauticianId);
+                });
+                vm.$store.commit('STORE_LIST',storeArrs);
+                // 上门服务员工 homeProductBeauticianRefList
+                let homeList = data.homeProductBeauticianRefList;
+                let homeArrs = [];
+                homeList.forEach(function(item,index){
+                    homeArrs.push(+item.beauticianId);
+                });
+                vm.$store.commit('TOHOME_LIST',homeArrs);
+
+                // 招募员工 recruitProductBeauticianRefList
+
+                let recruitList = data.recruitProductBeauticianRefList;
+                let recruitArrs = [];
+                recruitList.forEach(function(item,index){
+                    recruitArrs.push(+item.beauticianId);
+                });
+                vm.$store.commit('RECRUIT_LIST',recruitArrs);
+
+
+
+                // 是否支持上门
+                if(data.product.isSupportHome == 1){
+                    vm.formValidate.serverEffect1.push('home');
+                }
+                // 是否支持到店
+                if(data.product.isSupportStore == 1){
+                    vm.formValidate.serverEffect1.push('store');
+                }
+
+                vm.formValidate.type = !!!data.productCategoryRef?"":data.productCategoryRef.categoryId;// 服务分类
+                // vm.formValidate.brandId = data.product.brandId; // 服务所属品牌
+                vm.formValidate.serverName = data.product.serverName; // 服务名称
+                vm.formValidate.originalPrice = +data.product.originalPrice/100; // 市场价
+                vm.formValidate.salePrice = +data.product.salePrice/100; // 服务销售价
+
+
+
+                
+                vm.formValidate.homeFee = !!data.product.homeFee?+data.product.homeFee/100:'';// 上门费
+                vm.formValidate.coverImg = data.product.coverImg;//封面图
+                vm.formValidate.serverAttention = data.product.serverAttention; // 注意事项
+                vm.formValidate.serverNeedTime = data.product.serverNeedTime; // 服务总时长
+                // serverEffect: JSON.stringify(vm.formValidate.serverEffect), // 功效
+                if(vm.loginName == 'admin'&&!!data.product.storeId){
+                    vm.formValidate.storeName = data.product.storeId
+                }
+                vm.storeId = data.product.storeId; // 店铺id
+                vm.$store.commit('STORE_ID',vm.storeId);
+                if(!!!data.product.serverEffect){
+                    vm.formValidate.serverEffect = [];
+                }else{
+                vm.formValidate.serverEffect = JSON.parse(data.product.serverEffect);
+                }
+                vm.formValidate.serverIntroduce = data.product.serverIntroduce // 服务详情
+
+                // 审核结果
+                vm.formValidate.auditStatus = data.product.auditStatus;
+                // 封面图以及轮播图的处理
+                vm.defaultList = [];
+                if(!!!data.product.coverImg){
+
+                }else{
+                    vm.formValidate.coverImg = data.product.coverImg;//封面图
+                    if(!!data.productImg&&!!data.productImg.url){
+                        let arrs = data.productImg.url.split(",");
+                        let obj = {};
+                        arrs.forEach(function(item,index){
+                            obj = {
+                                'url': item
+                            }
+                            vm.defaultList.push(obj);
+                        })
+                    }
+                }
+                vm.testCode = true;
+                vm.uploadList = vm.defaultList;
+
+                
+
+                
+            },
             changePage (page) {
                 console.log(page)
                 let vm = this;
@@ -449,14 +485,11 @@
                 this.storeId = currentRow.id;
                 this.tableCtrl = false;
 
-
-
                 this.$store.commit('STORE_ID',this.storeId);
                 this.$store.commit('STORE_LIST',[]);
                 this.$store.commit('TOHOME_LIST',[]);
                 this.$store.commit('RECRUIT_LIST',[]);
                 this.isShowBox = true;
-
             },
             /* 数据获取 */
             getData () {
@@ -494,19 +527,18 @@
             },
         },
         mounted: function(){
-            let user = JSON.parse(window.localStorage.getItem("userInfo"));
+            let user = JSON.parse(window.localStorage.getItem("userInfo")); 
             let store = JSON.parse(window.localStorage.getItem("userInfo")).store;
+
             let vm = this;
-            this.getData()
+            vm.mainStoreName = store.storeName;
             vm.loginName = user.user.loginName;
-            if(store!=null){
-                vm.storeId = store.id;
-                vm.isAdmin = false;
-                vm.isShowBox = true;
-                vm.$store.commit('STORE_ID',vm.storeId);
-            }
+            this.getData()
+            this.serviceList = this.sendChild.serviceList;
+            // this.brandList = this.sendChild.brandList;
             this.fnGetProductCategory();
             // this.fnGetStoreChainBrand();
+            this.fnQueryById();
         },
         components:{
             MyUpload,
@@ -519,21 +551,6 @@
         }
     }
 </script>
-<style lang="scss" scoped>
-.tableBox{
-    width:380px;
-    position: absolute;
-    top:-185px;
-    left: 0;
-    z-index: 2;
-    border-radius: 5px;
-    .pageBox{
-        background: #fff;
-        border:1px solid #e9eaec;
-        border-top:none;
-        border-radius:0 0 5px 5px;
-    }
-}
+<style scoped>
 </style>
-
 

@@ -30,6 +30,8 @@
         <AddPage v-if="pageType == 'add'" :sendChild="sendChild"  class="testWrap" v-on:returnList="changePageType"/>
         <!-- 编辑容器 -->
         <EditPage v-if="pageType == 'edit'" :sendChild="sendChild" class="testWrap" v-on:returnList="changePageType"/>
+        <!-- 上架容器 -->
+        <OnSalePage v-if="pageType == 'onSale'" :sendChild="sendChild" class="testWrap" v-on:returnList="changePageType"/>
         <!-- 详情容器 -->
         <div v-if="pageType == 'info'" class="testWrap">详情</div>
         <!-- 列表容器 -->
@@ -98,6 +100,7 @@
 <script>
     import AddPage from './add.vue'
     import EditPage from './edit.vue'
+    import OnSalePage from './onSale.vue'
     export default {
         data () {
             return {
@@ -215,14 +218,16 @@
                         {
                             title: '操作',
                             key: 'action',
-                            width: 220,
-                            // align: 'center',
-                            // fixed: 'right',
+                            width: 270,
                             render: (h, params) => {
                                 const row = params.row;
                                 const color = row.saleStatus === 0 ? 'success' : 'warning';
-                                const text = row.saleStatus === 0 ? '上架' : '下架';
+                                const text = row.saleStatus === 0 ? '管理员上架' : '管理员下架';
+                                const text1 = row.saleStatus  === 0 ? '店长上架': '店长下架';
                                 let arrs = [];
+
+
+                                /* 管理员上下架 */
                                 let obj2 = h('Button', {
                                     props: {
                                         type: color,
@@ -233,7 +238,6 @@
                                     },
                                     on: {
                                         click: () => {
-                                            // this.fnDeleteItem(params.row.id);
                                             let row = params.row;
                                             this.modal.id = row.id;
                                             this.modal.type = row.saleStatus;
@@ -243,8 +247,39 @@
                                     }
                                 }, text)
                                 if(!!this.operators.updown){
-                                    arrs.push(obj2);
+                                    if(!!!this.storeId){
+                                        arrs.push(obj2);
+                                    }
                                 }
+                                /* 门店上下架 */
+                                let obj5 = h('Button', {
+                                    props: {
+                                        type: color,
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            let row = params.row;
+                                            this.fnOffShelves(row.id,row.storeId);
+                                            if(row.saleStatus  == 0){
+                                                // 商品上架
+                                                this.sendChild.itemId = row.id;
+                                                this.changePageType('onSale');
+                                            }else if(row.saleStatus  == 1){
+                                                // 商品下架
+                                                this.fnOffShelves(row.id,row.storeId);
+                                            }
+                                        }
+                                    }
+                                }, text1)
+                                if(!!this.storeId){
+                                    arrs.push(obj5);
+                                }
+
+
                                 let obj3 = h('Button', {
                                     props: {
                                         type: 'primary',
@@ -265,7 +300,9 @@
                                     }
                                 }, '审核')
                                 if(!!this.operators.examine){
-                                    arrs.push(obj3);
+                                    if(row.auditStatus == 0){
+                                        arrs.push(obj3);
+                                    }   
                                 }
                                 let obj1 = h('Button', {
                                     props: {
@@ -318,6 +355,7 @@
                     brandList:"", // 服务分类
                     itemId: "", // 编辑选项的id
                     isBrand: true,// 服务分类
+                    brandId: '',// 品牌id
                 },
                 // 店铺ID
                 storeId:"",
@@ -355,7 +393,7 @@
                 vm.table.tableColumns = vm.table.sellerColumns;
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path2+"product/findByPageForBrand?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"product/findByPageForStore?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
@@ -363,6 +401,9 @@
                 }
                 if(!!vm.brandId){
                     ajaxData.brandId = vm.brandId;
+                }
+                if(!!vm.storeId){
+                    ajaxData.storeId = vm.storeId;
                 }
                 /* 需要传storeId 就放开 */
                 /* if(!!!vm.isShow){
@@ -450,7 +491,7 @@
                     this.table.pageSize = this.table.size;
                     this.getData();
                 }
-                if(type == "add"){
+                if(type == "add" || type == "onSale"){
                     this.$store.commit('CITY_LIST',[]);
                     this.$store.commit('STORE_LIST',[]);
                     this.$store.commit('TOHOME_LIST',[]);
@@ -478,8 +519,9 @@
                 let type = vm.modal.type;
                 (function(){
                     let saleStatus = type == 0?1:0;
-                    let url = vm.common.path2 + "product/modify/saleStatus/brand/"+id+"/"+saleStatus;
-                    vm.$http.put(
+                    // let url = vm.common.path2 + "product/modify/saleStatus/brand/"+id+"/"+saleStatus;
+                    let url = type == 0?vm.common.path2 + "product/onSale/"+id:vm.common.path2 + "product/offShelves/"+id
+                    vm.$http.get(
                         url,
                     ).then(function(res){
                         vm.getData();
@@ -561,6 +603,26 @@
                 }
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
+            /* 店长下架 */
+            //product/store/offShelves
+            fnOffShelves (productId,storeId) {
+                let vm = this;
+                // let storeId1 = !!vm.storeId?vm.storeId:storeId;
+                let url = vm.common.path2 + "product/store/offShelves";
+                let ajaxData = {
+                    'productId':productId,
+                    'storeId':storeId
+                }
+                vm.$http.post(
+                    url,
+                    ajaxData
+                ).then((res)=>{
+                    vm.modal.loading = true;
+                    vm.getData();
+                }).catch((err)=>{
+                    vm.getData();
+                })
+            },
 
 
             /*===================== 菜单权限配置 start ====================*/
@@ -623,9 +685,10 @@
             let store = JSON.parse(window.localStorage.getItem("userInfo")).store;
             // let storeId = null;
             if(store!=null){
-                vm.storeId = store.storeId;
+                vm.storeId = store.id;
                 vm.brandId = store.brandId;
-                vm.isShow = false; // 隐藏
+                vm.sendChild.brandId = vm.brandId;
+                vm.isShow = false;
             }else{
                 vm.isShow = true;
             }
@@ -640,7 +703,8 @@
         },
         components:{
             AddPage,
-            EditPage
+            EditPage,
+            OnSalePage
         }
     }
 </script>
