@@ -41,15 +41,15 @@
             handleSubmit (name) {
                 this.$refs[name].validate((valid) => {
                     if (valid) {
-                        let url = common.path2+'memberCardTemplate/insertByBatch';
+                        let url = common.path2+'memberCardTemplate/edit';
                         console.log(url)
                         let ajaxData = {
-                            id:this.parent.parentId,
+                            parentGroupId:this.parent.parentId,
                             parentGroupCount:this.imgList.length,
                             bgImgList:this.imgList
                         }
                         console.log(JSON.stringify(ajaxData))
-                        this.$http.post(
+                        this.$http.put(
                             url,
                             JSON.stringify(ajaxData),
                             {

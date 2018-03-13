@@ -208,7 +208,7 @@
                             storeName:vm.formValidate.storeName //店铺名称
                         }
                         console.log(JSON.stringify(ajaxData))
-                        let url = vm.common.path2+"storeBeautician/insert";
+                        let url = vm.common.path2+"storeBeautician/add";
                         vm.$http.post(
                             url,
                             JSON.stringify(ajaxData),

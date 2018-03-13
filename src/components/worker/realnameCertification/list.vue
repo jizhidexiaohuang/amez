@@ -7,8 +7,8 @@
                     <Button v-if="false" style="float:left;margin-right:5px;" @click.native="changePageType('add')" type="success" icon="android-add">新增员工</Button>
                     <FormItem style="margin-bottom:10px;margin-left:10px;">
                         认证状态
-                        <Select v-model="cd.auditStatus" style="width:100px">
-                            <Option v-for="item in auditStatusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        <Select v-model="cd.thirdAuthStatus" style="width:100px">
+                            <Option v-for="item in thirdAuthStatusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                         </Select>
                     </FormItem>
                     <FormItem v-if="false" style="margin-bottom:10px;">
@@ -26,7 +26,7 @@
                     <FormItem style="margin-bottom:10px;">
                         <Input v-model="cd.inputVal">
                         <Select v-model="cd.selectType" slot="prepend" style="width: 100px">
-                            <Option value="beauticianName">员工姓名</Option>
+                            <Option value="realName">员工姓名</Option>
                             <Option value="phone">注册手机</Option>
                         </Select>
                         </Input>
@@ -63,7 +63,7 @@
             return {
                 examineId:'', //审核的id
                 infoId:'', //查看的id
-                auditStatusList:[
+                thirdAuthStatusList:[
                     {
                         value:'',
                         label:'全部'
@@ -106,11 +106,11 @@
                     },
                 ],
                 cd: {
-                    auditStatus:'', //审核状态
+                    thirdAuthStatus:'', //审核状态
                     beauticianType:'', //员工类型
                     beauticianStatus:'', //员工状态
                     inputVal: '', //选择的值
-                    selectType:'beauticianName',//input类型
+                    selectType:'realName',//input类型
                 },
                 formValidate: {
                     roleName: '',//角色名称
@@ -138,32 +138,40 @@
                         {
                             title: '员工信息',
                             width:140,
-                            key: 'beauticianName',
+                            key: 'realName',
                             render:(h,params)=>{
-                                return h('div',[
-                                    h('img',{
-                                        attrs:{src:params.row.headImgUrl},
-                                        style:{
-                                            width:'32px',
-                                            height:'32px',
-                                            borderRadius:'50%',
-                                            marginRight:'8px',
-                                            marginTop:'5px',
-                                            marginBottom:'5px',
-                                            verticalAlign:'middle'
-                                        }
-                                    }),
-                                    h('span',params.row.beauticianName)
-                                ])
+                                if(params.row.phone&&params.row.phone.length==11){
+                                    return h('div',[
+                                        h('div',params.row.realName),
+                                        h('div',params.row.phone.substring(0,3)+'****'+params.row.phone.substring(7,11))
+                                    ])
+                                }else{
+                                    return h('div',[
+                                        h('div',params.row.realName),
+                                        h('div',params.row.phone)
+                                    ])
+                                }
                             }
                         },
                         {
                             title: '真实姓名',
-                            key: 'phone',
+                            key: 'realName',
                         },
                         {
                             title: '身份证号',
-                            key: 'phone',
+                            key: 'idCard',
+                            render:(h,params)=>{
+                                if(params.row.idCard){
+                                    let leng = params.row.idCard.length;
+                                    return h('div',[
+                                        h('div',params.row.idCard.substring(0,6)+'*********'+params.row.idCard.substring(leng-4,leng-1))
+                                    ])
+                                }else{
+                                    return h('div',[
+                                        h('div',params.row.idCard)
+                                    ])
+                                }
+                            }
                         },
                         {
                             title: '所属店铺',
@@ -171,25 +179,25 @@
                         },
                         {
                             title: '认证时间',
-                            key: 'createTime',
+                            key: 'auditTime',
                             render: (h,params) => {
                                 const row = params.row;
-                                const time = this.common.formatDate(row.createTime);
+                                const time = this.common.formatDate(row.auditTime);
                                 return time
                             }
                         },
                         {   
                             title: '认证状态',
-                            key: 'auditStatus',
+                            key: 'thirdAuthStatus',
                             width:120,
                             render: (h,params) => {
-                                const auditStatus = params.row.auditStatus;
+                                const thirdAuthStatus = params.row.thirdAuthStatus;
                                 let color = '';
                                 let text = '';
-                                switch (auditStatus){
-                                    case 0:color = 'yellow';text = '待审核';break;
-                                    case 1:color = 'green';text = '审核通过';break;
-                                    case 2:color = 'red';text = '不通过';break;
+                                switch (thirdAuthStatus){
+                                    case 0:color = 'yellow';text = '未认证';break;
+                                    case 1:color = 'green';text = '认证成功';break;
+                                    case 2:color = 'red';text = '认证失败';break;
                                 }
                                 return h('Tag', {
                                     props: {
@@ -223,10 +231,10 @@
                 let vm = this;
                 vm.table.size = 10;//页数
                 vm.table.pageNun = 1;//索引
-                vm.cd.auditStatus = "";// 审核状态
+                vm.cd.thirdAuthStatus = "";// 审核状态
                 vm.cd.beauticianType = "";// 员工类型
                 vm.cd.beauticianStatus = "";// 员工状态
-                vm.cd.selectType = "beauticianName";// 输入框类型
+                vm.cd.selectType = "realName";// 输入框类型
                 vm.cd.inputVal = "";// 输入框的值
             },
             /* 数据获取 */
@@ -237,18 +245,12 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path2+"storeBeautician/front/findByPage?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"memberRealNameAuth/bg/findByPageForBg?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                    
                 }
-                if(vm.cd.auditStatus){
-                    ajaxData.auditStatus = vm.cd.auditStatus
-                }
-                if(vm.cd.beauticianType){
-                    ajaxData.beauticianType = vm.cd.beauticianType
-                }
-                if(vm.cd.beauticianStatus){
-                    ajaxData.beauticianStatus = vm.cd.beauticianStatus
+                if(vm.cd.thirdAuthStatus){
+                    ajaxData.thirdAuthStatus = vm.cd.thirdAuthStatus
                 }
                 if(!!vm.cd.inputVal){
                     ajaxData[vm.cd.selectType] = vm.cd.inputVal;

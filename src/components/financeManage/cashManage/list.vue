@@ -6,7 +6,7 @@
         <div v-if="pageType == 'list'" class="testWrap">
             <div class="boxStyle">
             <Form :model="cd" inline>
-                <Button style="float:left;margin-right:10px;" type="success">批量打款</Button>
+                <Button style="float:left;margin-right:10px;" type="success" @click="makeMoney()">批量打款</Button>
                 <Button style="float:left;margin-right:10px;" @click="exportData" type="success">导出Excel</Button>
                 <FormItem style="margin-bottom:10px;">
                     打款状态
@@ -25,8 +25,8 @@
                 <FormItem style="margin-bottom:10px;">
                     <Input v-model="cd.inputVal">
                     <Select v-model="cd.selectType" slot="prepend" style="width: 100px">
-                        <Option value="personName">提现人名字</Option>
-                        <Option value="phone">手机号码</Option>
+                        <Option value="beauticianId">提现人名字</Option>
+                        <Option value="beauticianPhone">手机号码</Option>
                     </Select>
                     </Input>
                 </FormItem>
@@ -73,6 +73,7 @@
         data () {
             return {
                 infoId:'',//服务订单id
+                ids:'',
                 playMoneyStatusList:[
                     {
                         value:'',
@@ -81,7 +82,7 @@
                         value:'1',
                         label:'已打款'
                     },{
-                        value:'2',
+                        value:'0',
                         label:'未打款'
                     }
                 ],  //打款状态
@@ -89,7 +90,7 @@
                     WithdrawalsTime:[],//提现申请时间
                     payMoneyTime:[],//打款时间
                     inputVal:'',
-                    selectType:'personName',
+                    selectType:'beauticianId',
                     playMoneyStatus:'',//支付类型
                 },
                 activatedType: false,//主要解决mounted和activated重复调用
@@ -112,44 +113,58 @@
                     },
                     {
                         title: '提现人',
-                        key: 'memberRealName',
+                        key: 'beauticianPhone',
+                        width:120,
                         render:(h,params)=>{
                             return h('div',[
-                                h('div',params.row.memberRealName),
-                                h('div',params.row.memberPhone),
+                                h('div',params.row.beauticianName),
+                                h('div',params.row.beauticianPhone),
                             ])
                         }
                     },
                     {
                         title: '所属门店',
-                        key: 'belongStoreName',
+                        key: 'storeName',
+                        width:120
                     },
                     {
                         title: '提现金额',
                         key: 'withdrawAmount',
+                        width:90
                     },
                     {
                         title: '手续费',
-                        key: 'taxRate',
+                        key: 'taxation',
+                        width:80
                     },
                     {
                         title: '打款金额',
                         key: 'actualAmount',
+                        width:90
                     },
                     {
                         title: '开户名',
-                        key: 'memberRealName',
+                        key: 'beauticianName',
+                        width:80
                     },
                     {
                         title: '提现账户',
-                        key: 'bankCardNo',
+                        key: 'bankBranch',
+                        width:160,
+                        render:(h,params)=>{
+                            return h('div',[
+                                h('div',params.row.bankBranch),
+                                h('div',params.row.bankCardNo),
+                            ])
+                        }
                     },
                     {
                         title: '打款状态',
                         key: 'playAmountStatus',
+                        width:100,
                         render:(h,params)=>{
                             let str = ''
-                            if(params.row.playAmountStatus){
+                            if(params.row.playAmountStatus=='1'){
                                 str = '已打款'
                             }else{
                                 str = '未打款'
@@ -160,9 +175,14 @@
                     {
                         title: '打款时间',
                         key: 'playAmountTime',
-                        width:150,
+                        width:120,
+                        align: 'center',
                         render:(h,params)=>{
-                            return h('div',params.row.playAmountTime?common.formatDate(params.row.playAmountTime):'')
+                            if(params.row.playAmountStatus=='1'){
+                                return h('div',params.row.playAmountTime?common.formatDate(params.row.playAmountTime):'')
+                            }else{
+                                return h('div','-')
+                            }
                         }
                     },
                     {
@@ -171,38 +191,21 @@
                         width: 80,
                         align: 'center',
                         render:(h,params)=>{
-                            if(params.row.playAmountStatus){
-                                return h('Button', {
-                                        props: {
-                                            type: 'info',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                this.infoId = params.row.id
-                                                this.changePageType('info');
-                                            }
+                            return h('Button', {
+                                    props: {
+                                        type: 'info',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.infoId = params.row.id
+                                            this.changePageType('info');
                                         }
-                                    }, '查看')
-                            }else{
-                                return h('Button', {
-                                        props: {
-                                            type: 'info',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                this.makeMoney(params.row.id);
-                                            }
-                                        }
-                                    }, '打款')
-                            }
+                                    }
+                                }, params.row.playAmountStatus?'查看':'打款')
                         }
                     }
                 ],
@@ -232,8 +235,14 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path2+"memberWithdraws/front/findByPage?pageNo="+start+'&pageSize='+size;
+                let url = common.path2+"beauticianTradeDetails/withdrawList?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {}
+                if(vm.cd.playMoneyStatus){
+                    ajaxData.playAmountStatus = vm.cd.playMoneyStatus;
+                }
+                if(vm.cd.inputVal){
+                    ajaxData.beauticianNameAndPhone = vm.cd.inputVal;
+                }
                 console.log(ajaxData)
                 vm.table.loading = true;
                 this.$http.post(
@@ -249,6 +258,7 @@
                     let oData = res.data
                     vm.table.recordsTotal = oData.data.total;
                     vm.table.tableData1 = oData.data.list;
+                    vm.selected(oData.data.list)
                     vm.table.loading = false;
                 }).catch(function(err){
                 })
@@ -263,7 +273,7 @@
                 vm.cd.orderStatus = '';//订单状态
                 vm.cd.transactionType = '';//订单来源
                 vm.cd.payType = '';//支付类型
-                vm.cd.selectType = 'storeName';// 状态
+                vm.cd.selectType = 'beauticianId';// 状态
                 vm.cd.inputVal = "";// 输入框的值
             },
             //导出Excel
@@ -317,6 +327,11 @@
             /* 全选时的回调函数 */
             fnSelectAll (selection) {
                 console.log(selection);
+                for(var i=0;i<selection.length;i++){
+                    this.ids += selection[i].id + ',';
+                }
+                this.ids = this.ids.substr(0,this.ids.length - 1)
+                console.log(this.ids)
             },
             fnBackformAdd (type) {
                 this.changePageType(type);
@@ -347,21 +362,23 @@
                 }
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
-            makeMoney(id){
+            makeMoney(){
                 let vm = this
-                this.$Modal.confirm({
-                    title:'确认打款',
-                    content:'确认给此会员打款？',
-                    onOk(){
-                        let url = common.path2+'...'+id;
-                        this.$http.put(url).then(res=>{
-                            if(res.code==200){
-                                this.$Message.success('打款成功！')
-                                vm.getData()
-                            }
-                        })
+                let url = common.path2+'beauticianTradeDetails/batchMoney/'+vm.ids;
+                this.$http.get(url).then(res=>{
+                    if(res.data.code==200){
+                        this.$Message.success('打款成功！')
+                        vm.getData()
                     }
-                });
+                })
+                  
+            },
+            selected(arr){
+                for(var i=0;i<arr.length;i++){
+                    if(arr[i].playAmountStatus=='1'){
+                        arr[i]._disabled = true
+                    }
+                }
             }
         },
         mounted: function(){

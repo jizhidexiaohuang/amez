@@ -4,24 +4,24 @@
         <h3 class="transactionTitle">数据概览</h3>
         <div class="transactionDetail">
             <Row>
-                <Col span="8">账单月份：{{financialTrade.payTime?common.formatDate(financialTrade.payTime):''}}</Col>
-                <Col span="8">店铺信息：{{financialTrade.orderNo}}</Col>
-                <Col span="8">联系方式：{{financialTrade.tradeNo}}</Col>
+                <Col span="8">账单月份：{{data.statisticsYearMonth}}</Col>
+                <Col span="8">店铺信息：{{storeMsg.storeName||''}}</Col>
+                <Col span="8">联系方式：{{storeMsg.storeTel||''}}</Col>
             </Row>
             <Row>
-                <Col span="8">打款状态：{{tradeType}}</Col>
-                <Col span="8">开户银行：{{financialTrade.storeName}}</Col>
-                <Col span="8">开户地区：{{financialTradeDetail.bossName}}</Col>
+                <Col span="8">打款状态：{{data.playStatus?'已打款':'未打款'}}</Col>
+                <Col span="8">开户银行：{{storeExtend.praBank}}</Col>
+                <Col span="8">开户地区：{{storeExtend.praArea}}</Col>
             </Row>
             <Row>
-                <Col span="8">支行名称：{{financialTradeDetail.bossPhone}}</Col>
-                <Col span="8">开户名：{{financialTradeDetail.beauticianName}}</Col>
-                <Col span="8">开户账号：{{financialTradeDetail.beauticianPhone}}</Col>
+                <Col span="8">支行名称：{{storeExtend.praBankBranch}}</Col>
+                <Col span="8">开户名：{{storeExtend.praAccountName}}</Col>
+                <Col span="8">开户账号：{{storeExtend.praBankCardNumber}}</Col>
             </Row>
             <Row>
                 <Col span="8">
-                    <Button type="error">确认打款</Button>
-                    <Button type="info">发送对账单</Button>
+                    <Button v-if="!data.playStatus" type="error" @click.native="payMoney()">确认打款</Button>
+                    <Button v-if="data.playStatus" type="info">已打款</Button>
                 </Col>
                 <Col span="8"></Col>
                 <Col span="8"></Col>
@@ -29,30 +29,30 @@
         </div>
         <div class="transactionDetail">
             <Row>
-                <Col span="8">月订单总量：{{financialTrade.payTime?common.formatDate(financialTrade.payTime):''}}</Col>
-                <Col span="8">本月销售总额：{{financialTrade.orderNo}}</Col>
-                <Col span="8">已服务订单：{{financialTrade.tradeNo}}</Col>
+                <Col span="8">月订单总量：{{data.monthlyOrderQuantity}}笔</Col>
+                <Col span="8">本月销售总额：{{data.totalSalesThisMonth/100}}元</Col>
+                <Col span="8">已服务订单：{{data.serviceOrder}}笔</Col>
             </Row>
             <Row>
-                <Col span="8">已服务订单金额：{{tradeType}}</Col>
-                <Col span="8">已完成订单：{{financialTrade.storeName}}</Col>
-                <Col span="8">已完成订单金额：{{financialTradeDetail.bossName}}</Col>
+                <Col span="8">已服务订单金额：{{data.serviceOrderAmount/100}}元</Col>
+                <Col span="8">已完成订单：{{data.orderCompleted}}笔</Col>
+                <Col span="8">已完成订单金额：{{data.orderCompletedAmount/100}}元</Col>
             </Row>
             <Row>
-                <Col span="8">退款订单：{{financialTradeDetail.bossPhone}}</Col>
-                <Col span="8">退款金额：{{financialTradeDetail.beauticianName}}</Col>
-                <Col span="8">会员卡售卡：{{financialTradeDetail.beauticianPhone}}</Col>
+                <Col span="8">退款订单：{{data.refundOrder}}笔</Col>
+                <Col span="8">退款金额：{{data.refundOrderAmount/100}}元</Col>
+                <Col span="8">会员卡售卡：{{data.cardNumber}}张</Col>
             </Row>
             <Row>
-                <Col span="8">会员卡售卡奖励：{{financialTradeDetail.buyersNickName}}</Col>
-                <Col span="8">月净收入：{{financialTradeDetail.buyersPhone}}</Col>
+                <Col span="8">会员卡售卡奖励：{{data.sellCardRewards/100}}元</Col>
+                <Col span="8">月净收入：{{data.onNetIncome/100}}元</Col>
             </Row>
         </div>
-        <Tabs type="card">
-            <TabPane label="月订单总量（1200）"><totalMonthlyOrders></totalMonthlyOrders></TabPane>
-            <TabPane label="已完成订单（1135）"><completedOrder></completedOrder></TabPane>
-            <TabPane label="退款订单（10）"><refundOrder></refundOrder></TabPane>
-            <TabPane label="会员卡售卡（10）"><membershipCard></membershipCard></TabPane>
+        <Tabs type="card" :animated="false">
+            <TabPane :label="'月订单总量（'+monthTotal+'）'"><totalMonthlyOrders v-if="totalMonthCtrl" :totalMonth="totalMonth" v-on:listenTotal="getMonthTotal"></totalMonthlyOrders></TabPane>
+            <TabPane :label="'已完成订单（'+completeTotal+'）'"><completedOrder v-if="totalMonthCtrl" :totalMonth="totalMonth" v-on:listenTotal="getCompleteTotal"></completedOrder></TabPane>
+            <TabPane :label="'退款订单（'+refundTotal+'）'"><refundOrder v-if="totalMonthCtrl" :totalMonth="totalMonth" v-on:listenTotal="getRefundTotal"></refundOrder></TabPane>
+            <TabPane :label="'会员卡售卡（'+cardTotal+'）'"><membershipCard v-if="totalMonthCtrl" :totalMonth="totalMonth" v-on:listenTotal="getCardTotal"></membershipCard></TabPane>
         </Tabs>
         <Button type="ghost" @click.native="returnHome('list')">返回</Button>
       </div>
@@ -68,10 +68,15 @@
         data () {
             return {
                 src:'../../../static/images/footer/1_1.png',
-                financialTrade:'',
-                financialTradeDetail:'',
-                detailInfo:'',
-                settlementInfo:''
+                data:'',
+                storeMsg:'',
+                storeExtend:'',
+                totalMonth:{},
+                totalMonthCtrl:false,
+                monthTotal:'',
+                completeTotal:'',
+                refundTotal:'',
+                cardTotal:'',
             }
         },
         computed:{
@@ -128,20 +133,71 @@
             //获取数据
             getData(id){
                 let vm = this
-                let url = common.path2+'financialTrade/findDetailById/'+id
+                let url = common.path2+'storeTradeStatistics/'+id
                 this.$http.get(url).then(res=>{
-                    console.log(res)
-                    vm.financialTrade = res.data.data.financialTrade
-                    vm.financialTradeDetail = res.data.data.financialTradeDetail
-                    vm.detailInfo = JSON.parse(res.data.data.financialTradeDetail.detailInfo)
-                    vm.settlementInfo = JSON.parse(res.data.data.financialTradeDetail.settlementInfo)
+                    console.log(res);
+                    vm.data = res.data.data;
                 })
-            }
+            },
+            //获取店铺的基本信息
+            getMsgByStoreId(id){
+                let vm = this
+                let url = common.path2+'store/detail/'+id
+                this.$http.get(url).then(res=>{
+                    console.log(res);
+                    vm.storeMsg = res.data.data.store;
+                    vm.storeExtend = res.data.data.storeExtend;
+                })
+            },
+            //打款
+            payMoney(){
+                let vm = this;
+                let url = common.path2+'storeTradeStatistics/update';
+                let ajaxData = {
+                    id:this.parentMsg.infoId,
+                    playStatus:1
+                }
+                this.$http.put(
+                    url,
+                    JSON.stringify(ajaxData),
+                    {
+                        headers: {
+                            'Content-type': 'application/json;charset=UTF-8'
+                        },
+                    }
+                    ).then(res=>{
+                        console.log(res)
+                        if(res.data.code==200){
+                            vm.$Message.success('打款成功！');
+                            vm.returnHome('list');
+                        }
+                })
+            },
+            getMonthTotal(val){
+                console.log(val)
+                this.monthTotal = val;
+            },
+            getCompleteTotal(val){
+                this.completeTotal = val;
+            },
+            getRefundTotal(val){
+                this.refundTotal = val;
+            },
+            getCardTotal(val){
+                this.cardTotal = val;
+            },
         },
-        Mounted:function(){
-            this.getData(this.infoId)
+        beforeMount:function(){
+            this.getData(this.parentMsg.infoId);
+            // this.getMsgByStoreId(this.parentMsg.storeId)
+            this.getMsgByStoreId(11)
         },
-        props:['infoId'],
+        mounted:function(){
+            this.totalMonth.storeId = this.parentMsg.storeId;
+            this.totalMonth.statisticsYearMonth = this.parentMsg.statisticsYearMonth;
+            this.totalMonthCtrl = true;
+        },
+        props:['parentMsg'],
         components:{
             totalMonthlyOrders,
             completedOrder,

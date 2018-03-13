@@ -3,46 +3,25 @@
         <Form  ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120">
             <h2>编辑会员卡</h2>
             <FormItem label="会员卡名称" prop="cardName">
-                <Col span="5">
+                <Col span="6">
                     <Input v-model="formValidate.cardName" placeholder="请输入会员卡名称"></Input>
                 </Col>
             </FormItem>
-            <FormItem label="发行方式" prop="issuingUnit">
+            <FormItem label="会员卡所属品牌" prop="brandId">
                 <Col span="6">
-                <Select v-model="formValidate.issuingUnit" label-in-value style="width:100px;">
+                <Select v-model="formValidate.issuingUnit" label-in-value style="width:100px;" v-if="false">
                     <Option value="0" disabled>平台</Option>
                     <Option value="1">品牌</Option>
                 </Select>
-                <Select v-model="formValidate.brandId" label-in-value @on-change="getBrandName" style="width:100px;">
+                <Select v-model="formValidate.brandId" label-in-value @on-change="getBrandName" style="width:200px;">
                     <Option :value="item.id" v-for='(item ,index) in brandList' :key="index">{{item.brandName}}</Option>
                 </Select>
                 </Col>
             </FormItem>
-            <FormItem label="会员卡折扣比率" prop="discount">
-                <Col span="5">
-                    <Input v-model="formValidate.discount" placeholder="请输入门店电话"></Input>              
-                </Col>
-                <Col span="5">（输入89，即表示下单可打89折）</Col>
-            </FormItem>
-            <FormItem label="会员卡面值" prop="cardValue">
-                <Col span="5">
-                    <Input v-model="formValidate.cardValue" placeholder="请输入会员卡面值"></Input>              
-                </Col>
-                <Col span="2">元</Col>
-            </FormItem>
-            <FormItem label="发行数量" prop="cardTotal">
-                <Col span="5">
+            <FormItem label="发行数量" prop="cardTotal" v-if="false">
+                <Col span="6">
                     <Input v-model="formValidate.cardTotal" placeholder="请输入发行数量"></Input>              
                 </Col>
-            </FormItem>
-            <FormItem label="上传卡面样式">
-                <MyUpload v-if="imgCtrl" :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
-            </FormItem>
-            <FormItem label="是否支持充值" prop="isRecharge">
-                <RadioGroup v-model="formValidate.isRecharge">
-                    <Radio label="0">是</Radio>
-                    <Radio label="1">否</Radio>
-                </RadioGroup>
             </FormItem>
             <FormItem label="使用范围">
                 <businessTable></businessTable>
@@ -51,6 +30,27 @@
             <FormItem label="服务项目">
                 <serviceTable></serviceTable>
                 <serviceList :discount="discount"></serviceList>
+            </FormItem>
+            <FormItem label="会员卡面值" prop="cardValue">
+                <Col span="6">
+                    <Input v-model="formValidate.cardValue" placeholder="请输入会员卡面值"></Input>              
+                </Col>
+                <Col span="2">元</Col>
+            </FormItem>
+            <FormItem label="会员卡折扣比率" prop="discount">
+                <Col span="6">
+                    <Input v-model="formValidate.discount" placeholder="请输入门店电话"></Input>              
+                </Col>
+                <Col span="5">（输入89，即表示下单可打89折）</Col>
+            </FormItem>
+            <FormItem label="选择卡面模版">
+                <MyUpload v-if="imgCtrl" :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
+            </FormItem>
+            <FormItem label="是否支持充值" prop="isRecharge">
+                <RadioGroup v-model="formValidate.isRecharge">
+                    <Radio label="0">是</Radio>
+                    <Radio label="1">否</Radio>
+                </RadioGroup>
             </FormItem>
             <FormItem label="有效期" prop="termOfValidity">
                 <RadioGroup v-model="formValidate.termOfValidity">
@@ -77,8 +77,8 @@
                 </div>
             </FormItem>
             <FormItem label="用卡说明" prop="cardExplain">
-                <Col span="5">
-                    <Input v-model="formValidate.cardExplain" type="textarea" :autosize="{minRows: 4,maxRows: 5}" placeholder="输入该卡的介绍，使用须知等"></Input>
+                <Col span="10">
+                    <Input v-model="formValidate.cardExplain" type="textarea" :autosize="{minRows: 6,maxRows: 12}" placeholder="输入该卡的介绍，使用须知等"></Input>
                 </Col>
             </FormItem>
             <FormItem>

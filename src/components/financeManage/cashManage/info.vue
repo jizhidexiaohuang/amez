@@ -9,18 +9,18 @@
                 <Col span="8"></Col>
             </Row>
             <Row>
-                <Col span="8">用户信息：{{data.memberRealName}}</Col>
-                <Col span="8">所属门店：{{data.memberPhone}}</Col>
+                <Col span="8">用户信息：{{data.beauticianId}} {{data.beauticianPhone}}</Col>
+                <Col span="8">所属门店：{{data.storeName}}</Col>
                 <Col span="8"></Col>
             </Row>
             <Row>
-                <Col span="8">开户人：{{data.memberRealName}}</Col>
+                <Col span="8">开户人：{{data.beauticianId}}</Col>
                 <Col span="8"></Col>
                 <Col span="8"></Col>
             </Row>
             <Row>
-                <Col span="8">开户银行：{{data.storeName}}</Col>
-                <Col span="8">开户支行：{{data.bossName}}</Col>
+                <Col span="8">开户银行：{{data.bankName}}</Col>
+                <Col span="8">开户支行：{{data.bankBranch}}</Col>
                 <Col span="8"></Col>
             </Row>
             <Row>
@@ -29,9 +29,9 @@
                 <Col span="8"></Col>
             </Row>
             <Row>
-                <Col span="8">提现金额：{{data.withdrawAmount}}</Col>
-                <Col span="8">手续费：{{data.withdrawAmount-data.actualAmount}}</Col>
-                <Col span="8">打款金额：{{data.actualAmount}}</Col>
+                <Col span="8">提现金额：{{data.withdrawAmount/100}}</Col>
+                <Col span="8">手续费：{{data.taxation/100}}</Col>
+                <Col span="8">打款金额：{{data.actualAmount/100}}</Col>
             </Row>
             <Row>
                 <Col span="8">打款状态：{{playAmountStatus}}</Col>
@@ -39,12 +39,12 @@
                 <Col span="8"></Col>
             </Row>
             <Row>
-                <Col span="20">打款时间：{{payMoneyStatus}}</Col>
+                <Col span="20">打款时间：{{payMoneyTime}}</Col>
                 <Col span="2"></Col>
                 <Col span="2"></Col>
             </Row>
         </div>
-        <Button type="primary" style="margin-right:20px;" @click="makeMoney(infoId)">确认打款</Button>
+        <Button v-if="!data.playAmountStatus" type="primary" style="margin-right:20px;" @click="makeMoney(infoId)">确认打款</Button>
         <Button type="ghost" @click.native="returnHome('list')">返回</Button>
       </div>
   </div>
@@ -62,23 +62,21 @@
             //交易类型
             playAmountStatus:function(){
                 let str = ''
-                if(this.data.playAmountStatus){
+                if(this.data.playAmountStatus=='1'){
                     str = '已打款'
-                }else if(this.data.playAmountStatus==1){
+                }else{
                     str = '未打款'
                 }
                 return str
             },
-            payMoneyStatus:function(){
-                let str = ''
-                if(this.data.playAmountTime){
-                    if(this.data.playAmountStatus){
-                        str = this.common.formatDate(this.data.playAmountTime)+'(具体以银行到账时间为准)'
-                    }else if(this.data.playAmountStatus==1){
-                        str = this.common.formatDate(this.data.playAmountTime);
-                    }
+            payMoneyTime(){
+                let str = '';
+                if(this.data.playAmountStatus=='1'){
+                    str = this.data.playAmountTime?common.formatDate(this.data.playAmountTime):'';
+                    str += '(具体以银行到账时间为准)';
                 }else{
-                    str = ''
+                    str = '预计打款时间为';
+                    str += this.data.readyPlayAmountTime?common.simpleFormatDate(this.data.readyPlayAmountTime,3):'';
                 }
                 return str;
             }
@@ -91,7 +89,7 @@
             //获取数据
             getData(id){
                 let vm = this
-                let url = common.path2+'memberWithdraws/queryById/'+id
+                let url = common.path2+'beauticianTradeDetails/'+id
                 this.$http.get(url).then(res=>{
                     console.log(res)
                     vm.data = res.data.data;
@@ -100,19 +98,15 @@
             makeMoney(id){
                 console.log(this.infoId)
                 let vm = this
-                this.$Modal.confirm({
-                    title:'确认打款',
-                    content:'确认给此会员打款？',
-                    onOk(){
-                        let url = common.path2+'...'+id;
-                        this.$http.put(url).then(res=>{
-                            if(res.code==200){
-                                this.$Message.success('打款成功！')
-                                vm.getData()
-                            }
-                        })
+                let url = common.path2+'beauticianTradeDetails/batchMoney/'+id;
+                this.$http.get(url).then(res=>{
+                    console.log(res)
+                    if(res.data.code==200){
+                        this.$Message.success('打款成功！')
+                        vm.returnHome('list')
                     }
-                });
+                })
+                   
             }
         },
         beforeMount:function(){

@@ -125,23 +125,46 @@
                     },
                     {
                         title: '通告内容',
-                        key: 'brandName',
+                        key: 'noticeContent',
                     },
                     {
                         title: '状态',
-                        key: 'brandOwnershipCompany'
+                        key: 'noticeStatus',
+                        render:(h,params)=>{
+                            return h('div',params.row.noticeStatus?'已停止':'公告中')
+                        }
                     },
                     {
                         title: '公告时间',
-                        key: 'storeTotal'
+                        key: 'noticeStartTime',
+                        render:(h,params)=>{
+                            return h('div',[
+                                h('div',params.row.noticeStartTime),
+                                h('div',params.row.noticeEndTime)
+                            ])
+                        }
                     },
                     {
                         title: '发布时间',
-                        key: 'productTotal'
+                        key: 'publishTime',
+                        render:(h,params)=>{
+                            return h('div',params.row.publishTime?this.common.formatDate(params.row.publishTime):'')
+                        }
                     },
                     {
                         title: '客户端',
-                        key: 'productTotal'
+                        key: 'usedType',
+                        render:(h,params)=>{
+                            let str = '';
+                            if(params.row.usedType=='0'){
+                                str = '美容邦客户端'
+                            }else if(params.row.usedType=='1'){
+                                str = '美容邦门店端'
+                            }else if(params.row.usedType=='2'){
+                                str = '美容邦邦女郎端'
+                            }
+                            return h('div',str);
+                        }
                     },
                     {
                         title: '操作',
@@ -159,10 +182,10 @@
                                 },
                                 on: {
                                     click: () => {
-                                        this.openOrClose(params.row.id);
+                                        this.openOrClose(params.row.id,params.row.noticeStatus);
                                     }
                                 }
-                            }, '停止'),
+                            }, params.row.noticeStatus=='1'?'开始':'停止'),
                             h('Button', {
                                 props: {
                                     type: 'primary',
@@ -288,18 +311,31 @@
             },
             removeNotice(id){
               let vm = this
-              let url = common.path2+'...'+id;
-              this.$http.put(url).then(res=>{
+              let url = common.path2+'notificationNotices/'+id;
+              this.$http.delete(url).then(res=>{
                   if(res.status==200){
                       this.$Message.success('删除成功！')
                       vm.getData()
                   }
               });
             },
-            openOrClose(id){
+            openOrClose(id,status){
               let vm = this
-              let url = common.path2+'...'+id;
-              this.$http.put(url).then(res=>{
+              let url = common.path2+'notificationNotices/update';
+              let noticeStatus = status=='1'?'0':'1';
+              let ajaxData = {
+                  id:id,
+                  noticeStatus:noticeStatus
+              }
+              this.$http.put(
+                  url,
+                  JSON.stringify(ajaxData),
+                  {
+                    headers: {
+                        'Content-type': 'application/json;charset=UTF-8'
+                    },
+                  }
+                  ).then(res=>{
                   if(res.status==200){
                       vm.getData()
                   }

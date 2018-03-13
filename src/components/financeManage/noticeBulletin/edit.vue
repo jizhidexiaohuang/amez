@@ -45,7 +45,7 @@
                 formValidate: {
                     client: '0', //客户端
                     bulletinContent: '', //公告内容
-                    announcementTime:'' //公告时间
+                    announcementTime:[] //公告时间
                 },
                 ruleValidate: {
                     
@@ -59,12 +59,13 @@
             handleSubmit (name) {
                 this.$refs[name].validate((valid) => {
                     if (valid) {
-                        let url = common.path2+'storeChainBrand/edit';
+                        let url = common.path2+'notificationNotices/update';
                         let ajaxData = {
                             id:this.editId,
-                            brandName:this.formValidate.brandName,
-                            brandOwnershipCompany:this.formValidate.brandOwnershipCompany,
-                            brandLogo:this.brandLogo[0].response.data,
+                            usedType:this.formValidate.client,
+                            noticeContent:this.formValidate.bulletinContent,
+                            noticeStartTime:common.simpleFormatDate(this.formValidate.announcementTime[0],3),
+                            noticeEndTime:common.simpleFormatDate(this.formValidate.announcementTime[1],3)
                         }
                         console.log(ajaxData)
                         this.$http.put(
@@ -97,16 +98,14 @@
             },
             //根据id查数据
             getDataById(id){
-                let url = common.path2+'storeChainBrand/queryById/'+id;
+                let vm = this;
+                let url = common.path2+'notificationNotices/'+id;
                 this.$http.get(url).then(res=>{
                     let data = res.data.data;
                     console.log(data)
-                    this.formValidate.brandName = data.brandName;
-                    this.formValidate.brandOwnershipCompany = data.brandOwnershipCompany;
-                    this.defaultList.push({
-                        'url':data.brandLogo
-                    });
-                    this.testCode = true;
+                    vm.formValidate.client = data.usedType;
+                    vm.formValidate.bulletinContent = data.noticeContent;
+                    vm.formValidate.announcementTime.push(data.noticeStartTime,data.noticeEndTime);
                 })
             }
         },
