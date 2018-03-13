@@ -83,12 +83,12 @@
                     </div>
                 </div>
             </FormItem>
-            <FormItem label="到店服务员工" v-if="false">
+            <FormItem label="到店服务员工" v-if="!!isShowBox">
                 <storeTable></storeTable>
                 <storeList></storeList>
                 <!--<businessList></businessList>-->
             </FormItem>
-            <FormItem label="上门服务员工" v-if="false">
+            <FormItem label="上门服务员工" v-if="!!isShowBox">
                 <homeTable></homeTable>
                 <homeList></homeList>
                 <!--<businessList></businessList>-->

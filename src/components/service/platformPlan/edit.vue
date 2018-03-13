@@ -57,10 +57,14 @@
                 <shopList></shopList>
                 <!--<businessList></businessList>-->
             </FormItem>
-            <FormItem label="服务产品">
+            <FormItem label="服务产品" v-if="false">
                 <goodsTable></goodsTable>
                 <goodsList></goodsList>
                 <!--<businessList></businessList>-->
+            </FormItem>
+
+            <FormItem label="服务产品">
+                <productTable v-if="!!testSwitch"></productTable>
             </FormItem>
             
 
@@ -169,6 +173,9 @@
     import homeTable from './homeTable.vue'
     import storeList from './storeList.vue'
     import homeList from './homeList.vue'
+
+
+    import productTable from './productTable.vue'
     
     export default {
         data () {
@@ -242,6 +249,7 @@
                 storeId:'',//店铺id
                 loginName:'', // 管理员身份
                 tableCtrl:false,
+                testSwitch: false,
             }
         },
         props: ["sendChild"],
@@ -315,11 +323,20 @@
                             ajaxData.productStoreRefList.push(obj);
                         }
                         /*  商品-产品-关联集合  productProductPhysicalRefList */ 
-                        ajaxData.productProductPhysicalRefList = [];
+                        /* ajaxData.productProductPhysicalRefList = [];
                         var productPhysicalList = vm.$store.getters.productList;
                         for(var j = 0;j<productPhysicalList.length;j++){
                             var obj = {};
                             obj.productPhysicalId = productPhysicalList[j];
+                            ajaxData.productProductPhysicalRefList.push(obj);
+                        } */
+                        ajaxData.productProductPhysicalRefList = [];
+                        var productPhysicalList = vm.$store.getters.testData;
+                        for(var j = 0;j<productPhysicalList.length;j++){
+                            var obj = {};
+                            obj.productPhysicalId = productPhysicalList[j].id; // id
+                            obj.physicalNumber = productPhysicalList[j].physicalNumber; // 数量
+                            obj.physicalName = productPhysicalList[j].physicalName; // 商品名称
                             ajaxData.productProductPhysicalRefList.push(obj);
                         }
 
@@ -458,14 +475,23 @@
                 });
                 vm.$store.commit('SERVICE_STORE_LIST',storeArrs1);
                 // 服务产品 productProductPhysicalRefList
-                let productPhysicalList = data.productProductPhysicalRefList;
+                /* let productPhysicalList = data.productProductPhysicalRefList;
                 let productPhysicalListArrs = [];
                 productPhysicalList.forEach(function(item,index){
                     productPhysicalListArrs.push(+item.productPhysicalId);
                 });
-                vm.$store.commit('PRODUCT_LIST',productPhysicalListArrs);
-
-
+                vm.$store.commit('PRODUCT_LIST',productPhysicalListArrs); */
+                let productPhysicalList = data.productProductPhysicalRefList;
+                let productPhysicalListArrs = [];
+                for(var i = 0;i<productPhysicalList.length;i++){
+                    var obj = {};
+                    obj.id = productPhysicalList[i].productPhysicalId;
+                    obj.physicalNumber = productPhysicalList[i].physicalNumber;
+                    obj.physicalName = productPhysicalList[i].physicalName;
+                    productPhysicalListArrs.push(obj);
+                }
+                vm.$store.commit('TEST_DATA',productPhysicalListArrs);
+                vm.testSwitch = true;
                 // 到店服务员工 storeProductBeauticianRefList
                 let storeList = data.storeProductBeauticianRefList;
                 let storeArrs = [];
@@ -632,7 +658,8 @@
             storeTable,
             homeTable,
             storeList,
-            homeList
+            homeList,
+            productTable
         }
     }
 </script>

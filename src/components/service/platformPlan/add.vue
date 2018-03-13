@@ -60,10 +60,14 @@
                 <shopList></shopList>
                 <!--<businessList></businessList>-->
             </FormItem>
-            <FormItem label="服务产品">
+            <FormItem v-if="false" label="服务产品">
                 <goodsTable></goodsTable>
                 <goodsList></goodsList>
                 <!--<businessList></businessList>-->
+            </FormItem>
+
+            <FormItem label="服务产品">
+                <productTable></productTable>
             </FormItem>
           
 
@@ -171,7 +175,7 @@
     import homeTable from './homeTable.vue'
     import homeList from './homeList.vue'
 
-
+    import productTable from './productTable.vue'
 
 
     export default {
@@ -315,11 +319,20 @@
                             ajaxData.productStoreRefList.push(obj);
                         }
                         /*  商品-产品-关联集合  productProductPhysicalRefList */ 
-                        ajaxData.productProductPhysicalRefList = [];
+                        /* ajaxData.productProductPhysicalRefList = [];
                         var productPhysicalList = vm.$store.getters.productList;
                         for(var j = 0;j<productPhysicalList.length;j++){
                             var obj = {};
                             obj.productPhysicalId = productPhysicalList[j];
+                            ajaxData.productProductPhysicalRefList.push(obj);
+                        } */
+                        ajaxData.productProductPhysicalRefList = [];
+                        var productPhysicalList = vm.$store.getters.testData;
+                        for(var j = 0;j<productPhysicalList.length;j++){
+                            var obj = {};
+                            obj.productPhysicalId = productPhysicalList[j].id; // id
+                            obj.physicalNumber = productPhysicalList[j].physicalNumber; // 数量
+                            obj.physicalName = productPhysicalList[j].physicalName; // 商品名称
                             ajaxData.productProductPhysicalRefList.push(obj);
                         }
 
@@ -518,7 +531,8 @@
             storeTable,
             homeTable,
             storeList,
-            homeList
+            homeList,
+            productTable
         }
     }
 </script>

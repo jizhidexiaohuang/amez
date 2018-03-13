@@ -83,7 +83,7 @@
                 <!--<businessList></businessList>-->
             </FormItem>
             
-            <FormItem label="招募员工" v-if="!!isShowBox">
+            <FormItem label="招募员工" v-if="false">
                 <recruitTable></recruitTable>
                 <recruitList></recruitList>
                 <!--<businessList></businessList>-->
