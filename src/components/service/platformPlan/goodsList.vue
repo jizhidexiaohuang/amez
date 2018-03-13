@@ -32,12 +32,6 @@
                 listId:[],
                 tableColumns1: [
                     {
-                        type: 'selection',
-                        title:'序号',
-                        width: 80,
-                        align: 'center'
-                    },
-                    {
                         title: '产品名称',
                         key: 'physicalName',
                     },
@@ -53,6 +47,7 @@
                             return +row.salePrice/100
                         }
                     },
+                    
                 ],
                 table:{
                     tableData1: [],
@@ -88,7 +83,6 @@
             getData(listId){
                 let vm = this;
                 if(vm.table.pageNun == Math.ceil(vm.table.recordsTotal/vm.table.size)){
-                    console.log('最后一页了');
                     if(listId.length<=((vm.table.pageNun-1)*vm.table.size)){
                         vm.table.pageNun = vm.table.pageNun - 1;
                     }
@@ -96,10 +90,9 @@
                 let start = vm.table.pageNun;
                 let size = vm.table.size;//每页条数
                 let ajaxData = {
-                    storeIdList:listId
                 }
-                // let url = this.common.path2+'store/findByPageForMemberCard?pageNo='+start+'&pageSize='+size;
                 let url = this.common.path2+'productPhysical/front/findByPage?pageSize=100000';
+                /* 获取所有产品 */
                 this.$http.post(
                     url,
                     ajaxData,
@@ -109,11 +102,8 @@
                         },
                     }
                 ).then(res=>{
-                    console.log(res)
                     let oData = res.data.data;
-                    // vm.table.tableData1 = oData.list;
                     var arrs = [];
-                    console.log(listId);
                     for(var i = 0;i<listId.length;i++){
                         for(var j = 0;j<oData.list.length;j++){
                             if(listId[i] == oData.list[j].id){
@@ -121,13 +111,8 @@
                             }
                         }
                     }
-                    
-
                     var startNum = (+vm.table.pageNun-1)*+vm.table.size;
                     var endNum = +vm.table.pageNun*+vm.table.size;
-
-                    console.log('开始：'+startNum)
-                    console.log('结束：'+endNum)
                     var arrs1 = [];
                     for(var b = 0;b<arrs.length;b++){
                         if(b>=startNum&&b<endNum){
@@ -135,7 +120,6 @@
                         }
                     }
                     vm.table.tableData1 = arrs1;
-                    // vm.table.recordsTotal = oData.total;
                     vm.table.recordsTotal = arrs.length;
                     vm.table.loading = false;
                 })
@@ -184,6 +168,7 @@
             console.log('测试：'+this.$store.getters.productList);
             let vm = this;
             let arrs = vm.$store.getters.productList;
+            this.testData = vm.$store.getters.testData;
             this.listId = arrs;
             if(arrs.length>0){
                 this.businessCtrl = true;

@@ -32,12 +32,6 @@
                 listId:[],
                 tableColumns1: [
                     {
-                        type: 'selection',
-                        title:'序号',
-                        width: 80,
-                        align: 'center'
-                    },
-                    {
                         title: '店铺名称',
                         key: 'storeName',
                     },

@@ -154,6 +154,9 @@
                 if(!!vm.cd.beauticianType){
                     ajaxData.beauticianType = vm.cd.beauticianType;
                 }
+                if(!!vm.storeId){
+                    ajaxData.storeId = vm.storeId;
+                }
                 
                 console.log(ajaxData)
                 vm.table.loading = true;
@@ -295,7 +298,11 @@
             }
         },
         mounted: function(){
-            
+            let vm = this;
+            let store = JSON.parse(window.localStorage.getItem("userInfo")).store;
+            if(store!=null){
+                vm.storeId = store.id;
+            }
             // this.getData();
         },
         activated: function(){

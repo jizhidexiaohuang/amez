@@ -23,6 +23,7 @@ const state = {
 	serviceStoreList:[],
 	productList: [],
 	storeId:'',
+	testData: [],
 };
 /* =========================改变状态的唯一方法======================= */
 const mutations = {
@@ -54,7 +55,6 @@ const mutations = {
 		state.headerShow = false;
 	},
 	[types.USER_INFO](state,userInfo){
-		console.log(userInfo);
 		state.userInfo = userInfo;
 	},
 	[types.MSG_SHOW](state){
@@ -70,50 +70,43 @@ const mutations = {
 		state.TabType = false;
 	},
 	[types.ADMIN_INFO](state,adminInfo){
-		console.log(adminInfo);
 		state.adminInfo = adminInfo;
 	},
 	[types.BUSINESS_ID](state,businessId){
-		console.log(businessId);
 		state.businessId = businessId;
 	},
 	[types.STORE_LIST](state,storeList){
-		console.log(storeList);
 		state.storeList = storeList;
 	},
 	[types.TOHOME_LIST](state,tohomeList){
 		state.tohomeList = tohomeList;
 	},
 	[types.RECRUIT_LIST](state,recruitList){
-		console.log(recruitList);
 		state.recruitList = recruitList;
 	},
 	[types.CITY_LIST](state,cityList){
-		console.log(cityList);
 		state.cityList = cityList;
 	},
 	[types.SERVICE_STORE_LIST](state,serviceStoreList){
-		console.log(serviceStoreList);
 		state.serviceStoreList = serviceStoreList;
 	},
 	[types.SERVICE_ID](state,serviceId){
-		console.log(serviceId);
 		state.serviceId = serviceId;
 	},
 	[types.TAB_CTRL](state,tabCtrl){
-		console.log(tabCtrl);
 		state.tabCtrl = tabCtrl;
 	},
 	[types.CARD_NAME](state,cardName){
-		console.log(cardName);
 		state.cardName = cardName;
 	},
 	[types.PRODUCT_LIST](state,productList){
-		console.log(productList);
 		state.productList = productList;
 	},
 	[types.STORE_ID](state,storeId){
 		state.storeId = storeId;
+	},
+	[types.TEST_DATA](state,testData){
+		state.testData = testData;
 	},
 }
 /* ====================对状态进行处理再输出=========================== */
@@ -177,6 +170,9 @@ const getters = {
 	},
 	storeId(state){
 		return state.storeId
+	},
+	testData(state){
+		return state.testData
 	},
 }
 export default{

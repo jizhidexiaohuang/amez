@@ -98,4 +98,7 @@ export default{
 	storeId:({commit},data)=>{
 		commit(types.STORE_ID,data.storeId);
 	},
+	testData:({commit},data)=>{
+		commit(types.TEST_DATA,data.testData);
+	},
 }

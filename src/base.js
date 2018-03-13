@@ -197,7 +197,7 @@ const common = {
                 {
                     name:"佣金费用设置",
                     hasChildList: false,
-                    href:"/financeManage/commissionCost "
+                    href:"/financeManage/commissionCost"
                 }
             ]
         },

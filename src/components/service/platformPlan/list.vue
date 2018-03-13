@@ -486,6 +486,8 @@
 
                     this.$store.commit('STORE_LIST',[]);
                     this.$store.commit('TOHOME_LIST',[]);
+
+                    this.$store.commit('TEST_DATA',[]);
                 }
             },
             /* 模态框 */

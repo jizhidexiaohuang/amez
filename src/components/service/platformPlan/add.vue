@@ -6,7 +6,7 @@
                     <Option :value="item.id" v-for="item in serviceList" :key="item.id">{{ item.categoryName }}</Option>
                 </Select>
             </FormItem>
-            <FormItem label="服务所属品牌" prop="brandId">
+            <FormItem label="服务所属品牌" prop="brandId" v-if="false">
                 <Select v-model="formValidate.brandId" placeholder="选择服务所属品牌">
                     <Option :value="item.id" v-for="item in brandList" :key="item.id">{{ item.brandName }}</Option>
                 </Select>
@@ -253,8 +253,6 @@
             // 提交验证
             handleSubmit (name) {
                 let vm = this;
-
-                
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         //添加品牌服务
@@ -321,7 +319,7 @@
                         var productPhysicalList = vm.$store.getters.productList;
                         for(var j = 0;j<productPhysicalList.length;j++){
                             var obj = {};
-                            obj.productId = productPhysicalList[j];
+                            obj.productPhysicalId = productPhysicalList[j];
                             ajaxData.productProductPhysicalRefList.push(obj);
                         }
 
@@ -349,8 +347,12 @@
                         ajaxData.recruitProductBeauticianRefList = [];
 
 
-                        console.log(ajaxData.productStoreRefList);
-                        console.log(ajaxData.productProductPhysicalRefList);
+                        // console.log(ajaxData.productStoreRefList);
+                        // console.log(ajaxData.productProductPhysicalRefList);
+
+
+                        console.log('~~~~~~~~~~~~~')
+                        console.log(JSON.stringify(ajaxData));
                         let url = vm.common.path2+"product/add/platformSelf";
                         vm.$http.post(
                             url,

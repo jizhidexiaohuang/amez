@@ -224,6 +224,7 @@
                 storeId:'',//店铺id
                 loginName:'', // 管理员身份
                 tableCtrl:false,
+                mainStoreName: '',
             }
         },
         props: ["sendChild"],
@@ -532,8 +533,13 @@
         },
         mounted: function(){
             let user = JSON.parse(window.localStorage.getItem("userInfo"));
+            let store = JSON.parse(window.localStorage.getItem("userInfo")).store;
             let vm = this;
             vm.loginName = user.user.loginName;
+            vm.mainStoreName = store.storeName;
+            vm.storeId = store.id;
+
+
             this.getData()
             this.serviceList = this.sendChild.serviceList;
             // this.brandList = this.sendChild.brandList;

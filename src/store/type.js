@@ -43,3 +43,5 @@ export const SERVICE_STORE_LIST = 'SERVICE_STORE_LIST';
 export const PRODUCT_LIST = 'PRODUCT_LIST';
 /* 店铺ID */
 export const STORE_ID = 'STORE_ID';
+/* 测试用的数据 */
+export const TEST_DATA = 'TEST_DATA';

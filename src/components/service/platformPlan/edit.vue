@@ -7,8 +7,8 @@
                     <Option :value="item.id" v-for="item in serviceList" :key="item.id">{{ item.categoryName }}</Option>
                 </Select>
             </FormItem>
-            <FormItem label="服务所属品牌" prop="brandId">
-                <Select v-model="formValidate.brandId" placeholder="选择服务所属品牌">
+            <FormItem label="服务所属品牌" prop="brandId" v-if="false">
+                <Select disabled v-model="formValidate.brandId" placeholder="选择服务所属品牌">
                     <Option :value="item.id" v-for="item in brandList" :key="item.id">{{ item.brandName }}</Option>
                 </Select>
             </FormItem>
@@ -319,12 +319,10 @@
                         var productPhysicalList = vm.$store.getters.productList;
                         for(var j = 0;j<productPhysicalList.length;j++){
                             var obj = {};
-                            obj.productId = productPhysicalList[j];
+                            obj.productPhysicalId = productPhysicalList[j];
                             ajaxData.productProductPhysicalRefList.push(obj);
                         }
 
-                        console.log(ajaxData.productStoreRefList);
-                        console.log(ajaxData.productProductPhysicalRefList);
 
 
                         /*  商品-美容师-关联集合（到店） storeProductBeauticianRefList*/
@@ -447,25 +445,25 @@
                
                
                 // 商品关联
-                vm.$store.commit('SERVICE_STORE_LIST',[3,4,5]);
-                vm.$store.commit('PRODUCT_LIST',[201,204]);
+                /* vm.$store.commit('SERVICE_STORE_LIST',[3,4,5]);
+                vm.$store.commit('PRODUCT_LIST',[201,204]); */
 
 
 
                 // 服务支持商家 storeProductBeauticianRefList
-                /* let storeList = data.productBeauticianRefList;
-                let storeArrs = [];
-                storeList.forEach(function(item,index){
-                    storeArrs.push(+item.beauticianId);
+                let storeList1 = data.productStoreRefList;
+                let storeArrs1 = [];
+                storeList1.forEach(function(item,index){
+                    storeArrs1.push(+item.storeId);
                 });
-                vm.$store.commit('SERVICE_STORE_LIST',storeArrs); */
+                vm.$store.commit('SERVICE_STORE_LIST',storeArrs1);
                 // 服务产品 productProductPhysicalRefList
-                /* let homeList = data.productProductPhysicalRefList;
-                let homeArrs = [];
-                homeList.forEach(function(item,index){
-                    homeArrs.push(+item.productId);
+                let productPhysicalList = data.productProductPhysicalRefList;
+                let productPhysicalListArrs = [];
+                productPhysicalList.forEach(function(item,index){
+                    productPhysicalListArrs.push(+item.productPhysicalId);
                 });
-                vm.$store.commit('PRODUCT_LIST',homeArrs); */
+                vm.$store.commit('PRODUCT_LIST',productPhysicalListArrs);
 
 
                 // 到店服务员工 storeProductBeauticianRefList

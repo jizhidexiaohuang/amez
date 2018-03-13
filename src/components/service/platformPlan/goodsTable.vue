@@ -154,16 +154,15 @@
                         },
                     }
                 ).then(function(res){
-                    console.log(res.data);
                     let oData = res.data
+                    // 分页插件-总数量
                     vm.table.recordsTotal = oData.data.total;
                     vm.table.tableData1 = oData.data.list;
+                    // 加载动画的开关
                     vm.table.loading = false;
-                    console.log(11111111);
-                    console.log(vm.listId);
+                    // 复选框的选中状态的判断，vm.listId是选中的数据id，oData.data.list是每一页的数据
                     vm.selectOrNo(vm.listId,oData.data.list)
-                    vm.tempArr = res.data.data.list;
-                    console.log(vm.tempArr)
+                    vm.tempArr = oData.data.list;
                 }).catch(function(err){
                 })
             },
@@ -182,19 +181,15 @@
             /* 选中某一项的回掉函数 */
             fnSelect (selection,row) {
                 // console.log(row);
-                this.listId.push(row.id)
-                console.log(this.listId)
+                this.listId.push(row.id);
             },
             // 取消选中某一项的回调函数
             fnCancel(selection,row){
                 // console.log(row)
-                this.remove(this.listId,row.id)
-                console.log(this.listId)
+                this.remove(this.listId,row.id);
             },
              /* 全选时的回调函数 */
             fnSelectAll (selection) {
-                console.log(selection);
-                console.log(this.listId)
                 if(this.listId.length==0){
                     for(var i=0;i<selection.length;i++){
                         this.listId.push(selection[i].id);
@@ -213,7 +208,6 @@
                         }
                     }
                 }
-                console.log(this.listId)
             },
             // 选中项改变
             fnChange(selection){
@@ -231,7 +225,7 @@
                     arr.splice(index, 1);
                 }
             },
-            // 每请求一页的时候判断是否被选中
+             // 每请求一页的时候判断是否被选中
             selectOrNo(arr1,arr2){
                 for(var i=0;i<arr1.length;i++){
                     for(var j=0;j<arr2.length;j++){
@@ -271,13 +265,13 @@
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
             ok () {
-                console.log(this.listId);
+                console.log('~~~~~~~~~~~~~~~~~~~');
                 this.$Message.info('Clicked ok');
                 this.$store.commit('PRODUCT_LIST',this.listId);
             },
             fnOpenModal () {
                 this.listId = this.$store.getters.productList;
-                console.log(this.listId);
+                console.log('~~~~~~~~~~~~~~~~~~~');
                 this.getData();
                 this.usingRange = true;
             }
