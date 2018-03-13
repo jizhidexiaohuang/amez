@@ -115,10 +115,23 @@ const common = {
                     hasChildList: false,
                     href:"/service/commissionPlan"
                 }, */
+            ]
+        },
+        {
+            name:"产品管理",
+            hasChildList:true,
+            href:"",
+            type:"laptop",
+            childList: [
                 {
                     name:"产品管理",
                     hasChildList: false,
-                    href:"/service/productManage"
+                    href:"/product/productManage"
+                },
+                {
+                    name:"运费模板",
+                    hasChildList: false,
+                    href:"/product/freightTemplate"
                 },
             ]
         },

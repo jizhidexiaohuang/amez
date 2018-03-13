@@ -1,6 +1,5 @@
 <template>
     <div>
-        
         <!-- 编辑 -->
         <EditPage v-if="pageType == 'edit'" :sendChild="sendChild"  class="testWrap" v-on:returnList="changePageType"></EditPage>
         <div v-if="pageType == 'info'" class="testWrap">详情</div>

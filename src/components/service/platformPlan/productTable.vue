@@ -106,8 +106,8 @@
                     recordsTotal:0,
                     pageNun:1,
                     loading: false,
-                    size: 1,
-                    option:[1, 10, 15, 20]
+                    size: 5,
+                    option:[5, 10, 15, 20]
                 },
                 // 展示的数据
                 showList: [],
@@ -120,8 +120,8 @@
                     recordsTotal:0,
                     pageNun:1,
                     loading: false,
-                    size: 1,
-                    option:[1, 10, 15, 20]
+                    size: 5,
+                    option:[5, 10, 15, 20]
                 },
                 showList1:[],
             }

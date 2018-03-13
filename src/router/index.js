@@ -35,8 +35,13 @@ import ClassifyManage from '@/components/service/classifyManage/list'
 import CommissionPlan from '@/components/service/commissionPlan/list'
 //平台自营服务
 import PlatformPlan from '@/components/service/platformPlan/list'
+/*==================================产品管理============================*/
 // 产品管理
-import ProductManage from '@/components/service/productManage/list'
+import ProductManage from '@/components/product/productManage/list'
+// 运费模板
+import FreightTemplate from '@/components/product/freightTemplate/list'
+
+
 /*==================================订单管理============================*/
 //服务订单
 import ServiceOrder from '@/components/order/serviceOrder/list'
@@ -210,8 +215,16 @@ const menuRouter = [
           name:"平台自营服务"
         }
       },
+    ]
+  },
+  {
+    path: '/product',
+    name: '产品管理',
+    title: '产品管理',
+    component: Main,
+    children: [
       {
-        path: '/service/productManage',
+        path: '/product/productManage',
         name: '产品管理',
         title: '产品管理',
         component: ProductManage,
@@ -220,6 +233,16 @@ const menuRouter = [
           name:"产品管理"
         }
       },
+      {
+        path: '/product/freightTemplate',
+        name: '运费模板',
+        title: '运费模板',
+        component: FreightTemplate,
+        meta:{
+          type:"菜单",
+          name:"运费模板"
+        }
+      }
     ]
   },
   {
