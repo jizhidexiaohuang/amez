@@ -219,10 +219,10 @@
             fnDeleteItem (id) {
                 let vm = this;
                 this.$Modal.confirm({
-                    title: '删除短信模板',
-                    content: '确定要删除此短信模板吗？',
+                    title: '删除运费模板',
+                    content: '确定要删除此运费模板吗？',
                     onOk: function(){
-                        let url = vm.common.path2+"baseSmsTemplates/"+id;
+                        let url = vm.common.path2+"freightTemplate/deleteById/"+id;
                         this.$http.delete(
                             url
                         ).then(function(res){

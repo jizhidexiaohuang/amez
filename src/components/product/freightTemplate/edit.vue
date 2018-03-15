@@ -1,16 +1,18 @@
 <template>
     <div>
-        <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120" style="padding-bottom: 20px;">
+        <Form class="boxStyle" ref="freightTemplate" :model="freightTemplate" :rules="ruleValidate" :label-width="120" style="padding-bottom: 20px;">
             <FormItem  label="模板名称" prop="">
-                <Input v-model="formValidate.templateName" placeholder="请填写模板名称"></Input>
+                <Input v-model="freightTemplate.templateName" placeholder="请填写模板名称"></Input>
+            </FormItem>
+            <FormItem  label="模板代码" prop="">
+                <Input v-model="freightTemplate.templateCode" placeholder="请填写模板代码"></Input>
             </FormItem>
             <FormItem label="计价方式" prop="">
-                <RadioGroup v-model="formValidate.priceType">
-                    <Radio label="0">按件数</Radio>
-                    <Radio label="1">按重量</Radio>
+                <RadioGroup v-model="freightTemplate.pricingMethod" @on-change="fnRadioChange">
+                    <Radio label="1">按件数</Radio>
+                    <Radio label="2">按重量</Radio>
                 </RadioGroup>
             </FormItem>
-
             <FormItem label="运送方式" prop="" style="margin-bottom: 0px;">
                 快递（未指定的城市将采用默认运费）
             </FormItem>
@@ -19,65 +21,74 @@
                     <!-- 默认设置 -->
                     <div style="border-bottom: 1px solid #dddee1; padding: 7px 10px 7px 10px;">
                             <span>默认运费</span>
-                            <InputNumber :min="0" v-model="formValidate.firstNum"></InputNumber>
-                            <span>件内</span>
-                            <Input v-model="formValidate.firstPrice" style="width: 78px;"></Input>
-                            <span>元，</span>
-                            <span style="margin-left: 20px;">每增加</span>
-                            <InputNumber :min="0" v-model="formValidate.nextNum"></InputNumber>
-                            <span>件，</span>
-                            <span>增加运费</span>
-                            <Input v-model="formValidate.nextPrice" style="width: 78px;"></Input>
+                            <InputNumber :min="1" v-model="defaultEdit.firstNumber"></InputNumber>
+                            <span v-if="freightTemplate.pricingMethod == 1">件内</span>
+                            <span v-if="freightTemplate.pricingMethod == 2">kg内</span>
+                            <InputNumber :min="0" v-model="defaultEdit.firstPrice" style="width: 78px;"></InputNumber>
+                            <span style="margin-left: 20px;">元，每增加</span>
+                            <InputNumber :min="1" v-model="defaultEdit.continuedNumber"></InputNumber>
+                            <span v-if="freightTemplate.pricingMethod == 1">件，增加运费</span>
+                            <span v-if="freightTemplate.pricingMethod == 2">kg，增加运费</span>
+                            <InputNumber :min="0" v-model="defaultEdit.continuedPrice" style="width: 78px;"></InputNumber>
                             <span>元</span>
                     </div>
                     <!-- 头部 -->
                     <Row style="padding: 7px 10px 7px 10px; border-bottom: 1px solid #dddee1; color: #000; font-size: 14px;">
                         <Col span="6">运送到</Col>
-                        <Col span="4">首件数（件）</Col>
+                        <Col span="4" v-if="freightTemplate.pricingMethod == 1">首件数（件）</Col>
+                        <Col span="4" v-if="freightTemplate.pricingMethod == 2">首重（kg）</Col>
                         <Col span="4">首费（元）</Col>
-                        <Col span="4">续件数（件）</Col>
+                        <Col span="4" v-if="freightTemplate.pricingMethod == 1">续件数（件）</Col>
+                        <Col span="4" v-if="freightTemplate.pricingMethod == 2">续重（kg）</Col>
                         <Col span="4">续费（元）</Col>
                         <Col span="2">操作</Col>
                     </Row>
                     <!-- 指定城市运费配置 -->
-                    <Row v-for="(item,index) in formValidate.lists" style="border-bottom: 1px solid #dddee1; padding: 7px 10px 7px 10px;">
+                    <Row v-for="(item,index) in cityList" style="border-bottom: 1px solid #dddee1; padding: 7px 10px 7px 10px;">
+                        <!-- 已选省份的显示 -->
                         <Col span="6">
                             <Row>
-                                <Col span="16">
-                                    <span v-for="(aItem,aIndex) in item.lists">
-                                        {{ aItem.regionName }}
-                                        <span v-if="aIndex != item.lists.length-1">、</span>
+                                <Col span="16" v-if="!!item.cityName">
+                                    <span v-for="name in item.cityName.split(',')">
+                                        {{ name }}
                                     </span>
                                 </Col>
                                 <Col span="3" offset="1">
-                                    <Button @click.native="fnCityEdit('edit',item)">编辑</Button>
+                                    <Button @click.native="fnEditCityItem(index,item.cityId)">编辑</Button>
                                 </Col>
                             </Row>
                         </Col>
+                        <!-- 首件数 -->
                         <Col span="4">
-                            <InputNumber :min="0" v-model="item.firstNum=0"></InputNumber>
+                            <InputNumber :min="1" v-model="item.firstNumber"></InputNumber>
                         </Col>
+                        <!-- 首件价格 -->
                         <Col span="4">
-                            <Input v-model="item.firstPrice" style="width: 78px;"></Input>
+                            <InputNumber :min="0" v-model="item.firstPrice" style="width: 78px;"></InputNumber>
                         </Col>
+                        <!-- 续件数 -->
                         <Col span="4">
-                            <InputNumber :min="0" v-model="item.nextNum=0"></InputNumber>
-                            
+                            <InputNumber :min="1" v-model="item.continuedNumber"></InputNumber>
                         </Col>
+                        <!-- 续件价格 -->
                         <Col span="4">
-                            <Input v-model="item.nextPrice" style="width: 78px;"></Input>
+                            <InputNumber :min="0" v-model="item.continuedPrice" style="width: 78px;"></InputNumber>
                         </Col>
                         <Col span="2">
-                            <Button type="error" @click.native="fnDelete(index,item)">删除</Button>
+                            <Button type="error" @click.native="fnDeleteRule(index)">删除</Button>
                         </Col>
                     </Row>
                 </div>
             </FormItem>
+
+
+
+
             <FormItem label="">
-                <a @click="fnCityEdit('add')">为指定城市设置运费</a>
+                <a @click="fnAddCitys">为指定城市设置运费</a>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+                <Button type="primary" @click="handleSubmit('freightTemplate')">提交</Button>
                 <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
             </FormItem> 
         </Form>
@@ -85,16 +96,15 @@
             v-model="modalCode"
             title="城市列表"
             width="900"
-            @on-ok="ok"
-            @on-cancel="cancel">
+            @on-ok="ok">
             <div class="modalBox">
                 <Row>
                     <Col span="12" style="border-right: 1px solid #ccc; min-height: 320px;">
                         <div style="text-align: center; padding:0px 0px 10px 0px; font-size: 14px;">剩余城市</div>
-                        <div v-if="!!!spareList.length" style="font-size: 14px;">空空如也~</div>
-                        <Row v-if="!!spareList.length">
-                            <Col span="8" v-for="(item,index) in spareList" :key="item.regionId">
-                                <Tag @click.native="selectItem(index)">
+                        <div v-if="!!!showSpareList.length" style="font-size: 14px;">空空如也~</div>
+                        <Row v-if="!!showSpareList.length">
+                            <Col span="8" v-for="(item,index) in showSpareList" :key="item.regionId">
+                                <Tag @click.native="selectCity(item,index)">
                                     {{ item.regionName }}
                                 </Tag>
                             </Col>
@@ -102,10 +112,10 @@
                     </Col>
                     <Col span="12">
                         <div style="text-align: center; padding:0px 0px 10px 0px; font-size: 14px;">已选城市</div>
-                        <div v-if="!!!selectList.length" style="padding-left: 20px; font-size: 14px;">空空如也~</div>
-                        <Row v-if="!!selectList.length" style="padding-left: 20px;">
-                            <Col span="8" v-for="(item,index) in selectList">
-                                <Tag closable @on-close="handleClose(index,item)">{{ item.regionName }}</Tag>
+                        <div v-if="!!!mineList.length" style="padding-left: 20px; font-size: 14px;">空空如也~</div>
+                        <Row v-if="!!mineList.length" style="padding-left: 20px;">
+                            <Col span="8" v-for="(item,index) in mineList">
+                                <Tag closable @on-close="deleteCity(item,index)">{{ item.regionName }}</Tag>
                             </Col>
                         </Row>
                     </Col>
@@ -118,101 +128,96 @@
     export default {
         data () {
             return {
-                formValidate: {
+                freightTemplate: {
                     templateName: '', // 模板名称
-                    priceType: '0', // 计费方式
-                    firstNum: 0, // 首件数
-                    firstPrice: '', // 首件价格
-                    nextNum: 0, // 续件数
-                    nextPrice: '', // 续件价格
-                    lists:[
-                        /* {
-                            lists:[
-                                {
-                                    'cityId':0,
-                                    'cityName':'北京'
-                                }
-                            ]
-                        } */
-                    ]
+                    pricingMethod: '1', // 计费方式
+                    templateCode: '', // 模板代码
+                    transportMethod: '1', // 运送方式
                 },
+                cityList: [], // 配置的省份列表
+                allList:[], // 省份列表
+                /* 默认方式的配置 */
+                defaultEdit: {
+                    'firstNumber': 1, // 首件数
+                    'firstPrice': 0, // 首件价格
+                    'continuedNumber': 1, // 续件数
+                    'continuedPrice': 0, // 续件价格
+                    'isDefault': 1, // 是否默认 1默认 0 非默认
+                },
+                index: 0, // 当前配置的省份规则索引值
                 ruleValidate: {
                 },
-                path:this.common.path1+"system/api/file/uploadForKindeditor",
                 modalCode: false,
-                allList:[], // 省份列表
-                spareList: [], // 剩下的省份列表
-                alreadyList: [], // 已经选择的列表
-                selectList: [], // 正在选择的城市
-                hisSpareList: [], // 历史记住剩下的省份列表
-                hisSelectList: [], // 历史记住正在选择的省份列表
-
-
-
-
+                showSpareList: [1], // 更新剩下省份界面用的数据
+                mineList: [], // 已经选择的省份
             }
         },
+        props: ["sendChild"],
         methods: {
-            // 提交验证
-            handleSubmit (name) {
+            /* ===============计价方式变化======== */ 
+            fnRadioChange (val) {
                 let vm = this;
-                console.log(vm.formValidate.lists);
-                this.$refs[name].validate((valid) => {
-                    if (valid) {
-                        debugger
-                        // console.log(vm.formValidate.lists)
-                        
-                        //添加品牌服务
-                        console.log(1)
-                        let ajaxData = {
-                        }
-                        console.log(ajaxData);
-                        let url = vm.common.path2+"baseSmsTemplates/insert";
-                        return false;
-                        vm.$http.post(
-                            url,
-                            JSON.stringify(ajaxData),
-                            {
-                                headers:{
-                                    'Content-type':'application/json;charset=UTF-8'
-                                }
-                            }
-                        ).then(function(res){
-                            let oData = res.data
-                            vm.$emit('returnList', 'list'); 
-                            vm.$Message.success('成功');
-                        }).catch(function(err){
-                            console.log(err);
-                            vm.$Message.success(err);
-                        })
-                        console.log(ajaxData);
-                    } else {
-                        this.$Message.error('提交失败!');
-                    }
-                })
+                let _d = vm.defaultEdit;
+                vm.cityList = []; // 让省份配置列表清空
+                /* 初始化默认配置项的数据 */
+                _d.firstNumber = 1;
+                _d.firstPrice = 0;
+                _d.continuedNumber = 1;
+                _d.continuedPrice = 0;
             },
-            // 返回
+            /* ===============提交验证============= */ 
+            handleSubmit (name) {
+                console.log(name);
+                let vm = this;
+                let ajaxData = {};
+                let url = vm.common.path2+"freightTemplate/modify";
+                let _f = vm.freightTemplate; // 运费模板
+                let _d = vm.defaultEdit; // 默认配置
+                /* 运费模板 */
+                ajaxData.freightTemplate = {
+                    'templateName':     _f.templateName,    // 模板名称
+                    'templateCode':     _f.templateCode,    // 模板代码
+                    'transportMethod':  _f.transportMethod, // 运送方式
+                    'pricingMethod':    _f.pricingMethod,   // 计价方式
+                    'id':               vm.sendChild.id,    // id
+                }
+                /* 运费模板城市集合 */
+                ajaxData.cityList = [];
+                // 默认项
+                ajaxData.cityList.push({
+                    'firstNumber':      _d.firstNumber,
+                    'firstPrice':       +_d.firstPrice*100,
+                    'continuedNumber':  _d.continuedNumber,
+                    'continuedPrice':   +_d.continuedPrice*100,
+                    'isDefault':        _d.isDefault
+                });
+                // 城市项
+                !!vm.cityList.length&&vm.cityList.forEach((item,index)=>{
+                    ajaxData.cityList.push(item);
+                })
+                console.log(ajaxData);
+                vm.$http.post(
+                    url,
+                    JSON.stringify(ajaxData),
+                    {
+                        headers:{
+                            'Content-type':'application/json;charset=UTF-8'
+                        }
+                    }
+                ).then(function(res){
+                    vm.$emit('returnList', 'list'); 
+                    vm.$Message.success('成功');
+                }).catch(function(err){
+                    console.log(err);
+                    vm.$Message.success(err);
+                })
+                console.log(ajaxData);
+            },
+            /* =================返回============= */ 
             handReturn (val) {
                 this.$emit('returnList', val); 
             },
-            // 新添加一个运送方式而要做的城市分配
-            fnCityEdit (type,arrs) {
-                let vm = this;
-                vm.hisSpareList = vm.spareList;
-                console.log(vm.hisSpareList);
-                if(type == 'add'){
-                    vm.selectList = [];
-                    vm.hisSelectList = [];
-                    vm.modalCode = true;
-                };
-                if(type == 'edit'){
-                    vm.selectList = arrs.lists;
-                    vm.hisSelectList = arrs.lists;
-                    vm.modalCode = true;
-                }
-                
-            },
-            // 获取全国省份数据
+            /* =================获取全国省份数据=============== */ 
             fnGetCityData () {
                 let vm = this;
                 let url = vm.common.path2+"baseRegions/selectListByConditions?pageSize=10000";
@@ -229,138 +234,184 @@
                     }
                 ).then((res)=>{
                     let oData = res.data.data.list;
-                    console.log(oData);
                     vm.allList = oData;
-                    vm.fnGetSpareList();
                 }).catch((err)=>{
                     console.log(err);
                 })
             },
-            // 剩下没有配置的城市
-            fnGetSpareList () {
+            /* =================新增省份的运送规则配置================= */
+            fnAddCitys () {
                 let vm = this;
-                vm.spareList = vm.allList;
+                // vm.cityList 数组
+                let obj = {
+                    'cityId': '', // 城市id
+                    'cityName': '', // 城市名称
+                    'firstNumber': 1, // 首件数
+                    'firstPrice': 0, // 首件价格
+                    'continuedNumber': 1, // 续件数
+                    'continuedPrice': 0, // 续件价格
+                    'isDefault': 0, // 非默认配置
+                }
+                vm.cityList.push(obj);
             },
-            // 模态框的回调函数
+            /* ==================编辑省份=========================== */
+            fnEditCityItem (index,cityId) {
+                let vm = this;
+                vm.index = index;
+                // 分配两部分的数据，未选，已选
+                let noList = []; // 未选
+                let isList = []; // 已选
+                let allIsList = []; // 所有规则已经选了的数据
+                let allList = vm.allList; // 所有省份
+                let thisCityId = [];
+                // 获得该规则已经选择的省份id
+                if(!!cityId){
+                    thisCityId = cityId.split(',');
+                }
+                // 获得未选的数据
+                if(vm.cityList.length == 1&&!!!vm.cityList[0].cityId){
+                    // 现在只新增了一个规则，并且该规则还没有分配省份
+                    noList = allList;
+                    isList = [];
+                }else{
+                    // 规则至少有一个，而且至少一个规则分配了省份
+                    // 获取所有规则已经分配的省份
+                    for(var i = 0;i<vm.cityList.length;i++){
+                        for(var j = 0;j<vm.cityList[i].cityId.split(',').length;j++){
+                            allIsList.push(vm.cityList[i].cityId.split(',')[j]);
+                        }
+                    }
+                    // 获取还剩什么省份没有分配
+                    noList = vm.fnRemoveArrFromArrs(allList,allIsList);
+                    isList = vm.fnGetArrFromArrs(allList,thisCityId)
+                    console.log(allIsList);
+                }
+                vm.showSpareList = noList;
+                vm.mineList = isList;
+                vm.modalCode = true;
+            },  
+            /* =============数组去重，arg1为原始数组，arg2为要被删除的数据================ */ 
+            fnRemoveArrFromArrs (arrs1,arrs2) {
+                // 状态值  true 则加 false 则不加
+                let list = [];
+                for(var i = 0;i<arrs1.length;i++){
+                    var _switch = true;
+                    for(var j = 0;j<arrs2.length;j++){
+                        if(arrs1[i].regionId == arrs2[j]){
+                            _switch = false;
+                        }
+                        if(j == arrs2.length -1&&!!_switch){
+                            list.push(arrs1[i]);
+                        }
+                    }
+                }
+                return list;
+            },    
+            /* =============数组去重，arg1为原始数组，arg2为要被删除的数据================ */ 
+            fnGetArrFromArrs (arrs1,arrs2) {
+                // 状态值  true 则加 false 则不加
+                let list = [];
+                for(var i = 0;i<arrs2.length;i++){
+                    for(var j = 0;j<arrs1.length;j++){
+                        if(arrs2[i] == arrs1[j].regionId){
+                            list.push(arrs1[j]);
+                        }
+                    }
+                }
+                return list;
+            },  
+            /* =============删除指数组定位置的元素，然后返回新的数组=================== */
+            fnDeleteItemFromArrs (arrs,index) {
+                let list = [];
+                arrs.forEach((item,i) => {
+                    if(i != index){
+                        list.push(item);
+                    }
+                })
+                return list;
+            },
+            /* ==============点击省份的回调函数==================== */
+            selectCity (item,index) {
+                let vm = this;
+                // 左侧未选择的变化
+                vm.showSpareList = vm.fnDeleteItemFromArrs(vm.showSpareList,index);
+                // 右侧已选择的变化
+                vm.mineList.push(item);
+            },  
+            /* ==============取消当前选择省份的回调函数======================= */
+            deleteCity (item,index) {
+                let vm = this;
+                // 右侧已选择的变化
+                vm.mineList = vm.fnDeleteItemFromArrs(vm.mineList,index);
+                // 左侧已选择的变化
+                vm.showSpareList.push(item);
+            },
+            /* ===============模态框的回调函数========================== */
             ok () {
                 let vm = this;
-                let arrs = vm.selectList;
-                let obj = {};
-                obj.lists = [];
-                for(var i = 0;i<arrs.length;i++){
-                    obj.lists.push({
-                        regionName: arrs[i].regionName,
-                        regionId: arrs[i].regionId
+                let index = vm.index;
+                let cityId = [];
+                let cityName = [];
+                vm.mineList.forEach((item,index) => {
+                    cityId.push(item.regionId);
+                    cityName.push(item.regionName);
+                }); 
+
+                vm.cityList[index].cityId = cityId.join(',');
+                vm.cityList[index].cityName = cityName.join(',');
+
+                console.log(vm.cityList);
+            },
+            /* ==================删除一个省份的规则配置================== */
+            fnDeleteRule (index) {
+                let vm = this;
+                vm.cityList = vm.fnDeleteItemFromArrs(vm.cityList,index);
+            },
+            /* ========================获取详情======================= */
+            fnQueryById () {
+                let vm = this;
+                let id = vm.sendChild.id;
+                let url = vm.common.path2 + "freightTemplate/detail/"+id;
+                vm.$http.get(
+                    url
+                ).then(function(res){
+                    let oData = res.data.data;
+                    vm.fnInitQuery(oData);
+                }).catch(function(err){
+                })
+
+            },
+            /* =======================模板信息的遍历========================== */
+            fnInitQuery (data) {
+                console.log(data);
+                let vm = this;
+                let _f = vm.freightTemplate;
+                let _d = vm.defaultEdit;
+                /* 运费模板 */  
+                _f.templateName = data.freightTemplate.templateName; // 模板名称
+                _f.templateCode = data.freightTemplate.templateCode; // 模板代码
+                _f.pricingMethod = data.freightTemplate.pricingMethod; // 计价方式
+                /* 运费模板城市集合 */
+                // 默认项
+                _d.firstNumber = data.freightTemplateCityList[0].firstNumber; // 首件数
+                _d.firstPrice = +data.freightTemplateCityList[0].firstPrice/100; // 首件价格
+                _d.continuedNumber = data.freightTemplateCityList[0].continuedNumber; // 首件价格
+                _d.continuedPrice = +data.freightTemplateCityList[0].continuedPrice/100; // 首件价格
+                _d.isDefault = data.freightTemplateCityList[0].isDefault; // 首件价格
+                // 城市项
+                if(data.freightTemplateCityList.length > 1){
+                    data.freightTemplateCityList.forEach((item,index) => {
+                        if(index != 0){
+                            vm.cityList.push(item);
+                        }
                     })
                 }
-                vm.formValidate.lists.push(obj);
-                console.log(111111111);
-                console.log(vm.formValidate.lists);
-            },
-            // 模态框的取消回调函数
-            cancel () {
-                let vm = this;
-                // 数组的合并
-                // vm.spareList = vm.spareList.concat(vm.selectList);
-                vm.spareList = vm.hisSpareList;
-                vm.selectList = vm.hisSelectList;
-            },
-            // 取消当前选择的城市
-            handleClose (index,data) {
-                let vm = this;
-                console.log(data);
-                console.log(vm.selectList);
-                console.log(vm.spareList);
-                console.log(vm.alreadyList);
-
-
-                // 已经选择的数据变化,要减少
-                var oldArrs = vm.alreadyList;
-                var newArrs = [];
-                for(var i = 0;i<oldArrs.length;i++){
-                    if(oldArrs[i].regionId != data.regionId){
-                        newArrs.push(oldArrs[i]);
-                    }
-                }
-                vm.alreadyList = newArrs;
-                // 右侧数据的变化
-                vm.spareList.push(data);
-                // 右侧数据的变化
-                var oldArrs1 = vm.selectList;
-                var newArrs1 = [];
-                for(var i = 0;i<oldArrs1.length;i++){
-                    if(oldArrs1[i].regionId != data.regionId){
-                        newArrs1.push(oldArrs1[i]);
-                    }
-                }
-                vm.selectList = newArrs1;
-                return false;
-
-
-
-                // 右侧列表的变化
-                vm.selectList = vm.fnFilterArrs(vm.selectList,index);
-                // 左侧列表的变化
-                vm.spareList.push(vm.selectList[index]);
-                // 已经选择列表的变化
-                var oldArrs = vm.alreadyList; // 已经选择的
-                var newArrs = [];
-
-                console.log(data);
-                console.log(oldArrs);
-                /* for(var i = 0;i<oldArrs.length;i++){
-                    if(oldArrs[i].regionId!=data.regionId){
-                        newArrs.push(oldArrs[i]);
-                    }
-                }
-                vm.alreadyList = newArrs; */
-            },
-            // 点击城市的某一项的时候的回调函数
-            selectItem (index) {
-                let vm = this;
-                /* 正在选择的城市 */
-                vm.selectList.push(vm.spareList[index]);
-                /* 已经选择的城市 */
-                vm.alreadyList.push(vm.spareList[index]);
-                console.log(vm.spareList[index]);
-                console.log(vm.alreadyList);
-                // 此时需要修改展示的面板，从剩下的数据里边删除掉被点中的那一项
-                var oldArrs = vm.spareList;
-                var newArrs = [];
-                for(var i = 0;i<oldArrs.length;i++){
-                    if(i!=index){
-                        newArrs.push(oldArrs[i]);
-                    }
-                }              
-                vm.spareList = newArrs; 
-
-
-                
-
-                
-            },
-            // 删除一个城市设置选型
-            fnDelete (index,arrs) {
-                let vm = this;
-                console.log(arrs);
-                vm.spareList = vm.spareList.concat(arrs.lists);
-                vm.formValidate.lists = vm.fnFilterArrs(vm.formValidate.lists,index);
-            },
-            // 过滤数组，去掉索引值为n的选项
-            fnFilterArrs (arrs,index) {
-                var oldArrs = arrs;
-                var newArrs = [];
-                for(var i = 0;i<oldArrs.length;i++){
-                    if(i!=index){
-                        newArrs.push(oldArrs[i]);
-                    }
-                }
-                return newArrs;
             }
         },
         mounted: function(){
             let vm = this;
             vm.fnGetCityData(); // 获取全国数据
+            vm.fnQueryById(); // 获取模板详情
         },
         components:{
         }

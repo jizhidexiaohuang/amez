@@ -287,7 +287,7 @@
         mounted: function(){
             let vm = this;
             this.fnGetProductCategory();
-             this.fnQueryById();
+            this.fnQueryById();
         },
         components:{
             MyUpload,
