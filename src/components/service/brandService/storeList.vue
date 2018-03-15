@@ -79,14 +79,12 @@
         methods:{
              /* 分页回掉函数 */
             changePage (page) {
-                console.log(page)
                 let vm = this;
                 vm.table.pageNun = page;   
                 vm.getData(vm.listId); 
             },
              /* 页码改变的回掉函数 */
             changeSize (size) {
-                console.log(size);
                 let vm = this;
                 vm.table.size = size;
                 vm.getData(vm.listId);
@@ -95,7 +93,6 @@
             getData(listId){
                 let vm = this;
                 if(vm.table.pageNun == Math.ceil(vm.table.recordsTotal/vm.table.size)){
-                    console.log('最后一页了');
                     if(listId.length<=((vm.table.pageNun-1)*vm.table.size)){
                         vm.table.pageNun = vm.table.pageNun - 1;
                     }
@@ -103,10 +100,8 @@
                 let start = vm.table.pageNun;
                 let size = vm.table.size;//每页条数
                 let ajaxData = {
-                    // storeIdList:listId
                     "storeId":vm.$store.getters.storeId
                 }
-                // let url = this.common.path2+'store/findByPageForMemberCard?pageNo='+start+'&pageSize='+size;
                 let url = this.common.path2+'storeBeautician/front/findByPage?pageSize=100000';
                 this.$http.post(
                     url,
@@ -117,25 +112,17 @@
                         },
                     }
                 ).then(res=>{
-                    console.log(res)
                     let oData = res.data.data;
-                    // vm.table.tableData1 = oData.list;
                     var arrs = [];
-                    console.log(listId);
                     for(var i = 0;i<listId.length;i++){
                         for(var j = 0;j<oData.list.length;j++){
-                            if(listId[i] == oData.list[j].id){
+                            if(listId[i].id == oData.list[j].id){
                                 arrs.push(oData.list[j]);
                             }
                         }
                     }
-                    
-
                     var startNum = (+vm.table.pageNun-1)*+vm.table.size;
                     var endNum = +vm.table.pageNun*+vm.table.size;
-
-                    console.log('开始：'+startNum)
-                    console.log('结束：'+endNum)
                     var arrs1 = [];
                     for(var b = 0;b<arrs.length;b++){
                         if(b>=startNum&&b<endNum){
@@ -143,23 +130,11 @@
                         }
                     }
                     vm.table.tableData1 = arrs1;
-                    console.log('~~~~~~~~~~~~~~~~~~~~~~')
-                    console.log(arrs1);
-
-                    // vm.table.recordsTotal = oData.total;
                     vm.table.recordsTotal = arrs.length;
                     vm.table.loading = false;
                 })
             },
-            /* 选中某一项的回掉函数 */
-            fnSelect (selection,row) {
-                console.log(row);
-            },
-            // 取消选中某一项的回调函数
-            fnCancel(selection,row){
-                console.log(row)
-            },
-             /* 判断页签中是否有该模块，如果有则使用缓存，如果没有则重新加载数据 */
+            /* 判断页签中是否有该模块，如果有则使用缓存，如果没有则重新加载数据 */
             fnExistTabList () {
                 let vm = this;
                 if(!!vm.activatedType){
@@ -179,8 +154,6 @@
             getBusinessId:{
                 deep:true,
                 handler(val){
-                    console.log('此时的listId')
-                    console.log(val)
                     this.listId = val;
                     if(val.length!=0){
                         this.getData(val);
@@ -192,7 +165,6 @@
             }
         },
         mounted: function () {
-            console.log('测试：'+this.$store.getters.storeList);
             let vm = this;
             let arrs = vm.$store.getters.storeList;
             this.listId = arrs;

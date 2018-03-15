@@ -131,20 +131,17 @@
                 let vm = this;
                 vm.$store.commit('TEST_DATA',vm.showList);
                 vm.fnGetData();
-                console.log(vm.$store.getters.testData);
             },
             /* ==================================== table ===================================== */
 
             /* 分页回掉函数 */
             changePage (page) {
-                console.log(page)
                 let vm = this;
                 vm.table.pageNun = page;   
                 vm.getData();             
             },
              /* 页码改变的回掉函数 */
             changeSize (size) {
-                console.log(size);
                 let vm = this;
                 vm.table.size = size;
                 vm.getData();
@@ -172,7 +169,6 @@
             /* 取消选中某一项的回调函数 */ 
             onSelectCancel (selection,row) {
                 let vm = this;
-                console.log(row);
                 vm.defaultList = vm.fnRemoveItemFromArrs(vm.defaultList,row);
             },
             /* 全选时的回调函数 */
@@ -272,7 +268,6 @@
                 }else{
                     vm.defaultList = vm.showList; // 展示的数据赋值给已经勾选的数据
                 }
-                console.log(vm.defaultList);
                 vm.getData();
                 vm.usingRange = true; // 模态框显示
             },
@@ -307,7 +302,6 @@
                     // 复选框的选中状态的判断，vm.listId是选中的数据id，oData.data.list是每一页的数据
                     vm.selectOrNo(vm.defaultList,oData.data.list);
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             /* ======================================公共方法================================*/
@@ -355,14 +349,12 @@
             },
              /* 分页回掉函数 */
             changePage1 (page) {
-                console.log(page)
                 let vm = this;
                 vm.table1.pageNun = page;   
                 vm.fnGetData();          
             },
              /* 页码改变的回掉函数 */
             changeSize1 (size) {
-                console.log(size);
                 let vm = this;
                 vm.table1.size = size;
                 vm.fnGetData();
@@ -372,8 +364,6 @@
             let vm = this;
             this.showList = this.$store.getters.testData; // 展示的数据
             vm.fnGetData();
-            console.log('~~~~~~~~~~~~~~~~');
-            console.log(this.showList);
             /* 进来的时候，让勾选的数据等于展示的数据 */
             if(!!this.showList.length){
                 this.defaultList = this.showList;

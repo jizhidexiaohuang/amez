@@ -16,6 +16,36 @@
                     <span slot="close">OFF</span>
                 </iSwitch>
             </FormItem>
+            <!-- 店铺选择  只有管理员可以看到 -->
+            <FormItem label="所属门店" prop="storeName" style="width:500px;" v-if="false">
+                <Input v-model="storeName" placeholder="请选择所属门店" @click.native="selectStore"></Input>
+                <div class="tableBox" v-show="tableCtrl">
+                    <Table
+                        :loading="table.loading" 
+                        :data="table.tableData1" 
+                        :columns="tableColumns1" 
+                        stripe
+                        border
+                        size="small"
+                        @on-current-change="fnHighlight"
+                        :show-header="false"
+                        :stripe="false"
+                        highlight-row
+                        height="150"
+                    ></Table>
+                    <div style="overflow: hidden;" class="pageBox">
+                        <div style="float: right;">
+                            <Page 
+                                size="small"
+                                :total="table.recordsTotal" 
+                                :current="table.pageNun"
+                                @on-change="changePage"
+                                @on-page-size-change="changeSize"
+                            ></Page>
+                        </div>
+                    </div>
+                </div>
+            </FormItem>
             <FormItem>
                 <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
                 <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
@@ -31,7 +61,7 @@
                 formValidate: {
                     categoryName: '',// 分类名称
                     categoryLogo:'',//图片地址
-                    categoryParentId: 0,//父类id
+                    pid: 0,//父类id
                 },
                 ruleValidate: {
                 },
@@ -43,7 +73,25 @@
                 switch1: false,
                 uploadConfig: {
                     num:1
-                }
+                },
+
+                table:{
+                    tableData1: [],
+                    recordsTotal:0,
+                    pageNun:1,
+                    loading: false,
+                    size: 10,
+                },
+                tableColumns1: [
+                    {
+                        title: '店铺名称',
+                        key: 'storeName'
+                    }
+                ],
+                tableCtrl:false,
+                storeId: '',
+                storeName: '',
+                isAdmin: false,
             }
         },
         props: ["sendChild"],
@@ -58,8 +106,10 @@
                         let ajaxData = {
                             categoryName: vm.formValidate.categoryName, // 分类名称
                             categoryLogo: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
-                            categoryParentId: vm.formValidate.categoryParentId,// 父类id
+                            pid: vm.formValidate.pid,// 父类id
                             isEnabled: !!!vm.switch1?0:1,//开启状态
+                            categoryCode: 'CODE_XX', // 一级分类
+                            storeId: vm.storeId, // 店铺id
                         }
                         let url = vm.common.path2+"productCategory/insert";
                         vm.$http.post(
@@ -96,11 +146,67 @@
             },
             // 开关控制
             changeSwitch1 (status) {
-                this.$Message.info('开关状态：' + status);
                 console.log(this.switch1);
-            }
+            },
+            /*表格选中高亮显示*/
+            fnHighlight(currentRow,oldCurrentRow){
+                this.storeName = currentRow.storeName;
+                this.storeId = currentRow.id;
+                this.tableCtrl = false;
+            },
+            // 点击所属门店输入框，显示或隐藏table
+            selectStore(){
+                if(this.tableCtrl){
+                    this.tableCtrl = false;
+                }else{
+                    this.tableCtrl = true;
+                }
+            },
+            /* 分页回掉函数 */
+            changePage (page) {
+                let vm = this;
+                vm.table.pageNun = page;   
+                vm.getData();             
+            },
+            /* 页码改变的回掉函数 */
+            changeSize (size) {
+                let vm = this;
+                vm.table.size = size;
+                vm.getData();
+            },
+             /* 数据获取 */
+            getData () {
+                let vm = this;
+                let start = vm.table.pageNun;//从第几个开始
+                let size = vm.table.size;//每页条数
+                let url = vm.common.path2+"store/front/findByPage?pageNo="+start+'&pageSize='+size;
+                let ajaxData = {
+                }
+                vm.loading = true;
+                vm.$http.post(
+                    url,
+                    ajaxData,
+                    {
+                        headers: {
+                            'Content-type': 'application/json;charset=UTF-8'
+                        },
+                    }
+                ).then(function(res){
+                    let oData = res.data
+                    vm.table.recordsTotal = oData.data.total;
+                    vm.table.tableData1 = oData.data.list;
+                    vm.table.loading = false;
+                }).catch(function(err){
+                })
+            },
         },
         mounted: function(){
+            let store = JSON.parse(window.localStorage.getItem("userInfo")).store;
+            this.getData();
+            if(store!=null){
+                this.storeId = store.id;
+                this.isAdmin = true;
+            }
         },
         components:{
             MyUpload

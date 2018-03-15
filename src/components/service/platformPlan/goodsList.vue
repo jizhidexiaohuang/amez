@@ -67,14 +67,12 @@
         methods:{
              /* 分页回掉函数 */
             changePage (page) {
-                console.log(page)
                 let vm = this;
                 vm.table.pageNun = page;   
                 vm.getData(vm.listId); 
             },
              /* 页码改变的回掉函数 */
             changeSize (size) {
-                console.log(size);
                 let vm = this;
                 vm.table.size = size;
                 vm.getData(vm.listId);
@@ -126,11 +124,9 @@
             },
             /* 选中某一项的回掉函数 */
             fnSelect (selection,row) {
-                console.log(row);
             },
             // 取消选中某一项的回调函数
             fnCancel(selection,row){
-                console.log(row)
             },
              /* 判断页签中是否有该模块，如果有则使用缓存，如果没有则重新加载数据 */
             fnExistTabList () {
@@ -152,8 +148,6 @@
             getBusinessId:{
                 deep:true,
                 handler(val){
-                    console.log('此时的listId')
-                    console.log(val)
                     this.listId = val;
                     if(val.length!=0){
                         this.getData(val);
@@ -165,7 +159,6 @@
             }
         },
         mounted: function () {
-            console.log('测试：'+this.$store.getters.productList);
             let vm = this;
             let arrs = vm.$store.getters.productList;
             this.testData = vm.$store.getters.testData;

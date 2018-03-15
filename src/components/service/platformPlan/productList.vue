@@ -46,14 +46,12 @@
         methods:{
              /* 分页回掉函数 */
             changePage (page) {
-                console.log(page)
                 let vm = this;
                 vm.table.pageNun = page;   
                 vm.getData(vm.listId); 
             },
              /* 页码改变的回掉函数 */
             changeSize (size) {
-                console.log(size);
                 let vm = this;
                 vm.table.size = size;
                 vm.getData(vm.listId);
@@ -106,9 +104,6 @@
                 let vm = this;
                 let arrs1 = this.$store.getters.testData; // 包含数量的数据
                 let arrs2 = val; // 被勾选的数据
-                console.log('测试的数据1：'+arrs1);
-                console.log('测试的数据2：'+arrs2);
-                console.log('~~~~~~~~~~~~~~~~~');
                 if(arrs1.length>0){
                     this.tSwitch = true;
                     /* 进行比较，如果a1和b1的id相等，那么就用a1的产品数量，如果没有，则默认为0 */

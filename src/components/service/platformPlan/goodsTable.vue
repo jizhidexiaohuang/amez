@@ -122,7 +122,6 @@
         methods: {
             /* 分页回掉函数 */
             changePage (page) {
-                console.log(page)
                 let vm = this;
                 vm.table.pageNun = page;   
                 vm.getData();             
@@ -142,8 +141,6 @@
                 if(!!vm.cd.beauticianType){
                     ajaxData.beauticianType = vm.cd.beauticianType;
                 }
-                
-                console.log(ajaxData)
                 vm.table.loading = true;
                 this.$http.post(
                     url,
@@ -180,12 +177,10 @@
             },
             /* 选中某一项的回掉函数 */
             fnSelect (selection,row) {
-                // console.log(row);
                 this.listId.push(row.id);
             },
             // 取消选中某一项的回调函数
             fnCancel(selection,row){
-                // console.log(row)
                 this.remove(this.listId,row.id);
             },
              /* 全选时的回调函数 */
@@ -211,7 +206,6 @@
             },
             // 选中项改变
             fnChange(selection){
-                console.log(selection)
                 if(selection.length==0){
                    for(var i=0;i<this.tempArr.length;i++){
                        this.remove(this.listId,this.tempArr[i].id);
@@ -237,7 +231,6 @@
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {
-                console.log(size);
                 let vm = this;
                 vm.table.size = size;
                 vm.getData();
@@ -265,13 +258,11 @@
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
             ok () {
-                console.log('~~~~~~~~~~~~~~~~~~~');
                 this.$Message.info('Clicked ok');
                 this.$store.commit('PRODUCT_LIST',this.listId);
             },
             fnOpenModal () {
                 this.listId = this.$store.getters.productList;
-                console.log('~~~~~~~~~~~~~~~~~~~');
                 this.getData();
                 this.usingRange = true;
             }
@@ -286,16 +277,6 @@
         },
         components:{
         },
-        /* watch:{
-            getBusinessId:{
-                deep:true,
-                handler(val){
-                    console.log(val)
-                    this.listId = val;
-                    this.getData();
-                }
-            }
-        }, */
     }
 </script>
 <style scoped>

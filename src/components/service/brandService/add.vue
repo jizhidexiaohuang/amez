@@ -46,11 +46,6 @@
             <FormItem label="兼职美容师佣金" number='true'>
                 <Input v-model="formValidate.parttimeBeauticianCommission" placeholder="请填写兼职美容师佣金，单位元"></Input>
             </FormItem>
-
-
-
-
-
             <!-- 店铺选择  只有管理员可以看到 -->
             <FormItem label="所属门店" prop="storeName" style="width:500px;" v-if="!!isAdmin">
                 <Input v-model="formValidate.storeName" placeholder="请选择所属门店" @click.native="selectStore"></Input>
@@ -288,9 +283,6 @@
                                 ajaxData.product.isSupportHome = 1;
                             }
                         })
-                        console.log('~~~~~~~~~~~~~~~~~~~~~~~')
-                        console.log(ajaxData.isSupportHome)
-                        console.log(ajaxData.isSupportStore)
                         /* 商品分类 */
                         ajaxData.productCategoryRef = {
                             categoryId:vm.formValidate.type, // 商品分类id
@@ -315,7 +307,9 @@
                         var storeList = vm.$store.getters.storeList;
                         for(var i = 0;i<storeList.length;i++){
                             var obj = {};
-                            obj.beauticianId = storeList[i];
+                            obj.beauticianId = storeList[i].id;
+                            obj.beauticianNickname = storeList[i].beauticianNickName;
+                            obj.beauticianHeadImgUrl = storeList[i].headImgUrl;
                             obj.serverType = 0;
                             ajaxData.storeProductBeauticianRefList.push(obj);
                         }
@@ -324,7 +318,9 @@
                         var homeList = vm.$store.getters.tohomeList;
                         for(var j = 0;j<homeList.length;j++){
                             var obj = {};
-                            obj.beauticianId = homeList[j];
+                            obj.beauticianId = homeList[j].id;
+                            obj.beauticianNickname = homeList[j].beauticianNickName;
+                            obj.beauticianHeadImgUrl = homeList[j].headImgUrl;
                             obj.serverType = 1;
                             ajaxData.homeProductBeauticianRefList.push(obj);
                         }
@@ -336,9 +332,6 @@
                             obj.beauticianId = recruitList[b];
                             ajaxData.recruitProductBeauticianRefList.push(obj);
                         }
-                        console.log(vm.$store.getters);
-                        // console.log(ajaxData);
-                        // return false;
                         let url = vm.common.path2+"product/add/self";
                         vm.$http.post(
                             url,
@@ -353,10 +346,8 @@
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.success(err);
                         })
-                        console.log(ajaxData);
                     } else {
                         this.$Message.error('提交失败!');
                     }
@@ -379,14 +370,13 @@
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = data;
-                console.log(vm.uploadList);
             },
             // 服务分类接口数据
             fnGetProductCategory () {
                 let vm = this;
                 let url = vm.common.path2 + "productCategory/front/findByPage?pageSize=1000";
                 let ajaxData = {
-                    categoryParentId:0,
+                    pid:0,
                 }
                 vm.$http.post(
                     url,
@@ -395,7 +385,6 @@
                     let oData = res.data.data.list;
                     vm.serviceList = oData;
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             // 服务所属品牌接口数据
@@ -412,45 +401,35 @@
                         }
                     }
                 ).then(function(res){
-                    console.log(res);
                     let oData = res.data.data.list;
                     vm.brandList = oData
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
-             /* 分页回掉函数 */
+            /* 分页回掉函数 */
             changePage (page) {
-                console.log(page)
                 let vm = this;
                 vm.table.pageNun = page;   
                 vm.getData();             
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {
-                console.log(size);
                 let vm = this;
                 vm.table.size = size;
                 vm.getData();
             },
             /* 选中某一项的回掉函数 */
             fnSelect (selection,row) {
-                console.log(row);
-                console.log(selection);
             },
             /* 全选时的回调函数 */
             fnSelectAll (selection) {
-                console.log(selection);
             },
-             /*表格选中高亮显示*/
+            /*表格选中高亮显示*/
             fnHighlight(currentRow,oldCurrentRow){
                 this.formValidate.storeName = currentRow.storeName;
                 this.formValidate.storeId = currentRow.id;
                 this.storeId = currentRow.id;
                 this.tableCtrl = false;
-
-
-
                 this.$store.commit('STORE_ID',this.storeId);
                 this.$store.commit('STORE_LIST',[]);
                 this.$store.commit('TOHOME_LIST',[]);
@@ -476,7 +455,6 @@
                         },
                     }
                 ).then(function(res){
-                    console.log(res.data);
                     let oData = res.data
                     vm.table.recordsTotal = oData.data.total;
                     vm.table.tableData1 = oData.data.list;

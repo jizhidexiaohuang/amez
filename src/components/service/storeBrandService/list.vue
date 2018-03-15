@@ -225,8 +225,6 @@
                                 const text = row.saleStatus === 0 ? '管理员上架' : '管理员下架';
                                 const text1 = row.saleStatus  === 0 ? '店长上架': '店长下架';
                                 let arrs = [];
-
-
                                 /* 管理员上下架 */
                                 let obj2 = h('Button', {
                                     props: {
@@ -300,7 +298,7 @@
                                     }
                                 }, '审核')
                                 if(!!this.operators.examine){
-                                    if(row.auditStatus == 0){
+                                    if(row.auditStatus == 0 && !!!this.storeId){
                                         arrs.push(obj3);
                                     }   
                                 }
@@ -405,10 +403,6 @@
                 if(!!vm.storeId){
                     ajaxData.storeId = vm.storeId;
                 }
-                /* 需要传storeId 就放开 */
-                /* if(!!!vm.isShow){
-                    ajaxData.storeId = vm.storeId
-                } */
                 if(!!vm.cd.saleStatus){
                     ajaxData.saleStatus = vm.cd.saleStatus;
                 }
@@ -604,7 +598,6 @@
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
             /* 店长下架 */
-            //product/store/offShelves
             fnOffShelves (productId,storeId) {
                 let vm = this;
                 // let storeId1 = !!vm.storeId?vm.storeId:storeId;
@@ -623,8 +616,6 @@
                     vm.getData();
                 })
             },
-
-
             /*===================== 菜单权限配置 start ====================*/
             /* 获取该菜单拥有的权限 */
             fnGetOperators () {
@@ -643,9 +634,6 @@
                             menuArrs.push(list[c]);
                         }
                     }
-
-                    console.log('zzzzzzzzz')
-                    console.log(menuArrs);
                     for(var j = 0;j<menuArrs.length;j++){
                         if(!!menuArrs[j].operCode){
                             vm.fnChangeOperators(menuArrs[j].operCode.split(","));
@@ -670,13 +658,10 @@
             },
             /* 权限的遍历 */
             fnChangeOperators (arrs) {
-                // operators{}是开关对象
                 let vm = this;
                 arrs.forEach(function(item,index){
                     vm.operators[item] = true;
                 })
-                console.log('zzzzzzzzzz')
-                console.log(vm.operators);
             }
             /*=================== 菜单权限配置 end ===========================*/
         },

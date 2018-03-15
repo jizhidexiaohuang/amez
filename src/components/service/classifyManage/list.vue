@@ -54,6 +54,7 @@
                     :columns="table.tableColumns" 
                     @on-select="fnSelect"
                     @on-select-all="fnSelectAll"
+                    border
                 ></Table>
                 <div style="margin: 10px;overflow: hidden">
                     <div style="float: right;">
@@ -122,7 +123,7 @@
                     tableData1: [],//数据
                     //table头
                     tableColumns: [
-                         /* {
+                        {
                             type: 'expand',
                             width: 50,
                             render: (h, params) => {
@@ -132,17 +133,10 @@
                                     }
                                 })
                             }
-                        },  */
+                        }, 
                         {
                             title: '分类名称',
                             key: 'categoryName',
-                        },
-                        {
-                            title: '商品数量',
-                            key: 'categoryName',
-                            render: (h,params) => {
-                                return parseInt(Math.random()*100)
-                            }
                         },
                         {   
                             title: '状态',
@@ -167,7 +161,7 @@
                             // fixed: 'right',
                             render: (h, params) => {
                                 let arrs = [];
-                                /* let obj1 = h('Button', {
+                                let obj1 = h('Button', {
                                     props: {
                                         type: 'primary',
                                         size: 'small'
@@ -178,12 +172,15 @@
                                     on: {
                                         click: () => {
                                             let row = params.row;
-                                            this.twoChild.categoryParentId = row.id;
+                                            this.twoChild.pid = row.id;
+                                            this.twoChild.storeId = row.storeId;
                                             this.changePageType('addChild');
                                         }
                                     }
                                 }, '添加子分类');
-                                arrs.push(obj1); */
+                                if(!!params.row.isEnabled){
+                                    arrs.push(obj1);
+                                }
                                 let obj2 = h('Button', {
                                     props: {
                                         type: 'primary',
@@ -213,7 +210,9 @@
                                     on: {
                                         click: () => {
                                             let row = params.row;
-                                            this.fnDeleteItem(row.id);
+                                            // 判断是否还有子分类
+                                            
+                                            this.fnCanDelete(row);
                                         }
                                     }
                                 }, '删除');
@@ -279,9 +278,11 @@
                 },
                 /* 传递给二级分类的数据 */
                 twoChild:{
-                    categoryParentId:"",//父类id
+                    pid:"",//父类id
                     id:"",//类目id
-                }
+                    storeId:"",//店铺id
+                },
+                thisType: false,
             }
         },
         methods: {
@@ -309,7 +310,7 @@
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
-                    categoryParentId: 0
+                    pid: 0
                 }
                 vm.table.loading = true;
                 this.$http.post(
@@ -330,38 +331,96 @@
                 })
             },
             /* 删除一条列表 */
-            fnDeleteItem (id) {
+            fnDeleteItem (row) {
                 let vm = this;
-                this.$Modal.confirm({
-                    title: '删除分类',
-                    content: '确定要删除此分类吗？',
-                    onOk: function(){
-                        let url = vm.common.path2+"productCategory/deleteById/"+id;
-                        this.$http.delete(
-                            url
-                        ).then(function(res){
-                            console.log(res);
-                            let oData = res.data;
-                            console.log(oData);
-                            if(oData.code == 200){
-                                setTimeout(function(){
-                                    vm.$Message.success('删除成功');
-                                },500)
-                                /* // 解决删除第(10n+1)个时，页数没有往后跳一页
-                                let total = vm.table.recordsTotal;
-                                console.log(total);
-                                if(total>10&&total%10 == 1){
-                                    vm.table.pageNun = vm.table.pageNun - 1;
-                                } */
-                                vm.getData();
-                            }else{
-                                vm.$Message.error(oData.message);
-                            }
-                        }).catch(function(err){
-                            console.log(err);
-                            vm.$Message.error(err);
-                        })
+                if(!!this.fnCanDelete(row)){
+                    alert('请确认没有子级分类再删除')
+                }else{
+                    this.$Modal.confirm({
+                        title: '删除分类',
+                        content: '确定要删除此分类吗？',
+                        onOk: function(){
+                            let url = vm.common.path2+"productCategory/deleteById/"+row.id;
+                            this.$http.delete(
+                                url
+                            ).then(function(res){
+                                console.log(res);
+                                let oData = res.data;
+                                console.log(oData);
+                                if(oData.code == 200){
+                                    setTimeout(function(){
+                                        vm.$Message.success('删除成功');
+                                    },500)
+                                    /* // 解决删除第(10n+1)个时，页数没有往后跳一页
+                                    let total = vm.table.recordsTotal;
+                                    console.log(total);
+                                    if(total>10&&total%10 == 1){
+                                        vm.table.pageNun = vm.table.pageNun - 1;
+                                    } */
+                                    vm.getData();
+                                }else{
+                                    vm.$Message.error(oData.message);
+                                }
+                            }).catch(function(err){
+                                console.log(err);
+                                vm.$Message.error(err);
+                            })
+                        }
+                    })
+                }
+            },
+            fnCanDelete (row) {
+                let vm = this;
+                let pid = row.id;
+                let start = 1;//从第几个开始
+                let size = 1000;//每页条数
+                let url = vm.common.path2+"productCategory/front/findByPage?pageNo="+start+"&pageSize="+size;
+                let ajaxData = {
+                    pageNo:start,
+                    pageSize: size,
+                    pid: pid,
+                    storeId: row.storeId
+                }
+                this.$http.post(
+                    url,
+                    JSON.stringify(ajaxData),
+                    {
+                        headers:{
+                            'Content-type':'application/json;charset=UTF-8'
+                        }
                     }
+                ).then(function(res){
+                    let oData1 = res.data.data.list
+                    if(!!!oData1.length){
+                        vm.$Modal.confirm({
+                            title: '删除分类',
+                            content: '确定要删除此分类吗？',
+                            onOk: function(){
+                                let url = vm.common.path2+"productCategory/deleteById/"+row.id;
+                                this.$http.delete(
+                                    url
+                                ).then(function(res1){
+                                    let oData = res1.data;
+                                    console.log(oData);
+                                    if(oData.code == 200){
+                                        setTimeout(function(){
+                                            vm.$Message.success('删除成功');
+                                        },500)
+                                        vm.getData();
+                                    }else{
+                                        vm.$Message.error(oData.message);
+                                    }
+                                }).catch(function(err){
+                                    console.log(err);
+                                    vm.$Message.error(err);
+                                })
+                            }
+                        })
+                    }else{
+                        vm.$Message.error('请确认没有子级分类了再删除！！');
+                    }
+                }).catch(function(err){
+                    console.log(err);
                 })
             },
             /* 查看详情 */

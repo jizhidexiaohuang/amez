@@ -46,10 +46,13 @@
                     <shopList></shopList>
                     <!--<businessList></businessList>-->
                 </FormItem>
-                <FormItem label="服务产品">
+                <FormItem label="服务产品" v-if="false">
                     <goodsTable></goodsTable>
                     <goodsList></goodsList>
                     <!--<businessList></businessList>-->
+                </FormItem>
+                <FormItem label="服务产品">
+                    <productTable v-if="!!testSwitch"></productTable>
                 </FormItem>
                 <FormItem label="正式员工服务提成" prop="formalWorker" v-if="false">
                     <Input v-model="formValidate.formalWorker" placeholder="请填写正式员工服务提成"></Input>
@@ -153,6 +156,8 @@
     import homeTable from './homeTable.vue'
     import storeList from './storeList.vue'
     import homeList from './homeList.vue'
+
+    import productTable from './productTable.vue'
     
     export default {
         data () {
@@ -225,6 +230,7 @@
                 loginName:'', // 管理员身份
                 tableCtrl:false,
                 mainStoreName: '',
+                testSwitch: false,
             }
         },
         props: ["sendChild"],
@@ -250,7 +256,9 @@
                         var homeList = vm.$store.getters.tohomeList;
                         for(var j = 0;j<homeList.length;j++){
                             var obj = {};
-                            obj.beauticianId = homeList[j];
+                            obj.beauticianId = homeList[j].id;
+                            obj.beauticianNickname = homeList[j].beauticianNickname;
+                            obj.beauticianHeadImgUrl = homeList[j].headImgUrl;
                             obj.serverType = 1;
                             ajaxData.homeProductBeauticianRefList.push(obj);
                         }
@@ -259,7 +267,9 @@
                         var storeList = vm.$store.getters.storeList;
                         for(var i = 0;i<storeList.length;i++){
                             var obj = {};
-                            obj.beauticianId = storeList[i];
+                            obj.beauticianId = storeList[i].id;
+                            obj.beauticianNickname = storeList[i].beauticianNickname;
+                            obj.beauticianHeadImgUrl = storeList[i].headImgUrl;
                             obj.serverType = 0;
                             ajaxData.storeProductBeauticianRefList.push(obj);
                         }
@@ -276,14 +286,11 @@
                             ajaxData,
                         ).then(function(res){
                             let oData = res.data
-                            console.log(oData);
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.success(err);
                         })
-                        console.log(ajaxData);
                     } else {
                         this.$Message.error('提交失败!');
                     }
@@ -306,7 +313,6 @@
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = data;
-                console.log(vm.uploadList);
             },
             // 服务分类接口数据
             fnGetProductCategory () {
@@ -323,7 +329,6 @@
                     let oData = res.data.data.list;
                     vm.serviceList = oData;
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             // 服务所属品牌接口数据
@@ -342,7 +347,6 @@
                     let oData = res.data.data.list;
                     vm.brandList = oData
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             // 获取产品信息
@@ -364,44 +368,53 @@
             // 产品的信息遍历出来
             fnInitQuery (data) {
                 let vm = this;
-
-                console.log('此时得list：'+ vm.$store.getters.storeList);
-               
-               
-                // 商品关联
-                vm.$store.commit('SERVICE_STORE_LIST',[3,4,5]);
-                vm.$store.commit('PRODUCT_LIST',[201,204]);
-
-
-
-                // 服务支持商家 storeProductBeauticianRefList
-                /* let storeList = data.productBeauticianRefList;
-                let storeArrs = [];
-                storeList.forEach(function(item,index){
-                    storeArrs.push(+item.beauticianId);
+                // 服务支持商家 
+                let storeList1 = data.productStoreRefList;
+                let storeArrs1 = [];
+                storeList1.forEach(function(item,index){
+                    var obj = {};
+                    obj.id = +item.storeId;
+                    obj.storeName = item.storeName;
+                    storeArrs1.push(obj);
                 });
-                vm.$store.commit('SERVICE_STORE_LIST',storeArrs); */
-                // 服务产品 productProductPhysicalRefList
-                /* let homeList = data.productProductPhysicalRefList;
-                let homeArrs = [];
-                homeList.forEach(function(item,index){
-                    homeArrs.push(+item.productId);
-                });
-                vm.$store.commit('PRODUCT_LIST',homeArrs); */
+                vm.$store.commit('SERVICE_STORE_LIST',storeArrs1);
+
+
+                let productPhysicalList = data.productProductPhysicalRefList;
+                let productPhysicalListArrs = [];
+                for(var i = 0;i<productPhysicalList.length;i++){
+                    var obj = {};
+                    obj.id = productPhysicalList[i].productPhysicalId;
+                    obj.physicalNumber = productPhysicalList[i].physicalNumber;
+                    obj.physicalName = productPhysicalList[i].physicalName;
+                    productPhysicalListArrs.push(obj);
+                }
+                vm.$store.commit('TEST_DATA',productPhysicalListArrs);
+                vm.testSwitch = true;
 
 
                 // 到店服务员工 storeProductBeauticianRefList
                 let storeList = data.storeProductBeauticianRefList;
                 let storeArrs = [];
                 storeList.forEach(function(item,index){
-                    storeArrs.push(+item.beauticianId);
+                    var obj = {
+                        'id' : +item.beauticianId,
+                        'beauticianNickName': item.beauticianNickName,
+                        'headImgUrl': item.beauticianHeadImgUrl,
+                    }
+                    storeArrs.push(obj);
                 });
                 vm.$store.commit('STORE_LIST',storeArrs);
                 // 上门服务员工 homeProductBeauticianRefList
                 let homeList = data.homeProductBeauticianRefList;
                 let homeArrs = [];
                 homeList.forEach(function(item,index){
-                    homeArrs.push(+item.beauticianId);
+                    var obj = {
+                        'id' : +item.beauticianId,
+                        'beauticianNickName': item.beauticianNickName,
+                        'headImgUrl': item.beauticianHeadImgUrl,
+                    }
+                    homeArrs.push(obj);
                 });
                 vm.$store.commit('TOHOME_LIST',homeArrs);
 
@@ -462,32 +475,23 @@
                 }
                 vm.testCode = true;
                 vm.uploadList = vm.defaultList;
-
-                
-
-                
             },
             changePage (page) {
-                console.log(page)
                 let vm = this;
                 vm.table.pageNun = page;   
                 vm.getData();             
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {
-                console.log(size);
                 let vm = this;
                 vm.table.size = size;
                 vm.getData();
             },
             /* 选中某一项的回掉函数 */
             fnSelect (selection,row) {
-                console.log(row);
-                console.log(selection);
             },
             /* 全选时的回调函数 */
             fnSelectAll (selection) {
-                console.log(selection);
             },
              /*表格选中高亮显示*/
             fnHighlight(currentRow,oldCurrentRow){
@@ -514,7 +518,6 @@
                         },
                     }
                 ).then(function(res){
-                    console.log(res.data);
                     let oData = res.data
                     vm.table.recordsTotal = oData.data.total;
                     vm.table.tableData1 = oData.data.list;
@@ -556,7 +559,8 @@
             storeTable,
             homeTable,
             storeList,
-            homeList
+            homeList,
+            productTable
         }
     }
 </script>

@@ -57,8 +57,6 @@
                 this.$emit("listenUpload",this.uploadList);
             },
             handleSuccess (res, file) {
-                console.log(res);
-                // file.url = 'https://o5wwk8baw.qnssl.com/7eb99afb9d5f317c912f08b5212fd69a/avatar';
                 file.url = res.data;
                 file.name = '7eb99afb9d5f317c912f08b5212fd69a';
                 this.$emit("listenUpload",this.uploadList);
@@ -76,7 +74,6 @@
                 });
             },
             handleBeforeUpload () {
-                console.log(this.uploadConfig.num);
                 let num = this.uploadConfig.num||5;
                 let title = '最多可以上传'+ num + '张照片';
                 const check = this.uploadList.length < num;
@@ -91,8 +88,6 @@
         },
         mounted: function(){
             this.uploadList = this.$refs.upload.fileList;
-            console.log(this.defaultList);
-            console.log(this.uploadConfig);
         },
     };
 </script>

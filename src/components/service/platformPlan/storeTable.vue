@@ -133,7 +133,6 @@
         methods: {
             /* 分页回掉函数 */
             changePage (page) {
-                console.log(page)
                 let vm = this;
                 vm.table.pageNun = page;   
                 vm.getData();             
@@ -156,8 +155,6 @@
                 if(!!vm.storeId){
                     ajaxData.storeId = vm.storeId;
                 }
-                
-                console.log(ajaxData)
                 vm.table.loading = true;
                 this.$http.post(
                     url,
@@ -168,16 +165,12 @@
                         },
                     }
                 ).then(function(res){
-                    console.log(res.data);
                     let oData = res.data
                     vm.table.recordsTotal = oData.data.total;
                     vm.table.tableData1 = oData.data.list;
                     vm.table.loading = false;
-                    console.log(11111111);
-                    console.log(vm.listId);
                     vm.selectOrNo(vm.listId,oData.data.list)
                     vm.tempArr = res.data.data.list;
-                    console.log(vm.tempArr)
                 }).catch(function(err){
                 })
             },
@@ -195,61 +188,71 @@
             },
             /* 选中某一项的回掉函数 */
             fnSelect (selection,row) {
-                // console.log(row);
-                this.listId.push(row.id)
-                console.log(this.listId)
+                this.listId.push(row)
             },
             // 取消选中某一项的回调函数
             fnCancel(selection,row){
-                // console.log(row)
-                this.remove(this.listId,row.id)
-                console.log(this.listId)
+                this.listId = this.fnRemoveItemFromArrs(this.listId,row);
             },
              /* 全选时的回调函数 */
             fnSelectAll (selection) {
-                console.log(selection);
-                console.log(this.listId)
                 if(this.listId.length==0){
                     for(var i=0;i<selection.length;i++){
-                        this.listId.push(selection[i].id);
+                        this.listId.push(selection[i]);
                     }
                 }else{
                     for(var i=0;i<selection.length;i++){
                         for(var j=0;j<this.listId.length;j++){
-                            if(this.listId[j] == selection[i].id){
+                            if(this.listId[j].id == selection[i].id){
                                 break;
                             }
-                            if(this.listId[j] != selection[i].id){
+                            if(this.listId[j].id != selection[i].id){
                                 if(j==this.listId.length-1){
-                                    this.listId.push(selection[i].id)
+                                    this.listId.push(selection[i])
                                 }
                             }
                         }
                     }
                 }
-                console.log(this.listId)
             },
             // 选中项改变
             fnChange(selection){
-                console.log(selection)
                 if(selection.length==0){
-                   for(var i=0;i<this.tempArr.length;i++){
-                       this.remove(this.listId,this.tempArr[i].id);
-                   } 
+                   this.listId = this.fnRemoveArrFromArrs(this.listId,this.tempArr);
                 }
             },
-            // 删除特定的id
-            remove(arr,id){
-                let index = arr.indexOf(id)
-                if (index > -1) {
-                    arr.splice(index, 1);
+            // 数组去重，arg1为原始数据，arg2为一个元素
+            fnRemoveItemFromArrs (arrs,item) {
+                var list = [];
+                arrs.forEach((aItem,index)=>{
+                    if(aItem.id != item.id){
+                        list.push(aItem);
+                    }
+                })
+                return list;
+            },
+             // 数组去重，arg1为原始数组，arg2为要被删除的数据
+            fnRemoveArrFromArrs (arrs1,arrs2) {
+                // 状态值  true 则加 false 则不加
+                let list = [];
+                for(var i = 0;i<arrs1.length;i++){
+                    var _switch = true;
+                    for(var j = 0;j<arrs2.length;j++){
+                        if(arrs1[i].id == arrs2[j].id){
+                            _switch = false;
+                        }
+                        if(j == arrs2.length -1&&!!_switch){
+                            list.push(arrs1[i]);
+                        }
+                    }
                 }
+                return list;
             },
             // 每请求一页的时候判断是否被选中
             selectOrNo(arr1,arr2){
                 for(var i=0;i<arr1.length;i++){
                     for(var j=0;j<arr2.length;j++){
-                        if(arr1[i]==arr2[j].id){
+                        if(arr1[i].id == arr2[j].id){
                             arr2[j]._checked = true
                         }
                     }
@@ -257,7 +260,6 @@
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {
-                console.log(size);
                 let vm = this;
                 vm.table.size = size;
                 vm.getData();
@@ -285,13 +287,11 @@
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
             ok () {
-                console.log(this.listId);
                 this.$Message.info('Clicked ok');
                 this.$store.commit('STORE_LIST',this.listId);
             },
             fnOpenModal () {
                 this.listId = this.$store.getters.storeList;
-                console.log(this.listId);
                 this.getData();
                 this.usingRange = true;
             }
@@ -311,15 +311,6 @@
         components:{
         },
         watch:{
-            /* getBusinessId:{
-                deep:true,
-                handler(val){
-                    console.log(val)
-                    this.listId = val;
-                    this.getData();
-                    alert("变化")
-                }
-            } */
         },
     }
 </script>

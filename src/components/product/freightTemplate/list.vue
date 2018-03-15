@@ -1,7 +1,5 @@
 <template>
     <div>
-        <!-- 详情容器 -->
-        <div v-if="pageType == 'info'" class="testWrap">详情</div>
         <!-- 新增 -->
         <AddPage v-if="pageType == 'add'"  class="testWrap" v-on:returnList="changePageType"></AddPage>
         <!-- 编辑容器 -->
@@ -78,24 +76,31 @@
                     //table头
                     tableColumns: [
                         {
-                            title: '短信名称',
-                            key: 'smsName',
+                            title: '模板名称',
+                            key: 'templateName',
                         },
                         {
-                            title: '短信编码',
-                            key: 'smsCode',
+                            title: '计价方式',
+                            key: 'pricingMethod',
                             render: (h,params) => {
                                 const row = params.row;
-                                return !!row.smsCode?row.smsCode:"无"
+                                const color = row.pricingMethod == 1? 'green':'yellow';
+                                const text = row.pricingMethod == 1? '按件数':'按重量';
+                                return h('Tag', {
+                                    props: {
+                                        type: 'border',
+                                        color: color
+                                    }
+                                }, text);
                             }
                         },
                         {   
-                            title: '短信类型',
-                            key: 'smsType',
+                            title: '运送方式',
+                            key: 'transportMethod',
                             render: (h,params) => {
                                 const row = params.row;
-                                const color = !!!row.smsType ? 'red' : row.smsType == 0 ? 'yellow': row.smsType == 1 ? 'green': row.smsType == 2?'blue':'white';
-                                const text = !!!row.smsType ? '无' : row.smsType == 0 ? '验证码': row.smsType == 1?'短信通知': row.smsType == 2? '短信推广': '';
+                                const color = row.transportMethod == 1? 'green':'yellow';
+                                const text = row.transportMethod == 1? '快递':'默认';
                                 return h('Tag', {
                                     props: {
                                         type: 'border',
@@ -105,11 +110,11 @@
                             }
                         },
                         {
-                            title: '更新时间',
-                            key: 'updateTime',
+                            title: '创建时间',
+                            key: 'createTime',
                             render: (h,params) => {
                                 const row = params.row;
-                                return this.common.formatDate(row.updateTime);
+                                return this.common.formatDate(row.createTime);
                             }
                         },
                         {
@@ -188,11 +193,10 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path2+"baseSmsTemplates/selectListByConditions?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"freightTemplate/findByPageForDefault?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
-                    categoryParentId: 0
                 }
                 vm.table.loading = true;
                 this.$http.post(
@@ -206,7 +210,6 @@
                 ).then(function(res){
                     let oData = res.data
                     vm.table.recordsTotal = res.data.data.total;
-
                     vm.table.tableData1 = res.data.data.list;
                     vm.table.loading = false;
                 }).catch(function(err){

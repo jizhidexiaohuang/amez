@@ -249,7 +249,9 @@
                         var storeList = vm.$store.getters.storeList;
                         for(var i = 0;i<storeList.length;i++){
                             var obj = {};
-                            obj.beauticianId = storeList[i];
+                            obj.beauticianId = storeList[i].id;
+                            obj.beauticianNickname = storeList[i].beauticianNickname;
+                            obj.beauticianHeadImgUrl = storeList[i].headImgUrl;
                             obj.serverType = 0;
                             ajaxData.storeProductBeauticianRefList.push(obj);
                         }
@@ -258,7 +260,9 @@
                         var homeList = vm.$store.getters.tohomeList;
                         for(var j = 0;j<homeList.length;j++){
                             var obj = {};
-                            obj.beauticianId = homeList[j];
+                            obj.beauticianId = homeList[j].id;
+                            obj.beauticianNickName = homeList[j].beauticianNickName;
+                            obj.beauticianHeadImgUrl = homeList[j].headImgUrl;
                             obj.serverType = 1;
                             ajaxData.homeProductBeauticianRefList.push(obj);
                         }
@@ -303,8 +307,12 @@
             fnGetProductCategory () {
                 let vm = this;
                 let url = vm.common.path2 + "productCategory/front/findByPage?pageSize=1000";
+                let ajaxData = {
+                    pid:0,
+                }
                 vm.$http.post(
                     url,
+                    ajaxData,
                     {
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
@@ -362,14 +370,24 @@
                 let storeList = data.storeProductBeauticianRefList;
                 let storeArrs = [];
                 storeList.forEach(function(item,index){
-                    storeArrs.push(+item.beauticianId);
+                    var obj = {
+                        'id' : +item.beauticianId,
+                        'beauticianNickName': item.beauticianNickName,
+                        'headImgUrl': item.beauticianHeadImgUrl,
+                    }
+                    storeArrs.push(obj);
                 });
                 vm.$store.commit('STORE_LIST',storeArrs);
                 // 上门服务员工 homeProductBeauticianRefList
                 let homeList = data.homeProductBeauticianRefList;
                 let homeArrs = [];
                 homeList.forEach(function(item,index){
-                    homeArrs.push(+item.beauticianId);
+                    var obj = {
+                        'id' : +item.beauticianId,
+                        'beauticianNickName': item.beauticianNickName,
+                        'headImgUrl': item.beauticianHeadImgUrl,
+                    }
+                    homeArrs.push(obj);
                 });
                 vm.$store.commit('TOHOME_LIST',homeArrs);
 

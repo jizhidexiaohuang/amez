@@ -134,7 +134,6 @@
             },
             // 开关控制
             changeSwitch1 () {
-                this.$Message.info('开关状态：' + status);
             }
         },
         mounted: function(){

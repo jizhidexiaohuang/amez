@@ -248,7 +248,9 @@
                         var storeList = vm.$store.getters.storeList;
                         for(var i = 0;i<storeList.length;i++){
                             var obj = {};
-                            obj.beauticianId = storeList[i];
+                            obj.beauticianId = storeList[i].id;
+                            obj.beauticianNickname = storeList[i].beauticianNickName;
+                            obj.beauticianHeadImgUrl = storeList[i].beauticianHeadImgUrl;
                             obj.serverType = 0;
                             ajaxData.storeProductBeauticianRefList.push(obj);
                         }
@@ -257,17 +259,14 @@
                         var homeList = vm.$store.getters.tohomeList;
                         for(var j = 0;j<homeList.length;j++){
                             var obj = {};
-                            obj.beauticianId = homeList[j];
+                            obj.beauticianId = homeList[j].id;
+                            obj.beauticianNickname = homeList[j].beauticianNickName;
+                            obj.beauticianHeadImgUrl = homeList[j].headImgUrl;
                             obj.serverType = 1;
                             ajaxData.homeProductBeauticianRefList.push(obj);
                         }
-
-                         /* 商品-美容师-关联集合（招募） recruitProductBeauticianRefList */
+                        /* 商品-美容师-关联集合（招募） recruitProductBeauticianRefList */
                         ajaxData.recruitProductBeauticianRefList = [];
-
-
-                        
-                        console.log(ajaxData);
                         let url = vm.common.path2+"product/add/brand";
                         vm.$http.post(
                             url,
@@ -279,17 +278,11 @@
                             }
                         ).then(function(res){
                             let oData = res.data
-                            console.log(oData);
-                            /* vm.table.recordsTotal = oData.data.total;
-                            vm.table.tableData1 = res.data.data.list;
-                            vm.table.loading = false; */
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.success(err);
                         })
-                        console.log(ajaxData);
                     } else {
                         this.$Message.error('提交失败!');
                     }
@@ -312,14 +305,13 @@
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = data;
-                console.log(vm.uploadList);
             },
             // 服务分类接口数据
             fnGetProductCategory () {
                 let vm = this;
                 let url = vm.common.path2 + "productCategory/front/findByPage?pageSize=1000";
                 let ajaxData = {
-                    categoryParentId:0,
+                    pid:0,
                 }
                 vm.$http.post(
                     url,
@@ -328,7 +320,6 @@
                     let oData = res.data.data.list;
                     vm.serviceList = oData;
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             // 服务所属品牌接口数据
@@ -345,11 +336,9 @@
                         }
                     }
                 ).then(function(res){
-                    console.log(res);
                     let oData = res.data.data.list;
                     vm.brandList = oData
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
         },

@@ -315,7 +315,8 @@
                         var productStoreList = vm.$store.getters.serviceStoreList;
                         for(var i = 0;i<productStoreList.length;i++){
                             var obj = {};
-                            obj.storeId = productStoreList[i];
+                            obj.storeId = productStoreList[i].id;
+                            obj.storeName = productStoreList[i].storeName;
                             ajaxData.productStoreRefList.push(obj);
                         }
                         /*  商品-产品-关联集合  productProductPhysicalRefList */ 
@@ -342,7 +343,9 @@
                         var storeList = vm.$store.getters.storeList;
                         for(var i = 0;i<storeList.length;i++){
                             var obj = {};
-                            obj.beauticianId = storeList[i];
+                            obj.beauticianId = storeList[i].id;
+                            obj.beauticianNickname = storeList[i].beauticianNickName;
+                            obj.beauticianHeadImgUrl = storeList[i].headImgUrl;
                             obj.serverType = 0;
                             ajaxData.storeProductBeauticianRefList.push(obj);
                         }
@@ -351,21 +354,15 @@
                         var homeList = vm.$store.getters.tohomeList;
                         for(var j = 0;j<homeList.length;j++){
                             var obj = {};
-                            obj.beauticianId = homeList[j];
+                            obj.beauticianId = homeList[j].id;
+                            obj.beauticianNickname = homeList[j].beauticianNickName;
+                            obj.beauticianHeadImgUrl = homeList[j].headImgUrl;
                             obj.serverType = 1;
                             ajaxData.homeProductBeauticianRefList.push(obj);
                         }
 
                          /* 商品-美容师-关联集合（招募） recruitProductBeauticianRefList */
                         ajaxData.recruitProductBeauticianRefList = [];
-
-
-                        // console.log(ajaxData.productStoreRefList);
-                        // console.log(ajaxData.productProductPhysicalRefList);
-
-
-                        console.log('~~~~~~~~~~~~~')
-                        console.log(JSON.stringify(ajaxData));
                         let url = vm.common.path2+"product/add/platformSelf";
                         vm.$http.post(
                             url,
@@ -380,10 +377,8 @@
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.success(err);
                         })
-                        console.log(ajaxData);
                     } else {
                         this.$Message.error('提交失败!');
                     }
@@ -406,14 +401,13 @@
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = data;
-                console.log(vm.uploadList);
             },
             // 服务分类接口数据
             fnGetProductCategory () {
                 let vm = this;
                 let url = vm.common.path2 + "productCategory/front/findByPage?pageSize=1000";
                 let ajaxData = {
-                    categoryParentId:0,
+                    pid:0,
                 }
                 vm.$http.post(
                     url,
@@ -422,7 +416,6 @@
                     let oData = res.data.data.list;
                     vm.serviceList = oData;
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             // 服务所属品牌接口数据
@@ -439,35 +432,28 @@
                         }
                     }
                 ).then(function(res){
-                    console.log(res);
                     let oData = res.data.data.list;
                     vm.brandList = oData
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
              /* 分页回掉函数 */
             changePage (page) {
-                console.log(page)
                 let vm = this;
                 vm.table.pageNun = page;   
                 vm.getData();             
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {
-                console.log(size);
                 let vm = this;
                 vm.table.size = size;
                 vm.getData();
             },
             /* 选中某一项的回掉函数 */
             fnSelect (selection,row) {
-                console.log(row);
-                console.log(selection);
             },
             /* 全选时的回调函数 */
             fnSelectAll (selection) {
-                console.log(selection);
             },
              /*表格选中高亮显示*/
             fnHighlight(currentRow,oldCurrentRow){
@@ -494,7 +480,6 @@
                         },
                     }
                 ).then(function(res){
-                    console.log(res.data);
                     let oData = res.data
                     vm.table.recordsTotal = oData.data.total;
                     vm.table.tableData1 = oData.data.list;

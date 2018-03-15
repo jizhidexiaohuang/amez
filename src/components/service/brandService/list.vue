@@ -325,9 +325,10 @@
                                     }
                                 }, '审核')
                                 if(row.auditStatus == 0){
-                                    arrs.push(obj6);
+                                    if(!!!this.storeId){
+                                        arrs.push(obj6);
+                                    }
                                 }   
-
                                 let obj4 = h('Button', {
                                     props: {
                                         type: 'error',

@@ -83,7 +83,6 @@
             ok () {
                 let vm = this;
                 this.$store.commit('CITY_LIST',vm.defaultList);
-                console.log(vm.defaultList);
             },
             // 打开模态框
             fnOpenModal () {
@@ -111,17 +110,14 @@
                 ).then(function(res){
                     let list = res.data.data.list;
                     vm.provinceList = list;
-                    console.log(list);
                     vm.provinceId = list[0].regionId;
                     vm.spinShow = false;
                     vm.fnGetCity(list[0].regionId);
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             // 点击省份的回调函数
             selectProvince (parentId,index) {
-                console.log(parentId);
                 let vm = this;
                 vm.provinceIndex = index;
                 vm.provinceId = parentId;
@@ -151,9 +147,7 @@
                     }
                     let list = res.data.data.list;
                     vm.cityList = list;
-                    console.log(list);
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             // 点击城市的回调函数
@@ -181,7 +175,6 @@
                     nArrs.push(obj);
                 }
                 vm.defaultList = nArrs;
-                console.log(vm.provinceId);
                 vm.fnGetCity(vm.provinceId,true)
             },
         },

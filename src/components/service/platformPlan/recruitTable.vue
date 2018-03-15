@@ -134,7 +134,6 @@
         methods: {
             /* 分页回掉函数 */
             changePage (page) {
-                console.log(page)
                 let vm = this;
                 vm.table.pageNun = page;   
                 vm.getData();             
@@ -154,8 +153,6 @@
                 if(!!vm.cd.beauticianType){
                     ajaxData.beauticianType = vm.cd.beauticianType;
                 }
-                
-                console.log(ajaxData)
                 vm.table.loading = true;
                 this.$http.post(
                     url,
@@ -166,16 +163,12 @@
                         },
                     }
                 ).then(function(res){
-                    console.log(res.data);
                     let oData = res.data
                     vm.table.recordsTotal = oData.data.total;
                     vm.table.tableData1 = oData.data.list;
                     vm.table.loading = false;
-                    console.log(11111111);
-                    console.log(vm.listId);
                     vm.selectOrNo(vm.listId,oData.data.list)
                     vm.tempArr = res.data.data.list;
-                    console.log(vm.tempArr)
                 }).catch(function(err){
                 })
             },
@@ -193,20 +186,14 @@
             },
             /* 选中某一项的回掉函数 */
             fnSelect (selection,row) {
-                // console.log(row);
                 this.listId.push(row.id)
-                console.log(this.listId)
             },
             // 取消选中某一项的回调函数
             fnCancel(selection,row){
-                // console.log(row)
                 this.remove(this.listId,row.id)
-                console.log(this.listId)
             },
              /* 全选时的回调函数 */
             fnSelectAll (selection) {
-                console.log(selection);
-                console.log(this.listId)
                 if(this.listId.length==0){
                     for(var i=0;i<selection.length;i++){
                         this.listId.push(selection[i].id);
@@ -225,11 +212,9 @@
                         }
                     }
                 }
-                console.log(this.listId)
             },
             // 选中项改变
             fnChange(selection){
-                console.log(selection)
                 if(selection.length==0){
                    for(var i=0;i<this.tempArr.length;i++){
                        this.remove(this.listId,this.tempArr[i].id);
@@ -255,7 +240,6 @@
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {
-                console.log(size);
                 let vm = this;
                 vm.table.size = size;
                 vm.getData();
@@ -283,13 +267,11 @@
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
             ok () {
-                console.log(this.listId);
                 this.$Message.info('Clicked ok');
                 this.$store.commit('RECRUIT_LIST',this.listId);
             },
             fnOpenModal () {
                 this.listId = this.$store.getters.recruitList;
-                console.log(this.listId);
                 this.getData();
                 this.usingRange = true;
             }
@@ -304,16 +286,6 @@
         },
         components:{
         },
-        /* watch:{
-            getBusinessId:{
-                deep:true,
-                handler(val){
-                    console.log(val)
-                    this.listId = val;
-                    this.getData();
-                }
-            }
-        }, */
     }
 </script>
 <style scoped>

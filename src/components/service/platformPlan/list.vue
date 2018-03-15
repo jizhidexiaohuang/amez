@@ -321,10 +321,9 @@
                                         }
                                     }
                                 }, '审核')
-                                if(row.auditStatus == 0){
+                                if(row.auditStatus == 0 && !!!this.storeId){
                                     arrs.push(obj7);
                                 }   
-
                                 let obj3 = h('Button', {
                                     props: {
                                         type: 'error',
@@ -433,7 +432,6 @@
                     vm.table.tableData1 = res.data.data.list;
                     vm.table.loading = false;
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             /* 删除一条列表 */
@@ -462,7 +460,6 @@
                                 vm.$Message.error(res.data.message);
                             }
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.error(err);
                         })
                     }
@@ -517,7 +514,6 @@
                         vm.modal.loading = true;
                         vm.modal.mineModal = false;
                     }).catch(function(err){
-                        console.log(err);
                         vm.getData();
                     })
                 })()
@@ -536,7 +532,6 @@
                     let oData = res.data.data.list;
                     vm.sendChild.serviceList = oData;
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             // 服务所属品牌接口数据
@@ -556,7 +551,6 @@
                     let oData = res.data.data.list;
                     vm.sendChild.brandList = oData
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             /* 判断页签中是否有该模块，如果有则使用缓存，如果没有则重新加载数据 */

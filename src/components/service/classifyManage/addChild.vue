@@ -31,7 +31,7 @@
                 formValidate: {
                     categoryName: '',// 分类名称
                     categoryLogo:'',//图片地址
-                    categoryParentId: 0,//父类id
+                    pid: 0,//父类id
                 },
                 ruleValidate: {
                 },
@@ -58,8 +58,10 @@
                         let ajaxData = {
                             categoryName: vm.formValidate.categoryName, // 分类名称
                             categoryLogo: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
-                            categoryParentId: !!!this.twoChild.categoryParentId?0:this.twoChild.categoryParentId,// 父类id
+                            pid: !!!this.twoChild.pid?0:this.twoChild.pid,// 父类id
                             isEnabled: !!!vm.switch1?0:1,//开启状态
+                            storeId: this.twoChild.storeId, // 店铺id
+                            categoryCode: 'CODE_XX_XX', // 分类代码
                         }
                         let url = vm.common.path2+"productCategory/insert";
                         vm.$http.post(
@@ -96,7 +98,6 @@
             },
             // 开关控制
             changeSwitch1 (status) {
-                this.$Message.info('开关状态：' + status);
                 console.log(this.switch1);
             }
         },

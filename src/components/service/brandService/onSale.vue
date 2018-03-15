@@ -248,7 +248,9 @@
                         var homeList = vm.$store.getters.tohomeList;
                         for(var j = 0;j<homeList.length;j++){
                             var obj = {};
-                            obj.beauticianId = homeList[j];
+                            obj.beauticianId = homeList[j].id;
+                            obj.beauticianNickname = homeList[j].beauticianNickName;
+                            obj.beauticianHeadImgUrl = homeList[j].headImgUrl;
                             obj.serverType = 1;
                             ajaxData.homeProductBeauticianRefList.push(obj);
                         }
@@ -257,7 +259,9 @@
                         var storeList = vm.$store.getters.storeList;
                         for(var i = 0;i<storeList.length;i++){
                             var obj = {};
-                            obj.beauticianId = storeList[i];
+                            obj.beauticianId = storeList[i].id;
+                            obj.beauticianNickname = storeList[i].beauticianNickname;
+                            obj.beauticianHeadImgUrl = storeList[i].headImgUrl;
                             obj.serverType = 0;
                             ajaxData.storeProductBeauticianRefList.push(obj);
                         }
@@ -275,14 +279,11 @@
                             ajaxData,
                         ).then(function(res){
                             let oData = res.data
-                            console.log(oData);
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.success(err);
                         })
-                        console.log(ajaxData);
                     } else {
                         this.$Message.error('提交失败!');
                     }
@@ -305,7 +306,6 @@
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = data;
-                console.log(vm.uploadList);
             },
             // 服务分类接口数据
             fnGetProductCategory () {
@@ -322,7 +322,6 @@
                     let oData = res.data.data.list;
                     vm.serviceList = oData;
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             // 服务所属品牌接口数据
@@ -341,7 +340,6 @@
                     let oData = res.data.data.list;
                     vm.brandList = oData
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             // 获取产品信息
@@ -363,24 +361,28 @@
             // 产品的信息遍历出来
             fnInitQuery (data) {
                 let vm = this;
-                console.log('此时得list：'+ vm.$store.getters.storeList);
-                // 商品关联
-                // vm.$store.commit('STORE_LIST',[1]);
-                vm.$store.commit('TOHOME_LIST',[2,3]);
-                // vm.$store.commit('RECRUIT_LIST',[4,5,6]);
-
                 // 到店服务员工 storeProductBeauticianRefList
                 let storeList = data.storeProductBeauticianRefList;
                 let storeArrs = [];
                 storeList.forEach(function(item,index){
-                    storeArrs.push(+item.beauticianId);
+                    var obj = {
+                        'id' : +item.beauticianId,
+                        'beauticianNickName': item.beauticianNickName,
+                        'headImgUrl': item.beauticianHeadImgUrl,
+                    }
+                    storeArrs.push(obj);
                 });
                 vm.$store.commit('STORE_LIST',storeArrs);
                 // 上门服务员工 homeProductBeauticianRefList
                 let homeList = data.homeProductBeauticianRefList;
                 let homeArrs = [];
                 homeList.forEach(function(item,index){
-                    homeArrs.push(+item.beauticianId);
+                    var obj = {
+                        'id' : +item.beauticianId,
+                        'beauticianNickName': item.beauticianNickName,
+                        'headImgUrl': item.beauticianHeadImgUrl,
+                    }
+                    homeArrs.push(obj);
                 });
                 vm.$store.commit('TOHOME_LIST',homeArrs);
 
@@ -451,32 +453,23 @@
                 }
                 vm.testCode = true;
                 vm.uploadList = vm.defaultList;
-
-                
-
-                
             },
             changePage (page) {
-                console.log(page)
                 let vm = this;
                 vm.table.pageNun = page;   
                 vm.getData();             
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {
-                console.log(size);
                 let vm = this;
                 vm.table.size = size;
                 vm.getData();
             },
             /* 选中某一项的回掉函数 */
             fnSelect (selection,row) {
-                console.log(row);
-                console.log(selection);
             },
             /* 全选时的回调函数 */
             fnSelectAll (selection) {
-                console.log(selection);
             },
              /*表格选中高亮显示*/
             fnHighlight(currentRow,oldCurrentRow){
@@ -484,7 +477,6 @@
                 this.formValidate.storeId = currentRow.id;
                 this.storeId = currentRow.id;
                 this.tableCtrl = false;
-
                 this.$store.commit('STORE_ID',this.storeId);
                 this.$store.commit('STORE_LIST',[]);
                 this.$store.commit('TOHOME_LIST',[]);
@@ -509,7 +501,6 @@
                         },
                     }
                 ).then(function(res){
-                    console.log(res.data);
                     let oData = res.data
                     vm.table.recordsTotal = oData.data.total;
                     vm.table.tableData1 = oData.data.list;
