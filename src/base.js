@@ -155,6 +155,11 @@ const common = {
                     name:"评论管理",
                     hasChildList: false,
                     href:"/order/commentManage"
+                },
+                {
+                    name:"产品订单",
+                    hasChildList: false,
+                    href:"/order/goodsOrder"
                 }
             ]
         },

@@ -49,6 +49,8 @@ import ServiceOrder from '@/components/order/serviceOrder/list'
 import CustomerOrder from '@/components/order/customerOrder/list'
 //评论管理
 import CommentManage from '@/components/order/commentManage/list'
+//产品订单
+import GoodsOrder from '@/components/order/goodsOrder/list'
 /*=====================================权限管理==========================*/
 //用户管理
 import UserManage from '@/components/manage/userManage/list'
@@ -318,7 +320,17 @@ const menuRouter = [
           type:"菜单",
           name:"评论管理"
         }
-      }
+      },
+      {
+        path: '/order/goodsOrder',
+        name: '产品订单',
+        title: '产品订单',
+        component: GoodsOrder,
+        meta:{
+          type:"菜单",
+          name:"产品订单"
+        }
+      },
     ]
   },
   {
