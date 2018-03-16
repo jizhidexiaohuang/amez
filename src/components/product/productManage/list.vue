@@ -40,7 +40,7 @@
                     <TabPane label="品牌服务" name="2"></TabPane>
                 </Tabs>
                 <Form :model="cd" inline>
-                    <FormItem style="margin-bottom:10px;">
+                    <FormItem style="margin-bottom:10px;" v-if="false">
                         状态
                         <Select v-model="cd.saleStatus" style="width:200px">
                             <Option value="">全部</Option>
@@ -200,7 +200,7 @@
                             {
                             title: '操作',
                             key: 'action',
-                            width: 220,
+                            width: 170,
                             // align: 'center',
                             // fixed: 'right',
                             render: (h, params) => {
@@ -228,7 +228,7 @@
                                     }
                                 }, text)
                                 if(!!this.operators.updown){
-                                    arrs.push(obj2);
+                                    // arrs.push(obj2);
                                 }
                                 let obj3 = h('Button', {
                                     props: {

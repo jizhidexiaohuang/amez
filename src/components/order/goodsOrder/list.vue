@@ -1,13 +1,31 @@
 <template>
     <div>
+        <!-- 模态框 -->
+        <Modal
+            v-model="modal.sendModal"
+            title="填写物流信息"
+            width="700"
+            @on-ok="fnAsyncOK">
+            <Form style="min-height:250px;" :label-width="80">
+                <FormItem label="物流公司：">
+                    <Select v-model="company.companyCode">
+                        <Option v-for="item in companyList" :value="item.companyCode">{{ item.companyName }}</Option>
+                    </Select>
+                </FormItem>
+                <FormItem label="物流单号：">
+                    <Input v-model="company.deliveryOrderNo" placeholder="请填写物流单号"></Input>
+                </FormItem>
+            </Form>
+        </Modal>
         <!-- 新增容器 -->
         <AddPage v-if="pageType == 'add'"  class="testWrap" v-on:returnList="changePageType"/>
         <!-- 编辑容器 -->
         <div v-if="pageType == 'edit'" class="testWrap">
             编辑
         </div>
+        <deliveryInfo v-if="pageType == 'delivery'" class="testWrap" :id="id" v-on:returnList="changePageType"></deliveryInfo>
         <!-- 详情容器 -->
-        <infoPage v-if="pageType == 'info'"  class="testWrap" :message="parentMsg" v-on:returnList="changePageType"/>
+        <infoPage v-if="pageType == 'info'" class="testWrap" :orderId="orderId" v-on:returnList="changePageType"/>
         <!-- 列表容器 -->
         <div v-if="pageType == 'list'" class="testWrap">
             <div class="boxStyle">
@@ -24,14 +42,14 @@
                 </Col>
             </Row>
             <Form :model="cd" inline>
-                <Button style="float:left;margin-right:10px;" @click="exportData" type="success">订单导出</Button>
-                <FormItem style="margin-bottom:10px;">
+                <Button style="float:left;margin-right:10px;" @click="exportData" type="success" v-if="false">订单导出</Button>
+                <FormItem style="margin-bottom:10px;" v-if="false">
                     订单类型
                     <Select v-model="cd.orderType" style="width:100px">
                         <Option v-for="item in orderTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
                 </FormItem>
-                <FormItem style="margin-bottom:10px;">
+                <FormItem style="margin-bottom:10px;" v-if="false">
                     订单来源
                     <Select v-model="cd.orderOrigin" style="width:100px">
                         <Option v-for="item in orderOriginList" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -43,7 +61,7 @@
                         <Option v-for="item in orderStatusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
                 </FormItem>
-                <FormItem style="margin-bottom:10px;">
+                <FormItem style="margin-bottom:10px;" v-if="false">
                     下单时间
                     <DatePicker v-model="cd.addTime" type="daterange" placement="bottom-end" placeholder="请填写时间范围" style="width:200px"></DatePicker>
                 </FormItem>
@@ -51,9 +69,6 @@
                     <Input v-model="cd.inputVal">
                     <Select v-model="cd.selectType" slot="prepend" style="width: 100px">
                         <Option value="orderNo">订单号</Option>
-                        <Option value="storeName">门店名称</Option>
-                        <Option value="memberRealName">收货人姓名</Option>
-                        <Option value="phone">收货人手机</Option>
                     </Select>
                     </Input>
                 </FormItem>
@@ -97,10 +112,25 @@
 <script>
     import expandRow from './table-expand.vue'
     import infoPage from './info.vue'
+    import deliveryInfo from './deliveryInfo.vue'
     import common from '../../../base.js'
     export default {
         data () {
             return {
+                id: '', // 查询物流用的id
+                modal: {
+                    loading: false,
+                    sendModal: false, // 模态框控制开关
+                },
+                orderInfo: '', // 订单信息
+                companyList: [], // 物流公司
+                company:{
+                    companyCode:'', // 快递公司编码
+                    deliveryOrderNo: '', // 快递单号
+                    companyName: '', // 快递公司名称
+                },
+                orderId: '', // 订单id,
+                // goodsInfoList: [], // 商品信息
                 src:'../../../static/images/footer/1_1.png',
                 area:'',
                 parentMsg:'',
@@ -137,20 +167,14 @@
                         label:'待付款'
                     },{
                         value:'1',
-                        label:'交易关闭'
+                        label:'待发货'
                     },{
                         value:'2',
-                        label:'待服务'
+                        label:'待收货'
                     },{
-                        value:'4',
-                        label:'服务中'
-                    },{
-                        value:'5',
-                        label:'待评价'
-                    },{
-                        value:'6',
-                        label:'评价完成'
-                    },
+                        value:'3',
+                        label:'已收货'
+                    }
                 ],//订单状态
                 cd:{
                     addTime:[],//评论时间范围
@@ -163,7 +187,7 @@
                 activatedType: false,//主要解决mounted和activated重复调用
                 pageType: 'list',
                 tableColumns1: [
-                    {
+                    /* {
                         type: 'expand',
                         width: 50,
                         render: (h, params) => {
@@ -173,86 +197,131 @@
                                 }
                             })
                         }
-                    },
+                    }, */
                     {
                         title: '订单编号',
                         key: '',
+                        width: 180,
                         render: (h,params) => {
                             const row = params.row;
-                            return row.orderGoodsBase.orderNo;
+                            return row.orderNo;
                         }
                     },
-                    {
-                        title: '发货单号',
+                    {   
+                        title: '商品总数量',
                         key: '',
-                        render: (h,params) => {
-                            const row = params.row;
-                            return row.orderGoodsBase.deliveryOrderNo;
+                        width: 100,
+                        render:(h,params)=>{
+                            const nums = params.row.nums
+                            return nums
+                        }
+                    },
+                    {   
+                        title: '订单总金额（元）',
+                        key: '',
+                        width: 135,
+                        render:(h,params)=>{
+                            const amountTotal = params.row.amountTotal
+                            return +amountTotal/100
+                        }
+                    },
+                    {   
+                        title: '下单时间',
+                        key: '',
+                        width: 150,
+                        render:(h,params)=>{
+                            const addTime = params.row.addTime
+                            return this.common.baseFormatDate(addTime)
+                        }
+                    },
+                    {   
+                        title: '美容师所属门店',
+                        key: '',
+                        render:(h,params)=>{
+                            const storeName = params.row.beauticianBelongStoreName
+                            return storeName
                         }
                     },
                     {
                         title: '订单状态',
                         key: '',
+                        width: 100,
                         render:(h,params) =>{
-                            const row = params.row;
-                            const color = row.saleStatus === 0 ? 'red' : 'blue';
-                            const text = row.saleStatus === 0 ? '下架' : '上架';
+                            const _s = params.row.status;
+                            // 0：待付款, 1:待发货, 2:待收货, 3:已收货,
+                            // red  yellow blue  green
+                            const color = _s === 0 ? '#ccc' : _s === 1 ? 'red' : _s === 2 ? 'blue' : 'green';
+                            const text = _s === 0 ? '待付款' : _s === 1 ? '待发货' : _s === 2 ? '待收货' : '已收货';
                             return h('Tag', {
                                 props: {
                                     type: 'border',
-                                    color: color
+                                    color: color,
+                                    // background: color,
                                 }
                             }, text);
                         }
                     },
-                    {   
-                        title: '美容院',
-                        key: 'storeName',
-                        render:(h,params)=>{
-                            return h('div',[
-                                h('div',params.row.storeName)
-                            ])
-                        }
-                    },
-                    {   
-                        title: '买家信息',
-                        key: 'type',
-                        render:(h,params)=>{
-                            let str = '';
-                            if(params.row.type==0){
-                                str = params.row.memberNickName
-                            }else{
-                                str = params.row.memberRealName
-                            }
-                            return h('div',[
-                                h('div',str),
-                                h('div',params.row.phone)
-                            ])
-                        }
-                    },
                     {
                         title: '操作',
-                        key: 'action',
-                        width: 100,
-                        align: 'center',
+                        key: '',
+                        width: 160,
                         render: (h, params) => {
-                            return h('div', [
-                                h('Button', {
-                                    props: {
-                                        type: 'primary',
-                                        size: 'small'
-                                    },
-                                    style: {
-                                        marginRight: '5px'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            this.parentMsg = params.row.id
-                                            this.changePageType('info');
-                                        }
+                            const row = params.row;
+                            let arrs = [];
+                            /* 查看按钮 */
+                            let see_obj = h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small'
+                                },
+                                style: {
+                                    marginRight: '5px'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.orderId = row.id;
+                                        // this.goodsInfoList = row.goodsInfoList;
+                                        this.changePageType('info');
                                     }
-                                }, '查看'),
-                            ]);
+                                }
+                            }, '查看');
+                            /* 发货按钮 */
+                            let send_obj = h('Button', {
+                                props: {
+                                    type: 'warning',
+                                    size: 'small'
+                                },
+                                style: {
+                                    marginRight: '5px'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.modal.sendModal = true;
+                                        this.orderInfo = row;
+                                    }
+                                }
+                            }, '发货');
+                            /* 查看物流 */
+                            let logistics_obj = h('Button', {
+                                props: {
+                                    type: 'success',
+                                    size: 'small'
+                                },
+                                style: {
+                                    marginRight: '5px'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.id = row.orderNo;
+                                        this.changePageType('delivery');
+                                    }
+                                }
+                            }, '查看物流');
+                            arrs.push(see_obj);
+                            row.status == 1 && arrs.push(send_obj); 
+                            (row.status == 2 || row.status == 3) && arrs.push(logistics_obj);
+                            // arrs.push(logistics_obj);
+                            return h('div', arrs);
                         }
                     }
                 ],
@@ -266,6 +335,45 @@
             }
         },
         methods: {
+            /* 发货的回调函数 */
+            fnAsyncOK () {
+                // vm.modal.loading = true;
+                let vm = this;
+                vm.companyList.forEach((item,index) => {
+                    if(item.companyCode == vm.company.companyCode){
+                        vm.company.companyName = item.companyName;
+                    }
+                })
+                let url = vm.common.path2 + 'orderGoodsBase/deliverGoods?orderNo='+vm.orderInfo.orderNo+'&companyCode='+vm.company.companyCode+'&deliveryOrderNo='+vm.company.deliveryOrderNo+'&companyName='+vm.company.companyName;
+                vm.$http.get(
+                    url
+                ).then(function(res){
+                    vm.getData();
+                    vm.modal.loading = true;
+                    vm.modal.mineModal = false;
+                }).catch(function(err){
+                    console.log(err);
+                    vm.getData();
+                })
+            },
+            /* 获取物流公司 */
+            fnGetCompanyList () {
+                let vm = this;
+                let url = vm.common.path2 + 'expressCompany/front/findByPage?pageSize=1000';
+                vm.$http.post(
+                    url,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                ).then(res =>{
+                    vm.companyList = res.data.data.list;
+                }).catch(err =>{
+                    console.log(err);
+                })
+
+            },
             /* 分页回掉函数 */
             changePage (page) {
                 let vm = this;
@@ -280,7 +388,7 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path2+"orderGoodsBase/queryByPage";
+                let url = common.path2+"orderGoodsBase/front/findByPage?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
@@ -310,9 +418,13 @@
                         },
                     }
                 ).then(function(res){
-                    let oData = res.data
+                    let oData = res.data.data
                     vm.table.recordsTotal = oData.total;
-                    vm.table.tableData1 = oData.list;
+                    if(!!oData.list){
+                        vm.table.tableData1 = oData.list;
+                    }else{
+                        vm.table.tableData1 = [];
+                    }
                     vm.table.loading = false;
                 }).catch(function(err){
                 })
@@ -394,6 +506,7 @@
             }
         },
         mounted: function(){
+            this.fnGetCompanyList();
             this.getData();
         },
         activated: function(){
@@ -403,6 +516,7 @@
         components:{
             infoPage,
             expandRow,
+            deliveryInfo
         }
     }
 </script>

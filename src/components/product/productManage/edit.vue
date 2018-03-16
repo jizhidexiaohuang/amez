@@ -7,6 +7,11 @@
                     <Option :value="item.id" v-for="item in serviceList" :key="item.id">{{ item.categoryName }}</Option>
                 </Select>
             </FormItem>
+            <FormItem label="运费模板" prop="type">
+                <Select v-model="formValidate.templateId" placeholder="选择运费模板">
+                    <Option :value="item.id" v-for="(item,index) in tplList" :key="item.id">{{ item.templateName }}</Option>
+                </Select>
+            </FormItem>
             
             <FormItem label="产品名称" prop="physicalName">
                 <Input v-model="formValidate.physicalName" placeholder="请填写产品名称"></Input>
@@ -72,6 +77,7 @@
     export default {
         data () {
             return {
+                tplList: [], // 模板列表
                 bookTypeList:['件','个','支','盒','片','套','瓶','箱','罐'],
                 formValidate: {
                     physicalName: '', // 产品名称
@@ -83,7 +89,7 @@
                     deliveryPlace: '', // 发货地
                     physicalDetail: '', // 产品详情
                     coverImg: '', // 封面图
-
+                    templateId: '', // 模板id
                 },
                 ruleValidate: {
                     teacherName: [
@@ -126,6 +132,8 @@
                     if (valid) {
                         /* 产品提交的数据 */
                         let ajaxData = {};
+                        /* 模板id */
+                        ajaxData.templateId = vm.formValidate.templateId;
                         /* 产品名称 */
                         ajaxData.physicalName = vm.formValidate.physicalName;
                         /* 产品编码 */
@@ -236,16 +244,8 @@
             fnInitQuery (data) {
                 console.log(data);
                 let vm = this;
-                // physicalName: '', // 产品名称
-                // physicalCode: '', // 产品编码
-                // physicalImg: '', // 产品图片
-                // salePrice: '', // 产品价格
-                // unit: '', // 产品单位
-                // inventory: '', // 库存数量
-                // deliveryPlace: '', // 发货地
-                // physicalDetail: '', // 产品详情
-                // coverImg: '', // 封面图
-
+                // 模板id
+                vm.formValidate.templateId = data.templateId;
                 // 产品名称
                 vm.formValidate.physicalName = data.physicalName;
                 // 产品编码
@@ -281,11 +281,29 @@
                 vm.formValidate.physicalDetail = data.physicalDetail;
                 // 封面图
                 vm.formValidate.coverImg = data.coverImg;
-            }
+            },
+            // 获取运费模板列表
+            fnGetTplList () {
+                let vm = this;
+                let url = vm.common.path2+"freightTemplate/findByPageForDefault?pageSize=1000";
+                this.$http.post(
+                    url,
+                    {
+                        headers:{
+                            'Content-type':'application/json;charset=UTF-8'
+                        }
+                    }
+                ).then(function(res){
+                    let oData = res.data
+                    vm.tplList = res.data.data.list;
+                }).catch(function(err){
+                })
+            },
           
         },
         mounted: function(){
             let vm = this;
+            this.fnGetTplList();
             this.fnGetProductCategory();
             this.fnQueryById();
         },

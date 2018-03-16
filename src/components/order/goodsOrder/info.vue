@@ -2,81 +2,75 @@
   <div class="testWrap">
     <div class="infoPage boxStyle">
     <Steps :current="progress">
-        <Step title="提交订单" :content="common.formatDate(orderBase.addTime)"></Step>
-        <Step title="付款时间" :content="showTime(orderBase.payTime)"></Step>
-        <Step title="服务开始时间" :content="showTime(orderBase.actualStartTime)"></Step>
-        <Step title="服务完成" :content="showTime(orderBase.actualEndTime)"></Step>
+        <Step title="买家付款" :content="common.formatDate(orderBase.payTime)"></Step>
+        <Step title="发货时间" :content="showTime(orderBase.deliveryTime)"></Step>
+        <Step title="收货完成" :content="showTime(orderBase.receiveTime)"></Step>
     </Steps>
+    <!-- 订单信息 -->
     <div class="order_info">
       <h4>订单信息</h4>
       <Row>
         <Col span="8">订单号：{{orderBase.orderNo}}</Col>
         <Col span="8">订单状态：{{orderType}}</Col>
-        <Col span="8">订单来源：{{orderBase.orderSource==0?'APP商城':'微信商城'}}</Col>
       </Row>
       <Row>
-        <Col span="8">订单类型：{{orderBase.type==0?'到店订单':'上门订单'}}</Col>
         <Col span="8">支付单号：{{orderBase.tradeNo}}</Col>
         <Col span="8">付款方式：{{payType}}</Col>
       </Row>
     </div>
+    <!-- 买家信息 -->
     <div class="order_info">
       <h4>买家信息</h4>
       <Row>
-        <Col span="8">购买人：{{orderBase.memberRealName}}</Col>
-        <Col span="8">联系电话：{{orderBase.memberPhone}}</Col>
+        <Col span="8">购买人：{{orderBase.addressReveiver}}</Col>
+        <Col span="8">联系电话：{{orderBase.addressPhone}}</Col>
         <Col span="8"></Col>
       </Row>
       <Row>
-        <Col span="8">上门地址：{{orderBase.memberAddress}}</Col>
+        <Col span="8">上门地址：{{!!orderBase.addressRegson?orderBase.addressRegson:orderBase.address}}</Col>
       </Row>
       <Row>
         <Col span="8">备注：{{orderBase.remark?orderBase.remark:'无'}}</Col>
       </Row>
     </div>
+    <!-- 美容院信息 -->
     <div class="order_info">
       <h4>美容院信息</h4>
       <Row>
-        <Col span="8">门店：{{orderBase.storeName}}</Col>
-        <Col span="8">老板姓名：{{orderBase.storeOwnerName}}</Col>
-        <Col span="8">注册手机：{{orderBase.storeTel}}</Col>
+        <Col span="8">美容师名称：{{orderBase.beauticianRealName}}</Col>
+        <Col span="8">美容师类型：{{ orderBase.beauticianType == 0?'店长':'兼职员工' }}</Col>
+        <Col span="8">注册手机：{{orderBase.beauticianPhone}}</Col>
       </Row>
       <Row>
-        <Col span="8">地址：{{orderBase.storeAddress}}</Col>
-        <Col span="8">服务美容师：{{orderBase.beauticianName}}</Col>
+        <Col span="8">门店：{{orderBase.beauticianBelongStoreName}}</Col>
       </Row>
     </div>
+
     <div class="service_info">
-      <h3>服务信息 <span class="service_type">{{orderBase.type==0?'到店订单':'上门订单'}}</span></h3>
+      <h3>商品信息</h3>
       <div class="table">
         <div class="title">
           <Row>
-            <Col span="6">服务</Col>
-            <Col span="6">单价</Col>
-            <Col span="6">订单总额</Col>
-            <Col span="6">售后</Col>
+            <Col span="6">商品名称</Col>
+            <Col span="6">单价（元）</Col>
+            <Col span="6">数量</Col>
+            <Col span="6">总价（元）</Col>
           </Row>
         </div>
         <div class="content">
-          <Row>
-            <Col span="6"><img :src="orderBase.productImg" alt=""><span>{{orderBase.productName}}</span></Col>
-            <Col span="6">￥{{orderBase.productPrice/100}}</Col>
-            <Col span="6">{{orderBase.amountTotal/100}}(含上门费：￥30.00)</Col>
-            <Col span="6">{{returnStatus}}</Col>
+          <Row v-for="(item,index) in goodsInfoList">
+            <Col span="6"><img :src="item.coverImg" alt=""><span>{{ item.physicalName }}</span></Col>
+            <Col span="6">￥{{ +item.salePrice/100 }}</Col>
+            <Col span="6">{{ item.nums }}</Col>
+            <Col span="6">{{ (+item.salePrice/100)*(+item.nums) }}</Col>
           </Row>
         </div>
       </div>
     </div>
     <div class="discount">
-      <div class="ticket" v-if="orderBase.couponReduce">
-        优惠券：-￥{{orderBase.couponReduce}} <span>满100减{{orderBase.couponReduce}}</span>
-      </div>
-      <div class="member_card" v-if="orderBase.memberCardReduce">
-        会员卡：-￥{{orderBase.memberCardReduce}} <span>一卡通折扣</span>
-      </div>
       <div class="total_pay">
         <Button style="float:left;" type="success" @click.native="returnHome('list')">返回</Button>
-        实付金额：<strong>￥{{orderBase.amountPay/100}}.00</strong>
+        实付金额：<strong>￥{{ allPrice }}</strong>
       </div>
     </div>
     </div>
@@ -90,40 +84,46 @@ export default {
       src:'../../../static/images/footer/1_1.png',
       orderBase:"",
       progress:0,
+      goodsInfoList:[],
     };
   },
   computed:{
+    // 总付金额
+    allPrice : function () {
+      var num = 0;
+      this.goodsInfoList.forEach(( item,index ) => {
+        num += (+item.salePrice/100)*(+item.nums);
+      })
+      return num;
+    },
     // 订单状态    
     orderType:function(){
       let str = ""
-      if(this.orderBase.status == 0){
-        str = "待付款";
-        this.progress = 1;
-      }else if(this.orderBase.status == 1){
-        str = '交易关闭'
+      if(this.orderBase.status == 1){
+        str = "待发货";
         this.progress = 1;
       }else if(this.orderBase.status == 2){
-        str = '待服务'
+        str = '待收货'
         this.progress = 2;
-      }else if(this.orderBase.status == 4){
-        str = '服务中'
+      }else if(this.orderBase.status == 3){
+        str = '已收货'
         this.progress = 3;
-      }else if(this.orderBase.status == 5){
-        str = '待评价';
-        this.progress = 4;
-      }else if(this.orderBase.status == 6){
-        str = '评价完成';
-        this.progress = 4;
       }
       return str
     },
     // 支付方式
     payType:function(){
       let str = '';
-      if(this.orderBase.payType=='wechatpay'){
+      if(this.orderBase.payType == 'wechatpay'){
         str = '微信支付'
-      }else if(this.orderBase.payType=='alipay'){
+      }else if(this.orderBase.payType == 'alipay'){
         str = '支付宝支付'
+      }else if(this.orderBase.payType == 'memberCardPay'){
+        str = '会员支付'
+      }else if(this.orderBase.payType == 'oneCardPay'){
+        str = '一卡通'
+      }else if(this.orderBase.payType == 'balancePay') {
+        str = '贷款'
       }
       return str;
     },
@@ -146,10 +146,17 @@ export default {
   methods: {
     getData(id){
       let vm = this;
-      let url = common.path2+'orderBase/queryOrderInfoById/'+id;
+      let url = common.path2+'orderGoodsBase/queryDetailsById/'+id;
       this.$http.get(url).then(res=>{
-        console.log(res.data.data)
-        vm.orderBase = res.data.data;
+        console.log(res.data.data);
+        vm.orderBase = res.data.data.orderGoodsBase;
+        if(!!res.data.data.goodsInfoList){
+          vm.goodsInfoList = res.data.data.goodsInfoList;
+        }else{
+          vm.goodsInfoList = [];
+        }
+        console.log('~~~~~~~~~~~~~~~')
+        console.log(vm.orderBase);
       }).catch(err=>{
         console.log(err)
       })
@@ -166,14 +173,15 @@ export default {
     },
     returnHome(type){
         this.$emit('returnList',type)
-    }
+    },
   },
   mounted: function() {
-    this.getData(this.message);
+    // 获取商品信息
+    this.getData(this.orderId);
   },
   activated: function() {},
   components: {},
-  props:['message']
+  props:['orderId']
 };
 </script>
 <style lang="scss" scoped>
