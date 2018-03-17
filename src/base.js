@@ -290,6 +290,11 @@ const common = {
                     name:"短信模板",
                     hasChildList: false,
                     href:"/manage/newsTemplate"
+                },
+                {
+                    name:"菜单列表管理",
+                    hasChildList: false,
+                    href:"/manage/menuList"
                 }
             ]
         },

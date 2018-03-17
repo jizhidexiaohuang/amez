@@ -60,8 +60,10 @@ import DepartmentManage from '@/components/manage/departmentManage/list'
 import OperationLog from '@/components/manage/operationLog/list'
 //短信模板
 import NewsTemplate from '@/components/manage/newsTemplate/list'
-//菜单管理
+//菜单权限管理
 import MenuManage from '@/components/manage/menuManage/list'
+//菜单列表管理
+import MenuList from '@/components/manage/menuList/list'
 /*=====================================财务管理=========================*/
 //交易流水
 import TradeWater from '@/components/financeManage/tradeWater/list'
@@ -384,6 +386,16 @@ const menuRouter = [
         name: '菜单权限管理',
         title: '菜单权限管理',
         component: MenuManage,
+        meta:{
+          type:"菜单",
+          name:"菜单权限管理"
+        }
+      },
+      {
+        path: '/manage/MenuList',
+        name: '菜单列表管理',
+        title: '菜单列表管理',
+        component: MenuList,
         meta:{
           type:"菜单",
           name:"菜单权限管理"
