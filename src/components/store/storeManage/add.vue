@@ -81,7 +81,7 @@
                 </FormItem>
                 <FormItem label="" prop="">
                     <Row type="flex" justify="start">
-                        <Col span="20">
+                        <Col span="24">
                             <div id="map" style="height:300px;"></div>
                         </Col>
                     </Row>

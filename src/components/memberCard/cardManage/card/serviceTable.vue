@@ -126,6 +126,7 @@
                 return this.$store.getters.serviceId;
             }
         },
+        props:['storeId'],
         methods: {
             /* 分页回掉函数 */
             changePage (page) {
@@ -142,16 +143,16 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path2+"product/findByPageForMemberCard?pageNo="+start+'&pageSize='+size;
-                let ajaxData = {
-
-                }
+                let url = common.path2+"product/findByPageForStore?pageNo="+start+'&pageSize='+size;
+                let ajaxData = {}
+                ajaxData.storeId = this.storeId;
                 if(vm.cd.branchId){
                     ajaxData.brandId = vm.cd.branchId;
                 }
                 if(vm.cd.inputVal){
                     ajaxData[vm.cd.selectType] = vm.cd.inputVal;
                 }
+                console.log('查询店铺适用的服务')
                 console.log(ajaxData)
                 vm.table.loading = true;
                 this.$http.post(
@@ -321,8 +322,8 @@
             
         },
         mounted: function(){
-            this.getData();
             this.getBranch()
+            this.getData();
         },
         activated: function(){
             let vm = this;
@@ -335,6 +336,12 @@
                     console.log(val)
                     this.listId = val;
                     // this.getData();
+                }
+            },
+            storeId:{
+                deep:true,
+                handler(val){
+                    this.getData()
                 }
             }
         }

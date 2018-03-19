@@ -1,9 +1,9 @@
 <template>
     <div>
         <Row class="expand-row">
-            <Col span="4">
+            <Col span="7">
                 <span class="expand-key">交易类型: </span>
-                <span class="expand-value">{{tradeType}}</span>
+                <span class="expand-value">{{row.transactionSerialNumber}}</span>
             </Col>
             <Col span="6">
                 <span class="expand-key">支付方式: </span>

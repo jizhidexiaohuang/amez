@@ -86,7 +86,7 @@
             //根据id查数据
             getDataById(id){
                 let vm = this;
-                let url = common.path2+'memberCardTemplate/front/findByPage';
+                let url = common.path2+'memberCardTemplate/front/findByPage?pageNo=1&pageSize=1000';
                 let ajaxData = {
                     "parentGroupId": id
                 }

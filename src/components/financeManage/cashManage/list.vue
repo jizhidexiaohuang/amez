@@ -133,7 +133,7 @@
                         width:90
                     },
                     {
-                        title: '手续费',
+                        title: '手续费(3%)',
                         key: 'taxation',
                         width:80
                     },
@@ -209,6 +209,56 @@
                         }
                     }
                 ],
+                tableColumns2: [
+                    {
+                        title: '申请时间',
+                        key: 'addTime',
+                    },
+                    {
+                        title: '提现人',
+                        key: 'beauticianName',
+                    },
+                    {
+                        title: '提现人手机号',
+                        key: 'beauticianPhone',
+                    },
+                    {
+                        title: '所属门店',
+                        key: 'storeName',
+                    },
+                    {
+                        title: '提现金额',
+                        key: 'withdrawAmount',
+                    },
+                    {
+                        title: '手续费(3%)',
+                        key: 'taxation',
+                    },
+                    {
+                        title: '打款金额',
+                        key: 'actualAmount',
+                    },
+                    {
+                        title: '开户名',
+                        key: 'beauticianName',
+                    },
+                    {
+                        title: '提现银行',
+                        key: 'bankBranch',
+                    },
+                    {
+                        title: '提现卡号',
+                        key: 'bankCardNo',
+                    },
+                    {
+                        title: '打款状态',
+                        key: 'playAmountStatus',
+                    },
+                    {
+                        title: '打款时间',
+                        key: 'playAmountTime',
+                    },
+                ],
                 table:{
                     recordsTotal:0,
                     pageNun:1,
@@ -278,39 +328,34 @@
             },
             //导出Excel
             exportData(){
+                this.table.tableData1.filter((data, index) => {
+                    //提现时间 
+                    data.addTime = data.addTime?common.formatDate(data.addTime):'';
+                    //打款时间 
+                    data.playAmountTime = data.playAmountTime?common.formatDate(data.playAmountTime):'';
+                    //提现人手机
+                    data.beauticianPhone = '="'+data.beauticianPhone+'"';
+                    //提现金额  
+                    data.withdrawAmount = '="'+data.withdrawAmount/100+'"';
+                    //手续费  
+                    data.taxation = '="'+data.taxation/100+'"';
+                    //打款金额  
+                    data.actualAmount = '="'+data.actualAmount/100+'"';
+                    //提现卡号 
+                    data.bankCardNo = '="'+data.bankCardNo+'"';
+                    //交易类型
+                    if(data.playAmountStatus==1){
+                        data.playAmountStatus = '已打款'
+                    }else{
+                        data.playAmountStatus = '未打款'
+                    }
+                })
                 this.$refs.table.exportCsv({
-                    filename: '数据',
-                    data: this.table.tableData1.filter((data, index) => {
-                        // console.log(data)
-                        //付款时间
-                        data.payTime = data.payTime?common.formatDate(data.payTime):'';
-                        //交易类型
-                        if(data.tradeType==1){
-                            data.tradeType = '服务订单'
-                        }else if(data.tradeType==3){
-                            data.tradeType = '会员卡售卡'
-                        }else if(data.tradeType==4){
-                            data.tradeType = '会员卡充值'
-                        }
-                        //支付方式
-                        if(data.payType=='alipay'){
-                            data.payType = '支付宝支付'
-                        }else if(data.payType=='wechatpay'){
-                            data.payType = '微信支付'
-                        }
-                        //交易状态
-                        switch(data.tradeStatus){
-                            case '0':return data.tradeStatus = '待付款'; break;
-                            case '1':return data.tradeStatus = '交易关闭'; break;
-                            case '2':return data.tradeStatus = '待服务'; break;
-                            case '4':return data.tradeStatus = '服务中'; break;
-                            case '5':return data.tradeStatus = '待评价'; break;
-                            case '6':return data.tradeStatus = '评价完成'; break;
-                            case '7':return data.tradeStatus = '购卡成功'; break;
-                            case '8':return data.tradeStatus = '充值完成'; break;
-                        }
-                    })
+                    filename: '提现管理',
+                    columns: this.tableColumns2,
+                    data: this.table.tableData1
                 });
+                this.getData();
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {

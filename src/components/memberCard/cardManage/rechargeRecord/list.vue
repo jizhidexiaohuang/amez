@@ -19,20 +19,20 @@
             </Row>
             <Form :model="cd" inline>
                 <Button style="float:left;margin-right:10px;" @click="exportData" type="success">Excel导出</Button>
-                <FormItem style="margin-bottom:10px;">
+                <FormItem style="margin-bottom:10px;" v-if="false">
                     发卡方
                     <Select v-model="cd.brandId" style="width:100px">
                         <Option v-for="(item, index) in makeCardList" :value="item.id" :key="index">{{ item.brandName }}</Option>
                     </Select>
                 </FormItem>
-                <FormItem style="margin-bottom:10px;">
+                <FormItem style="margin-bottom:10px;" v-if="false">
                     售卡方
                     <Select v-model="cd.salesType" style="width:100px">
                         <Option v-for="(item, index) in salesTypeList" :value="item.value" :key="index">{{ item.label }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem style="margin-bottom:10px;">
-                    售卡时间
+                    充值时间
                     <DatePicker v-model="cd.saleCardTime" type="daterange" placement="bottom-end" placeholder="请填写时间范围" style="width:200px"></DatePicker>
                 </FormItem>
                 <FormItem style="margin-bottom:10px;">
@@ -40,8 +40,6 @@
                     <Select v-model="cd.selectType" slot="prepend" style="width: 120px">
                         <Option value="cardName">会员卡名称</Option>
                         <Option value="phone">买家注册手机</Option>
-                        <Option value="nickName">买家昵称</Option>
-                        <Option value="storeName">售卡店铺名称</Option>
                     </Select>
                     </Input>
                 </FormItem>
@@ -119,7 +117,7 @@
                         align: 'center'
                     },
                     {
-                        title: '交易时间',
+                        title: '充值时间',
                         key: 'useTime',
                         render:(h,params)=>{
                             return h('div',this.common.baseFormatDate(params.row.useTime))
@@ -127,10 +125,10 @@
                     },
                     {
                         title: '会员卡信息',
-                        key: 'memberCardId'
+                        key: 'memberCardNo'
                     },
                     {
-                        title: '交易金额',
+                        title: '充值金额',
                         key: 'tradeAmount',
                         render:(h,params)=>{
                             return h('div',params.row.tradeAmount/100)
@@ -153,15 +151,7 @@
                         }
                     },
                     {   
-                        title: '发卡方',
-                        key: 'storeName'
-                    },
-                    {   
-                        title: '售卡方',
-                        key: 'storeName'
-                    },
-                    {   
-                        title: '买家信息',
+                        title: '用户信息',
                         key: 'storeName'
                     },
                     {
@@ -246,7 +236,7 @@
                 let size = vm.table.size;//每页条数
                 let url = common.path2+"memberCardTradeRecode/front/findByPage?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
-                    useType:2
+                    useType:0
                 }
                 console.log(vm.cd.brandId)
                 if(vm.cd.brandId){
@@ -254,7 +244,6 @@
                 }
                 if(vm.cd.inputVal){
                     ajaxData[vm.cd.selectType] = vm.cd.inputVal 
-                    vm.$store.commit('CARD_NAME',vm.cd.inputVal)
                 }
                 console.log(ajaxData)
                 vm.table.loading = true;
@@ -352,14 +341,14 @@
             InfoPage
         },
         watch:{
-            getCardName:{
-                handler(val){
-                    if(val){
-                        this.cd.inputVal = val;
-                        this.getData();
-                    }
-                }
-            }
+            // getCardName:{
+            //     handler(val){
+            //         if(val){
+            //             this.cd.inputVal = val;
+            //             this.getData();
+            //         }
+            //     }
+            // }
         }
     }
 </script>

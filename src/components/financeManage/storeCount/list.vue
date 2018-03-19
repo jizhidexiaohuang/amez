@@ -318,6 +318,64 @@
                         }
                     }
                 ],
+                tableColumns2: [
+                    {
+                        title: '月份',
+                        key: 'statisticsYearMonth'
+                    },
+                    {
+                        title: '门店名称',
+                        key: 'storeName',
+                    },
+                    {
+                        title: '门店号码',
+                        key: 'storePhone',
+                    },
+                    {
+                        title: '月订单总量',
+                        key: 'monthlyOrderQuantity',
+                    },
+                    {
+                        title: '本月销售总额（元）',
+                        key: 'totalSalesThisMonth',
+                    },
+                    {
+                        title: '已完成订单（笔）',
+                        key: 'orderCompleted',
+                    },
+                    {
+                        title: '已完成订单总金额（元）',
+                        key: 'orderCompletedAmount',
+                    },
+                    {
+                        title: '退款订单（笔）',
+                        key: 'refundOrder',
+                    },
+                    {
+                        title: '退款金额（元）',
+                        key: 'refundOrderAmount',
+                    },
+                    {
+                        title: '会员卡售卡（张）',
+                        key: 'cardNumber',
+                    },
+                    {
+                        title: '售卡奖励（元）',
+                        key: 'sellCardRewards',
+                    },
+                    {
+                        title: '月净收入（元）',
+                        key: 'onNetIncome',
+                    },
+                    {
+                        title: '打款状态',
+                        key: 'playStatus',
+                    },
+                    {
+                        title: '打款时间',
+                        key: 'playTime',
+                    },
+                ],
                 table:{
                     recordsTotal:0,
                     pageNun:1,
@@ -394,39 +452,36 @@
             },
             //导出Excel
             exportData(){
+                this.table.tableData1.filter((data, index) => {
+                    //月份
+                    data.statisticsYearMonth = '="'+data.statisticsYearMonth+'"';
+                    //门店号码 
+                    data.storePhone = '="'+data.storePhone+'"';
+                    //本月销售总额 
+                    data.totalSalesThisMonth = '="'+data.totalSalesThisMonth/100+'"';
+                    //已完成订单总额  
+                    data.orderCompletedAmount = '="'+data.orderCompletedAmount/100+'"';
+                    //退款金额  
+                    data.refundOrderAmount = '="'+data.refundOrderAmount/100+'"';
+                    //售卡奖励  
+                    data.sellCardRewards = '="'+data.sellCardRewards/100+'"';
+                    //月净收入  
+                    data.onNetIncome = '="'+data.onNetIncome/100+'"';
+                    //打款时间
+                    data.playTime = data.playTime?common.formatDate(data.playTime):'';
+                    //打款状态 playStatus
+                    if(data.playStatus==1){
+                        data.playStatus = '已完成'
+                    }else{
+                        data.playStatus = '未完成'
+                    }
+                })
                 this.$refs.table.exportCsv({
-                    filename: '数据',
-                    data: this.table.tableData1.filter((data, index) => {
-                        // console.log(data)
-                        //付款时间
-                        data.payTime = data.payTime?common.formatDate(data.payTime):'';
-                        //交易类型
-                        if(data.tradeType==1){
-                            data.tradeType = '服务订单'
-                        }else if(data.tradeType==3){
-                            data.tradeType = '会员卡售卡'
-                        }else if(data.tradeType==4){
-                            data.tradeType = '会员卡充值'
-                        }
-                        //支付方式
-                        if(data.payType=='alipay'){
-                            data.payType = '支付宝支付'
-                        }else if(data.payType=='wechatpay'){
-                            data.payType = '微信支付'
-                        }
-                        //交易状态
-                        switch(data.tradeStatus){
-                            case '0':return data.tradeStatus = '待付款'; break;
-                            case '1':return data.tradeStatus = '交易关闭'; break;
-                            case '2':return data.tradeStatus = '待服务'; break;
-                            case '4':return data.tradeStatus = '服务中'; break;
-                            case '5':return data.tradeStatus = '待评价'; break;
-                            case '6':return data.tradeStatus = '评价完成'; break;
-                            case '7':return data.tradeStatus = '购卡成功'; break;
-                            case '8':return data.tradeStatus = '充值完成'; break;
-                        }
-                    })
+                    filename: '店铺交易流水',
+                    columns: this.tableColumns2,
+                    data: this.table.tableData1
                 });
+                this.getData()
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {

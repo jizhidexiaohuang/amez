@@ -270,7 +270,6 @@
                         {
                             title: '操作',
                             key: 'action',
-                            width: 130,
                             render: (h, params) => {
                                 if(params.row.auditStatus==0){
                                     return h('div', [

@@ -22,7 +22,7 @@
                     <Input size="small" placeholder="please write text" icon="ios-search"></Input>
                 </Col>
             </Row>
-            <Form :model="cd" inline>
+            <Form :model="cd" inline v-if="false">
                 <FormItem style="margin-bottom:10px;">
                     品牌
                     <Select v-model="cd.branchId" style="width:100px">
@@ -161,7 +161,9 @@
                 let size = vm.table.size;//每页条数
                 let url = common.path2+"store/front/findByPage?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {
-
+                    brandId:vm.brandId,
+                    isEnabled:1,
+                    storeState:1
                 }
                 if(vm.cd.branchId){
                     ajaxData.brandId = vm.cd.branchId;
@@ -369,6 +371,7 @@
             let vm = this;
             vm.fnExistTabList()
         },
+        props:['brandId'],
         components:{
            CityLinkage
         },
@@ -379,6 +382,19 @@
                     console.log(val)
                     this.listId = val;
                     // this.getData();
+                }
+            },
+            brandId:{
+                deep:true,
+                handler(val){
+                    console.log('编辑第一次')
+                    console.log(val)
+                    this.table.pageNun = 1;
+                    this.brandId = val;
+                    this.getData();
+                    // if(val.key){
+                    //     this.$store.commit('BUSINESS_ID',[]); //清空上一个品牌的商家组
+                    // }
                 }
             }
         },

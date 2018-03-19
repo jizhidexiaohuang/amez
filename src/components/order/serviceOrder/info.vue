@@ -76,7 +76,7 @@
       </div>
       <div class="total_pay">
         <Button style="float:left;" type="success" @click.native="returnHome('list')">返回</Button>
-        实付金额：<strong>￥{{orderBase.amountPay/100}}.00</strong>
+        实付金额：<strong>￥{{orderBase.amountPay/100}}</strong>
       </div>
     </div>
     </div>

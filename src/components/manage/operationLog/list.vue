@@ -175,7 +175,7 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path+"baseLogs/selectListByConditions?pageNo="+start+'&pageSize='+size;
+                let url = common.path2+"baseLogs/selectListByConditions?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,

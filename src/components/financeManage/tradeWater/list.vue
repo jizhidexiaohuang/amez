@@ -201,14 +201,30 @@
                         width:120,
                         key: 'orderNumber',
                     },
+                    // {
+                    //     title: '交易流水号',
+                    //     width:120,
+                    //     key: 'transactionSerialNumber',
+                    // },
                     {
-                        title: '交易流水号',
-                        width:120,
-                        key: 'transactionSerialNumber',
+                        title: '交易类型',
+                        key: 'tradeType',
+                        width:100,
+                        render:(h,params)=>{
+                            let str = ''
+                            if(params.row.tradeType==1){
+                                str = '服务订单'
+                            }else if(params.row.tradeType==2){
+                                str = '会员卡售卡'
+                            }else if(params.row.tradeType==3){
+                                str = '会员卡充值'
+                            }
+                            return h('div',str)
+                        }
                     },
                     {
                         title: '付款时间',
-                        width:120,
+                        width:150,
                         key: 'payTime',
                         render:(h,params)=>{
                             if(params.row.payTime){
@@ -218,22 +234,6 @@
                             }
                         }
                     },
-                    // {
-                    //     title: '交易类型',
-                    //     key: 'tradeType',
-                    //     width:100,
-                    //     render:(h,params)=>{
-                    //         let str = ''
-                    //         if(params.row.tradeType==1){
-                    //             str = '服务订单'
-                    //         }else if(params.row.tradeType==2){
-                    //             str = '会员卡售卡'
-                    //         }else if(params.row.tradeType==3){
-                    //             str = '会员卡充值'
-                    //         }
-                    //         return h('div',str)
-                    //     }
-                    // },
                     {
                         title: '订单金额',
                         key: 'orderAmount',
@@ -333,7 +333,7 @@
                     {
                         title: '门店信息',
                         key: 'storeName',
-                        width:90,
+                        width:100,
                         render:(h,params)=>{
                             return h('div',[
                                 h('div',params.row.storeName),
@@ -344,7 +344,6 @@
                     {
                         title: '操作',
                         key: 'action',
-                        width: 80,
                         render: (h, params) => {
                             return h('div', [
                             h('Button', {
@@ -373,6 +372,60 @@
                              ]);
                         }
                     }
+                ],
+                tableColumns2: [
+                    {
+                        title: '订单号',
+                        key: 'orderNumber'
+                    },
+                    {
+                        title: '交易流水号',
+                        key: 'transactionSerialNumber'
+                    },
+                    {
+                        title: '交易类型',
+                        key: 'tradeType'
+                    },
+                    {
+                        title: '付款时间',
+                        key: 'payTime'
+                    },
+                    {
+                        title: '订单金额',
+                        key: 'orderAmount'
+                    },
+                    {
+                        title: '实付金额',
+                        key: 'actuallyAmount'
+                    },
+                    {
+                        title: '结算金额',
+                        key: 'settlementAmount'
+                    },
+                    {
+                        title: '平台佣金',
+                        key: 'platformCommission'
+                    },
+                    {
+                        title: '支付方式',
+                        key: 'payMethod'
+                    },
+                    {
+                        title: '交易状态',
+                        key: 'tradeStatus'
+                    },
+                    {
+                        title: '结算时间',
+                        key: 'settlementTime'
+                    },
+                    {
+                        title: '门店名称',
+                        key: 'storeName'
+                    },
+                    {
+                        title: '门店电话',
+                        key: 'storePhone'
+                    },
                 ],
                 table:{
                     recordsTotal:0,
@@ -469,39 +522,76 @@
             },
             //导出Excel
             exportData(){
+                this.table.tableData1.filter((data, index) => {
+                    //订单号 
+                    data.orderNumber = '="'+data.orderNumber+'"';
+                    //门店号码 
+                    data.storePhone = '="'+data.storePhone+'"';
+                    //交易流水号 
+                    data.transactionSerialNumber = '="'+data.transactionSerialNumber+'"';
+                    //付款时间 
+                    data.payTime = data.payTime?common.formatDate(data.payTime):'';
+                    //结算时间 
+                    data.settlementTime = data.settlementTime?common.formatDate(data.settlementTime):'';
+                    //交易类型
+                    if(data.tradeType==1){
+                        data.tradeType = '服务订单'
+                    }else if(data.tradeType==2){
+                        data.tradeType = '会员卡售卡'
+                    }else if(data.tradeType==3){
+                        data.tradeType = '会员卡充值'
+                    }
+                    //订单金额
+                    data.orderAmount = data.orderAmount/100;
+                    //实付金额
+                    data.actuallyAmount = data.actuallyAmount/100;
+                    //结算金额
+                    data.settlementAmount = data.settlementAmount/100;
+                    //平台佣金
+                    data.platformCommission = data.platformCommission/100;
+                    //支付方式
+                    if(data.payMethod=='1'){
+                        data.payMethod = '支付宝支付'
+                    }else if(data.payMethod=='2'){
+                        data.payMethod = '微信支付'
+                    }else if(data.payMethod=='3'){
+                        data.payMethod = '会员卡支付'
+                    }else if(data.payMethod=='4'){
+                        data.payMethod = '一卡通支付'
+                    }else if(data.payMethod=='5'){
+                        data.payMethod = '余额支付'
+                    }
+                    //交易状态
+                    if(data.tradeType=='服务订单'){
+                        if(data.tradeStatus==1){
+                            data.tradeStatus = '待服务'
+                        }else if(data.tradeStatus==2){
+                            data.tradeStatus = '服务中'
+                        }else if(data.tradeStatus==3){
+                            data.tradeStatus = '服务完成'
+                        }else if(data.tradeStatus==4){
+                            data.tradeStatus = '交易完成'
+                        }else if(data.tradeStatus==5){
+                            data.tradeStatus = '退款中'
+                        }else if(data.tradeStatus==6){
+                            data.tradeStatus = '退款完成'
+                        }
+                    }else if(data.tradeType=='会员卡售卡'){
+                        if(data.tradeStatus=='1'){
+                            data.tradeStatus = '售卡成功'
+                        }
+                    }else if(data.tradeType=='会员卡充值'){
+                        if(data.tradeStatus=='1'){
+                            data.tradeStatus = '充值成功'
+                        }
+                    }
+                })
                 this.$refs.table.exportCsv({
-                    filename: '数据',
-                    data: this.table.tableData1.filter((data, index) => {
-                        // console.log(data)
-                        //付款时间
-                        data.payTime = data.payTime?common.formatDate(data.payTime):'';
-                        //交易类型
-                        if(data.tradeType==1){
-                            data.tradeType = '服务订单'
-                        }else if(data.tradeType==3){
-                            data.tradeType = '会员卡售卡'
-                        }else if(data.tradeType==4){
-                            data.tradeType = '会员卡充值'
-                        }
-                        //支付方式
-                        if(data.payType=='alipay'){
-                            data.payType = '支付宝支付'
-                        }else if(data.payType=='wechatpay'){
-                            data.payType = '微信支付'
-                        }
-                        //交易状态
-                        switch(data.tradeStatus){
-                            case '0':return data.tradeStatus = '待付款'; break;
-                            case '1':return data.tradeStatus = '交易关闭'; break;
-                            case '2':return data.tradeStatus = '待服务'; break;
-                            case '4':return data.tradeStatus = '服务中'; break;
-                            case '5':return data.tradeStatus = '待评价'; break;
-                            case '6':return data.tradeStatus = '评价完成'; break;
-                            case '7':return data.tradeStatus = '购卡成功'; break;
-                            case '8':return data.tradeStatus = '充值完成'; break;
-                        }
-                    })
+                    filename: '交易流水',
+                    columns: this.tableColumns2,
+                    data: this.table.tableData1
                 });
+                this.getData();
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {

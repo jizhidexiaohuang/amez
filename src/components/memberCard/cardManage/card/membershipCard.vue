@@ -109,7 +109,7 @@
                         title: '面值',
                         key: 'balance',
                         render:(h,params)=>{
-                            return h('div','￥'+params.row.balance)
+                            return h('div','￥'+params.row.balance/100)
                         }
                     },
                     {
@@ -127,10 +127,6 @@
                         key: 'brandName'
                     },
                     {   
-                        title: '开卡数量',
-                        key: 'issueNum'
-                    },
-                    {   
                         title: '状态',
                         key: 'sellStatus',
                         render:(h,params)=>{
@@ -142,6 +138,7 @@
                     {   
                         title: '发布时间',
                         key: 'createTime',
+                        width:150,
                         render:(h,params)=>{
                             return h('div',this.common.formatDate(params.row.createTime))
                         }
@@ -194,7 +191,7 @@
                                         },
                                         on: {
                                             click: () => {
-                                                this.shelvesDown(params.row.id)
+                                                this.upAndDown(params.row.id,params.row.sellStatus)
                                             }
                                         }
                                     }, '下架'),
@@ -242,7 +239,7 @@
                                         },
                                         on: {
                                             click: () => {
-                                                this.shelvesUp(params.row.id)
+                                                this.upAndDown(params.row.id,params.row.sellStatus)
                                             }
                                         }
                                     }, '上架'),
@@ -266,6 +263,36 @@
                             }
                         }
                     }
+                ],
+                tableColumns2:[
+                    {
+                        title: '会员卡',
+                        key: 'cardName'
+                    },
+                    {
+                        title: '面值',
+                        key: 'balance',
+                    },
+                    {
+                        title: '折扣',
+                        key: 'discount',
+                    },
+                    {   
+                        title: '是否支持充值',
+                        key: 'supportRecharge'
+                    },
+                    {
+                        title: '发卡方',
+                        key: 'brandName'
+                    },
+                    {   
+                        title: '状态',
+                        key: 'sellStatus',
+                    },
+                    {   
+                        title: '发布时间',
+                        key: 'createTime',
+                    },
                 ],
                 table:{
                     tableData1: [],
@@ -359,15 +386,32 @@
             },
             //导出Excel
             exportData(){
+                this.table.tableData1.filter((data, index) => {
+                    //面值
+                    data.balance = '￥'+data.balance/100;
+                    //折扣
+                    data.discount = (data.discount/10+'').replace('.','')+'折'
+                    //是否支持充值
+                    if(data.supportRecharge){
+                        data.supportRecharge = '不支持'
+                    }else{
+                        data.supportRecharge = '支持'
+                    }
+                    //状态
+                    if(data.sellStatus){
+                        data.sellStatus = '已下架'
+                    }else{
+                        data.sellStatus = '销售中'
+                    }
+                    //发布时间
+                    data.createTime = '="'+common.formatDate(data.createTime)+'"';
+                })
                 this.$refs.table.exportCsv({
-                    filename: '数据',
-                    original :true,                 
-                    data: this.table.tableData1.filter((data, index) => {
-                        // console.log(data)
-                        //订单总价
-                        data.amountTotal = data.amountTotal;
-                    })
+                    filename: '会员卡列表',
+                    columns: this.tableColumns2,         
+                    data: this.table.tableData1
                 });
+                this.getData();
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {
@@ -410,35 +454,38 @@
                 }
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
-            // 下架
-            shelvesDown(id){
+            // 上下架
+            upAndDown(id,status){
                 let vm = this;
+                let title ;
+                let sellStatus;
+                let ajaxData = {}
+                if(status==1){
+                    title = '上架';
+                    sellStatus = 0;
+                }else{
+                    title = '下架';
+                    sellStatus = 1;
+                }
+                ajaxData.id = id;
+                ajaxData.sellStatus = sellStatus;
                 this.$Modal.confirm({
-                    title:'下架',
-                    content:'确认将此会员卡下架？',
+                    title:title,
+                    content:'确认将此会员卡'+title+'？',
                     onOk(){
-                        let url = this.common.path2+'....'+id;
-                        this.$http.put(url).then(res=>{
-                            if(res.status==200){
-                                this.$Message.success('下架成功！')
-                                vm.getData()
+                        let url = this.common.path2+'memberCard/edit';
+                        this.$http.put(
+                            url,
+                            JSON.stringify(ajaxData),
+                            {
+                                headers: {
+                                    'Content-type': 'application/json;charset=UTF-8'
+                                },
                             }
-                        })
-                    }
-                });
-            },
-            // 上架
-            shelvesUp(id){
-                let vm = this;
-                this.$Modal.confirm({
-                    title:'上架',
-                    content:'确认将此会员卡上架？',
-                    onOk(){
-                        let url = this.common.path2+'....'+id;
-                        this.$http.put(url).then(res=>{
-                            if(res.status==200){
-                                this.$Message.success('上架成功！')
-                                vm.getData()
+                            ).then(res=>{
+                            if(res.data.code==200){
+                                this.$Message.success(res.data.message)
+                                vm.getData();
                             }
                         })
                     }

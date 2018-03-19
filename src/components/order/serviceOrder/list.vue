@@ -177,7 +177,7 @@
                     {
                         title: '服务项目',
                         key: 'productName',
-                        width:'280px',
+                        width:'220px',
                         render:(h,params)=>{
                             return h('div',[
                                 h('img',{
@@ -199,7 +199,7 @@
                     },
                     {
                         title: '单价',
-                        key: 'payTime',
+                        key: 'productPrice',
                         render: (h,params) =>{
                             return params.row.productPrice/100
                         }
@@ -235,7 +235,7 @@
                     },
                     {   
                         title: '应/实付金额',
-                        key: 'amountTotal',
+                        key: 'amountPay',
                         render:(h,params)=>{
                             return params.row.amountPay/100
                         }
@@ -251,7 +251,7 @@
                     },
                     {   
                         title: '买家信息',
-                        key: 'type',
+                        key: 'memberNickName',
                         render:(h,params)=>{
                             let str = '';
                             if(params.row.type==0){
@@ -290,6 +290,56 @@
                             ]);
                         }
                     }
+                ],
+                tableColumns2:[
+                     {
+                        title:'订单号',
+                        key:'orderNo'
+                    },
+                    {
+                        title: '服务项目',
+                        key: 'productName'
+                    },
+                    {
+                        title: '订单类型',
+                        key: 'type'
+                    },
+                    {
+                        title: '订单来源',
+                        key: 'orderSource'
+                    },
+                    {
+                        title: '下单事件',
+                        key: 'addTime'
+                    },
+                    {
+                        title: '单价',
+                        key: 'productPrice'
+                    },
+                    {
+                        title: '订单总价',
+                        key: 'amountTotal'
+                    },
+                    {
+                        title: '订单状态',
+                        key: 'status'
+                    },
+                    {   
+                        title: '应/实付金额',
+                        key: 'amountPay'
+                    },
+                    {   
+                        title: '美容院',
+                        key: 'storeName'
+                    },
+                    {   
+                        title: '买家信息',
+                        key: 'memberNickName'
+                    },
+                    {   
+                        title: '买家号码',
+                        key: 'phone'
+                    },
                 ],
                 table:{
                     tableData1: [],
@@ -369,19 +419,36 @@
             //导出Excel
             exportData(){
                 this.$refs.table.exportCsv({
-                    filename: '数据',
-                    original :true,                 
+                    filename: '服务订单',
+                    columns: this.tableColumns2,
                     data: this.table.tableData1.filter((data, index) => {
-                        // console.log(data)
-                        //订单总价
-                        data.amountTotal = data.amountTotal;
+                        //订单编号
+                        data.orderNo = '="'+data.orderNo+'"';
+                        //买家号码
+                        data.phone = '="'+data.phone+'"';
+                        //下单时间
+                        data.addTime = '="'+common.formatDate(data.addTime)+'"';
+                        //订单单价
+                        data.productPrice = data.productPrice/100;
+                        //订单总价 
+                        data.amountTotal = data.amountTotal/100;
+                        //应付金额
+                        data.amountPay = data.amountPay/100;
                         //订单类型
                         if(data.type=='0'){
                             data.type = '到店服务'
+                            data.memberNickName = data.memberNickName
                         }else{
                             data.type = '上门服务'
+                            data.memberNickName = data.memberRealName
                         }
-                        //服务状态
+                        //订单来源
+                        if(data.orderSource =='0'){
+                            data.orderSource = 'APP商城'
+                        }else{
+                            data.orderSource = '微信商城'
+                        }
+                        //订单状态
                         switch(data.status){
                             case 0:return data.status = '待付款'; break;
                             case 1:return data.status = '交易关闭'; break;
@@ -392,6 +459,7 @@
                         }
                     })
                 });
+                this.getData();
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {

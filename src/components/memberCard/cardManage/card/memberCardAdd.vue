@@ -7,7 +7,7 @@
                     <Input v-model="formValidate.cardName" placeholder="请输入会员卡名称"></Input>
                 </Col>
             </FormItem>
-            <FormItem label="会员卡所属品牌" prop="brandId">
+            <FormItem label="会员卡所属品牌" prop="brandId" v-show="!storeShow">
                 <Col span="6">
                 <Select v-model="formValidate.issuingUnit" label-in-value style="width:100px;" v-if="false">
                     <Option value="0" disabled>平台</Option>
@@ -23,29 +23,31 @@
                     <Input v-model="formValidate.cardTotal" placeholder="请输入发行数量"></Input>              
                 </Col>
             </FormItem>
-            <FormItem label="使用范围">
-                <businessTable></businessTable>
+            <FormItem label="使用范围" v-show="!storeShow">
+                <businessTable :brandId="brandId"></businessTable>
                 <businessList></businessList>
             </FormItem>
-            <FormItem label="服务项目">
-                <serviceTable></serviceTable>
+            <FormItem label="服务项目" v-show="storeShow">
+                <serviceTable :storeId="storeId"></serviceTable>
                 <serviceList :discount="discount"></serviceList>
             </FormItem>
             <FormItem label="会员卡面值" prop="cardValue">
-                <Col span="6">
-                    <Input v-model="formValidate.cardValue" placeholder="请输入会员卡面值"></Input>              
+                <Col span="2">
+                    <InputNumber :max="100000000" :min="1" v-model="formValidate.cardValue"></InputNumber>
+                    <!-- <Input v-model="formValidate.cardValue" placeholder="请输入会员卡面值"></Input>               -->
                 </Col>
                 <Col span="2">元</Col>
             </FormItem>
             <FormItem label="会员卡折扣比率" prop="discount">
-                <Col span="6">
-                    <Input v-model="formValidate.discount" placeholder="请输入门店电话"></Input>              
+                <Col span="2">
+                    <InputNumber :max="99" :min="30" v-model="formValidate.discount"></InputNumber>
+                    <!-- <Input v-model="formValidate.discount" placeholder="请输入门店电话"></Input>               -->
                 </Col>
                 <Col span="5">（输入89，即表示下单可打89折）</Col>
             </FormItem>
             <FormItem label="选择卡面模版">
                 <MyUpload v-if="false" :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
-                <CardTpl></CardTpl>
+                <CardTpl v-on:listenImg="getImgSrc" :radioCtrl="radioCtrl"></CardTpl>
             </FormItem>
             <FormItem label="是否支持充值" prop="isRecharge">
                 <RadioGroup v-model="formValidate.isRecharge">
@@ -72,14 +74,14 @@
             <FormItem label="卡面预览" prop="">
                 <div class="memberCard">
                     <img :src="src" alt="">
-                    <div class="brand" v-if="formValidate.brandName">{{formValidate.brandName}}·会员卡（下单享{{formValidate.discount}}折）</div>
-                    <div class="quota" v-if="formValidate.cardValue">￥{{formValidate.cardValue}} （全国通用）</div>
+                    <div class="brand" v-if="formValidate.cardName">{{formValidate.cardName}}（下单享{{formValidate.discount}}折）</div>
+                    <div class="quota" v-if="formValidate.cardValue">￥{{formValidate.cardValue}} （{{storeRange}}）</div>
                     <div class="periodOfValidity">有效期 {{getPeriod}}</div>
                 </div>
             </FormItem>
             <FormItem label="用卡说明" prop="cardExplain">
-                <Col span="10">
-                    <Input v-model="formValidate.cardExplain" type="textarea" :autosize="{minRows: 6,maxRows: 12}" placeholder="输入该卡的介绍，使用须知等"></Input>
+                <Col span="7">
+                    <Input v-model="formValidate.cardExplain" type="textarea" :autosize="{minRows: 4,maxRows: 8}" placeholder="输入该卡的介绍，使用须知等"></Input>
                 </Col>
             </FormItem>
             <FormItem>
@@ -99,13 +101,19 @@
     export default {
         data() {
             return {
+                storeRange:'',
+                radioCtrl:'',
                 discount:'',
+                brandId:'',
+                storeId:'',
+                storeShow:false,
+                issueType:0,
                 src:'../../../static/images/membercard.png',
                 brandList:[], //渲染所属品牌下拉框数组
                 formValidate:{
                    cardName:'',
-                   cardValue:'',
-                   discount:'',
+                   cardValue:1,
+                   discount:100,
                    issuingUnit:'1',
                    brandId:'',
                    brandName:'',
@@ -158,6 +166,12 @@
                 console.log(data)
                 this.formValidate.brandId = data.value;
                 this.formValidate.brandName = data.label;
+                this.brandId = data.value;
+                this.$store.commit('BUSINESS_ID',[]);
+            },
+            getImgSrc(val){
+                this.src = val;
+                this.formValidate.imgUrl = val;
             },
             //获取连锁品牌
             getBrand(){
@@ -218,7 +232,7 @@
                             discount:this.formValidate.discount-0,
                             brandId:this.formValidate.brandId,
                             brandName:this.formValidate.brandName,
-                            issueType:this.formValidate.issuingUnit=='0'?false:true,
+                            issueType:this.issueType,
                             issueNum:this.formValidate.cardTotal-0,
                             stylePattern:this.formValidate.imgUrl,
                             supportRecharge:this.formValidate.isRecharge=='0'?false:true,
@@ -263,6 +277,7 @@
                 handler(val){
                     console.log(val)
                     this.formValidate.useAbleStoreList = val;
+                    this.storeRange = val.length+'家门店可用';
                 }
             },
             getServiceId:{
@@ -283,6 +298,16 @@
         },
         beforeMount: function () {
             this.getBrand()
+            console.log(JSON.parse(window.localStorage.getItem('userInfo')))
+            if(JSON.parse(window.localStorage.getItem('userInfo')).store){
+                this.storeShow = true;
+                this.issueType = 1;//店铺
+                this.storeRange = '限本店适用';
+                this.storeId = JSON.parse(window.localStorage.getItem('userInfo')).store.id;
+                this.formValidate.useAbleStoreList.push(JSON.parse(window.localStorage.getItem('userInfo')).store.id);
+                this.formValidate.brandId = JSON.parse(window.localStorage.getItem('userInfo')).store.brandId;
+                this.formValidate.brandName = JSON.parse(window.localStorage.getItem('userInfo')).store.brandName;
+            }
         },
         components:{
             MyUpload,

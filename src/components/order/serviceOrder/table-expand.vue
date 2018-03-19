@@ -10,7 +10,7 @@
                 <span class="expand-value">{{ row.orderNo }}</span>
             </Col>
             <Col span="4">
-                <span class="expand-key">下单时间: </span>
+                <span class="expand-key">订单来源: </span>
                 <span class="expand-value">{{ row.orderSource ==0?'APP商城':'微信商城' }}</span>
             </Col>
             <Col span="6">

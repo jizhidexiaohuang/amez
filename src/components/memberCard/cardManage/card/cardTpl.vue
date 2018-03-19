@@ -63,27 +63,15 @@
             ></Table>
             <div class="sliderBar">
                 <ul>
-                    <li class="active">简洁</li>
-                    <li>唯美</li>
-                    <li>节日</li>
-                    <li>唯美</li>
-                    <li>节日</li>
-                    <li>唯美</li>
-                    <li>节日</li>
-                    <li>唯美</li>
-                    <li>节日</li>
+                    <li v-for="item in themeList" :key="item.id" :class="item.id==isActive?'active':''" @click="addClass(item.id)">{{item.parentGroupName}}</li>
                 </ul>
             </div>
             <div class="displayList">
-                <ul>
-                    <li>
-                        <RadioGroup v-model="vertical" vertical>
-                            <Radio label="apple">
-                                <img :src="src" alt="">
-                            </Radio>
-                        </RadioGroup>
-                    </li>
-                </ul>
+                <RadioGroup v-model="imgId">
+                    <Radio :label="item.bgImgUrl" v-for="item in imgList" :key="item.id">
+                        <img :src="item.bgImgUrl" alt="">
+                    </Radio>
+                </RadioGroup>
             </div>
             <div style="margin: 10px;overflow: hidden">
                 <div style="float: right;">
@@ -111,13 +99,16 @@
                 src:'../../../../static/images/membercard.png',
                 usingRange:false,
                 tempArr:[],
-                vertical:'apple',
+                isActive:0,
+                imgList:[],
+                imgId:'',
                 cityConfig:{
                     key:false,
                     title:'地区',
                     type:'select'
                 },
                 listId:[],
+                themeList:[],
                 branchList:[],
                 cd:{
                     branchId:'',
@@ -128,92 +119,66 @@
                 activatedType: false,//主要解决mounted和activated重复调用
                 pageType: 'list',
                 openPage: false,
-                tableColumns1: [
-                    {
-                        type: 'selection',
-                        title:'序号',
-                        width: 80,
-                        align: 'center'
-                    },
-                    {
-                        title: '门店名称',
-                        key: 'storeName',
-                    },
-                    {
-                        title: '负责人',
-                        key: 'bossName',
-                    },
-                    {
-                        title: '联系方式',
-                        key: 'bossPhone',
-                    },
-                    {
-                        title: '地区',
-                        key: 'storeAddress',
-                    }
-                ],
+                tableColumns1: [],
                 table:{
                     tableData1: [],
                     recordsTotal:0,
                     pageNun:1,
                     loading: false,
-                    size: 5,
-                    option:[5, 10, 15, 20]
+                    size: 6,
+                    option:[6, 12, 18, 24]
                 }
             }
         },
-        computed:{
-            getBusinessId(){
-                return this.$store.getters.businessId;
-            }
-        },
+        props:['radioCtrl'],
         methods: {
             /* 分页回掉函数 */
             changePage (page) {
                 console.log(page)
                 let vm = this;
                 vm.table.pageNun = page;   
-                vm.getData();             
+                vm.getData(vm.isActive);
+                if(this.radioCtrl){
+                    this.imgId = this.radioCtrl;
+                }
+            },
+            getTheme(){
+                let vm = this;
+                let url = common.path2+'memberCardTemplate/front/findByPage?pageNo=1&pageSize=10000';
+                let ajaxData = {
+                    "parentGroupId": 0
+                }
+                this.$http.post(
+                    url,
+                    JSON.stringify(ajaxData),
+                    {
+                        headers: {
+                            'Content-type': 'application/json;charset=UTF-8'
+                        },
+                    }
+                ).then(res=>{
+                    console.log(res)
+                    vm.themeList = res.data.data.list;
+                    vm.isActive = res.data.data.list[0].id;
+                    vm.getData(vm.isActive);
+                })
+            },
+            addClass(val){
+                this.isActive = val;
+                this.table.pageNun = 1;
+                if(this.radioCtrl){
+                    this.imgId = this.radioCtrl;
+                }
+                this.getData(val);
             },
             /* 数据获取 */
-            getData (init) {
+            getData (num) {
                 let vm = this;
-                if(!!init&&init=='init'){
-                    vm.fnInit();
-                }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path2+"store/front/findByPage?pageNo="+start+'&pageSize='+size;
+                let url = common.path2+"memberCardTemplate/front/findByPage?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {
-
-                }
-                if(vm.cd.branchId){
-                    ajaxData.brandId = vm.cd.branchId;
-                }
-                if(vm.cd.inputVal){
-                    ajaxData[vm.cd.selectType] = vm.cd.inputVal;
-                }
-                if(!!vm.cd.cityArr){
-                    if(vm.cd.cityArr.length==1){
-                        if(!!vm.cd.cityArr[0].value){
-                            ajaxData.productId = vm.cd.cityArr[0].value
-                        }
-                    }else if(vm.cd.cityArr.length==2){
-                        if(!!vm.cd.cityArr[0].value){
-                            ajaxData.productId = vm.cd.cityArr[0].value
-                        }
-                        if(!!vm.cd.cityArr[1].value){
-                            ajaxData.cityId = vm.cd.cityArr[1].value
-                        }
-                    }else if(vm.cd.cityArr.length==3){
-                        for(var i=0;i<3;i++){
-                            if(!!vm.cd.cityArr[i].value){
-                                ajaxData.productId = vm.cd.cityArr[0].value
-                                ajaxData.cityId = vm.cd.cityArr[1].value
-                                ajaxData.areaId = vm.cd.cityArr[2].value
-                            }
-                        }
-                    }
+                    "parentGroupId": num
                 }
                 console.log(ajaxData)
                 vm.table.loading = true;
@@ -226,14 +191,11 @@
                         },
                     }
                 ).then(function(res){
-                    console.log(res.data);
                     let oData = res.data
+                    console.log(oData);
                     vm.table.recordsTotal = oData.data.total;
-                    vm.table.tableData1 = oData.data.list;
+                    vm.imgList = oData.data.list;
                     vm.table.loading = false;
-                    vm.selectOrNo(vm.listId,oData.data.list)
-                    vm.tempArr = res.data.data.list;
-                    console.log(vm.tempArr)
                 }).catch(function(err){
                 })
             },
@@ -340,14 +302,14 @@
             },
             fnBackformAdd (type) {
                 this.changePageType(type);
-                this.getData();
+                this.getData(this.isActive);
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {
                 console.log(size);
                 let vm = this;
                 vm.table.size = size;
-                vm.getData();
+                vm.getData(vm.isActive);
             },
             changePageType (type) {
                 this.pageType = type;
@@ -357,7 +319,7 @@
                 var vm = this;
                 vm.table.pageNun = 1;
                 vm.table.size = 10;
-                vm.getData();
+                vm.getData(vm.isActive);
             },
             /* 判断页签中是否有该模块，如果有则使用缓存，如果没有则重新加载数据 */
             fnExistTabList () {
@@ -369,14 +331,14 @@
                         vm.table.tableData1 = [];//为了处理进来的时候看到之前缓存的页面
                         vm.table.loading = true;//进一步模拟第一次进来时的页面效果
                         vm.pageType = 'list'//显示列表页，放在这里是给上边的处理留点时间，也就是初始化放在这段代码上边
-                        vm.getData();//再次请求数据
+                        vm.getData(vm.isActive);//再次请求数据
                     }
                 }
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
             ok () {
-                this.$Message.info('Clicked ok');
-                this.$store.commit('BUSINESS_ID',this.listId);
+                //将选中的图片路径传给父组件
+                this.$emit('listenImg',this.imgId);
             },
             cancel () {
                 this.$Message.info('Clicked cancel');
@@ -386,7 +348,7 @@
             
         },
         mounted: function(){
-            this.getData();
+            this.getTheme();
             this.getBranch()
         },
         activated: function(){
@@ -395,25 +357,17 @@
         },
         components:{
            CityLinkage
-        },
-        watch:{
-            getBusinessId:{
-                deep:true,
-                handler(val){
-                    console.log(val)
-                    this.listId = val;
-                    // this.getData();
-                }
-            }
-        },
+        }
     }
 </script>
 <style scoped lang="scss">
     .ivu-modal{
         display: flex;
+        min-height:300px;
     }
     .sliderBar{
         position: absolute;
+        z-index: 999;
         flex:1;
         left: 0;
         top: 51px;
@@ -433,5 +387,33 @@
                 }
             }
         }
+    }
+    .displayList{
+        position: relative;
+        flex:1;
+        left:0px;
+        padding-left:140px;
+        min-height:180px;
+        .ivu-radio-group-item{
+            position: relative;
+            img{
+                display: inline-block;
+                width: 140px;
+                height: 80px;
+                text-align: center;
+                line-height: 60px;
+                border: 1px solid transparent;
+                border-radius: 4px;
+                overflow: hidden;
+                background: #fff;
+                position: relative;
+                box-shadow: 0 1px 1px rgba(0,0,0,.2);
+                margin-right: 4px;
+            }
+            .ivu-radio{
+                position: absolute;
+                top:0!important;
+            }
+        }  
     }
 </style>
