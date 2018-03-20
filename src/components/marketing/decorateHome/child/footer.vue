@@ -89,8 +89,6 @@
                 vm.defaultList = []; // 默认滞空
                 vm.defaultList = oData.imgList; // 传过来的数据赋值给默认数组
                 vm.uploadList = oData.imgList; // 保存要提交的数据
-                console.log(vm.uploadList);
-                console.log(111111111111111);
                 vm.fnGetArrs();
                 vm.testCode = true;
             },
@@ -142,7 +140,6 @@
                     obj.name = item.name;
                     arrs.push(obj);
                 })
-                console.log(arrs);
                 return arrs;
             }
         },
@@ -153,8 +150,6 @@
         },
         watch:{
             curIndex (curVal,oldVal) {
-                // console.log("新值:"+curVal);
-                // console.log("旧值:"+oldVal);
                 this.fnInitData();
             },
         },

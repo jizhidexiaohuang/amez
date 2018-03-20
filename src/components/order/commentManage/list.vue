@@ -206,7 +206,6 @@
                 if(!!init&&init=='init'){
                     vm.fnInit();
                 }
-                console.log(vm.cd.time);
                 /* 买家和卖家的表头不一样 */
                 if(vm.cd.operType == "1"){
                     vm.table.tableColumns = vm.table.buyerColumns;
@@ -233,7 +232,6 @@
                 ).then(function(res){
                     let oData = res.data.data
                     vm.table.recordsTotal = oData.total;
-                    console.log(vm.table.recordsTotal)
                     vm.table.tableData1 = res.data.data.list;
                     vm.table.loading = false;
                 }).catch(function(err){
@@ -253,8 +251,6 @@
                         this.$http.delete(
                             url,
                         ).then(function(res){
-                            console.log(res)
-                            console.log(res.data);
                             if(res.data.code == 200){
                                 setTimeout(function(){
                                     vm.$Message.success(res.data.message);
@@ -264,14 +260,12 @@
                                 vm.$Message.error(res.data.message);
                             }
                         }).catch(function(err){
-                            console.log(err);
                         })
                     }
                 })
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {
-                console.log(size);
                 let vm = this;
                 vm.table.size = size;
                 vm.getData();

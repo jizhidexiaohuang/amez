@@ -107,8 +107,6 @@
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = vm.fnFilterDatas(data);
-                console.log(1111111)
-                console.log(vm.uploadList)
                 vm.fnHandleSubmit();
             },
             fnGetArrs () {
@@ -134,7 +132,6 @@
                     obj.src = item.src;
                     arrs.push(obj);
                 })
-                console.log(arrs);
                 return arrs;
             }
         },
@@ -145,8 +142,6 @@
         },
         watch:{
             curIndex (curVal,oldVal) {
-                // console.log("新值:"+curVal);
-                // console.log("旧值:"+oldVal);
                 this.fnInitData();
             },
         },

@@ -67,8 +67,6 @@
         methods: {
             /* 获取二级分类列表 */
             getData: function(){
-                console.log(this.row);
-                console.log('~~~~~~~~~~~~~~')
                 let vm = this;
                 let parentId = vm.row.menuId;
                 let start = 1;//从第几个开始
@@ -89,10 +87,8 @@
                     }
                 ).then(function(res){
                     let oData = res.data.data
-                    console.log(oData.list);
                     vm.list = oData.list;
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             /* 删除一个子级分类 */

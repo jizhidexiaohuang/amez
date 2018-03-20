@@ -100,22 +100,10 @@
                     roleId:vm.roleId,
                     resourcesIds:vm.resourcesIds
                 }
-                console.log(ajaxData);
-                // let url = vm.common.path2+"system/api/baseRoleResources/distributionBaseRoleResources?roleId="+vm.roleId+"&resourcesIds="+vm.resourcesIds;
                 let url = vm.common.path2+"baseRoleResources/distributionBaseRoleResources?roleId="+vm.roleId+"&resourcesIds="+vm.resourcesIds;
                 vm.$http.get(
                     url
-                    // JSON.stringify(ajaxData),
-                    // vm.qs.stringify(ajaxData),
-                    // ajaxData,
-                    /* {
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                            'Accept': 'application/json'
-                        }
-                    } */
                 ).then(function(res){
-                    console.log(res);
                     let oData = res.data
                     vm.$emit('returnList', 'list'); 
                     vm.$Message.success(oData.message);
@@ -271,23 +259,6 @@
             fnGetData () {
                 let vm = this;
                 let id = vm.roleId;
-                /* let url = vm.common.path2 + "system/api/baseRoleResources/"+id;
-                vm.$http.get(
-                    url
-                ).then(function(res){
-                    console.log(res);
-                    let oData = res.data;
-                    vm.spinShow = false;
-                    // 该角色拥有的权限
-                    vm.mineList = !!!res.data?[]:res.data.data.list;
-                    // 生成最终的树
-                    vm.treeList = vm.fnGetTree();
-                }).catch(function(err){
-                    vm.spinShow = false;
-                }) */
-
-
-
                 let url = vm.common.path2 + "baseRoleResources/selectListByConditions?pageSize=999&roleId="+id;
                 let ajaxData = {
                     roleId: id,
@@ -295,15 +266,12 @@
                 }
                 vm.$http.post(
                     url,
-                    // vm.qs.stringify(ajaxData),
                     ajaxData
                 ).then(function(res){
-                    console.log(res);
                     let oData = res.data;
                     vm.spinShow = false;
                     // 该角色拥有的权限
                     vm.mineList = !!!res.data?[]:res.data.data.list;
-                    console.log(vm.mineList);
                     // 设置提交时的默认值
                     if(vm.mineList.length>0){
                         let arrs = [];
@@ -320,7 +288,6 @@
             },
             // 点击树节点的回调函数
             fnDoSome (data) {
-                console.log(this.roleId)
                 let vm = this;
                 vm.selectData = data;
                 vm.spinShow1 = true;// 出现加载条
@@ -472,9 +439,7 @@
                                 }
                             }
                         ).then(function(res){
-                            console.log(res);
                             vm.btnType = 1;
-
                             // 获取按钮id
                             let url1 = vm.common.path2+"baseOperators/selectListByConditions?pageSize=10";
                             let ajaxData1 = {
@@ -494,7 +459,6 @@
                             })
 
                         }).catch(function(err){
-                            console.log(err);
                         })
                     }else if(vm.btnType == 1){
                         /* 编辑 */
@@ -503,15 +467,12 @@
                             menuId: vm.menuId,
                             operCode: operCode.join(), // 操作码
                             operId: vm.operId,
-                            // roleId: vm.roleId,// 角色id
                         }
                         vm.$http.put(   
                             url,
                             ajaxData
                         ).then(function(res){
-                            console.log(res);
                         }).catch(function(err){
-                            console.log(err);
                         })
                     }
                 }
@@ -520,7 +481,6 @@
             // 基础的表格数据
             fnBaseList (type) {
                 let arrs = [];
-                console.log(type);
                 if(type!="店铺等级"&&type!="连锁品牌管理"){
                     arrs.push({
                         name: '新增',
@@ -953,7 +913,6 @@
         mounted: function(){
             let vm = this;
             vm.allList = vm.allMenus;
-            console.log(vm.allList);
             // 获取角色数据
             vm.fnGetData();
         },

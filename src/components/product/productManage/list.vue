@@ -553,9 +553,6 @@
                             menuArrs.push(list[c]);
                         }
                     }
-
-                    console.log('zzzzzzzzz')
-                    console.log(menuArrs);
                     for(var j = 0;j<menuArrs.length;j++){
                         if(!!menuArrs[j].operCode){
                             vm.fnChangeOperators(menuArrs[j].operCode.split(","));
@@ -564,8 +561,6 @@
                 }
                 /* 得到所有的菜单 */
                 let arrs = JSON.parse(window.localStorage.getItem("userInfo")).menu;
-                console.log(11111111111);
-                console.log(JSON.parse(window.localStorage.getItem("userInfo")));
                 for(var i = 0;i<arrs.length;i++){
                     if(!!arrs[i].hasChildList){
                         for(var j = 0;j<arrs[i].childList.length;j++){
@@ -588,8 +583,6 @@
                 arrs.forEach(function(item,index){
                     vm.operators[item] = true;
                 })
-                console.log('zzzzzzzzzz')
-                console.log(vm.operators);
             }
             /*=================== 菜单权限配置 end ===========================*/
         },

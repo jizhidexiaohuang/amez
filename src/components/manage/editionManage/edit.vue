@@ -132,11 +132,8 @@
                     url
                 ).then(function(res){
                     let oData = res.data.data;
-                    console.log(11111111111);
-                    console.log(oData);
                     vm.fnInitQuery(oData);
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             // 短信模板的内容遍历出来

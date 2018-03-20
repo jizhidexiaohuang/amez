@@ -119,21 +119,17 @@
                             categoryCode: 'CODE_XX',
                             storeId: vm.storeId, // 店铺id
                         }
-                        console.log(ajaxData);
                         let url = vm.common.path2 + "productCategory/edit"
                         vm.$http.put(
                             url,
                             ajaxData,
                         ).then(function(res){
                             let oData = res.data
-                            console.log(oData);
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.success(err);
                         })
-                        console.log(ajaxData);
                     } else {
                         this.$Message.error('提交失败!');
                     }
@@ -147,7 +143,6 @@
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = data;
-                console.log(vm.uploadList);
             },
             // 获取产品信息
             fnQueryById () {
@@ -159,11 +154,9 @@
                     url
                 ).then(function(res){
                     let oData = res.data.data;
-                    console.log(oData);
                     vm.fnInitQuery(oData);
                     vm.spinShow = false;
                 }).catch(function(err){
-                    console.log(err);
                     vm.spinShow = false;
                 })
             },

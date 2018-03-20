@@ -210,7 +210,6 @@
                             storeId:vm.formValidate.storeId, //店铺id
                             storeName:vm.formValidate.storeName //店铺名称
                         }
-                        console.log(ajaxData)
                         let url = vm.common.path2+"storeBeautician/edit";
                         vm.$http.put(
                             url,
@@ -225,7 +224,6 @@
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.success(err);
                         })
                     } else {
@@ -241,12 +239,10 @@
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = data;
-                console.log(vm.uploadList);
             },
             // 开关控制
             changeSwitch1 (status) {
                 this.$Message.info('开关状态：' + status);
-                console.log(this.switch1);
             },
             // 点击所属门店输入框，显示或隐藏table
             selectStore(){
@@ -258,26 +254,21 @@
             },
             /* 分页回掉函数 */
             changePage (page) {
-                console.log(page)
                 let vm = this;
                 vm.table.pageNun = page;   
                 vm.getData();             
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {
-                console.log(size);
                 let vm = this;
                 vm.table.size = size;
                 vm.getData();
             },
             /* 选中某一项的回掉函数 */
             fnSelect (selection,row) {
-                console.log(row);
-                console.log(selection);
             },
             /* 全选时的回调函数 */
             fnSelectAll (selection) {
-                console.log(selection);
             },
             /*表格选中高亮显示*/
             fnHighlight(currentRow,oldCurrentRow){
@@ -303,7 +294,6 @@
                         },
                     }
                 ).then(function(res){
-                    console.log(res.data);
                     let oData = res.data
                     vm.table.recordsTotal = oData.data.total;
                     vm.table.tableData1 = oData.data.list;
@@ -313,7 +303,6 @@
             },
             //省市联动选择的值
             getCity(data){
-                console.log(data)
                 this.province = data[0].label
                 this.provinceId = data[0].value
                 this.city = data[1].label
@@ -326,7 +315,6 @@
                 let vm = this;
                 let url = this.common.path2 +'storeBeautician/queryById/'+id
                 vm.$http.get(url).then(res=>{
-                    console.log(res.data.data)
                     let oData = res.data.data;
                     vm.formValidate.beauticianName = oData.beauticianName;
                     vm.formValidate.beauticianNickName = oData.beauticianNickName;

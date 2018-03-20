@@ -300,25 +300,16 @@
                             url,
                             JSON.stringify(ajaxData)
                         ).then(function(res){
-                            console.log(res);
                             let oData = res.data;
-                            console.log(oData);
                             if(oData.code == 200){
                                 setTimeout(function(){
                                     vm.$Message.success('删除成功');
                                 },500)
-                                /* // 解决删除第(10n+1)个时，页数没有往后跳一页
-                                let total = vm.table.recordsTotal;
-                                console.log(total);
-                                if(total>10&&total%10 == 1){
-                                    vm.table.pageNun = vm.table.pageNun - 1;
-                                } */
                                 vm.getData();
                             }else{
                                 vm.$Message.error(oData.message);
                             }
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.error(err);
                         })
                     }
@@ -354,7 +345,6 @@
             },
             /* 模态框的控制 */
             fnShowMoadl (id) {
-                console.log(id);
                 let vm = this;
                 let name = 'formValidate';
                 // 初始化
@@ -367,14 +357,11 @@
                         url
                     ).then(function(res){
                         let oData = res.data.data;
-                        console.log(oData);
                         // 初始化页面
                         vm.formValidate.roleName = oData.roleName;
                         vm.formValidate.roleCode = oData.roleCode;
                         vm.modal.spinShow = false;
-                        console.log(res);
                     }).catch(function(err){
-                        console.log(err);
                         vm.modal.spinShow = false;
                     })
                 }else{
@@ -407,12 +394,10 @@
                                 }
                             ).then(function(res){
                                 let oData = res.data
-                                console.log(res);
                                 vm.$Message.success(oData.message);
                                 vm.modal.mineModal = false;
                                 vm.getData();
                             }).catch(function(err){
-                                console.log(err);
                                 vm.$Message.success(err);
                                 vm.modal.mineModal = false;
                             })
@@ -432,12 +417,10 @@
                                 }
                             ).then(function(res){
                                 let oData = res.data
-                                console.log(res);
                                 vm.$Message.success(oData.message);
                                 vm.modal.mineModal = false;
                                 vm.getData();
                             }).catch(function(err){
-                                console.log(err);
                                 vm.$Message.success(err);
                                 vm.modal.mineModal = false;
                             })
@@ -460,12 +443,8 @@
                         }
                     }
                 ).then(function(res){
-                    console.log(res);
                     vm.allMenus = res.data.data.list;
-                    console.log(111111111111)
-                    console.log(vm.allMenus);
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             /* 判断页签中是否有该模块，如果有则使用缓存，如果没有则重新加载数据 */
@@ -540,7 +519,6 @@
             this.fnGetOperators();
             this.getData();
             // 获取所有菜单。之所以放在这里，是为了减少编辑页面的在同步获取数据的过程中产生的不好体验
-            console.log(11111);
             this.fnGetAllMenu();
         },
         activated: function(){

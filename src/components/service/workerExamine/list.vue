@@ -333,9 +333,7 @@
                         this.$http.delete(
                             url
                         ).then(function(res){
-                            console.log(res);
                             let oData = res.data;
-                            console.log(oData);
                             if(oData.code == 200){
                                 setTimeout(function(){
                                     vm.$Message.success('删除成功');
@@ -345,7 +343,6 @@
                                 vm.$Message.error(oData.message);
                             }
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.error(err);
                         })
                     }
@@ -385,7 +382,6 @@
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = data;
-                console.log(vm.uploadList);
             },
         },
         mounted: function(){

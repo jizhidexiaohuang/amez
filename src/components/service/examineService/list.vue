@@ -164,7 +164,6 @@
                     url,
                     JSON.stringify(ajaxData)
                 ).then(function(res){
-                    console.log(res.data.data);
                     let oData = res.data
                     vm.recordsTotal = oData.total;
                     vm.tableData1 = res.data.data.list;
@@ -181,19 +180,15 @@
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {
-                console.log(size);
                 let vm = this;
                 vm.size = size;
                 vm.getData();
             },
             /* 选中某一项的回掉函数 */
             fnSelect (selection,row) {
-                console.log(row);
-                console.log(selection);
             },
             /* 全选时的回调函数 */
             fnSelectAll (selection) {
-                console.log(selection);
             },
             changePageType (type) {
                 this.pageType = type;

@@ -103,12 +103,9 @@
                     url
                 ).then(function(res){
                     let oData = res.data.data;
-                    console.log(11111111111);
-                    console.log(oData);
                     vm.fnInitQuery(oData);
                     vm.spinShow = false;
                 }).catch(function(err){
-                    console.log(err);
                     vm.spinShow = false;
                 })
             },

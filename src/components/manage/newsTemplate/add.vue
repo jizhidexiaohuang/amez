@@ -62,7 +62,6 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         //添加品牌服务
-                        console.log(1)
                         let ajaxData = {
                             smsName: vm.formValidate.smsName, // 短信名称
                             smsCode: vm.formValidate.smsCode, // 短信编码
@@ -70,7 +69,6 @@
                             remarks: vm.formValidate.remarks, // 备注
                             smsTemplate: vm.formValidate.smsTemplate, // 备注
                         }
-                        console.log(ajaxData);
                         let url = vm.common.path2+"baseSmsTemplates/insert";
                         vm.$http.post(
                             url,
@@ -85,10 +83,8 @@
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.success(err);
                         })
-                        console.log(ajaxData);
                     } else {
                         this.$Message.error('提交失败!');
                     }

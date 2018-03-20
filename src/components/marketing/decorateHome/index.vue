@@ -96,7 +96,6 @@
                 ).then(function(res){
                     let oData = res.data.data.list
                     oData.reverse();
-                    // console.log(oData);
                     let myArrs = [];
                     for(var i = 0;i<oData.length;i++){
                         var obj = {};
@@ -108,23 +107,7 @@
                         obj.templateCode = oData[i].templateCode;
                         myArrs.push(obj);
                     }
-                    console.log('llllllkk');
-                    console.log(myArrs);
                     vm.list = myArrs;
-
-                    /* 制造数据 */
-                    /* if(oData.length > 0){
-                        oData.forEach(function(item,index){
-                            let obj = {};
-                            obj.type = vm.fnSelectType(1); // 模板类型
-                            obj.data.text = vm.fnSelectType(1); // 模板名称
-                            obj.data.imgList = JSON.parse(item.templateContent); // 模板内容
-                            myArrs.push(obj);
-                        })
-                    }
-                    console.log(122222222)
-                    console.log(myArrs);
-                     */
                 }).catch(function(err){
                 })
             },
@@ -355,25 +338,17 @@
             fnAjaxBySend (data) {
                 let vm = this;
                 var data = vm.fnRefreshData(data);
-                console.log(22222222222);
-                console.log(data);
                 if(!!data.id){
                     // 这是编辑
-                    console.log('编辑');
                     let url = "http://120.79.42.13:8005/app/baseHomeTemplate/edit";
                     vm.$http.put(
                         url,
                         data,
                     ).then(function(res){
-                        console.log(res);
-                        // vm.$Message.success('成功');
                     }).catch(function(err){
-                        console.log(err);
-                        // vm.$Message.success(err);
                     })
                 }else{
                     // 这是新增
-                    console.log('新增');
                     let url = "http://120.79.42.13:8005/app/baseHomeTemplate/insert";
                     vm.$http.post(
                         url,
@@ -384,17 +359,14 @@
                             }
                         }
                     ).then(function(res){
-                        console.log(res);
                         vm.$Message.success('成功');
                     }).catch(function(err){
-                        console.log(err);
                         vm.$Message.success(err);
                     })
                 }
             },
             /* 提交ajax之前,需要对传过去的参数进行还原处理 */
             fnRefreshData (data) {
-                console.log(data.data.imgList);
                 let vm = this;
                 var ajaxData = {};
                 if(!!data.id){

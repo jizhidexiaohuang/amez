@@ -65,7 +65,6 @@
                             parentId: 0, // 父类id
                             menuId: vm.sendChild.id,
                         }
-                        console.log(ajaxData);
                         let url = vm.common.path2+"baseMenus/update";
                         vm.$http.put(
                             url,
@@ -74,10 +73,8 @@
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.success(err);
                         })
-                        console.log(ajaxData);
                     } else {
                         this.$Message.error('提交失败!');
                     }
@@ -98,12 +95,10 @@
                     let oData = res.data.data;
                     vm.fnInitQuery(oData);
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             // 菜单的信息遍历出来
             fnInitQuery (data) {
-                console.log(data);
                 let vm = this;
                 vm.formValidate.menuName = data.menuName;
                 vm.formValidate.menuLogo = data.menuLogo;

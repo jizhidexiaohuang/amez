@@ -124,11 +124,9 @@
                             }
                         ).then(function(res){
                             let oData = res.data
-                            console.log(res);
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success(oData.message);
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.success(err);
                         })
                         

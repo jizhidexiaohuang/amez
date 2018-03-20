@@ -154,8 +154,7 @@
                         /* 产品详情 */
                         ajaxData.physicalDetail = vm.formValidate.physicalDetail;
                         /* 封面图 */
-                        ajaxData.coverImg = vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
-                        console.log(ajaxData);
+                        ajaxData.coverImg = vm.uploadList.length>0?vm.uploadList[0].url:"";//封面图
                         let url = vm.common.path2+"productPhysical/insert";
                         vm.$http.post(
                             url,
@@ -167,17 +166,11 @@
                             }
                         ).then(function(res){
                             let oData = res.data
-                            console.log(oData);
-                            /* vm.table.recordsTotal = oData.data.total;
-                            vm.table.tableData1 = res.data.data.list;
-                            vm.table.loading = false; */
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.success(err);
                         })
-                        console.log(ajaxData);
                     } else {
                         this.$Message.error('提交失败!');
                     }
@@ -200,7 +193,6 @@
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = data;
-                console.log(vm.uploadList);
             },
             // 服务分类接口数据
             fnGetProductCategory () {
@@ -216,7 +208,6 @@
                     let oData = res.data.data.list;
                     vm.serviceList = oData;
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             // 获取运费模板列表
