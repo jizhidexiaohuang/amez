@@ -276,11 +276,11 @@ const common = {
                     hasChildList: false,
                     href:"/manage/departmentManage"
                 },
-                /* {
-                    name:"菜单权限管理",
+                {
+                    name:"按钮管理",
                     hasChildList: false,
                     href:"/manage/menuManage"
-                }, */
+                },
                 {
                     name:"操作日志",
                     hasChildList: false,

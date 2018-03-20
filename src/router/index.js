@@ -60,7 +60,7 @@ import DepartmentManage from '@/components/manage/departmentManage/list'
 import OperationLog from '@/components/manage/operationLog/list'
 //短信模板
 import NewsTemplate from '@/components/manage/newsTemplate/list'
-//菜单权限管理
+//按钮管理
 import MenuManage from '@/components/manage/menuManage/list'
 //菜单列表管理
 import MenuList from '@/components/manage/menuList/list'
@@ -387,12 +387,12 @@ const menuRouter = [
       },
       {
         path: '/manage/menuManage',
-        name: '菜单权限管理',
-        title: '菜单权限管理',
+        name: '按钮管理',
+        title: '按钮管理',
         component: MenuManage,
         meta:{
           type:"菜单",
-          name:"菜单权限管理"
+          name:"按钮管理"
         }
       },
       {

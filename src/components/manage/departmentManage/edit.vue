@@ -314,7 +314,8 @@
                         })
                     } */
                     // 2.判断是新增还是编辑
-                    vm.fnAddOrEdit();
+                    // vm.fnAddOrEdit();
+                    vm.fnTest();
                     return false;
 
 
@@ -359,15 +360,6 @@
                 let vm = this;
                 let arrs = [];
                 arrs = vm.fnNewList(vm.selectData[0].title);
-                /* if(vm.selectData[0].title == '门店审核'){
-                    arrs.push({
-                        name: '品牌审核',
-                        age: '编辑操作',
-                        code: 0,
-                        index:arrs.length,
-                        operCode: 'examine'
-                    })
-                } */
                 let url = vm.common.path2+"baseOperators/selectListByConditions?pageSize=10";
                 let ajaxData = {
                     menuId: vm.selectData[0].menuId,
@@ -399,7 +391,79 @@
                         /* 是新增 */
                         vm.btnType = 0;
                     }
+                    if(!!fnCallback){
+                        fnCallback(vm);
+                    }
 
+                }).catch(function(err){
+                })
+            },
+            fnTest (fnCallback) {
+                let vm = this;
+                let url = vm.common.path2 + "baseBtnMenus/selectListByConditions?pageSize=1000";
+                let ajaxData = {
+                    'btnIndex': vm.selectData[0].menuId
+                }
+                vm.$http.post(
+                    url,
+                    JSON.stringify(ajaxData),
+                    {
+                        headers:{
+                            'Content-type':'application/json;charset=UTF-8'
+                        }
+                    }
+                ).then((res)=>{
+                    let arrs = res.data.data.list;
+                    let arrs1 = [];
+                    arrs.forEach(function(item,index){
+                        var obj = {
+                            'name': item.btnName,
+                            'age': item.btnDesc,
+                            'code': 0,
+                            'index': index,
+                            'operCode': item.operCode
+                        }
+                        arrs1.push(obj);
+                    })
+                    vm.fnShowBtnList(fnCallback,arrs1);
+                }).catch((err)=>{
+                })
+            },
+            fnShowBtnList (fnCallback,arrs1) {
+                let vm = this;
+                let arrs = [];
+                arrs = arrs1;
+                let url = vm.common.path2+"baseOperators/selectListByConditions?pageSize=10";
+                let ajaxData = {
+                    menuId: vm.selectData[0].menuId,
+                    roleId: vm.roleId, // 角色id
+                }
+                vm.$http.post(
+                    url,
+                    JSON.stringify(ajaxData),
+                    {
+                        headers:{
+                            'Content-type':'application/json;charset=UTF-8'
+                        }
+                    }
+                ).then(function(res){
+                    let oData = res.data.data
+                    if(oData.list.length>0){
+                        /* 是编辑 */
+                        vm.btnType = 1;
+                        vm.operId = oData.list[0].operId;
+                        if(oData.list[0].operCode!=null){
+                            let operCodeList = oData.list[0].operCode.split(",");
+                            if(operCodeList.length>0){
+                                vm.changeTableList(operCodeList,arrs);
+                            }
+                        }
+                    }else{
+                        vm.spinShow1 = false;
+                        vm.menuList = arrs;
+                        /* 是新增 */
+                        vm.btnType = 0;
+                    }
                     if(!!fnCallback){
                         fnCallback(vm);
                     }
@@ -476,7 +540,8 @@
                         })
                     }
                 }
-                this.fnAddOrEdit(fnCallback);
+                // this.fnAddOrEdit(fnCallback);
+                this.fnTest(fnCallback);
             },
             // 基础的表格数据
             fnBaseList (type) {
@@ -612,7 +677,7 @@
                     default:
                         return arrs;
                 }
-            }, 
+            }, //[0,1,3,4,7,8];
             fnNewList (type) {
                 let arrs = [];
                 let newArr = new Array();
@@ -638,8 +703,8 @@
                     operCode:'delete'
                 };
                 newArr[3] = {
-                    name: '查看',
-                    age: '查看操作',
+                    name: '查询',
+                    age: '查询操作',
                     code: 0,
                     index:3,
                     operCode:'see'
