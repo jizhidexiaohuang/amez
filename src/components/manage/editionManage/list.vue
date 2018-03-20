@@ -64,12 +64,16 @@
                     //table头
                     tableColumns: [
                         {
+                            title: '版本名称',
+                            key: 'versionName',
+                        },
+                        {
                             title: '版本号',
-                            key: 'apkVersion',
+                            key: 'versionCode',
                         },
                         {
                             title: 'apk路径',
-                            key: 'apkUrl',
+                            key: 'updateUrl',
                         },
                         {
                             title: '客户端类型',
@@ -104,12 +108,28 @@
                         },
                         {   
                             title: '更新类型',
-                            key: 'updateStatus',
+                            key: 'forced',
                             width: 120,
                             render: (h,params) => {
                                 const row = params.row;
-                                const color = row.updateStatus == 2? 'green': 'red';
-                                const text = row.updateStatus == 2? '手动更新': '强制更新';
+                                const color = row.forced == 2? 'green': 'red';
+                                const text = row.forced == 2? '手动更新': '强制更新';
+                                return h('Tag', {
+                                    props: {
+                                        type: 'border',
+                                        color: color
+                                    }
+                                }, text);
+                            }
+                        },
+                        {   
+                            title: '是否忽略更新',
+                            key: 'ignoreUpdate',
+                            width: 120,
+                            render: (h,params) => {
+                                const row = params.row;
+                                const color = row.ignoreUpdate == 1? 'green': 'red';
+                                const text = row.ignoreUpdate == 1? '不忽略': '忽略';
                                 return h('Tag', {
                                     props: {
                                         type: 'border',

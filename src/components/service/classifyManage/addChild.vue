@@ -34,6 +34,9 @@
                     pid: 0,//父类id
                 },
                 ruleValidate: {
+                    categoryName: [
+                        {required: true, message: '请填写分类名称', pattern: /.+/, trigger: 'change'}
+                    ],
                 },
                 defaultList: [],
                 uploadList:[],//图片列表

@@ -2,9 +2,11 @@
     <div>
         <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120" style="padding-bottom: 20px;">
             <Spin fix v-if="spinShow"></Spin>
-            <FormItem  label="分类名称" prop="categoryName">
-                <Input v-model="formValidate.categoryName" placeholder="请填写分类名称"></Input>
-            </FormItem>
+            <div>
+                <FormItem  label="分类名称" prop="categoryName">
+                    <Input v-model="formValidate.categoryName" placeholder="请填写分类名称"></Input>
+                </FormItem>
+            </div>
             <FormItem  label="状态">
                 <iSwitch size="large" v-model="switch1" @on-change="changeSwitch1">
                     <span slot="open">ON</span>
@@ -35,6 +37,9 @@
                     categoryParentId: 0,//父类id
                 },
                 ruleValidate: {
+                    categoryName: [
+                        {required: true, message: '请填写分类名称', pattern: /.+/, trigger: 'change'}
+                    ],
                 },
                 defaultList: [],
                 uploadConfig: {

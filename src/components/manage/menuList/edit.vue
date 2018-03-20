@@ -33,6 +33,12 @@
                     sortNo: '',
                 },
                 ruleValidate: {
+                    menuName: [
+                        {required: true, message: '请填写菜单名称', pattern: /.+/, trigger: 'change'}
+                    ],
+                    menuLogo: [
+                        {required: true, message: '请填写菜单logo', pattern: /.+/, trigger: 'change'}
+                    ],
                 },
                 path:this.common.path1+"system/api/file/uploadForKindeditor",
                 table:{

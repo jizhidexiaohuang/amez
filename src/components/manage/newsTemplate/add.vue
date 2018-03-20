@@ -1,23 +1,23 @@
 <template>
     <div>
         <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120" style="padding-bottom: 20px;">
-            <FormItem  label="短信名称" prop="">
+            <FormItem  label="短信名称" prop="smsName">
                 <Input v-model="formValidate.smsName" placeholder="请填写短信名称"></Input>
             </FormItem>
-            <FormItem  label="短信编码" prop="">
+            <FormItem  label="短信编码" prop="smsCode">
                 <Input v-model="formValidate.smsCode" placeholder="请填写短信编码"></Input>
             </FormItem>
-            <FormItem label="短信类型" prop="">
+            <FormItem label="短信类型" prop="smsType">
                 <RadioGroup v-model="formValidate.smsType">
                     <Radio label="0">验证码</Radio>
                     <Radio label="1">短信通知</Radio>
                     <Radio label="2">短信推广</Radio>
                 </RadioGroup>
             </FormItem>
-            <FormItem label="短信模板" prop="">
+            <FormItem label="短信模板" prop="smsTemplate">
                 <Input v-model="formValidate.smsTemplate" type="textarea" :autosize="{minRows: 3,maxRows: 5}" placeholder="请填写短信模板..."></Input>
             </FormItem>
-            <FormItem label="备注" prop="">
+            <FormItem label="备注" prop="remarks">
                 <Input v-model="formValidate.remarks" type="textarea" :autosize="{minRows: 3,maxRows: 5}" placeholder="请填写备注..."></Input>
             </FormItem>
             <FormItem label="图片地址" prop="img" style="position:absolute; left:-9999px;">
@@ -42,6 +42,15 @@
                     smsTemplate: '', // 模板
                 },
                 ruleValidate: {
+                    smsName: [
+                        {required: true, message: '请填写短信名称', pattern: /.+/, trigger: 'change'}
+                    ],
+                    smsCode: [
+                        {required: true, message: '请填写短信编码', pattern: /.+/, trigger: 'change'}
+                    ],
+                    smsTemplate: [
+                        {required: true, message: '请填写短信模板', pattern: /.+/, trigger: 'change'}
+                    ],
                 },
                 path:this.common.path1+"system/api/file/uploadForKindeditor",
             }

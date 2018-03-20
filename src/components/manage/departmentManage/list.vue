@@ -74,8 +74,8 @@
                     roleCode: '',//角色描述
                 },
                 ruleValidate: {
-                    teacherName: [
-                        { required: true, message: '老师姓名不能为空', trigger: 'blur' }
+                    roleName: [
+                        {required: true, message: '请填写角色名称', pattern: /.+/, trigger: 'change'}
                     ],
                 },
                 // 模态框
@@ -444,7 +444,7 @@
                         }
                     } else {
                         this.$Message.error('提交失败!');
-                        vm.modal.loading = true;
+                        vm.modal.loading = false;
                     }
                 })
             },

@@ -4,7 +4,7 @@
             <FormItem  label="二级菜单名称" prop="menuName">
                 <Input v-model="formValidate.menuName" placeholder="请填写二级菜单名称"></Input>
             </FormItem>
-            <FormItem  label="菜单logo图标" prop="menuLogo">
+            <FormItem  label="菜单logo图标" prop="menuLogo" v-if="false">
                 <Input v-model="formValidate.menuLogo" placeholder="请填写菜单logo图标"></Input>
             </FormItem>
             <FormItem label="菜单请求地址" prop="menuUrl">
@@ -27,6 +27,12 @@
                     menuName: '',// 分类名称
                 },
                 ruleValidate: {
+                    menuName: [
+                        {required: true, message: '请填写菜单名称', pattern: /.+/, trigger: 'change'}
+                    ],
+                    menuUrl: [
+                        {required: true, message: '请填写菜单跳转地址', pattern: /.+/, trigger: 'change'}
+                    ],
                 },
                 table:{
                     tableData1: [],

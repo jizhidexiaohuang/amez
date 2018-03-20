@@ -1,14 +1,14 @@
 <template>
     <div>
         <Spin size="large" fix v-if="spinShow"></Spin>
-        <Form class="boxStyle" ref="freightTemplate" :model="freightTemplate" :rules="ruleValidate" :label-width="120" style="padding-bottom: 20px;">
-            <FormItem  label="模板名称" prop="">
+        <Form class="boxStyle" ref="formValidate" :model="freightTemplate" :rules="ruleValidate" :label-width="120" style="padding-bottom: 20px;">
+            <FormItem  label="模板名称" prop="templateName">
                 <Input v-model="freightTemplate.templateName" placeholder="请填写模板名称"></Input>
             </FormItem>
-            <FormItem  label="模板代码" prop="">
+            <FormItem  label="模板代码" prop="templateCode">
                 <Input v-model="freightTemplate.templateCode" placeholder="请填写模板代码"></Input>
             </FormItem>
-            <FormItem label="计价方式" prop="">
+            <FormItem label="计价方式" prop="pricingMethod">
                 <RadioGroup v-model="freightTemplate.pricingMethod" @on-change="fnRadioChange">
                     <Radio label="1">按件数</Radio>
                     <Radio label="2">按重量</Radio>
@@ -90,7 +90,7 @@
                 <a @click="fnAddCitys">为指定省份设置运费</a>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('freightTemplate')">提交</Button>
+                <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
                 <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
             </FormItem> 
         </Form>
@@ -148,6 +148,12 @@
                 },
                 index: 0, // 当前配置的省份规则索引值
                 ruleValidate: {
+                    templateName: [
+                        {required: true, message: '请填写模板名称', pattern: /.+/, trigger: 'change'}
+                    ],
+                    templateCode: [
+                        {required: true, message: '请填写模板代码', pattern: /.+/, trigger: 'change'}
+                    ],
                 },
                 modalCode: false,
                 showSpareList: [1], // 更新剩下省份界面用的数据
@@ -172,44 +178,50 @@
             /* ===============提交验证============= */ 
             handleSubmit (name) {
                 let vm = this;
-                let ajaxData = {};
-                let url = vm.common.path2+"freightTemplate/add";
-                let _f = vm.freightTemplate; // 运费模板
-                let _d = vm.defaultEdit; // 默认配置
-                /* 运费模板 */
-                ajaxData.freightTemplate = {
-                    'templateName':     _f.templateName,    // 模板名称
-                    'templateCode':     _f.templateCode,    // 模板代码
-                    'transportMethod':  _f.transportMethod, // 运送方式
-                    'pricingMethod':    _f.pricingMethod,   // 计价方式
-                }
-                /* 运费模板城市集合 */
-                ajaxData.cityList = [];
-                // 默认项
-                ajaxData.cityList.push({
-                    'firstNumber':      _d.firstNumber,
-                    'firstPrice':       +_d.firstPrice*100,
-                    'continuedNumber':  _d.continuedNumber,
-                    'continuedPrice':   +_d.continuedPrice*100,
-                    'isDefault':        _d.isDefault
-                });
-                // 城市项
-                !!vm.cityList.length&&vm.cityList.forEach((item,index)=>{
-                    ajaxData.cityList.push(item);
-                })
-                vm.$http.post(
-                    url,
-                    JSON.stringify(ajaxData),
-                    {
-                        headers:{
-                            'Content-type':'application/json;charset=UTF-8'
+                this.$refs[name].validate((valid) => {
+                    if (valid) {
+                        let ajaxData = {};
+                        let url = vm.common.path2+"freightTemplate/add";
+                        let _f = vm.freightTemplate; // 运费模板
+                        let _d = vm.defaultEdit; // 默认配置
+                        /* 运费模板 */
+                        ajaxData.freightTemplate = {
+                            'templateName':     _f.templateName,    // 模板名称
+                            'templateCode':     _f.templateCode,    // 模板代码
+                            'transportMethod':  _f.transportMethod, // 运送方式
+                            'pricingMethod':    _f.pricingMethod,   // 计价方式
                         }
+                        /* 运费模板城市集合 */
+                        ajaxData.cityList = [];
+                        // 默认项
+                        ajaxData.cityList.push({
+                            'firstNumber':      _d.firstNumber,
+                            'firstPrice':       +_d.firstPrice*100,
+                            'continuedNumber':  _d.continuedNumber,
+                            'continuedPrice':   +_d.continuedPrice*100,
+                            'isDefault':        _d.isDefault
+                        });
+                        // 城市项
+                        !!vm.cityList.length&&vm.cityList.forEach((item,index)=>{
+                            ajaxData.cityList.push(item);
+                        })
+                        vm.$http.post(
+                            url,
+                            JSON.stringify(ajaxData),
+                            {
+                                headers:{
+                                    'Content-type':'application/json;charset=UTF-8'
+                                }
+                            }
+                        ).then(function(res){
+                            vm.$emit('returnList', 'list'); 
+                            vm.$Message.success('成功');
+                        }).catch(function(err){
+                            vm.$Message.success(err);
+                        })
+                    } else {
+                        this.$Message.error('提交失败!');
                     }
-                ).then(function(res){
-                    vm.$emit('returnList', 'list'); 
-                    vm.$Message.success('成功');
-                }).catch(function(err){
-                    vm.$Message.success(err);
                 })
             },
             /* =================返回============= */ 

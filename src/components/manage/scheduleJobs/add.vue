@@ -60,6 +60,21 @@
                     'description': '', // 备注
                 },
                 ruleValidate: {
+                    jobName: [
+                        {required: true, message: '请填写定时任务名称', pattern: /.+/, trigger: 'change'}
+                    ],
+                    cronExpression: [
+                        {required: true, message: '请填写定时任务Corn表达式', pattern: /.+/, trigger: 'change'}
+                    ],
+                    jobClass: [
+                        {required: true, message: '请填写定时任务完整类名称', pattern: /.+/, trigger: 'change'}
+                    ],
+                    jobCode: [
+                        {required: true, message: '请填写job唯一代码', pattern: /.+/, trigger: 'change'}
+                    ],
+                    jobMethod: [
+                        {required: true, message: '请填写定时任务方法名称', pattern: /.+/, trigger: 'change'}
+                    ],
                 },
                 switch1: false,
             }

@@ -26,7 +26,7 @@
                         <Button v-if="!!operators.see" style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
 		                <Button v-if="!!operators.refresh" style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     </Col>
-                    <Col span="3" offset="16" v-if="!!operators.add">
+                    <Col span="3" offset="16" v-if="false">
                         <Button style="float:right;" @click.native="changePageType('list')" type="success" icon="android-add">新增</Button>
                     </Col>
                 </Row>

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120" style="padding-bottom: 20px;">
+        <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="140" style="padding-bottom: 20px;">
             <Spin fix v-if="spinShow"></Spin>
             <FormItem label="服务分类" prop="type">
                 <Select disabled v-model="formValidate.type" placeholder="选择服务分类">
@@ -16,13 +16,13 @@
             <FormItem label="服务名称" prop="serverName">
                 <Input v-model="formValidate.serverName" placeholder="请填写服务名称"></Input>
             </FormItem>
-            <FormItem label="市场价" prop="originalPrice" number='true'>
-                <Input v-model="formValidate.originalPrice" placeholder="请填写市场价，单位元"></Input>
+            <FormItem label="市场价（元）" prop="originalPrice" number='true'>
+                <InputNumber :min="0" v-model="formValidate.originalPrice" style="width: 100%;"></InputNumber>
             </FormItem>
-            <FormItem label="服务销售价" prop="salePrice" number='true'>
-                <Input v-model="formValidate.salePrice" placeholder="请填写服务销售价，单位元"></Input>
+            <FormItem label="服务销售价（元）" prop="salePrice" number='true'>
+                <InputNumber :min="0" v-model="formValidate.salePrice" style="width: 100%;"></InputNumber>
             </FormItem>
-            <FormItem label="预约方式">
+            <FormItem label="预约方式" prop="serverEffect1">
                 <CheckboxGroup v-model="formValidate.serverEffect1">
                     <Checkbox label="store">到店服务</Checkbox>
                     <Checkbox label="home">上门服务</Checkbox>
@@ -30,14 +30,14 @@
             </FormItem>
 
 
-            <FormItem label="上门费" prop="homeFee" number='true'>
-                <Input v-model="formValidate.homeFee" placeholder="请填写上门费，单位元"></Input>
+            <FormItem label="上门费（元）" prop="homeFee" number='true'>
+                <InputNumber :min="0" v-model="formValidate.homeFee" style="width: 100%;"></InputNumber>
             </FormItem>
-            <FormItem label="正式美容师佣金" number='true'>
-                <Input v-model="formValidate.formalBeauticianCommission" placeholder="请填写上门费，单位元"></Input>
+            <FormItem label="正式美容师佣金（元）" number='true'>
+                <InputNumber :min="0" v-model="formValidate.formalBeauticianCommission" style="width: 100%;"></InputNumber>
             </FormItem>
-            <FormItem label="兼职美容师佣金" number='true'>
-                <Input v-model="formValidate.parttimeBeauticianCommission" placeholder="请填写上门费，单位元"></Input>
+            <FormItem label="兼职美容师佣金（元）" number='true'>
+                <InputNumber :min="0" v-model="formValidate.parttimeBeauticianCommission" style="width: 100%;"></InputNumber>
             </FormItem>
 
             <FormItem label="到店服务员工">
@@ -96,8 +96,8 @@
             <FormItem label="注意事项" prop="serverAttention">
                 <Input v-model="formValidate.serverAttention" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请填写注意事项"></Input>
             </FormItem>
-            <FormItem label="服务总时长" prop="serverNeedTime">
-                <Input v-model="formValidate.serverNeedTime" placeholder="请填写服务总时长"></Input>
+            <FormItem label="服务总时长（分）" prop="serverNeedTime">
+                <InputNumber :min="0" v-model="formValidate.serverNeedTime" style="width: 100%;"></InputNumber>
             </FormItem>
             <FormItem label="功效" prop="serverEffect">
                 <CheckboxGroup v-model="formValidate.serverEffect">
@@ -197,9 +197,9 @@
                     type: '',//服务分类
                     brandId: '',//服务所属品牌
                     serverName: '',//服务名称
-                    originalPrice: '',//市场价
-                    salePrice: '',//服务销售价
-                    homeFee: '',//上门费
+                    originalPrice: 0,//市场价
+                    salePrice: 0,//服务销售价
+                    homeFee: 0,//上门费
                     commissionType: '1',//平台佣金类型
                     commission: '',//佣金价格
                     coverImg:'',//图片地址
@@ -213,10 +213,26 @@
                     serverEffect1: [], // 服务方式
                     isSupportHome:0, // 是否支持上门 1支持 0不支持
                     isSupportStore:0, // 是否支持到店 1支持 0不支持
-                    formalBeauticianCommission: '', // 正式美容师佣金
-                    parttimeBeauticianCommission: '', // 兼职美容师佣金
+                    formalBeauticianCommission: 0, // 正式美容师佣金
+                    parttimeBeauticianCommission: 0, // 兼职美容师佣金
                 },
                 ruleValidate: {
+                    type: [
+                        {required: true, message: '请选择服务分类', pattern: /.+/, trigger: 'change'}
+                    ],
+                    brandId: [
+                        {required: true, message: '请选择品牌分类', pattern: /.+/, trigger: 'change'}
+                    ],
+                    serverName: [
+                        {required: true, message: '请填写服务名称', pattern: /.+/, trigger: 'change'}
+                    ],
+                    serverEffect1: [
+                        {required: true, message: '请选择预约方式', pattern: /.+/, trigger: 'change'}
+                    ],
+                    storeName: [
+                        {required: true, message: '请选择门店', pattern: /.+/, trigger: 'change'}
+                    ],
+
                     teacherName: [
                         { required: true, message: '老师姓名不能为空', trigger: 'blur' }
                     ],
@@ -269,9 +285,9 @@
                             originalPrice: +vm.formValidate.originalPrice*100, // 原价
                             salePrice: +vm.formValidate.salePrice*100, // 销售价
                             saleVolume: vm.formValidate.saleVolume, // 销量
-                            homeFee: !!vm.formValidate.homeFee?+vm.formValidate.homeFee*100:"", // 上门费
-                            formalBeauticianCommission: !!vm.formValidate.formalBeauticianCommission?+vm.formValidate.formalBeauticianCommission*100:"", // 正式美容师佣金
-                            parttimeBeauticianCommission: !!vm.formValidate.parttimeBeauticianCommission?+vm.formValidate.parttimeBeauticianCommission*100:"", // 兼职美容师佣金
+                            homeFee: !!vm.formValidate.homeFee?+vm.formValidate.homeFee*100:0, // 上门费
+                            formalBeauticianCommission: !!vm.formValidate.formalBeauticianCommission?+vm.formValidate.formalBeauticianCommission*100:0, // 正式美容师佣金
+                            parttimeBeauticianCommission: !!vm.formValidate.parttimeBeauticianCommission?+vm.formValidate.parttimeBeauticianCommission*100:0, // 兼职美容师佣金
                             coverImg: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
                             serverAttention: vm.formValidate.serverAttention, // 注意事项
                             serverNeedTime: vm.formValidate.serverNeedTime, // 服务总时长
@@ -537,7 +553,7 @@
 
 
                 
-                vm.formValidate.homeFee = !!data.product.homeFee?+data.product.homeFee/100:'';// 上门费
+                vm.formValidate.homeFee = !!data.product.homeFee?+data.product.homeFee/100:0;// 上门费
                 vm.formValidate.formalBeauticianCommission = !!data.product.formalBeauticianCommission?+data.product.formalBeauticianCommission/100:'';// 正式美容师佣金
                 vm.formValidate.parttimeBeauticianCommission = !!data.product.parttimeBeauticianCommission?+data.product.parttimeBeauticianCommission/100:'';// 兼职美容师佣金
 
@@ -545,7 +561,7 @@
 
                 vm.formValidate.coverImg = data.product.coverImg;//封面图
                 vm.formValidate.serverAttention = data.product.serverAttention; // 注意事项
-                vm.formValidate.serverNeedTime = data.product.serverNeedTime; // 服务总时长
+                vm.formValidate.serverNeedTime = +data.product.serverNeedTime; // 服务总时长
                 // serverEffect: JSON.stringify(vm.formValidate.serverEffect), // 功效
                 if(!!!data.product.serverEffect){
                     vm.formValidate.serverEffect = [];
