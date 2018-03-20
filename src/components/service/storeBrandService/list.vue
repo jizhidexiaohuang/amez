@@ -104,21 +104,7 @@
     export default {
         data () {
             return {
-                operators: {
-                    add: false, // 新增
-                    edit: false, // 编辑
-                    delete: false, // 删除
-                    see: false, // 查看
-                    refresh: false, // 刷新
-                    updown: false, // 上下架
-                    examine: false, // 审核
-                    openclose: false, // 开启关闭
-                    frozen: false, // 冻结激活
-                    storeGrade: false, // 新增店铺等级
-                    storeRules: false, // 新增规则
-                    orderInfo: false, // 订单详情
-                    backInfo: false, // 退款详情
-                },
+                operators: {},
                 modal:{
                     mineModal: false,
                     loading: true,
@@ -244,7 +230,7 @@
                                         }
                                     }
                                 }, text)
-                                if(!!this.operators.updown){
+                                if(!!this.operators.adminUpdown){
                                     if(!!!this.storeId){
                                         arrs.push(obj2);
                                     }
@@ -273,11 +259,11 @@
                                         }
                                     }
                                 }, text1)
-                                if(!!this.storeId){
-                                    arrs.push(obj5);
+                                if(!!this.operators.storeUpdown){
+                                    if(!!this.storeId){
+                                        arrs.push(obj5);
+                                    }
                                 }
-
-
                                 let obj3 = h('Button', {
                                     props: {
                                         type: 'primary',
@@ -293,15 +279,14 @@
                                             this.audit.auditStatus = row.auditStatus;
                                             this.audit.auditReason = row.auditReason;
                                             this.fnShowModal1();
-                                            // this.fnDeleteItem(params.row.id);
                                         }
                                     }
                                 }, '审核')
-                                if(!!this.operators.examine){
-                                    if(row.auditStatus == 0 && !!!this.storeId){
+                                if(row.auditStatus == 0 && !!!this.storeId){
+                                    if(!!this.operators.examine){
                                         arrs.push(obj3);
-                                    }   
-                                }
+                                    }
+                                }   
                                 let obj1 = h('Button', {
                                     props: {
                                         type: 'error',

@@ -1,5 +1,7 @@
 <template>
     <div>
+        <!-- 详情容器 -->
+        <div v-if="pageType == 'info'" class="testWrap">详情</div>
         <!-- 新增 -->
         <AddPage v-if="pageType == 'add'"  class="testWrap" v-on:returnList="changePageType"></AddPage>
         <!-- 编辑容器 -->
@@ -19,7 +21,7 @@
 		                <Button v-if="!!operators.refresh" style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     </Col>
                     <Col span="3" offset="16" v-if="!!operators.add">
-                        <Button style="float:right;" @click.native="changePageType('add')" type="success" icon="android-add">新增模板</Button>
+                        <Button style="float:right;" @click.native="changePageType('add')" type="success" icon="android-add">新增定时任务</Button>
                     </Col>
                 </Row>
                 <Table
@@ -62,16 +64,26 @@
                     //table头
                     tableColumns: [
                         {
-                            title: '模板名称',
-                            key: 'templateName',
+                            title: '定时任务名称',
+                            key: 'jobName',
                         },
                         {
-                            title: '计价方式',
-                            key: 'pricingMethod',
+                            title: '表达式',
+                            key: 'cronExpression',
+                        },
+                        {
+                            title: '完整类名称',
+                            key: 'jobClass',
+                            width: 240,
+                        },
+                        {   
+                            title: '是否启用',
+                            key: 'isEnable',
+                            width: 120,
                             render: (h,params) => {
                                 const row = params.row;
-                                const color = row.pricingMethod == 1? 'green':'yellow';
-                                const text = row.pricingMethod == 1? '按件数':'按重量';
+                                const color = !!row.isEnable == 1? 'green': 'red';
+                                const text = !!row.isEnable == 1? '启用': '禁用';
                                 return h('Tag', {
                                     props: {
                                         type: 'border',
@@ -81,12 +93,29 @@
                             }
                         },
                         {   
-                            title: '运送方式',
-                            key: 'transportMethod',
+                            title: '并发运行',
+                            key: 'isConcurrent',
+                            width: 120,
                             render: (h,params) => {
                                 const row = params.row;
-                                const color = row.transportMethod == 1? 'green':'yellow';
-                                const text = row.transportMethod == 1? '快递':'默认';
+                                const color = !!row.isConcurrent == 1? 'green': 'red';
+                                const text = !!row.isConcurrent == 1? '可以': '不可以';
+                                return h('Tag', {
+                                    props: {
+                                        type: 'border',
+                                        color: color
+                                    }
+                                }, text);
+                            }
+                        },
+                        {   
+                            title: '运行状态',
+                            key: 'jobState',
+                            width: 120,
+                            render: (h,params) => {
+                                const row = params.row;
+                                const color = !!row.isConcurrent == 1? 'green': 'red';
+                                const text = !!row.isConcurrent == 1? '正常运行': '运行异常';
                                 return h('Tag', {
                                     props: {
                                         type: 'border',
@@ -96,17 +125,9 @@
                             }
                         },
                         {
-                            title: '创建时间',
-                            key: 'createTime',
-                            render: (h,params) => {
-                                const row = params.row;
-                                return this.common.formatDate(row.createTime);
-                            }
-                        },
-                        {
                             title: '操作',
                             key: 'action',
-                            width: 210,
+                            width: 160,
                             // align: 'center',
                             // fixed: 'right',
                             render: (h, params) => {
@@ -179,7 +200,7 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path2+"freightTemplate/findByPageForDefault?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"scheduleJob/selectListByConditions?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
@@ -196,6 +217,7 @@
                 ).then(function(res){
                     let oData = res.data
                     vm.table.recordsTotal = res.data.data.total;
+
                     vm.table.tableData1 = res.data.data.list;
                     vm.table.loading = false;
                 }).catch(function(err){
@@ -205,10 +227,10 @@
             fnDeleteItem (id) {
                 let vm = this;
                 this.$Modal.confirm({
-                    title: '删除运费模板',
-                    content: '确定要删除此运费模板吗？',
+                    title: '删除定时任务',
+                    content: '确定要删除此定时任务吗？',
                     onOk: function(){
-                        let url = vm.common.path2+"freightTemplate/deleteById/"+id;
+                        let url = vm.common.path2+"scheduleJob/deleteById?id="+id;
                         this.$http.delete(
                             url
                         ).then(function(res){

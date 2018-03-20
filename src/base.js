@@ -276,11 +276,11 @@ const common = {
                     hasChildList: false,
                     href:"/manage/departmentManage"
                 },
-                {
+                /* {
                     name:"菜单权限管理",
                     hasChildList: false,
                     href:"/manage/menuManage"
-                },
+                }, */
                 {
                     name:"操作日志",
                     hasChildList: false,
@@ -295,6 +295,16 @@ const common = {
                     name:"菜单列表管理",
                     hasChildList: false,
                     href:"/manage/menuList"
+                },
+                {
+                    name:"定时任务管理",
+                    hasChildList: false,
+                    href:"/manage/scheduleJobs"
+                },
+                {
+                    name:"版本管理",
+                    hasChildList: false,
+                    href:"/manage/editionManage"
                 }
             ]
         },

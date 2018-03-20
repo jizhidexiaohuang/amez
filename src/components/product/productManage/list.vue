@@ -105,21 +105,7 @@
     export default {
         data () {
             return {
-                operators: {
-                    add: false, // 新增
-                    edit: false, // 编辑
-                    delete: false, // 删除
-                    see: false, // 查看
-                    refresh: false, // 刷新
-                    updown: false, // 上下架
-                    examine: false, // 审核
-                    openclose: false, // 开启关闭
-                    frozen: false, // 冻结激活
-                    storeGrade: false, // 新增店铺等级
-                    storeRules: false, // 新增规则
-                    orderInfo: false, // 订单详情
-                    backInfo: false, // 退款详情
-                },
+                operators: {},
                 modal:{
                     mineModal: false,
                     loading: true,

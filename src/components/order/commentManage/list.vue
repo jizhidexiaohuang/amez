@@ -15,7 +15,7 @@
                     <TabPane label="买家评论" name="1"></TabPane>
                     <TabPane label="卖家评论" name="2"></TabPane>
                 </Tabs>
-                <Form :model="cd" inline>
+                <Form :model="cd" inline v-if="false">
                     <FormItem style="margin-bottom:10px;">
                         评价时间
                         <DatePicker v-model="cd.time" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="请填写时间范围" style="width: 300px"></DatePicker>
@@ -57,21 +57,7 @@
     export default {
         data () {
             return {
-                operators: {
-                    add: false, // 新增
-                    edit: false, // 编辑
-                    delete: false, // 删除
-                    see: false, // 查看
-                    refresh: false, // 刷新
-                    updown: false, // 上下架
-                    examine: false, // 审核
-                    openclose: false, // 开启关闭
-                    frozen: false, // 冻结激活
-                    storeGrade: false, // 新增店铺等级
-                    storeRules: false, // 新增规则
-                    orderInfo: false, // 订单详情
-                    backInfo: false, // 退款详情
-                },
+                operators: {},
                 cd:{
                     time:[],//评论时间范围
                     operType:"1"//评论类型、不用重置

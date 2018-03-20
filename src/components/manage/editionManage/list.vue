@@ -1,5 +1,7 @@
 <template>
     <div>
+        <!-- 详情容器 -->
+        <div v-if="pageType == 'info'" class="testWrap">详情</div>
         <!-- 新增 -->
         <AddPage v-if="pageType == 'add'"  class="testWrap" v-on:returnList="changePageType"></AddPage>
         <!-- 编辑容器 -->
@@ -19,7 +21,7 @@
 		                <Button v-if="!!operators.refresh" style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     </Col>
                     <Col span="3" offset="16" v-if="!!operators.add">
-                        <Button style="float:right;" @click.native="changePageType('add')" type="success" icon="android-add">新增模板</Button>
+                        <Button style="float:right;" @click.native="changePageType('add')" type="success" icon="android-add">新增版本</Button>
                     </Col>
                 </Row>
                 <Table
@@ -62,16 +64,20 @@
                     //table头
                     tableColumns: [
                         {
-                            title: '模板名称',
-                            key: 'templateName',
+                            title: '版本号',
+                            key: 'apkVersion',
                         },
                         {
-                            title: '计价方式',
-                            key: 'pricingMethod',
+                            title: 'apk路径',
+                            key: 'apkUrl',
+                        },
+                        {
+                            title: '客户端类型',
+                            key: 'appClientType',
                             render: (h,params) => {
                                 const row = params.row;
-                                const color = row.pricingMethod == 1? 'green':'yellow';
-                                const text = row.pricingMethod == 1? '按件数':'按重量';
+                                const color = row.appClientType == 1? 'green': row.isEnable == 2? 'blue': 'red';
+                                const text = row.appClientType == 1? '门店端': row.isEnable == 2? '用户端': '美容师端';
                                 return h('Tag', {
                                     props: {
                                         type: 'border',
@@ -81,12 +87,29 @@
                             }
                         },
                         {   
-                            title: '运送方式',
-                            key: 'transportMethod',
+                            title: '系统类型',
+                            key: 'appSystemType',
+                            width: 120,
                             render: (h,params) => {
                                 const row = params.row;
-                                const color = row.transportMethod == 1? 'green':'yellow';
-                                const text = row.transportMethod == 1? '快递':'默认';
+                                const color = row.appSystemType == 1? 'green': 'red';
+                                const text = row.appSystemType == 1? '安卓': 'ios';
+                                return h('Tag', {
+                                    props: {
+                                        type: 'border',
+                                        color: color
+                                    }
+                                }, text);
+                            }
+                        },
+                        {   
+                            title: '更新类型',
+                            key: 'updateStatus',
+                            width: 120,
+                            render: (h,params) => {
+                                const row = params.row;
+                                const color = row.updateStatus == 2? 'green': 'red';
+                                const text = row.updateStatus == 2? '手动更新': '强制更新';
                                 return h('Tag', {
                                     props: {
                                         type: 'border',
@@ -96,17 +119,9 @@
                             }
                         },
                         {
-                            title: '创建时间',
-                            key: 'createTime',
-                            render: (h,params) => {
-                                const row = params.row;
-                                return this.common.formatDate(row.createTime);
-                            }
-                        },
-                        {
                             title: '操作',
                             key: 'action',
-                            width: 210,
+                            width: 160,
                             // align: 'center',
                             // fixed: 'right',
                             render: (h, params) => {
@@ -179,7 +194,7 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path2+"freightTemplate/findByPageForDefault?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"baseAppUpdateVersions/selectListByConditions?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
@@ -196,6 +211,7 @@
                 ).then(function(res){
                     let oData = res.data
                     vm.table.recordsTotal = res.data.data.total;
+
                     vm.table.tableData1 = res.data.data.list;
                     vm.table.loading = false;
                 }).catch(function(err){
@@ -205,10 +221,10 @@
             fnDeleteItem (id) {
                 let vm = this;
                 this.$Modal.confirm({
-                    title: '删除运费模板',
-                    content: '确定要删除此运费模板吗？',
+                    title: '删除版本',
+                    content: '确定要删除此版本吗？',
                     onOk: function(){
-                        let url = vm.common.path2+"freightTemplate/deleteById/"+id;
+                        let url = vm.common.path2+"baseAppUpdateVersions/"+id;
                         this.$http.delete(
                             url
                         ).then(function(res){

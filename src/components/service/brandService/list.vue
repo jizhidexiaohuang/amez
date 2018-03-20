@@ -242,7 +242,6 @@
                                         click: () => {
                                             let row = params.row;
                                             this.sendChild.itemId = row.id;
-                                            // this.$store.commit('STORE_LIST',[]);
                                             this.changePageType('edit');
                                         }
                                     }
@@ -270,7 +269,7 @@
                                         }
                                     }
                                 }, text)
-                                if(!!this.operators.updown){
+                                if(!!this.operators.adminUpdown){
                                     if(!!!this.storeId){
                                         arrs.push(obj2);
                                     }
@@ -299,11 +298,11 @@
                                         }
                                     }
                                 }, text1)
-                                if(!!this.storeId){
-                                    arrs.push(obj3);
+                                if(!!this.operators.storeAdmin){
+                                    if(!!this.storeId){
+                                        arrs.push(obj3);
+                                    }
                                 }
-
-
                                 /* 审核 */
                                 let obj6 = h('Button', {
                                     props: {
@@ -325,7 +324,7 @@
                                     }
                                 }, '审核')
                                 if(row.auditStatus == 0){
-                                    if(!!!this.storeId){
+                                    if(!!!this.storeId&&!!this.operators.examine){
                                         arrs.push(obj6);
                                     }
                                 }   
@@ -346,13 +345,6 @@
                                 if(!!this.operators.delete){
                                     arrs.push(obj4);
                                 }
-
-
-                                
-
-
-
-
                                 return h('div', arrs);
                             }
                         }

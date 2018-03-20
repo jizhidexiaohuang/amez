@@ -64,6 +64,10 @@ import NewsTemplate from '@/components/manage/newsTemplate/list'
 import MenuManage from '@/components/manage/menuManage/list'
 //菜单列表管理
 import MenuList from '@/components/manage/menuList/list'
+//定时任务管理
+import ScheduleJobs from '@/components/manage/scheduleJobs/list'
+//版本管理
+import EditionManage from '@/components/manage/editionManage/list'
 /*=====================================财务管理=========================*/
 //交易流水
 import TradeWater from '@/components/financeManage/tradeWater/list'
@@ -382,7 +386,7 @@ const menuRouter = [
         }
       },
       {
-        path: '/manage/MenuManage',
+        path: '/manage/menuManage',
         name: '菜单权限管理',
         title: '菜单权限管理',
         component: MenuManage,
@@ -392,15 +396,35 @@ const menuRouter = [
         }
       },
       {
-        path: '/manage/MenuList',
+        path: '/manage/menuList',
         name: '菜单列表管理',
         title: '菜单列表管理',
         component: MenuList,
         meta:{
           type:"菜单",
-          name:"菜单权限管理"
+          name:"菜单列表管理"
         }
-      }
+      },
+      {
+        path: '/manage/scheduleJobs',
+        name: '定时任务管理',
+        title: '定时任务管理',
+        component: ScheduleJobs,
+        meta:{
+          type:"菜单",
+          name:"定时任务管理"
+        }
+      },
+      {
+        path: '/manage/editionManage',
+        name: '版本管理',
+        title: '版本管理',
+        component: EditionManage,
+        meta:{
+          type:"菜单",
+          name:"版本管理"
+        }
+      },
     ]
   },
   {

@@ -66,10 +66,10 @@
                         </Input>
                     </Col>
                     <Col span="5">
-                        <Button v-if="!!!operators.see" style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
-		                <Button v-if="!!!operators.refresh" style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
+                        <Button v-if="!!operators.see" style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
+		                <Button v-if="!!operators.refresh" style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     </Col>
-                    <Col span="3" offset="11" v-if="!!!operators.add">
+                    <Col span="3" offset="11" v-if="!!operators.add">
                         <Button style="float:right;" @click.native="changePageType('add')" type="success" icon="android-add" v-if="!!isShow">发布服务</Button>
                     </Col>
                 </Row>
@@ -245,7 +245,7 @@
                                         }
                                     }
                                 }, '编辑')
-                                if(!!!this.operators.edit){
+                                if(!!this.operators.edit){
                                     if(!!this.isShow){
                                         arrs.push(obj1);
                                     }
@@ -270,7 +270,7 @@
                                         }
                                     }
                                 }, text)
-                                if(!!!this.storeId){
+                                if(!!!this.storeId&&!!this.operators.adminUpdown){
                                     arrs.push(obj2);
                                 }
                                 /* 门店上下架 */
@@ -297,11 +297,9 @@
                                         }
                                     }
                                 }, text1)
-                                if(!!this.storeId){
+                                if(!!this.storeId&&!!this.operators.storeUpdown){
                                     arrs.push(obj4);
                                 }
-
-
                                 let obj7 = h('Button', {
                                     props: {
                                         type: 'primary',
@@ -321,7 +319,7 @@
                                         }
                                     }
                                 }, '审核')
-                                if(row.auditStatus == 0 && !!!this.storeId){
+                                if(row.auditStatus == 0 && !!!this.storeId&&this.operators.examine){
                                     arrs.push(obj7);
                                 }   
                                 let obj3 = h('Button', {
@@ -338,14 +336,11 @@
                                         }
                                     }
                                 }, '删除')
-                                if(!!!this.operators.delete){
+                                if(!!this.operators.delete){
                                     if(!!this.isShow){
                                         arrs.push(obj3);
                                     }
                                 }
-
-
-
                                 return h('div', arrs);
                             }
                         }

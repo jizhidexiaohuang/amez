@@ -768,10 +768,68 @@
                     index:15,
                     operCode:'power'
                 };
-                /*
-                0.新增  1.编辑  2.删除  3.查看  4.刷新  5.审核  6.上下架  7.开启关闭  8.冻结激活  9.新增店铺等级  10.成长规则设置  11.新增连锁品牌  12.订单详情  13.退款详情  14.导出  15.分配权限
+                newArr[16] = {
+                    name: '管理员上下架',
+                    age: '管理员可操控的上下架',
+                    code: 0,
+                    index:16,
+                    operCode:'adminUpdown'
+                };
+                newArr[17] = {
+                    name: '店长上下架',
+                    age: '店长可操控的上下架',
+                    code: 0,
+                    index:16,
+                    operCode:'storeUpdown'
+                };
+                newArr[18] = {
+                    name: '添加子级',
+                    age: '添加子级',
+                    code: 0,
+                    index:17,
+                    operCode:'addChild'
+                };
+                newArr[19] = {
+                    name: '发货',
+                    age: '产品发货',
+                    code: 0,
+                    index:18,
+                    operCode:'sendGoods'
+                };
+                newArr[20] = {
+                    name: '查看物流',
+                    age: '查看物流',
+                    code: 0,
+                    index:19,
+                    operCode:'seeWater'
+                };
+                newArr[21] = {
+                    name: '详情',
+                    age: '查看详情',
+                    code: 0,
+                    index:20,
+                    operCode:'seeInfo'
+                };
+                newArr[22] = {
+                    name: '确定',
+                    age: '确定操作',
+                    code: 0,
+                    index:21,
+                    operCode:'determine'
+                };
+                /* 
+                0.新增  1.编辑  2.删除  3.查看  4.刷新  5.审核
+                6.上下架  7.开启关闭  8.冻结激活  9.新增店铺等级  
+                10.成长规则设置  11.新增连锁品牌  12.订单详情  13.退款详情  
+                14.导出  15.分配权限  16.管理员上下架  17.店长上下架
+                18.添加子级  19.发货  20.查看物流  21.详情
+                22.确定
                 */
                 switch (type) {
+                    case "首页装修":
+                        var iArrs = [22];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
                     case "门店审核":
                         var iArrs = [1,3,4];
                         return fnBackItem(iArrs,newArr,arrs);
@@ -789,19 +847,27 @@
                         return fnBackItem(iArrs,newArr,arrs);
                     break;
                     case "门店自营服务":
-                        var iArrs = [0,1,2,3,4,6];
+                        var iArrs = [0,1,2,3,4,5,16,17];
                         return fnBackItem(iArrs,newArr,arrs);
                     break;
                     case "品牌服务":
-                        var iArrs = [0,3,4,5,1,6,2];
+                        var iArrs = [0,3,4,5,1,16,2,17];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "平台自营服务":
+                        var iArrs = [0,3,4,5,1,16,2,17];
                         return fnBackItem(iArrs,newArr,arrs);
                     break;
                     case "产品管理":
-                        var iArrs = [0,3,4,1,6,2];
+                        var iArrs = [0,3,4,1,2];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "运费模板":
+                        var iArrs = [0,1,2,4];
                         return fnBackItem(iArrs,newArr,arrs);
                     break;
                     case "分类管理":
-                        var iArrs = [0,4,1,2];
+                        var iArrs = [0,4,1,2,18];
                         return fnBackItem(iArrs,newArr,arrs);
                     break;
                     case "服务订单":
@@ -814,6 +880,10 @@
                     break;
                     case "评论管理":
                         var iArrs = [0,2,3,4];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "产品订单":
+                        var iArrs = [3,4,21,20,19];
                         return fnBackItem(iArrs,newArr,arrs);
                     break;
                     case "员工管理":
@@ -837,6 +907,18 @@
                         return fnBackItem(iArrs,newArr,arrs);
                     break;
                     case "短信模板":
+                        var iArrs = [4,0,1,2];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "菜单列表管理":
+                        var iArrs = [4,0,18,1,2];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "定时任务表":
+                        var iArrs = [4,0,1,2];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "版本管理":
                         var iArrs = [4,0,1,2];
                         return fnBackItem(iArrs,newArr,arrs);
                     break;
