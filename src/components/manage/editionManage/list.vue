@@ -66,10 +66,12 @@
                         {
                             title: '版本名称',
                             key: 'versionName',
+                            width: 100,
                         },
                         {
                             title: '版本号',
                             key: 'versionCode',
+                            width: 100,
                         },
                         {
                             title: 'apk路径',
@@ -78,6 +80,7 @@
                         {
                             title: '客户端类型',
                             key: 'appClientType',
+                            width: 100,
                             render: (h,params) => {
                                 const row = params.row;
                                 const color = row.appClientType == 1? 'green': row.isEnable == 2? 'blue': 'red';
@@ -93,7 +96,7 @@
                         {   
                             title: '系统类型',
                             key: 'appSystemType',
-                            width: 120,
+                            width: 100,
                             render: (h,params) => {
                                 const row = params.row;
                                 const color = row.appSystemType == 1? 'green': 'red';
@@ -142,8 +145,6 @@
                             title: '操作',
                             key: 'action',
                             width: 160,
-                            // align: 'center',
-                            // fixed: 'right',
                             render: (h, params) => {
                                 let arrs = [];
                                 let obj1 = h('Button', {
