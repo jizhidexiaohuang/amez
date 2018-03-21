@@ -175,6 +175,11 @@ const common = {
                     href:"/worker/workerManage"
                 },
                 {
+                    name:"招募员工管理",
+                    hasChildList: false,
+                    href:"/worker/recruitWorkerManage"
+                },
+                {
                     name:"员工等级",
                     hasChildList: false,
                     href:"/worker/workerGrade"

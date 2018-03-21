@@ -77,7 +77,7 @@
                 <homeList></homeList>
                 <!--<businessList></businessList>-->
             </FormItem>
-            <FormItem label="招募员工" v-if="false">
+            <FormItem label="招募员工" v-if="!!isShowBox">
                 <recruitTable></recruitTable>
                 <recruitList></recruitList>
                 <!--<businessList></businessList>-->
@@ -237,6 +237,7 @@
                     if (valid) {
                         //添加品牌服务
                         let ajaxData = {};
+                        debugger
                         /* 商品 */
                         ajaxData.product = {
                             serverName: vm.formValidate.serverName, // 商品名称
@@ -317,7 +318,9 @@
                         var recruitList = vm.$store.getters.recruitList;
                         for(var b = 0;b<recruitList.length;b++){
                             var obj = {};
-                            obj.beauticianId = recruitList[b];
+                            obj.beauticianId = recruitList[b].id;
+                            obj.beauticianNickname = recruitList[b].beauticianNickName;
+                            obj.beauticianHeadImgUrl = recruitList[b].headImgUrl;
                             ajaxData.recruitProductBeauticianRefList.push(obj);
                         }
                         let url = vm.common.path2+"product/add/self";

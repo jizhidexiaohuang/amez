@@ -76,7 +76,7 @@
                 <homeTable></homeTable>
                 <homeList></homeList>
             </FormItem>
-            <FormItem label="招募员工" v-if="false">
+            <FormItem label="招募员工" v-if="!!isShowBox">
                 <recruitTable></recruitTable>
                 <recruitList></recruitList>
             </FormItem>
@@ -313,7 +313,9 @@
                         var recruitList = vm.$store.getters.recruitList;
                         for(var b = 0;b<recruitList.length;b++){
                             var obj = {};
-                            obj.beauticianId = recruitList[b];
+                            obj.beauticianId = recruitList[b].id;
+                            obj.beauticianNickname = recruitList[b].beauticianNickName;
+                            obj.beauticianHeadImgUrl = recruitList[b].headImgUrl;
                             ajaxData.recruitProductBeauticianRefList.push(obj);
                         }
                         let url = vm.common.path2 + "product/modify/self"
@@ -431,7 +433,12 @@
                 let recruitList = data.recruitProductBeauticianRefList;
                 let recruitArrs = [];
                 recruitList.forEach(function(item,index){
-                    recruitArrs.push(+item.beauticianId);
+                    var obj = {
+                        'id' : +item.beauticianId,
+                        'beauticianNickName': item.beauticianNickName,
+                        'headImgUrl': item.beauticianHeadImgUrl,
+                    }
+                    recruitArrs.push(obj);
                 });
                 vm.$store.commit('RECRUIT_LIST',recruitArrs);
                 // 是否支持上门

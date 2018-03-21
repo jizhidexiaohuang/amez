@@ -82,6 +82,8 @@ import CommissionCost from '@/components/financeManage/commissionCost/list'
 /*=====================================员工管理=========================*/
 //员工管理
 import WorkerManage from '@/components/worker/workerManage/list'
+//招募员工管理
+import RecruitWorkerManage from '@/components/worker/recruitWorkerManage/list'
 //员工等级
 import WorkerGrade from '@/components/worker/workerGrade/list'
 //实名认证
@@ -267,6 +269,16 @@ const menuRouter = [
         meta:{
           type:"菜单",
           name:"员工管理"
+        }
+      },
+      {
+        path: '/worker/recruitWorkerManage',
+        name: '招募员工管理',
+        title: '招募员工管理',
+        component: RecruitWorkerManage,
+        meta:{
+          type:"菜单",
+          name:"招募员工管理"
         }
       },
       {

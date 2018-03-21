@@ -298,7 +298,9 @@
                                         }
                                     }
                                 }, text1)
-                                if(!!this.operators.storeAdmin){
+                                console.log(this.storeId);
+                                console.log(this.operators.adminUpdown);
+                                if(!!this.operators.adminUpdown){
                                     if(!!this.storeId){
                                         arrs.push(obj3);
                                     }
