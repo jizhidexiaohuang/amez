@@ -74,8 +74,6 @@
         },
         watch:{
             curIndex (curVal,oldVal) {
-                console.log("新值:"+curVal);
-                console.log("旧值:"+oldVal);
                 this.fnInitData();
             }
         }

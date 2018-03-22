@@ -1,16 +1,5 @@
 <template>
     <div :class="['item','clear','banner-item',curIndex == index?'active':'']">
-        <!-- 显示区域 {{ oData.data.text }} -->
-        <!--
-        <div class="aServerItem" v-for="(item,index) in uploadList">
-            <div class="severIcon">
-                <img :src="imgArrs[index]" />
-            </div>
-            <div class="severName line">
-                {{ item.name }}
-            </div>
-        </div>
-        -->
         <div class="aActivityItem" v-for="(item,index) in uploadList">
             <div class="activityIcon">
                 <img :src="imgArrs[index]" />
@@ -149,7 +138,6 @@
                     obj.title2 = item.title2;
                     arrs.push(obj);
                 })
-                console.log(arrs);
                 return arrs;
             }
         },
@@ -160,8 +148,6 @@
         },
         watch:{
             curIndex (curVal,oldVal) {
-                // console.log("新值:"+curVal);
-                // console.log("旧值:"+oldVal);
                 this.fnInitData();
             },
         },

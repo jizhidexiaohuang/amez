@@ -175,6 +175,11 @@ const common = {
                     href:"/worker/workerManage"
                 },
                 {
+                    name:"招募员工管理",
+                    hasChildList: false,
+                    href:"/worker/recruitWorkerManage"
+                },
+                {
                     name:"员工等级",
                     hasChildList: false,
                     href:"/worker/workerGrade"
@@ -277,7 +282,7 @@ const common = {
                     href:"/manage/departmentManage"
                 },
                 {
-                    name:"菜单权限管理",
+                    name:"按钮管理",
                     hasChildList: false,
                     href:"/manage/menuManage"
                 },
@@ -295,6 +300,16 @@ const common = {
                     name:"菜单列表管理",
                     hasChildList: false,
                     href:"/manage/menuList"
+                },
+                {
+                    name:"定时任务管理",
+                    hasChildList: false,
+                    href:"/manage/scheduleJobs"
+                },
+                {
+                    name:"版本管理",
+                    hasChildList: false,
+                    href:"/manage/editionManage"
                 }
             ]
         },

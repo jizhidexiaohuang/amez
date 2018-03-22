@@ -42,10 +42,10 @@
                 <Row style="margin-bottom:10px;">
                     <Col span="5">
                         <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search" v-if="false">查询</Button>
-		                <Button v-if="!!!operators.refresh" style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
+		                <Button v-if="!!operators.refresh" style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     </Col>
-                    <Col span="3" offset="16" v-if="!!!operators.add">
-                        <Button style="float:right;" @click.native="changePageType('add')"  type="success" icon="android-add">新增分类</Button>
+                    <Col span="3" offset="16" v-if="!!operators.add">
+                        <Button style="float:right;" @click.native="changePageType('add')"  type="success" icon="android-add">新增菜单</Button>
                     </Col>
                 </Row>
                 <Table
@@ -82,21 +82,7 @@
     export default {
         data () {
             return {
-                operators: {
-                    add: false, // 新增
-                    edit: false, // 编辑
-                    delete: false, // 删除
-                    see: false, // 查看
-                    refresh: false, // 刷新
-                    updown: false, // 上下架
-                    examine: false, // 审核
-                    openclose: false, // 开启关闭
-                    frozen: false, // 冻结激活
-                    storeGrade: false, // 新增店铺等级
-                    storeRules: false, // 新增规则
-                    orderInfo: false, // 订单详情
-                    backInfo: false, // 退款详情
-                },
+                operators: {},
                 formValidate: {
                     roleName: '',//角色名称
                     roleCode: '',//角色描述
@@ -169,7 +155,9 @@
                                         }
                                     }
                                 }, '添加二级菜单');
-                                arrs.push(obj1);
+                                if(!!this.operators.addChild){
+                                    arrs.push(obj1);
+                                }
                                 let obj2 = h('Button', {
                                     props: {
                                         type: 'primary',
@@ -188,7 +176,7 @@
                                         }
                                     }
                                 }, '编辑');
-                                if(!!!this.operators.edit){
+                                if(!!this.operators.edit){
                                     arrs.push(obj2);
                                 }
                                 let obj3 = h('Button', {
@@ -205,51 +193,10 @@
                                         }
                                     }
                                 }, '删除');
-                                if(!!!this.operators.delete){
+                                if(!!this.operators.delete){
                                     arrs.push(obj3);
                                 }
                                 return h('div', arrs);
-                            }
-                        }
-                    ],
-                    //卖家表头
-                    sellerColumns: [
-                        {
-                            title: '商家名称',
-                            key: 'parentBeauticianName',
-                        },
-                        {
-                            title: '评价时间',
-                            key: 'payTime',
-                            render: (h,params) =>{
-                                return "2017/12/16 12:16"
-                                //return h('div', this.formatDate(params.time));
-                            }
-                        },
-                        {
-                            title: '订单编号',
-                            key: 'orderId',
-                        },
-                        {
-                            title: '操作',
-                            key: 'action',
-                            width: 180,
-                            // align: 'center',
-                            // fixed: 'right',
-                            render: (h, params) => {
-                                return h('div', [
-                                    h('Button', {
-                                        props: {
-                                            type: 'error',
-                                            size: 'small'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                // this.test(params.index)
-                                            }
-                                        }
-                                    }, '删除')
-                                ]);
                             }
                         }
                     ],
@@ -332,25 +279,16 @@
                             this.$http.delete(
                                 url
                             ).then(function(res){
-                                console.log(res);
                                 let oData = res.data;
-                                console.log(oData);
                                 if(oData.code == 200){
                                     setTimeout(function(){
                                         vm.$Message.success('删除成功');
                                     },500)
-                                    /* // 解决删除第(10n+1)个时，页数没有往后跳一页
-                                    let total = vm.table.recordsTotal;
-                                    console.log(total);
-                                    if(total>10&&total%10 == 1){
-                                        vm.table.pageNun = vm.table.pageNun - 1;
-                                    } */
                                     vm.getData();
                                 }else{
                                     vm.$Message.error(oData.message);
                                 }
                             }).catch(function(err){
-                                console.log(err);
                                 vm.$Message.error(err);
                             })
                         }
@@ -397,7 +335,6 @@
                                         vm.$Message.error(oData.message);
                                     }
                                 }).catch(function(err){
-                                    console.log(err);
                                     vm.$Message.error(err);
                                 })
                             }
@@ -406,7 +343,6 @@
                         vm.$Message.error('请确认没有子级菜单了再删除！！');
                     }
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             /* 查看详情 */
@@ -439,10 +375,8 @@
             },
             /* 模态框的控制 */
             fnShowMoadl (id) {
-                console.log(id);
                 let vm = this;
                 let name = 'formValidate';
-                console.log(1);
                 // 初始化
                 vm.$refs[name].resetFields();
                 // 判断是新增还是编辑
@@ -453,14 +387,11 @@
                         url
                     ).then(function(res){
                         let oData = res.data.data;
-                        console.log(oData);
                         // 初始化页面
                         vm.formValidate.roleName = oData.roleName;
                         vm.formValidate.roleCode = oData.roleCode;
                         vm.modal.spinShow = false;
-                        console.log(res);
                     }).catch(function(err){
-                        console.log(err);
                         vm.modal.spinShow = false;
                     })
                 }
@@ -491,12 +422,10 @@
                                 }
                             ).then(function(res){
                                 let oData = res.data
-                                console.log(res);
                                 vm.$Message.success(oData.message);
                                 vm.modal.mineModal = false;
                                 vm.getData();
                             }).catch(function(err){
-                                console.log(err);
                                 vm.$Message.success(err);
                                 vm.modal.mineModal = false;
                             })
@@ -516,12 +445,10 @@
                                 }
                             ).then(function(res){
                                 let oData = res.data
-                                console.log(res);
                                 vm.$Message.success(oData.message);
                                 vm.modal.mineModal = false;
                                 vm.getData();
                             }).catch(function(err){
-                                console.log(err);
                                 vm.$Message.success(err);
                                 vm.modal.mineModal = false;
                             })
@@ -539,11 +466,8 @@
                 vm.$http.post(
                     url,
                 ).then(function(res){
-                    console.log(res);
                     vm.allMenus = res.data.data.list;
-                    console.log(vm.allMenus);
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             /* 一级菜单的变化 */
@@ -570,9 +494,8 @@
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = data;
-                console.log(vm.uploadList);
             },
-                        /*===================== 菜单权限配置 start ====================*/
+            /*===================== 菜单权限配置 start ====================*/
             /* 获取该菜单拥有的权限 */
             fnGetOperators () {
                 let vm = this;
@@ -620,7 +543,7 @@
                 arrs.forEach(function(item,index){
                     vm.operators[item] = true;
                 })
-            }
+            },
             /*=================== 菜单权限配置 end ===========================*/
         },
         mounted: function(){

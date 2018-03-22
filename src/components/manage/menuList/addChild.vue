@@ -4,7 +4,7 @@
             <FormItem  label="二级菜单名称" prop="menuName">
                 <Input v-model="formValidate.menuName" placeholder="请填写二级菜单名称"></Input>
             </FormItem>
-            <FormItem  label="菜单logo图标" prop="menuLogo">
+            <FormItem  label="菜单logo图标" prop="menuLogo" v-if="false">
                 <Input v-model="formValidate.menuLogo" placeholder="请填写菜单logo图标"></Input>
             </FormItem>
             <FormItem label="菜单请求地址" prop="menuUrl">
@@ -27,6 +27,12 @@
                     menuName: '',// 分类名称
                 },
                 ruleValidate: {
+                    menuName: [
+                        {required: true, message: '请填写菜单名称', pattern: /.+/, trigger: 'change'}
+                    ],
+                    menuUrl: [
+                        {required: true, message: '请填写菜单跳转地址', pattern: /.+/, trigger: 'change'}
+                    ],
                 },
                 table:{
                     tableData1: [],
@@ -50,7 +56,6 @@
                             menuUrl: vm.formValidate.menuUrl, // 地址
                             parentId: vm.twoChild.parentId, // 父类id
                         }
-                        console.log(ajaxData);
                         let url = vm.common.path2+"baseMenus/insert";
                         vm.$http.post(
                             url,
@@ -64,10 +69,8 @@
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.success(err);
                         })
-                        console.log(ajaxData);
                     } else {
                         this.$Message.error('提交失败!');
                     }
@@ -79,7 +82,6 @@
             },
         },
         mounted: function(){
-            console.log(this.twoChild.parentId);
         },
         components:{
             MyUpload

@@ -80,8 +80,6 @@
         methods: {
             /* 获取二级分类列表 */
             getData: function(){
-                console.log(this.row);
-                console.log('~~~~~~~~~~~~~~')
                 let vm = this;
                 let pid = vm.row.id;
                 let start = 1;//从第几个开始
@@ -103,10 +101,8 @@
                     }
                 ).then(function(res){
                     let oData = res.data.data
-                    console.log(oData.list);
                     vm.list = oData.list;
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             /* 删除一个子级分类 */
@@ -171,11 +167,9 @@
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = data;
-                console.log(vm.uploadList);
             },
              // 开关控制
             changeSwitch1 (status) {
-                console.log(this.switch1);
             }
         },
         components:{

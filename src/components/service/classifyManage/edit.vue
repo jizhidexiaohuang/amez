@@ -2,17 +2,19 @@
     <div>
         <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120" style="padding-bottom: 20px;">
             <Spin fix v-if="spinShow"></Spin>
-            <FormItem  label="分类名称" prop="categoryName">
-                <Input v-model="formValidate.categoryName" placeholder="请填写分类名称"></Input>
+            <div>
+                <FormItem  label="分类名称" prop="categoryName">
+                    <Input v-model="formValidate.categoryName" placeholder="请填写分类名称"></Input>
+                </FormItem>
+            </div>
+            <FormItem label="轮播图" v-if="testCode"> 
+                <MyUpload :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
             </FormItem>
             <FormItem  label="状态">
                 <iSwitch size="large" v-model="switch1" @on-change="changeSwitch1">
                     <span slot="open">ON</span>
                     <span slot="close">OFF</span>
                 </iSwitch>
-            </FormItem>
-            <FormItem label="轮播图" v-if="testCode"> 
-                <MyUpload :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
             </FormItem>
             <FormItem label="图片地址" prop="img" style="position:absolute; left:-9999px;">
                 <Input v-model="formValidate.img" placeholder=""></Input>
@@ -65,6 +67,9 @@
                     pid: 0,//父类id
                 },
                 ruleValidate: {
+                    categoryName: [
+                        {required: true, message: '请填写分类名称', pattern: /.+/, trigger: 'change'}
+                    ],
                 },
                 defaultList: [],
                 uploadConfig: {
@@ -114,21 +119,17 @@
                             categoryCode: 'CODE_XX',
                             storeId: vm.storeId, // 店铺id
                         }
-                        console.log(ajaxData);
                         let url = vm.common.path2 + "productCategory/edit"
                         vm.$http.put(
                             url,
                             ajaxData,
                         ).then(function(res){
                             let oData = res.data
-                            console.log(oData);
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.success(err);
                         })
-                        console.log(ajaxData);
                     } else {
                         this.$Message.error('提交失败!');
                     }
@@ -142,7 +143,6 @@
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = data;
-                console.log(vm.uploadList);
             },
             // 获取产品信息
             fnQueryById () {
@@ -154,11 +154,9 @@
                     url
                 ).then(function(res){
                     let oData = res.data.data;
-                    console.log(oData);
                     vm.fnInitQuery(oData);
                     vm.spinShow = false;
                 }).catch(function(err){
-                    console.log(err);
                     vm.spinShow = false;
                 })
             },

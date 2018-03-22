@@ -6,7 +6,7 @@
                     <Option :value="item.id" v-for="item in serviceList" :key="item.id">{{ item.categoryName }}</Option>
                 </Select>
             </FormItem>
-            <FormItem label="运费模板" prop="type">
+            <FormItem label="运费模板" prop="templateId">
                 <Select v-model="formValidate.templateId" placeholder="选择运费模板">
                     <Option :value="item.id" v-for="(item,index) in tplList" :key="item.id">{{ item.templateName }}</Option>
                 </Select>
@@ -27,20 +27,20 @@
                 <Input v-model="formValidate.img" placeholder=""></Input>
             </FormItem>
 
-            <FormItem label="产品价格" prop="salePrice" number='true'>
-                <Input v-model="formValidate.salePrice" placeholder="请填写产品价格，单位元"></Input>
+            <FormItem label="产品价格（元）" prop="salePrice" number='true'>
+                <InputNumber :min="0" v-model="formValidate.salePrice" style="width: 100%;"></InputNumber>
             </FormItem>
 
 
         
-            <FormItem label="单位">
+            <FormItem label="单位" prop="unit">
                 <Select v-model="formValidate.unit" placeholder="选择产品单位">
                     <Option :value="item" v-for="item in bookTypeList" :key="item">{{ item }}</Option>
                 </Select>
             </FormItem>
 
             <FormItem label="库存数量" prop="inventory">
-                <Input v-model="formValidate.inventory" placeholder="请填写库存数量"></Input>
+                <InputNumber :min="0" v-model="formValidate.inventory" style="width: 100%;"></InputNumber>
             </FormItem>
 
             <FormItem label="发货地" prop="deliveryPlace">
@@ -81,32 +81,33 @@
                     physicalName: '', // 产品名称
                     physicalCode: '', // 产品编码
                     physicalImg: '', // 产品图片
-                    salePrice: '', // 产品价格
+                    salePrice: 0, // 产品价格
                     unit: '', // 产品单位
-                    inventory: '', // 库存数量
+                    inventory: 0, // 库存数量
                     deliveryPlace: '', // 发货地
                     physicalDetail: '', // 产品详情
                     coverImg: '', // 封面图
                     templateId: '', // 模板id
                 },
                 ruleValidate: {
-                    teacherName: [
-                        { required: true, message: '老师姓名不能为空', trigger: 'blur' }
+                    type: [
+                        {required: true, message: '请选择产品分类', pattern: /.+/, trigger: 'change'}
                     ],
-                    activityType: [
-                        { required: true, message: '请选择活动类型', trigger: 'change' }
+                    templateId: [
+                        {required: true, message: '请选择运费模板', pattern: /.+/, trigger: 'change'}
                     ],
-                    teacherType: [
-                        { required: true, message: '请选择老师类型', trigger: 'change' }
+                    physicalName: [
+                        {required: true, message: '请填写产品名称', pattern: /.+/, trigger: 'change'}
                     ],
-                    date: [
-                        { required: true, type: 'date', message: '请选择日期', trigger: 'change' }
+                    physicalCode: [
+                        {required: true, message: '请填写产品编码', pattern: /.+/, trigger: 'change'}
                     ],
-                    desc: [
-                        { required: true, message: '请填写服务详情', trigger: 'blur' },
-                        { type: 'string', min: 20, message: '不少于20字', trigger: 'blur' }
+                    unit: [
+                        {required: true, message: '请选择产品单位', pattern: /.+/, trigger: 'change'}
                     ],
-                    
+                    deliveryPlace: [
+                        {required: true, message: '请填写发货地', pattern: /.+/, trigger: 'change'}
+                    ],
                 },
                 defaultList: [],
                 uploadList:[],//图片列表
@@ -153,8 +154,7 @@
                         /* 产品详情 */
                         ajaxData.physicalDetail = vm.formValidate.physicalDetail;
                         /* 封面图 */
-                        ajaxData.coverImg = vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
-                        console.log(ajaxData);
+                        ajaxData.coverImg = vm.uploadList.length>0?vm.uploadList[0].url:"";//封面图
                         let url = vm.common.path2+"productPhysical/insert";
                         vm.$http.post(
                             url,
@@ -166,17 +166,11 @@
                             }
                         ).then(function(res){
                             let oData = res.data
-                            console.log(oData);
-                            /* vm.table.recordsTotal = oData.data.total;
-                            vm.table.tableData1 = res.data.data.list;
-                            vm.table.loading = false; */
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.success(err);
                         })
-                        console.log(ajaxData);
                     } else {
                         this.$Message.error('提交失败!');
                     }
@@ -199,7 +193,6 @@
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = data;
-                console.log(vm.uploadList);
             },
             // 服务分类接口数据
             fnGetProductCategory () {
@@ -215,7 +208,6 @@
                     let oData = res.data.data.list;
                     vm.serviceList = oData;
                 }).catch(function(err){
-                    console.log(err);
                 })
             },
             // 获取运费模板列表

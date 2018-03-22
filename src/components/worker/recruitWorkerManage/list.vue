@@ -1,31 +1,37 @@
 <template>
     <div>
+        <!-- 新增 -->
+        <AddPage v-if="pageType == 'add'"  class="testWrap" v-on:returnList="changePageType"></AddPage>
+        <!-- 查看 -->
+        <InfoPage v-if="pageType == 'info'" :infoId="infoId"  class="testWrap" v-on:returnList="changePageType"></InfoPage>
+        <!-- 审核 -->
+        <ExaminePage v-if="pageType == 'examine'" :examineId="examineId"  class="testWrap" v-on:returnList="changePageType"></ExaminePage>
         <!-- 编辑 -->
         <EditPage v-if="pageType == 'edit'" :sendChild="sendChild"  class="testWrap" v-on:returnList="changePageType"></EditPage>
-        <div v-if="pageType == 'info'" class="testWrap">详情</div>
         <!-- 列表容器 -->
         <div v-if="pageType == 'list'" class="testWrap">
             <div class="boxStyle">
                 <Form :model="cd" inline>
+                    <Button v-if="false" style="float:left;margin-right:5px;" @click.native="changePageType('add')" type="success" icon="android-add">新增员工</Button>
                     <FormItem style="margin-bottom:10px;">
                         审核状态
                         <Select v-model="cd.auditStatus" style="width:100px">
                             <Option v-for="item in auditStatusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                         </Select>
                     </FormItem>
-                    <FormItem style="margin-bottom:10px;" v-if="false">
+                    <FormItem style="margin-bottom:10px;">
                         员工类型
                         <Select v-model="cd.beauticianType" style="width:100px">
                             <Option v-for="item in beauticianTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                         </Select>
                     </FormItem>
-                    <FormItem style="margin-bottom:10px;" v-if="false">
+                    <FormItem style="margin-bottom:10px;">
                         员工状态
                         <Select v-model="cd.beauticianStatus" style="width:100px">
                             <Option v-for="item in beauticianStatusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                         </Select>
                     </FormItem>
-                    <FormItem style="margin-bottom:10px;" v-if="false">
+                    <FormItem style="margin-bottom:10px;">
                         <Input v-model="cd.inputVal">
                         <Select v-model="cd.selectType" slot="prepend" style="width: 100px">
                             <Option value="beauticianName">员工姓名</Option>
@@ -63,10 +69,16 @@
 </template>
 <script>
     import MyUpload from '../../common/upload.vue'
+    import AddPage from './add.vue'
     import EditPage from './edit.vue'
+    import InfoPage from './info.vue'
+    import ExaminePage from './examine.vue'
     export default {
         data () {
             return {
+                storeId: '', // 店铺id
+                examineId:'', //审核的id
+                infoId:'', //查看的id
                 auditStatusList:[
                     {
                         value:'',
@@ -117,7 +129,7 @@
                     auditStatus:'', //审核状态
                     beauticianType:'', //员工类型
                     beauticianStatus:'', //员工状态
-                    inputval: '', //选择的值
+                    inputVal: '', //选择的值
                     selectType:'beauticianName',//input类型
                 },
                 formValidate: {
@@ -139,8 +151,13 @@
                     //table头
                     tableColumns: [
                         {
-                            title: '招募员工信息',
-                            width: 180,
+                            type: 'index',
+                            width: 50,
+                            align: 'center'
+                        },
+                        {
+                            title: '员工信息',
+                            width:140,
                             key: 'beauticianName',
                             render:(h,params)=>{
                                 return h('div',[
@@ -161,36 +178,79 @@
                             }
                         },
                         {
-                            title: '服务信息',
+                            title: '注册手机',
                             key: 'phone',
-                            render: (h,params) => {
-                                return '服务名称'
-                            } 
+                            width:120
                         },
                         {
-                            title: '服务时长',
+                            title: '性别',
                             key: 'sex',
+                            width:70,
                             render: (h,params) => {
-                                return '60分钟'
+                                const row = params.row;
+                                const color = row.sex == 1 ? 'blue' : 'red';
+                                const text = row.sex == 1 ? '男' : '女';
+                                return h('Tag', {
+                                    props: {
+                                        type: 'border',
+                                        color: color
+                                    }
+                                }, text);
                             }
                         },
                         {
-                            title: '服务提成',
+                            title: '员工类型',
                             key: 'beauticianType',
+                            width:90,
                             render:(h,params)=>{
-                                return '¥80.90'
+                                let str = '';
+                                if(params.row.beauticianType==0){
+                                    str = '老板'
+                                }else if(params.row.beauticianType==1){
+                                    str = '店长'
+                                }else if(params.row.beauticianType==2){
+                                    str = '正式员工'
+                                }else if(params.row.beauticianType==3){
+                                    str = '兼职员工'
+                                }
+                                return str;
                             }
                         },
                         {
-                            title: '招募店铺',
+                            title: '员工状态',
                             key: 'beauticianStatus',
+                            width:70,
                             render:(h,params)=>{
-                                return '美佳人美容会所'
+                                let str = '';
+                                if(params.row.beauticianStatus==0){
+                                    str = '离职'
+                                }else if(params.row.beauticianStatus==1){
+                                    str = '在职'
+                                }else if(params.row.beauticianStatus==2){
+                                    str = '休息'
+                                }
+                                return str;
+                            }
+                        },
+                        {
+                            title: '所属门店',
+                            key: 'storeName',
+                            width:120
+                        },
+                        {
+                            title: '创建时间',
+                            key: 'createTime',
+                            width:150,
+                            render: (h,params) => {
+                                const row = params.row;
+                                const time = this.common.formatDate(row.createTime);
+                                return time
                             }
                         },
                         {   
                             title: '审核状态',
                             key: 'auditStatus',
+                            width:110,
                             render: (h,params) => {
                                 const auditStatus = params.row.auditStatus;
                                 let color = '';
@@ -212,43 +272,75 @@
                         {
                             title: '操作',
                             key: 'action',
-                            width: 180,
                             render: (h, params) => {
-                                var obj1 = h('Button', {
-                                    props: {
-                                        type: 'primary',
-                                        size: 'small'
-                                    },
-                                    style: {
-                                        marginRight: '5px'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            let row = params.row;
-                                            this.sendChild.id = row.id;
-                                            this.changePageType('edit');
-                                        }
-                                    }
-                                }, '审核');
-                                var obj2 = h('Button', {
-                                    props: {
-                                        size: 'small',
-                                        type: 'warning'
-                                    },
-                                    style: {
-                                        marginRight: '5px'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            let row = params.row;
-                                            this.sendChild.id = row.id;
-                                            this.changePageType('edit');
-                                        }
-                                    }
-                                }, '查看')
-
-
-                                return h('div', [obj1,obj2]);
+                                if(params.row.auditStatus==0){
+                                    return h('div', [
+                                        h('Button', {
+                                            props: {
+                                                type: 'error',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                marginRight: '5px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    let row = params.row;
+                                                    this.examineId = row.id;
+                                                    this.changePageType('examine');
+                                                }
+                                            }
+                                        }, '审核')
+                                    ]);
+                                }else if(params.row.auditStatus==1){
+                                    return h('div', [
+                                        /* h('Button', {
+                                            props: {
+                                                type: 'primary',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                marginRight: '5px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    let row = params.row;
+                                                    this.sendChild.id = row.id;
+                                                    this.changePageType('edit');
+                                                }
+                                            }
+                                        }, '编辑'), */
+                                        h('Button', {
+                                            props: {
+                                                type: 'info',
+                                                size: 'small'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    let row = params.row;
+                                                    this.infoId = row.id;
+                                                    this.changePageType('info');
+                                                }
+                                            }
+                                        }, '查看')
+                                    ]);
+                                }else if(params.row.auditStatus==2){
+                                    return h('div', [
+                                        h('Button', {
+                                            props: {
+                                                type: 'info',
+                                                size: 'small'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    let row = params.row;
+                                                    this.infoId = row.id;
+                                                    this.changePageType('info');
+                                                }
+                                            }
+                                        }, '查看')
+                                    ]);
+                                }
                             }
                         }
                     ],
@@ -277,7 +369,7 @@
                 vm.cd.auditStatus = "";// 审核状态
                 vm.cd.beauticianType = "";// 员工类型
                 vm.cd.beauticianStatus = "";// 员工状态
-                vm.cd.inputType = "beauticianName";// 输入框类型
+                vm.cd.selectType = "beauticianName";// 输入框类型
                 vm.cd.inputVal = "";// 输入框的值
             },
             /* 数据获取 */
@@ -288,9 +380,12 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path2+"storeBeautician/front/findByPage?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"storeBeautician/findByPageForRecruit?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                    
+                }
+                if(!!vm.storeId){
+                    ajaxData.storeId = vm.storeId;
                 }
                 if(vm.cd.auditStatus){
                     ajaxData.auditStatus = vm.cd.auditStatus
@@ -302,7 +397,7 @@
                     ajaxData.beauticianStatus = vm.cd.beauticianStatus
                 }
                 if(!!vm.cd.inputVal){
-                    ajaxData[vm.cd.inputType] = vm.cd.inputVal;
+                    ajaxData[vm.cd.selectType] = vm.cd.inputVal;
                 }
                 vm.table.loading = true;
                 this.$http.post(
@@ -333,7 +428,9 @@
                         this.$http.delete(
                             url
                         ).then(function(res){
+                            console.log(res);
                             let oData = res.data;
+                            console.log(oData);
                             if(oData.code == 200){
                                 setTimeout(function(){
                                     vm.$Message.success('删除成功');
@@ -343,6 +440,7 @@
                                 vm.$Message.error(oData.message);
                             }
                         }).catch(function(err){
+                            console.log(err);
                             vm.$Message.error(err);
                         })
                     }
@@ -382,9 +480,15 @@
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = data;
+                console.log(vm.uploadList);
             },
         },
         mounted: function(){
+            let store = JSON.parse(window.localStorage.getItem("userInfo")).store;
+            let vm = this;
+            if(store!=null){
+                vm.storeId = store.id;
+            }
             this.getData();
         },
         activated: function(){
@@ -393,7 +497,10 @@
         },
         components:{
             MyUpload,
-            EditPage
+            AddPage,
+            EditPage,
+            InfoPage,
+            ExaminePage
         }
     }
 </script>

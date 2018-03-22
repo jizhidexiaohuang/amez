@@ -1,6 +1,5 @@
 <template>
     <div style="position:relative;">
-        
         <div class="boxStyle" style="padding-bottom:0px; margin-bottom:5px;">
             <Alert type="error">
                 操作提示
@@ -11,103 +10,155 @@
         </div>
         <div class="boxStyle" style="padding-top: 0px; padding-bottom: 0px;">
             <Row>
-                <Col span="12">
+                <Col span="6">
                     <Form :label-width="90">
                         <Tree :data="treeList" @on-select-change="fnDoSome"  style="margin-left:30px; margin-bottom:20px;"></Tree>
-                        <FormItem style="margin-left:5px;" v-if="false">
-                            <Button type="primary" @click="handleSubmit()">提交</Button>
-                        </FormItem>        
                     </Form>
                 </Col>
-                <Col span="12" style="min-height: 200px;">
-                    <Spin fix v-if="spinShow"></Spin>
-                    <Table class="editTable" :columns="columns" :data="menuList" v-if="show"></Table>
-                    <!--
-                    <Form style="padding-left: 10px;">
-                        <FormItem label="编辑">
-                            <i-switch v-model="formItem.edit" size="large">
-                                <span slot="open">On</span>
-                                <span slot="close">Off</span>
-                            </i-switch>
-                        </FormItem>
-                        <FormItem label="新增">
-                            <i-switch v-model="formItem.add" size="large">
-                                <span slot="open">On</span>
-                                <span slot="close">Off</span>
-                            </i-switch>
-                        </FormItem>
-                        <FormItem label="导出">
-                            <i-switch v-model="formItem.daochu" size="large">
-                                <span slot="open">On</span>
-                                <span slot="close">Off</span>
-                            </i-switch>
-                        </FormItem>
-                    </Form>
-                    -->
+                <Col span="18" style="min-height: 200px;" v-if="show">
+                    <div v-if="!!operators.add" style="overflow:hidden; padding: 10px 10px 10px 10px;">
+                        <Button type="primary" @click="handleSubmit('add')" style="float:right;">新增按钮</Button>
+                    </div>
+                    <div style="position: relative;">
+                        <Spin fix v-if="spinShow"></Spin>
+                        <Table border class="editTable" :columns="columns" :data="menuList"></Table>
+                    </div>
                 </Col>
-                <div class="example-split"></div>
             </Row>
             
         </div>
+        <!-- 模态框 -->
+        <Modal
+            v-model="modal.mineModal"
+            title="增加按钮"
+            :loading="modal.loading"
+            @on-ok="fnAsyncOK">
+            <Form class="" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
+                <FormItem  label="按钮名称" prop="btnName">
+                    <Input v-model="formValidate.btnName" placeholder="请填写按钮名称"></Input>
+                </FormItem>
+                <FormItem  label="按钮编码" prop="operCode">
+                    <Input v-model="formValidate.operCode" placeholder="请填写按钮编码"></Input>
+                </FormItem>
+                <FormItem  label="功能描述" prop="btnDesc">
+                    <Input v-model="formValidate.btnDesc" placeholder="请填写功能描述"></Input>
+                </FormItem>
+            </Form>
+        </Modal>
     </div>
 </template>
 <script>
     export default {
         data () {
             return {
+                operators: {},
                 treeList:[],
-                allMenu:[],
                 spinShow: false,//加载开关
                 allList:[],//所有权限
                 mineList:[],//该角色拥有的权限
-                resourcesIds:"",//权限id数组
                 allMenus: [],//所有菜单
-                formItem:{
-                    edit: false, // 编辑
-                    daochu: false, // 导出
-                    add: false, // 新增
-                },
                 columns:[
                     {
                         title: '按钮名称',
-                        key: 'name'
+                        key: 'btnName',
+                        width: 200,
+                    },
+                    {
+                        title: '按钮编码',
+                        key: 'operCode',
+                        width: 200,
                     },
                     {
                         title: '描述',
-                        key: 'age'
+                        key: 'btnDesc'
                     },
                     {
                         title: '操作',
-                        key: 'address',
-                        width: 180,
+                        key: '',
+                        width: 130,
                         render: (h, params) => {
-                            return h('div', [
-                                h('i-switch', {
-                                    props: {
-                                        type: 'primary',
-                                        value: params.row.code === 1
-                                    },
-                                    on: {
-                                        'on-change': (code) => {
-                                            const row = params.row;
-                                            this.changeData(row.index,code);
-                                        }
+                            let arrs = [];
+                            let obj1 = h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small'
+                                },
+                                style: {
+                                    marginRight: '5px'
+                                },
+                                on: {
+                                    click: () => {
+                                        let row = params.row;
+                                        this.btnId = row.id;
+                                        this.handleSubmit('edit');
                                     }
-                                }, '删除')
-                            ]);
+                                }
+                            }, '编辑');
+                            if(!!this.operators.edit){
+                                arrs.push(obj1);
+                            }
+                            let obj2 = h('Button', {
+                                props: {
+                                    type: 'error',
+                                    size: 'small'
+                                },
+                                on: {
+                                    click: () => {
+                                        let row = params.row;
+                                        this.delete(row.id);
+                                    }
+                                }
+                            }, '删除');
+                            if(!!this.operators.delete){
+                                arrs.push(obj2);
+                            }
+                            return h('div', arrs);
                         }
                     }
                 ],
                 menuList: [],
-                btnType:0,// 0是新增，1是编辑
                 menuId: '',// 菜单id
-                operId: '',// 按钮id
                 show: false, // 控制按钮表格是否显示
+                // 模态框
+                modal:{
+                    mineModal: false,
+                    loading: true,
+                },
+                formValidate: {
+                    btnName: '',
+                    operCode: '',
+                    btnDesc: '',
+                    btnCode: 0,
+                    btnIndex: '',
+                },
+                ruleValidate: {
+                },
+                btnId: '', // 按钮id
+                modalType: '', // 模态框类型
             }
         },
         methods: {
             // 提交
-            handleSubmit () {
+            handleSubmit (type) {
+                let vm = this;
+                vm.modalType = type;
+                let url = vm.common.path2 + "baseBtnMenus/"+vm.btnId;
+                if(type == 'add'){
+                    vm.formValidate.btnName = '';
+                    vm.formValidate.operCode = '';
+                    vm.formValidate.btnDesc = '';
+                }else{
+                    vm.$http.get(
+                        url
+                    ).then(function(res){
+                        let oData = res.data.data;
+                        vm.formValidate.btnName = oData.btnName;
+                        vm.formValidate.operCode = oData.operCode;
+                        vm.formValidate.btnDesc = oData.btnDesc;
+                    }).catch(function(err){
+                    })
+                }
+                vm.modal.mineModal = true;
             },
             // 生成最终的树
             fnGetTree () {
@@ -170,100 +221,50 @@
             fnDoSome (data) {
                 let vm = this;
                 vm.spinShow = true;// 出现加载条
-                // 0.判断是一级还是二级菜单
-                /* 一级或者重复点 */
                 if(data.length == 0||data[0].parentId == 0){
                     vm.menuList = [];
                     vm.spinShow = false;
                     vm.show = false;
                 }else{
-                    vm.show = true;
-                    console.log(data);
-                    /* 二级 */
-                    // 1.显示对应的按钮列表
-                    let arrs = [];
                     vm.menuId = data[0].menuId;
-                    arrs = vm.fnBaseList(data[0].title);
-                    /* arrs.push({
-                        name: '新增',
-                        age: '新增操作',
-                        code: 0,
-                        index:0,
-                        operCode:'add'
-                    });
-                    arrs.push({
-                        name: '编辑',
-                        age: '编辑操作',
-                        code: 0,
-                        index:1,
-                        operCode:'edit'
-                    }); */
-                    if(data[0].title == '门店审核'){
-                        arrs.push({
-                            name: '品牌审核',
-                            age: '编辑操作',
-                            code: 0,
-                            index:arrs.length,
-                            operCode: 'examine'
-                        })
-                    }
-                    // 2.判断是新增还是编辑
-                    let url = vm.common.path2+"baseOperators/selectListByConditions?pageSize=10";
-                    let ajaxData = {
-                        menuId: data[0].menuId
-                        // menuId: 1
-                    }
-                    this.$http.post(
-                        url,
-                        JSON.stringify(ajaxData),
-                        {
-                            headers:{
-                                'Content-type':'application/json;charset=UTF-8'
-                            }
-                        }
-                    ).then(function(res){
-                        let oData = res.data.data
-                        if(oData.list.length>0){
-                            /* 是编辑 */
-                            vm.btnType = 1;
-                            vm.operId = oData.list[0].operId;
-                            if(oData.list[0].operCode!=null){
-                                let operCodeList = oData.list[0].operCode.split(",");
-                                if(operCodeList.length>0){
-                                    vm.changeTableList(operCodeList,arrs);
-                                }
-                            }
-                        }else{
-                            vm.spinShow = false;
-                            vm.menuList = arrs;
-                            /* 是新增 */
-                            vm.btnType = 0;
-                        }
-                    }).catch(function(err){
-                    })
-                    // 3. 如果是编辑，则要改变已存在的按钮列表操作
+                    vm.fnBaseList();
                 }
             },
-            // 切换开关的回调函数
-            changeData (index,code) {
+            // 基础的表格数据
+            fnBaseList () {
                 let vm = this;
-                let operCode = [];
-                // 修改数据
-                vm.menuList[index].code = !!!code?0:1;
-                vm.menuList.forEach(function(item,index){
-                    if(item.code == 1){
-                        operCode.push(item.operCode);
+                let url = vm.common.path2 + "baseBtnMenus/selectListByConditions?pageSize=1000";
+                let ajaxData = {
+                    'btnIndex': vm.menuId
+                }
+                vm.$http.post(
+                    url,
+                    JSON.stringify(ajaxData),
+                    {
+                        headers:{
+                            'Content-type':'application/json;charset=UTF-8'
+                        }
                     }
+                ).then((res)=>{
+                    vm.spinShow = false;
+                    let oData= res.data.data.list;
+                    vm.menuList = oData;
+                    vm.show = true;
+
+                }).catch((err)=>{
                 })
-                // 判断是新增还是编辑
-                let url = "";
-                let ajaxData = {};
-                if(vm.btnType == 0){
-                    /* 新增 */
-                    url = vm.common.path2+"baseOperators/insert";
-                    ajaxData = {
-                        menuId: vm.menuId,
-                        operCode: operCode.join(), // 操作码
+            }, 
+            // 模态框的回调函数
+            fnAsyncOK () {
+                let vm = this;
+                if(vm.modalType == 'add'){
+                    let url = vm.common.path2 + "baseBtnMenus/insert";
+                    let ajaxData = {
+                        'btnName': vm.formValidate.btnName,
+                        'operCode': vm.formValidate.operCode,
+                        'btnDesc': vm.formValidate.btnDesc,
+                        'btnCode': 0,
+                        'btnIndex': vm.menuId
                     }
                     vm.$http.post(
                         url,
@@ -274,112 +275,118 @@
                             }
                         }
                     ).then(function(res){
-                        console.log(res);
-                        vm.btnType = 1;
-
-                        // 获取按钮id
-                        let url1 = vm.common.path2+"baseOperators/selectListByConditions?pageSize=10";
-                        let ajaxData1 = {
-                            menuId: vm.menuId
-                        }
-                        vm.$http.post(
-                            url1,
-                            JSON.stringify(ajaxData1),
-                            {
-                                headers:{
-                                    'Content-type':'application/json;charset=UTF-8'
-                                }
-                            }
-                        ).then(function(res){
-                            let oData = res.data.data;
-                            vm.operId = oData.list[0].operId;
-                        })
-
+                        vm.$Message.success(res.data.message);
+                        vm.fnBaseList();
+                        vm.modal.mineModal = false;
                     }).catch(function(err){
-                        console.log(err);
+                        vm.$Message.success(err);
                     })
-                }else if(vm.btnType == 1){
-                    /* 编辑 */
-                    url = vm.common.path2+"baseOperators/update";
-                    ajaxData = {
-                        menuId: vm.menuId,
-                        operCode: operCode.join(), // 操作码
-                        operId: vm.operId
+                }else if('edit'){
+                    let url = vm.common.path2 + 'baseBtnMenus/update';
+                    let ajaxData = {
+                        'btnName': vm.formValidate.btnName,
+                        'operCode': vm.formValidate.operCode,
+                        'btnDesc': vm.formValidate.btnDesc,
+                        'btnCode': 0,
+                        'btnIndex': vm.menuId,
+                        'id': vm.btnId
                     }
-                    vm.$http.put(   
+                    vm.$http.put(
                         url,
-                        ajaxData
+                        ajaxData,
                     ).then(function(res){
-                        console.log(res);
+                        let oData = res.data
+                        vm.$Message.success(oData.message);
+                        vm.fnBaseList();
+                        vm.modal.mineModal = false;
                     }).catch(function(err){
-                        console.log(err);
+                        vm.$Message.success(err);
                     })
                 }
-                // 接口
             },
-            // 基础的表格数据
-            fnBaseList (type) {
-                let arrs = [];
-                arrs.push({
-                    name: '新增',
-                    age: '新增操作',
-                    code: 0,
-                    index:0,
-                    operCode:'add'
-                });
-                arrs.push({
-                    name: '编辑',
-                    age: '编辑操作',
-                    code: 0,
-                    index:1,
-                    operCode:'edit'
-                });
-                switch(type){
-                    case "品牌服务":
-                        arrs.push({
-                            name: '审核',
-                            age: '深恶黑操作',
-                            code: 0,
-                            index:arrs.length,
-                            operCode:'examine'
-                        });
-                        return arrs;
-                    break;
-                    default:
-                        return arrs;
-                }
-            }, 
-            /* 如果是编辑，则去修改table */
-            changeTableList (list,oldArrs) {
+            // 删除按钮
+            delete (id) {
                 let vm = this;
-                for(let i = 0;i<oldArrs.length;i++){
-                    for(var j = 0;j<list.length;j++){
-                        if(oldArrs[i].operCode == list[j]){
-                            oldArrs[i].code= 1 ;
+                this.$Modal.confirm({
+                    title: '删除按钮',
+                    content: '确定要删除此按钮吗？',
+                    onOk: function(){
+                        let url = vm.common.path2+"baseBtnMenus/"+id;
+                        this.$http.delete(
+                            url
+                        ).then(function(res){
+                            let oData = res.data;
+                            if(oData.code == 200){
+                                vm.$Message.success(oData.message);
+                                vm.fnBaseList();
+                            }else{
+                                vm.$Message.error(oData.message);
+                            }
+                        }).catch(function(err){
+                            vm.$Message.error(err);
+                        })
+                    }
+                })
+            },
+            /*===================== 菜单权限配置 start ====================*/
+            /* 获取该菜单拥有的权限 */
+            fnGetOperators () {
+                let vm = this;
+                function fnGetDatas (id,vm) {
+                    let list = [];
+                    let menuArrs = []; // 相同menuId的数组
+                    let strArrs = []; // 权限数组 ["add","edit"]
+                    /* 菜单对应的权限组 */
+                    if(!!JSON.parse(window.localStorage.getItem("userInfo")).operator.list){
+                        list = JSON.parse(window.localStorage.getItem("userInfo")).operator.list;
+                    }
+                    /* 每个用户有可能被分配了多个角色，所以需要合并相同menuId的权限组 */
+                    for(var c = 0;c<list.length;c++){
+                        if(list[c].menuId == id){
+                            menuArrs.push(list[c]);
+                        }
+                    }
+
+                    for(var j = 0;j<menuArrs.length;j++){
+                        if(!!menuArrs[j].operCode){
+                            vm.fnChangeOperators(menuArrs[j].operCode.split(","));
                         }
                     }
                 }
-                vm.menuList = oldArrs;
-                vm.spinShow = false;
+                /* 得到所有的菜单 */
+                let arrs = JSON.parse(window.localStorage.getItem("userInfo")).menu;
+                for(var i = 0;i<arrs.length;i++){
+                    if(!!arrs[i].hasChildList){
+                        for(var j = 0;j<arrs[i].childList.length;j++){
+                            if(arrs[i].childList[j].href == this.$route.path){
+                                fnGetDatas(arrs[i].childList[j].menuId,vm)
+                            }
+                        }
+                    }else{
+                        if(arrs[i].href == this.$route.path){
+                            fnGetDatas(arrs[i].menuId,vm)
+                        }
+                    }
+                }
+            },
+            /* 权限的遍历 */
+            fnChangeOperators (arrs) {
+                // operators{}是开关对象
+                let vm = this;
+                arrs.forEach(function(item,index){
+                    vm.operators[item] = true;
+                })
             }
+            /*=================== 菜单权限配置 end ===========================*/
         },
         mounted: function(){
             let vm = this;
+            vm.fnGetOperators();
             vm.fnGetAllMenu();
         },
-        components:{
-        }
     }
 </script>
 <style scoped>
-.example-split{
-    display: block;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 50%;
-    border: 1px dashed #eee;
-}
 .ivu-form-item{
     margin-bottom: 10px;
 }

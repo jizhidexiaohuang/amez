@@ -64,6 +64,9 @@
                     pid: 0,//父类id
                 },
                 ruleValidate: {
+                    categoryName: [
+                        {required: true, message: '请填写分类名称', pattern: /.+/, trigger: 'change'}
+                    ],
                 },
                 defaultList: [],
                 uploadList:[],//图片列表
@@ -102,7 +105,6 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         //添加品牌服务
-                        console.log(1)
                         let ajaxData = {
                             categoryName: vm.formValidate.categoryName, // 分类名称
                             categoryLogo: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
@@ -125,10 +127,8 @@
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.success(err);
                         })
-                        console.log(ajaxData);
                     } else {
                         this.$Message.error('提交失败!');
                     }
@@ -142,11 +142,9 @@
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = data;
-                console.log(vm.uploadList);
             },
             // 开关控制
             changeSwitch1 (status) {
-                console.log(this.switch1);
             },
             /*表格选中高亮显示*/
             fnHighlight(currentRow,oldCurrentRow){

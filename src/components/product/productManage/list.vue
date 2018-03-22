@@ -105,21 +105,7 @@
     export default {
         data () {
             return {
-                operators: {
-                    add: false, // 新增
-                    edit: false, // 编辑
-                    delete: false, // 删除
-                    see: false, // 查看
-                    refresh: false, // 刷新
-                    updown: false, // 上下架
-                    examine: false, // 审核
-                    openclose: false, // 开启关闭
-                    frozen: false, // 冻结激活
-                    storeGrade: false, // 新增店铺等级
-                    storeRules: false, // 新增规则
-                    orderInfo: false, // 订单详情
-                    backInfo: false, // 退款详情
-                },
+                operators: {},
                 modal:{
                     mineModal: false,
                     loading: true,
@@ -567,9 +553,6 @@
                             menuArrs.push(list[c]);
                         }
                     }
-
-                    console.log('zzzzzzzzz')
-                    console.log(menuArrs);
                     for(var j = 0;j<menuArrs.length;j++){
                         if(!!menuArrs[j].operCode){
                             vm.fnChangeOperators(menuArrs[j].operCode.split(","));
@@ -578,8 +561,6 @@
                 }
                 /* 得到所有的菜单 */
                 let arrs = JSON.parse(window.localStorage.getItem("userInfo")).menu;
-                console.log(11111111111);
-                console.log(JSON.parse(window.localStorage.getItem("userInfo")));
                 for(var i = 0;i<arrs.length;i++){
                     if(!!arrs[i].hasChildList){
                         for(var j = 0;j<arrs[i].childList.length;j++){
@@ -602,8 +583,6 @@
                 arrs.forEach(function(item,index){
                     vm.operators[item] = true;
                 })
-                console.log('zzzzzzzzzz')
-                console.log(vm.operators);
             }
             /*=================== 菜单权限配置 end ===========================*/
         },

@@ -60,10 +60,14 @@ import DepartmentManage from '@/components/manage/departmentManage/list'
 import OperationLog from '@/components/manage/operationLog/list'
 //短信模板
 import NewsTemplate from '@/components/manage/newsTemplate/list'
-//菜单权限管理
+//按钮管理
 import MenuManage from '@/components/manage/menuManage/list'
 //菜单列表管理
 import MenuList from '@/components/manage/menuList/list'
+//定时任务管理
+import ScheduleJobs from '@/components/manage/scheduleJobs/list'
+//版本管理
+import EditionManage from '@/components/manage/editionManage/list'
 /*=====================================财务管理=========================*/
 //交易流水
 import TradeWater from '@/components/financeManage/tradeWater/list'
@@ -78,6 +82,8 @@ import CommissionCost from '@/components/financeManage/commissionCost/list'
 /*=====================================员工管理=========================*/
 //员工管理
 import WorkerManage from '@/components/worker/workerManage/list'
+//招募员工管理
+import RecruitWorkerManage from '@/components/worker/recruitWorkerManage/list'
 //员工等级
 import WorkerGrade from '@/components/worker/workerGrade/list'
 //实名认证
@@ -266,6 +272,16 @@ const menuRouter = [
         }
       },
       {
+        path: '/worker/recruitWorkerManage',
+        name: '招募员工管理',
+        title: '招募员工管理',
+        component: RecruitWorkerManage,
+        meta:{
+          type:"菜单",
+          name:"招募员工管理"
+        }
+      },
+      {
         path: '/worker/workerGrade',
         name: '员工等级',
         title: '员工等级',
@@ -382,25 +398,45 @@ const menuRouter = [
         }
       },
       {
-        path: '/manage/MenuManage',
-        name: '菜单权限管理',
-        title: '菜单权限管理',
+        path: '/manage/menuManage',
+        name: '按钮管理',
+        title: '按钮管理',
         component: MenuManage,
         meta:{
           type:"菜单",
-          name:"菜单权限管理"
+          name:"按钮管理"
         }
       },
       {
-        path: '/manage/MenuList',
+        path: '/manage/menuList',
         name: '菜单列表管理',
         title: '菜单列表管理',
         component: MenuList,
         meta:{
           type:"菜单",
-          name:"菜单权限管理"
+          name:"菜单列表管理"
         }
-      }
+      },
+      {
+        path: '/manage/scheduleJobs',
+        name: '定时任务管理',
+        title: '定时任务管理',
+        component: ScheduleJobs,
+        meta:{
+          type:"菜单",
+          name:"定时任务管理"
+        }
+      },
+      {
+        path: '/manage/editionManage',
+        name: '版本管理',
+        title: '版本管理',
+        component: EditionManage,
+        meta:{
+          type:"菜单",
+          name:"版本管理"
+        }
+      },
     ]
   },
   {

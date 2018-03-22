@@ -27,6 +27,12 @@
                     menuName: '',// 分类名称
                 },
                 ruleValidate: {
+                    menuName: [
+                        {required: true, message: '请填写菜单名称', pattern: /.+/, trigger: 'change'}
+                    ],
+                    menuLogo: [
+                        {required: true, message: '请填写菜单logo', pattern: /.+/, trigger: 'change'}
+                    ],
                 },
                 path:this.common.path1+"system/api/file/uploadForKindeditor",
                 table:{
@@ -52,7 +58,6 @@
                             sortNo: +vm.firstMenusNum+1, // 排序号
                             parentId: 0, // 父类id
                         }
-                        console.log(ajaxData);
                         let url = vm.common.path2+"baseMenus/insert";
                         vm.$http.post(
                             url,
@@ -66,10 +71,8 @@
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.success(err);
                         })
-                        console.log(ajaxData);
                     } else {
                         this.$Message.error('提交失败!');
                     }
@@ -81,7 +84,6 @@
             },
         },
         mounted: function(){
-            console.log(this.firstMenusNum)
         },
         components:{
             MyUpload

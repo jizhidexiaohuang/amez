@@ -1,33 +1,27 @@
 <template>
     <div>
-        <!-- 新增容器 -->
-        <AddPage v-if="pageType == 'add'"  class="testWrap" v-on:returnList="changePageType"/>
-        <!-- 编辑容器 -->
-        <div v-if="pageType == 'edit'" class="testWrap">
-            编辑
-        </div>
         <!-- 详情容器 -->
         <div v-if="pageType == 'info'" class="testWrap">详情</div>
+        <!-- 新增 -->
+        <AddPage v-if="pageType == 'add'"  class="testWrap" v-on:returnList="changePageType"></AddPage>
+        <!-- 编辑容器 -->
+        <EditPage v-if="pageType == 'edit'"  class="testWrap" :sendChild="sendChild" v-on:returnList="changePageType"/>
         <!-- 列表容器 -->
         <div v-if="pageType == 'list'" class="testWrap">
             <div class="boxStyle">
-                <Tabs type="card" v-model="cd.operType" @click.native="getData('init')">
-                    <TabPane label="买家评论" name="1"></TabPane>
-                    <TabPane label="卖家评论" name="2"></TabPane>
-                </Tabs>
                 <Form :model="cd" inline v-if="false">
                     <FormItem style="margin-bottom:10px;">
                         评价时间
-                        <DatePicker v-model="cd.time" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="请填写时间范围" style="width: 300px"></DatePicker>
+                        <DatePicker v-model="cd.time" type="date" placeholder="请选择评价时间" style="width:200px;"></DatePicker>
                     </FormItem>
                 </Form>
                 <Row style="margin-bottom:10px;">
                     <Col span="5">
-                        <Button v-if="!!operators.see" style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
+                        <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search" v-if="false">查询</Button>
 		                <Button v-if="!!operators.refresh" style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     </Col>
-                    <Col span="3" offset="16" v-if="false">
-                        <Button style="float:right;" @click.native="changePageType('list')" type="success" icon="android-add">新增</Button>
+                    <Col span="3" offset="16" v-if="!!operators.add">
+                        <Button style="float:right;" @click.native="changePageType('add')" type="success" icon="android-add">新增定时任务</Button>
                     </Col>
                 </Row>
                 <Table
@@ -41,6 +35,7 @@
                         <Page 
                             :total="table.recordsTotal" 
                             :current="table.pageNun"
+                            :page-size="table.pageSize"
                             show-sizer 
                             @on-change="changePage"
                             @on-page-size-change="changeSize"
@@ -52,17 +47,15 @@
     </div>
 </template>
 <script>
-    // import AddPage from './add.vue'
-    import expandRow from './table-expand.vue'
+    import MyUpload from '../../common/upload.vue'
+    import AddPage from './add.vue'
+    import EditPage from './edit.vue'
     export default {
         data () {
             return {
                 operators: {},
-                cd:{
-                    time:[],//评论时间范围
-                    operType:"1"//评论类型、不用重置
-                },
                 table:{
+                    pageSize:10,//每页显示的数量
                     recordsTotal:0,//总数量
                     pageNun:1,//索引
                     loading: false,//加载状态
@@ -70,120 +63,120 @@
                     tableData1: [],//数据
                     //table头
                     tableColumns: [
-                        
-                    ],
-                    //买家表头
-                    buyerColumns: [
                         {
-                            type: 'expand',
-                            width: 50,
-                            render: (h, params) => {
-                                return h(expandRow, {
+                            title: '定时任务名称',
+                            key: 'jobName',
+                        },
+                        {
+                            title: '表达式',
+                            key: 'cronExpression',
+                        },
+                        {
+                            title: '完整类名称',
+                            key: 'jobClass',
+                            width: 240,
+                        },
+                        {   
+                            title: '是否启用',
+                            key: 'isEnable',
+                            width: 120,
+                            render: (h,params) => {
+                                const row = params.row;
+                                const color = !!row.isEnable == 1? 'green': 'red';
+                                const text = !!row.isEnable == 1? '启用': '禁用';
+                                return h('Tag', {
                                     props: {
-                                        row: params.row
+                                        type: 'border',
+                                        color: color
                                     }
-                                })
-                            }
-                        },
-                        {
-                            title: '买家名称',
-                            key: 'memberName',
-                        },
-                        {
-                            title: '评价时间',
-                            key: 'payTime',
-                            render: (h,params) =>{
-                                return "2017/12/16 12:16"
+                                }, text);
                             }
                         },
                         {   
-                            title: '订单编号',
-                            key: 'orderId',
+                            title: '并发运行',
+                            key: 'isConcurrent',
+                            width: 120,
+                            render: (h,params) => {
+                                const row = params.row;
+                                const color = !!row.isConcurrent == 1? 'green': 'red';
+                                const text = !!row.isConcurrent == 1? '可以': '不可以';
+                                return h('Tag', {
+                                    props: {
+                                        type: 'border',
+                                        color: color
+                                    }
+                                }, text);
+                            }
+                        },
+                        {   
+                            title: '运行状态',
+                            key: 'jobState',
+                            width: 120,
+                            render: (h,params) => {
+                                const row = params.row;
+                                const color = !!row.isConcurrent == 1? 'green': 'red';
+                                const text = !!row.isConcurrent == 1? '正常运行': '运行异常';
+                                return h('Tag', {
+                                    props: {
+                                        type: 'border',
+                                        color: color
+                                    }
+                                }, text);
+                            }
                         },
                         {
                             title: '操作',
                             key: 'action',
-                            width: 180,
+                            width: 160,
                             // align: 'center',
                             // fixed: 'right',
                             render: (h, params) => {
                                 let arrs = [];
                                 let obj1 = h('Button', {
                                     props: {
-                                        type: 'error',
+                                        type: 'primary',
                                         size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
                                     },
                                     on: {
                                         click: () => {
-                                            this.fnDeleteItem(params.row.id);
+                                            let row = params.row;
+                                            this.sendChild.id = row.id;
+                                            this.changePageType('edit');
                                         }
                                     }
-                                }, '删除')
-                                if(!!this.operators.delete){
+                                }, '编辑');
+                                if(!!this.operators.edit){
                                     arrs.push(obj1);
                                 }
-                                return h('div',arrs);
-                            }
-                        }
-                    ],
-                    //卖家表头
-                    sellerColumns: [
-                        {
-                            type: 'expand',
-                            width: 50,
-                            render: (h, params) => {
-                                return h(expandRow, {
-                                    props: {
-                                        row: params.row
-                                    }
-                                })
-                            }
-                        },
-                        {
-                            title: '商家名称',
-                            key: 'parentBeauticianName',
-                        },
-                        {
-                            title: '评价时间',
-                            key: 'payTime',
-                            render: (h,params) =>{
-                                return "2017/12/16 12:16"
-                            }
-                        },
-                        {
-                            title: '订单编号',
-                            key: 'orderId',
-                        },
-                        {
-                            title: '操作',
-                            key: 'action',
-                            width: 180,
-                            // align: 'center',
-                            // fixed: 'right',
-                            render: (h, params) => {
-                                let arrs = [];
-                                let obj1 = h('Button', {
+                                let obj2 = h('Button', {
                                     props: {
                                         type: 'error',
                                         size: 'small'
                                     },
                                     on: {
                                         click: () => {
-                                            // this.test(params.index)
+                                            let row = params.row;
+                                            this.fnDeleteItem(row.id);
                                         }
                                     }
                                 }, '删除');
                                 if(!!this.operators.delete){
-                                    arrs.push(obj1);
+                                    arrs.push(obj2);
                                 }
-
-                                return h('div',arrs);
+                                return h('div', arrs);
                             }
                         }
                     ],
                 },
                 activatedType: false,//主要解决mounted和activated重复调用
                 pageType: 'list',//子页面类型
+                 /* 传递给子组件的数据 */
+                sendChild:{
+                    id: "", // 编辑选项的id
+                },
             }
         },
         methods: {
@@ -196,9 +189,8 @@
             /* 初始化表格筛选条件 */
             fnInit () {
                 let vm = this;
-                vm.table.pageNun = 1;//索引
                 vm.table.size = 10;//页数
-                vm.cd.time = [];//评价时间
+                vm.table.pageNun = 1;//索引
             },
             /* 数据获取 */
             getData (init) {
@@ -206,32 +198,26 @@
                 if(!!init&&init=='init'){
                     vm.fnInit();
                 }
-                /* 买家和卖家的表头不一样 */
-                if(vm.cd.operType == "1"){
-                    vm.table.tableColumns = vm.table.buyerColumns;
-                }else{
-                    vm.table.tableColumns = vm.table.sellerColumns;
-                }
-                let start = vm.table.pageNun;//从第几页开始
+                let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path2+"orderComment/front/findByPage?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"scheduleJob/selectListByConditions?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
-                    operType: vm.cd.operType
                 }
                 vm.table.loading = true;
                 this.$http.post(
                     url,
-                    ajaxData,
+                    JSON.stringify(ajaxData),
                     {
-                        headers: {
-                            'Content-Type': 'application/json'
+                        headers:{
+                            'Content-type':'application/json;charset=UTF-8'
                         }
                     }
                 ).then(function(res){
-                    let oData = res.data.data
-                    vm.table.recordsTotal = oData.total;
+                    let oData = res.data
+                    vm.table.recordsTotal = res.data.data.total;
+
                     vm.table.tableData1 = res.data.data.list;
                     vm.table.loading = false;
                 }).catch(function(err){
@@ -241,25 +227,24 @@
             fnDeleteItem (id) {
                 let vm = this;
                 this.$Modal.confirm({
-                    title: '删除买家评价',
-                    content: '确定要删除此评价吗？',
+                    title: '删除定时任务',
+                    content: '确定要删除此定时任务吗？',
                     onOk: function(){
-                        let ajaxData = {
-                            id: 20
-                        }
-                        let url = vm.common.path2+"orderComment/deleteById/"+id;
+                        let url = vm.common.path2+"scheduleJob/deleteById?id="+id;
                         this.$http.delete(
-                            url,
+                            url
                         ).then(function(res){
-                            if(res.data.code == 200){
+                            let oData = res.data;
+                            if(oData.code == 200){
                                 setTimeout(function(){
-                                    vm.$Message.success(res.data.message);
+                                    vm.$Message.success('删除成功');
                                 },500)
                                 vm.getData();
                             }else{
-                                vm.$Message.error(res.data.message);
+                                vm.$Message.error(oData.message);
                             }
                         }).catch(function(err){
+                            vm.$Message.error(err);
                         })
                     }
                 })
@@ -270,8 +255,14 @@
                 vm.table.size = size;
                 vm.getData();
             },
+            /* 控制当前显示页面的类型 */
             changePageType (type) {
+                // this.getData();
                 this.pageType = type;
+                if(type == "list"){
+                    this.table.pageSize = this.table.size;
+                    this.getData();
+                }
             },
             /* 判断页签中是否有该模块，如果有则使用缓存，如果没有则重新加载数据 */
             fnExistTabList () {
@@ -284,7 +275,6 @@
                         vm.table.loading = true;//进一步模拟第一次进来时的页面效果
                         vm.pageType = 'list'//显示列表页，放在这里是给上边的处理留点时间，也就是初始化放在这段代码上边
                         
-                        vm.cd.operType = "1"
                         vm.getData('init');//再次请求数据
                     }
                 }
@@ -350,7 +340,9 @@
             vm.fnExistTabList()
         },
         components:{
-            expandRow
+            MyUpload,
+            AddPage,
+            EditPage,
         }
     }
 </script>

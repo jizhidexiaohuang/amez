@@ -117,7 +117,7 @@
                     var arrs = [];
                     for(var i = 0;i<listId.length;i++){
                         for(var j = 0;j<oData.list.length;j++){
-                            if(listId[i] == oData.list[j].id){
+                            if(listId[i].id == oData.list[j].id){
                                 arrs.push(oData.list[j]);
                             }
                         }

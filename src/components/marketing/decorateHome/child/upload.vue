@@ -86,7 +86,6 @@
                 file.name = '';
                 file.src = '';
                 file.myId = +(new Date());
-                console.log(this.uploadList)
                 this.$emit("listenUpload",this.uploadList);
             },
             handleFormatError (file) {
@@ -120,12 +119,9 @@
         },
         mounted: function(){
             this.uploadList = this.$refs.upload.fileList;
-            // console.log(this.uploadList);
         },
         watch:{
             uploadList (curVal,oldVal) {
-                // console.log("新值:"+curVal);
-                // console.log("旧值:"+oldVal);
                 this.$emit("listenUpload",this.uploadList);
             },
         },

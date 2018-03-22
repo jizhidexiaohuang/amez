@@ -100,22 +100,10 @@
                     roleId:vm.roleId,
                     resourcesIds:vm.resourcesIds
                 }
-                console.log(ajaxData);
-                // let url = vm.common.path2+"system/api/baseRoleResources/distributionBaseRoleResources?roleId="+vm.roleId+"&resourcesIds="+vm.resourcesIds;
                 let url = vm.common.path2+"baseRoleResources/distributionBaseRoleResources?roleId="+vm.roleId+"&resourcesIds="+vm.resourcesIds;
                 vm.$http.get(
                     url
-                    // JSON.stringify(ajaxData),
-                    // vm.qs.stringify(ajaxData),
-                    // ajaxData,
-                    /* {
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                            'Accept': 'application/json'
-                        }
-                    } */
                 ).then(function(res){
-                    console.log(res);
                     let oData = res.data
                     vm.$emit('returnList', 'list'); 
                     vm.$Message.success(oData.message);
@@ -271,23 +259,6 @@
             fnGetData () {
                 let vm = this;
                 let id = vm.roleId;
-                /* let url = vm.common.path2 + "system/api/baseRoleResources/"+id;
-                vm.$http.get(
-                    url
-                ).then(function(res){
-                    console.log(res);
-                    let oData = res.data;
-                    vm.spinShow = false;
-                    // 该角色拥有的权限
-                    vm.mineList = !!!res.data?[]:res.data.data.list;
-                    // 生成最终的树
-                    vm.treeList = vm.fnGetTree();
-                }).catch(function(err){
-                    vm.spinShow = false;
-                }) */
-
-
-
                 let url = vm.common.path2 + "baseRoleResources/selectListByConditions?pageSize=999&roleId="+id;
                 let ajaxData = {
                     roleId: id,
@@ -295,15 +266,12 @@
                 }
                 vm.$http.post(
                     url,
-                    // vm.qs.stringify(ajaxData),
                     ajaxData
                 ).then(function(res){
-                    console.log(res);
                     let oData = res.data;
                     vm.spinShow = false;
                     // 该角色拥有的权限
                     vm.mineList = !!!res.data?[]:res.data.data.list;
-                    console.log(vm.mineList);
                     // 设置提交时的默认值
                     if(vm.mineList.length>0){
                         let arrs = [];
@@ -320,7 +288,6 @@
             },
             // 点击树节点的回调函数
             fnDoSome (data) {
-                console.log(this.roleId)
                 let vm = this;
                 vm.selectData = data;
                 vm.spinShow1 = true;// 出现加载条
@@ -347,7 +314,8 @@
                         })
                     } */
                     // 2.判断是新增还是编辑
-                    vm.fnAddOrEdit();
+                    // vm.fnAddOrEdit();
+                    vm.fnTest();
                     return false;
 
 
@@ -392,15 +360,6 @@
                 let vm = this;
                 let arrs = [];
                 arrs = vm.fnNewList(vm.selectData[0].title);
-                /* if(vm.selectData[0].title == '门店审核'){
-                    arrs.push({
-                        name: '品牌审核',
-                        age: '编辑操作',
-                        code: 0,
-                        index:arrs.length,
-                        operCode: 'examine'
-                    })
-                } */
                 let url = vm.common.path2+"baseOperators/selectListByConditions?pageSize=10";
                 let ajaxData = {
                     menuId: vm.selectData[0].menuId,
@@ -432,7 +391,79 @@
                         /* 是新增 */
                         vm.btnType = 0;
                     }
+                    if(!!fnCallback){
+                        fnCallback(vm);
+                    }
 
+                }).catch(function(err){
+                })
+            },
+            fnTest (fnCallback) {
+                let vm = this;
+                let url = vm.common.path2 + "baseBtnMenus/selectListByConditions?pageSize=1000";
+                let ajaxData = {
+                    'btnIndex': vm.selectData[0].menuId
+                }
+                vm.$http.post(
+                    url,
+                    JSON.stringify(ajaxData),
+                    {
+                        headers:{
+                            'Content-type':'application/json;charset=UTF-8'
+                        }
+                    }
+                ).then((res)=>{
+                    let arrs = res.data.data.list;
+                    let arrs1 = [];
+                    arrs.forEach(function(item,index){
+                        var obj = {
+                            'name': item.btnName,
+                            'age': item.btnDesc,
+                            'code': 0,
+                            'index': index,
+                            'operCode': item.operCode
+                        }
+                        arrs1.push(obj);
+                    })
+                    vm.fnShowBtnList(fnCallback,arrs1);
+                }).catch((err)=>{
+                })
+            },
+            fnShowBtnList (fnCallback,arrs1) {
+                let vm = this;
+                let arrs = [];
+                arrs = arrs1;
+                let url = vm.common.path2+"baseOperators/selectListByConditions?pageSize=10";
+                let ajaxData = {
+                    menuId: vm.selectData[0].menuId,
+                    roleId: vm.roleId, // 角色id
+                }
+                vm.$http.post(
+                    url,
+                    JSON.stringify(ajaxData),
+                    {
+                        headers:{
+                            'Content-type':'application/json;charset=UTF-8'
+                        }
+                    }
+                ).then(function(res){
+                    let oData = res.data.data
+                    if(oData.list.length>0){
+                        /* 是编辑 */
+                        vm.btnType = 1;
+                        vm.operId = oData.list[0].operId;
+                        if(oData.list[0].operCode!=null){
+                            let operCodeList = oData.list[0].operCode.split(",");
+                            if(operCodeList.length>0){
+                                vm.changeTableList(operCodeList,arrs);
+                            }
+                        }
+                    }else{
+                        vm.spinShow1 = false;
+                        vm.menuList = arrs;
+                        /* 是新增 */
+                        vm.btnType = 0;
+                    }
                     if(!!fnCallback){
                         fnCallback(vm);
                     }
@@ -472,9 +503,7 @@
                                 }
                             }
                         ).then(function(res){
-                            console.log(res);
                             vm.btnType = 1;
-
                             // 获取按钮id
                             let url1 = vm.common.path2+"baseOperators/selectListByConditions?pageSize=10";
                             let ajaxData1 = {
@@ -494,7 +523,6 @@
                             })
 
                         }).catch(function(err){
-                            console.log(err);
                         })
                     }else if(vm.btnType == 1){
                         /* 编辑 */
@@ -503,24 +531,21 @@
                             menuId: vm.menuId,
                             operCode: operCode.join(), // 操作码
                             operId: vm.operId,
-                            // roleId: vm.roleId,// 角色id
                         }
                         vm.$http.put(   
                             url,
                             ajaxData
                         ).then(function(res){
-                            console.log(res);
                         }).catch(function(err){
-                            console.log(err);
                         })
                     }
                 }
-                this.fnAddOrEdit(fnCallback);
+                // this.fnAddOrEdit(fnCallback);
+                this.fnTest(fnCallback);
             },
             // 基础的表格数据
             fnBaseList (type) {
                 let arrs = [];
-                console.log(type);
                 if(type!="店铺等级"&&type!="连锁品牌管理"){
                     arrs.push({
                         name: '新增',
@@ -652,7 +677,7 @@
                     default:
                         return arrs;
                 }
-            }, 
+            }, //[0,1,3,4,7,8];
             fnNewList (type) {
                 let arrs = [];
                 let newArr = new Array();
@@ -678,8 +703,8 @@
                     operCode:'delete'
                 };
                 newArr[3] = {
-                    name: '查看',
-                    age: '查看操作',
+                    name: '查询',
+                    age: '查询操作',
                     code: 0,
                     index:3,
                     operCode:'see'
@@ -768,10 +793,68 @@
                     index:15,
                     operCode:'power'
                 };
-                /*
-                0.新增  1.编辑  2.删除  3.查看  4.刷新  5.审核  6.上下架  7.开启关闭  8.冻结激活  9.新增店铺等级  10.成长规则设置  11.新增连锁品牌  12.订单详情  13.退款详情  14.导出  15.分配权限
+                newArr[16] = {
+                    name: '管理员上下架',
+                    age: '管理员可操控的上下架',
+                    code: 0,
+                    index:16,
+                    operCode:'adminUpdown'
+                };
+                newArr[17] = {
+                    name: '店长上下架',
+                    age: '店长可操控的上下架',
+                    code: 0,
+                    index:16,
+                    operCode:'storeUpdown'
+                };
+                newArr[18] = {
+                    name: '添加子级',
+                    age: '添加子级',
+                    code: 0,
+                    index:17,
+                    operCode:'addChild'
+                };
+                newArr[19] = {
+                    name: '发货',
+                    age: '产品发货',
+                    code: 0,
+                    index:18,
+                    operCode:'sendGoods'
+                };
+                newArr[20] = {
+                    name: '查看物流',
+                    age: '查看物流',
+                    code: 0,
+                    index:19,
+                    operCode:'seeWater'
+                };
+                newArr[21] = {
+                    name: '详情',
+                    age: '查看详情',
+                    code: 0,
+                    index:20,
+                    operCode:'seeInfo'
+                };
+                newArr[22] = {
+                    name: '确定',
+                    age: '确定操作',
+                    code: 0,
+                    index:21,
+                    operCode:'determine'
+                };
+                /* 
+                0.新增  1.编辑  2.删除  3.查看  4.刷新  5.审核
+                6.上下架  7.开启关闭  8.冻结激活  9.新增店铺等级  
+                10.成长规则设置  11.新增连锁品牌  12.订单详情  13.退款详情  
+                14.导出  15.分配权限  16.管理员上下架  17.店长上下架
+                18.添加子级  19.发货  20.查看物流  21.详情
+                22.确定
                 */
                 switch (type) {
+                    case "首页装修":
+                        var iArrs = [22];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
                     case "门店审核":
                         var iArrs = [1,3,4];
                         return fnBackItem(iArrs,newArr,arrs);
@@ -789,19 +872,27 @@
                         return fnBackItem(iArrs,newArr,arrs);
                     break;
                     case "门店自营服务":
-                        var iArrs = [0,1,2,3,4,6];
+                        var iArrs = [0,1,2,3,4,5,16,17];
                         return fnBackItem(iArrs,newArr,arrs);
                     break;
                     case "品牌服务":
-                        var iArrs = [0,3,4,5,1,6,2];
+                        var iArrs = [0,3,4,5,1,16,2,17];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "平台自营服务":
+                        var iArrs = [0,3,4,5,1,16,2,17];
                         return fnBackItem(iArrs,newArr,arrs);
                     break;
                     case "产品管理":
-                        var iArrs = [0,3,4,1,6,2];
+                        var iArrs = [0,3,4,1,2];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "运费模板":
+                        var iArrs = [0,1,2,4];
                         return fnBackItem(iArrs,newArr,arrs);
                     break;
                     case "分类管理":
-                        var iArrs = [0,4,1,2];
+                        var iArrs = [0,4,1,2,18];
                         return fnBackItem(iArrs,newArr,arrs);
                     break;
                     case "服务订单":
@@ -814,6 +905,10 @@
                     break;
                     case "评论管理":
                         var iArrs = [0,2,3,4];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "产品订单":
+                        var iArrs = [3,4,21,20,19];
                         return fnBackItem(iArrs,newArr,arrs);
                     break;
                     case "员工管理":
@@ -837,6 +932,18 @@
                         return fnBackItem(iArrs,newArr,arrs);
                     break;
                     case "短信模板":
+                        var iArrs = [4,0,1,2];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "菜单列表管理":
+                        var iArrs = [4,0,18,1,2];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "定时任务表":
+                        var iArrs = [4,0,1,2];
+                        return fnBackItem(iArrs,newArr,arrs);
+                    break;
+                    case "版本管理":
                         var iArrs = [4,0,1,2];
                         return fnBackItem(iArrs,newArr,arrs);
                     break;
@@ -871,7 +978,6 @@
         mounted: function(){
             let vm = this;
             vm.allList = vm.allMenus;
-            console.log(vm.allList);
             // 获取角色数据
             vm.fnGetData();
         },

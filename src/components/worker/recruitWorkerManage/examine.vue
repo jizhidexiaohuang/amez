@@ -1,33 +1,34 @@
 <template>
     <div>
         <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120" style="padding-bottom: 20px;">
+            <h3>审核员工信息</h3>
             <FormItem  label="员工姓名" prop="beauticianName">
-                <Input v-model="formValidate.beauticianName" placeholder="请填写员工姓名"></Input>
+                <Input disabled v-model="formValidate.beauticianName" placeholder="请填写员工姓名"></Input>
             </FormItem>
             <FormItem  label="员工昵称" prop="beauticianNickName">
-                <Input v-model="formValidate.beauticianNickName" placeholder="请填写员工姓名"></Input>
+                <Input disabled v-model="formValidate.beauticianNickName" placeholder="请填写员工姓名"></Input>
             </FormItem>
-            <FormItem label="员工照片">
+            <FormItem label="员工照片" v-if="false">
                 <MyUpload v-if="imgCtrl" :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
             </FormItem>
             <FormItem  label="工牌号" prop="workCardNo">
-                <Input v-model="formValidate.workCardNo" placeholder="请填写工牌号"></Input>
+                <Input disabled v-model="formValidate.workCardNo" placeholder="请填写工牌号"></Input>
             </FormItem>
             <FormItem  label="注册手机" prop="mobile">
-                <Input v-model="formValidate.mobile" disabled placeholder="请填写注册手机"></Input>
+                <Input disabled v-model="formValidate.mobile" placeholder="请填写注册手机"></Input>
             </FormItem>
             <FormItem label="员工类型" prop="position">
-                <RadioGroup v-model="formValidate.position">
-                    <Radio label="1">店长</Radio>
-                    <Radio label="2">正式员工</Radio>
-                    <Radio label="3">兼职员工</Radio>
+                <RadioGroup  v-model="formValidate.position">
+                    <Radio disabled label="1">店长</Radio>
+                    <Radio disabled label="2">正式员工</Radio>
+                    <Radio disabled label="3">兼职员工</Radio>
                 </RadioGroup>
             </FormItem>
             <FormItem label="出生年月">
                 <Row>
                     <Col span="11">
                         <FormItem prop="birthday">
-                            <DatePicker type="date" v-model="formValidate.birthday"></DatePicker>
+                            <DatePicker disabled type="date" v-model="formValidate.birthday"></DatePicker>
                         </FormItem>
                     </Col>
                 </Row>
@@ -36,15 +37,15 @@
                 <Row>
                     <Col span="11">
                         <FormItem prop="joinTime">
-                            <DatePicker type="date" v-model="formValidate.joinTime"></DatePicker>
+                            <DatePicker disabled type="date" v-model="formValidate.joinTime"></DatePicker>
                         </FormItem>
                     </Col>
                 </Row>
             </FormItem>
             <FormItem  label="从业经验" prop="experience">
-                <Input v-model="formValidate.experience" placeholder=""></Input>
+                <Input disabled v-model="formValidate.experience" placeholder=""></Input>
             </FormItem>
-            <FormItem label="员工住址" prop="">
+            <FormItem label="员工住址" prop="" v-if="false">
                 <Row>
                     <Col span="20">
                         <CityLinkage v-if="cityCtrl" :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
@@ -52,16 +53,16 @@
                 </Row>
             </FormItem>
             <FormItem  label="详细地址" prop="address">
-                <Input v-model="formValidate.address" placeholder=""></Input>
+                <Input disabled v-model="formValidate.address" placeholder=""></Input>
             </FormItem>
             <FormItem label="员工状态" prop="beauticianStatus">
                 <RadioGroup v-model="formValidate.beauticianStatus">
-                    <Radio label="1">在职</Radio>
-                    <Radio label="0">离职</Radio>
+                    <Radio disabled label="1">在职</Radio>
+                    <Radio disabled label="0">离职</Radio>
                 </RadioGroup>
             </FormItem>
             <FormItem label="所属门店" prop="storeName" style="width:500px;">
-                <Input v-model="formValidate.storeName" placeholder="请选择所属门店" @click.native="selectStore"></Input>
+                <Input disabled v-model="formValidate.storeName" placeholder="请选择所属门店" @click.native="selectStore"></Input>
                 <div class="tableBox" v-show="tableCtrl">
                     <Table
                         :loading="table.loading" 
@@ -92,15 +93,27 @@
                 </div>
             </FormItem>
             <FormItem label="员工等级" prop="workerGrade">
-                <Select v-model="formValidate.workerGrade">
+                <Select disabled v-model="formValidate.workerGrade">
                     <Option :value="item.value" v-for='(item ,index) in formValidate.workerGradeList' :key="index">{{item.label}}</Option>
                 </Select>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+                <Button type="primary" @click="handleSubmit('formValidate')">审核通过</Button>
+                <Button type="error" @click="notPass()" style="margin-left: 8px;">审核不通过</Button>
                 <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
             </FormItem>
         </Form>
+        <Modal
+            v-model="modalCtrl"
+            title="不通过原因"
+            width="360"
+            @on-ok="ok">
+            <Form ref="formCustom" :model="formCustom" :rules="ruleCustom" :label-width="0">
+                <FormItem label="" prop="auditReason">
+                    <Input v-model="formCustom.auditReason" type="textarea" :autosize="{minRows: 4,maxRows: 8}" placeholder="请说明审核不通过的原因"></Input>
+                </FormItem>
+            </Form>
+        </Modal>
     </div>
 </template>
 <script>
@@ -115,6 +128,7 @@
                     type:'linkage',
                     cityList:[],
                 },
+                modalCtrl:false, //审核不通过的弹框
                 cityCtrl:false, //控制子组件是否创建
                 imgCtrl:false,
                 tableCtrl:false,
@@ -158,6 +172,14 @@
                 },
                 ruleValidate: {
                 },
+                formCustom:{
+                    auditReason:''
+                },
+                ruleCustom: {
+                    auditReason: [
+                        { required: true, message: '请输入未通过审核原因', trigger: 'blur' }
+                    ],
+                },
                 defaultList: [], //默认列表
                 uploadList:[],//图片列表
                 path:this.common.path2+"system/api/file/uploadForKindeditor",
@@ -188,15 +210,15 @@
                     if (valid) {
                         //添加品牌服务
                         let ajaxData = {
-                            id:vm.sendChild.id, //id
+                            id:vm.examineId, //id
                             beauticianName: vm.formValidate.beauticianName, // 员工姓名
                             beauticianNickName: vm.formValidate.beauticianNickName, // 员工昵称
                             headImgUrl: vm.uploadList.length>0?vm.uploadList[0].url:vm.defaultList[0].url, // 员工头像
                             workCardNo: vm.formValidate.workCardNo, // 员工编号
                             phone:vm.formValidate.mobile, //注册手机
                             beauticianType:vm.formValidate.position, //员工类型
-                            birthDate:vm.common.simpleFormatDate(vm.formValidate.birthday), //出生年月
-                            entryDate:vm.common.simpleFormatDate(vm.formValidate.joinTime), //入职时间
+                            birthDate:vm.common.simpleFormatDate(vm.formValidate.birthday,1), //出生年月
+                            entryDate:vm.common.simpleFormatDate(vm.formValidate.joinTime,1), //入职时间
                             years:vm.formValidate.experience, //从业经验
                             provinceName:vm.province,
                             provinceId:vm.provinceId,
@@ -208,8 +230,15 @@
                             beauticianStatus:vm.formValidate.beauticianStatus, //员工状态
                             beauticianLevel:vm.formValidate.workerGrade, //员工等级
                             storeId:vm.formValidate.storeId, //店铺id
-                            storeName:vm.formValidate.storeName //店铺名称
+                            storeName:vm.formValidate.storeName, //店铺名称
                         }
+                        if(vm.formCustom.auditReason){
+                            ajaxData.auditStatus = 2
+                            ajaxData.auditReason = vm.formCustom.auditReason;
+                        }else{
+                            ajaxData.auditStatus = 1
+                        }
+                        console.log(ajaxData)
                         let url = vm.common.path2+"storeBeautician/edit";
                         vm.$http.put(
                             url,
@@ -224,6 +253,7 @@
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
                         }).catch(function(err){
+                            console.log(err);
                             vm.$Message.success(err);
                         })
                     } else {
@@ -235,14 +265,31 @@
             handReturn (val) {
                 this.$emit('returnList', val); 
             },
+            notPass(){
+                this.$refs['formCustom'].resetFields();
+                this.modalCtrl = true;
+            },
+            ok(){
+                let vm = this;
+                let name = 'formCustom'
+                this.$refs[name].validate((valid) => {
+                    if (valid) {
+                        this.handleSubmit('formValidate')
+                    }else{
+                        vm.$Message.error('未填写审核未通过原因!');
+                    }
+                })
+            },
             // 获取图片列表
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = data;
+                console.log(vm.uploadList);
             },
             // 开关控制
             changeSwitch1 (status) {
                 this.$Message.info('开关状态：' + status);
+                console.log(this.switch1);
             },
             // 点击所属门店输入框，显示或隐藏table
             selectStore(){
@@ -254,21 +301,26 @@
             },
             /* 分页回掉函数 */
             changePage (page) {
+                console.log(page)
                 let vm = this;
                 vm.table.pageNun = page;   
                 vm.getData();             
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {
+                console.log(size);
                 let vm = this;
                 vm.table.size = size;
                 vm.getData();
             },
             /* 选中某一项的回掉函数 */
             fnSelect (selection,row) {
+                console.log(row);
+                console.log(selection);
             },
             /* 全选时的回调函数 */
             fnSelectAll (selection) {
+                console.log(selection);
             },
             /*表格选中高亮显示*/
             fnHighlight(currentRow,oldCurrentRow){
@@ -294,6 +346,7 @@
                         },
                     }
                 ).then(function(res){
+                    console.log(res.data);
                     let oData = res.data
                     vm.table.recordsTotal = oData.data.total;
                     vm.table.tableData1 = oData.data.list;
@@ -303,6 +356,7 @@
             },
             //省市联动选择的值
             getCity(data){
+                console.log(data)
                 this.province = data[0].label
                 this.provinceId = data[0].value
                 this.city = data[1].label
@@ -315,6 +369,7 @@
                 let vm = this;
                 let url = this.common.path2 +'storeBeautician/queryById/'+id
                 vm.$http.get(url).then(res=>{
+                    console.log(res.data.data)
                     let oData = res.data.data;
                     vm.formValidate.beauticianName = oData.beauticianName;
                     vm.formValidate.beauticianNickName = oData.beauticianNickName;
@@ -348,7 +403,7 @@
             }
         },
         beforeMount:function(){
-            this.getDataById(this.sendChild.id)
+            this.getDataById(this.examineId)
         },
         mounted: function(){
             this.getData();
@@ -357,7 +412,7 @@
             MyUpload,
             CityLinkage
         },
-        props:['sendChild']
+        props:['examineId']
     }
 </script>
 <style lang="scss" scoped>
@@ -375,6 +430,8 @@
         border-radius:0 0 5px 5px;
     }
 }
+h3{
+    margin-left:20px;
+    margin-bottom:10px;
+}
 </style>
-
-

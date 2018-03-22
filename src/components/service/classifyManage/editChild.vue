@@ -2,9 +2,11 @@
     <div>
         <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120" style="padding-bottom: 20px;">
             <Spin fix v-if="spinShow"></Spin>
-            <FormItem  label="分类名称" prop="categoryName">
-                <Input v-model="formValidate.categoryName" placeholder="请填写分类名称"></Input>
-            </FormItem>
+            <div>
+                <FormItem  label="分类名称" prop="categoryName">
+                    <Input v-model="formValidate.categoryName" placeholder="请填写分类名称"></Input>
+                </FormItem>
+            </div>
             <FormItem  label="状态">
                 <iSwitch size="large" v-model="switch1" @on-change="changeSwitch1">
                     <span slot="open">ON</span>
@@ -35,6 +37,9 @@
                     categoryParentId: 0,//父类id
                 },
                 ruleValidate: {
+                    categoryName: [
+                        {required: true, message: '请填写分类名称', pattern: /.+/, trigger: 'change'}
+                    ],
                 },
                 defaultList: [],
                 uploadConfig: {
@@ -64,21 +69,17 @@
                             id:vm.sendChild.id,
                             isEnabled: !!!vm.switch1?0:1,//开启状态
                         }
-                        console.log(ajaxData);
                         let url = vm.common.path + "productCategory/edit"
                         vm.$http.put(
                             url,
                             ajaxData,
                         ).then(function(res){
                             let oData = res.data
-                            console.log(oData);
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            console.log(err);
                             vm.$Message.success(err);
                         })
-                        console.log(ajaxData);
                     } else {
                         this.$Message.error('提交失败!');
                     }
@@ -92,7 +93,6 @@
             getUploadList (data) {
                 let vm = this;
                 vm.uploadList = data;
-                console.log(vm.uploadList);
             },
             // 获取产品信息
             fnQueryById () {
@@ -104,11 +104,9 @@
                     url
                 ).then(function(res){
                     let oData = res.data.data;
-                    console.log(oData);
                     vm.fnInitQuery(oData);
                     vm.spinShow = false;
                 }).catch(function(err){
-                    console.log(err);
                     vm.spinShow = false;
                 })
             },
@@ -137,8 +135,6 @@
             }
         },
         mounted: function(){
-            console.log(this.sendChild);
-            console.log(1);
             this.fnQueryById();
         },
         components:{

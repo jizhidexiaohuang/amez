@@ -16,9 +16,9 @@
                 <Row style="margin-bottom:10px;">
                     <Col span="5">
                         <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search" v-if="false">查询</Button>
-		                <Button v-if="!!!operators.refresh" style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
+		                <Button v-if="!!operators.refresh" style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     </Col>
-                    <Col span="3" offset="16" v-if="!!!operators.add">
+                    <Col span="3" offset="16" v-if="!!operators.add">
                         <Button style="float:right;" @click.native="changePageType('add')" type="success" icon="android-add">新增模板</Button>
                     </Col>
                 </Row>
@@ -51,21 +51,7 @@
     export default {
         data () {
             return {
-                operators: {
-                    add: false, // 新增
-                    edit: false, // 编辑
-                    delete: false, // 删除
-                    see: false, // 查看
-                    refresh: false, // 刷新
-                    updown: false, // 上下架
-                    examine: false, // 审核
-                    openclose: false, // 开启关闭
-                    frozen: false, // 冻结激活
-                    storeGrade: false, // 新增店铺等级
-                    storeRules: false, // 新增规则
-                    orderInfo: false, // 订单详情
-                    backInfo: false, // 退款详情
-                },
+                operators: {},
                 table:{
                     pageSize:10,//每页显示的数量
                     recordsTotal:0,//总数量
@@ -141,7 +127,7 @@
                                         }
                                     }
                                 }, '编辑');
-                                if(!!!this.operators.edit){
+                                if(!!this.operators.edit){
                                     arrs.push(obj1);
                                 }
                                 let obj2 = h('Button', {
@@ -156,7 +142,7 @@
                                         }
                                     }
                                 }, '删除');
-                                if(!!!this.operators.delete){
+                                if(!!this.operators.delete){
                                     arrs.push(obj2);
                                 }
                                 return h('div', arrs);
