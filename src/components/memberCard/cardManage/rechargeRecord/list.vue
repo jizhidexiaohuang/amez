@@ -39,7 +39,7 @@
                     <Input v-model="cd.inputVal">
                     <Select v-model="cd.selectType" slot="prepend" style="width: 120px">
                         <Option value="cardName">会员卡名称</Option>
-                        <Option value="phone">买家注册手机</Option>
+                        <Option value="registerPhone">买家注册手机</Option>
                     </Select>
                     </Input>
                 </FormItem>
@@ -125,13 +125,13 @@
                     },
                     {
                         title: '会员卡信息',
-                        key: 'memberCardNo'
+                        key: 'cardName'
                     },
                     {
                         title: '充值金额',
                         key: 'tradeAmount',
                         render:(h,params)=>{
-                            return h('div',params.row.tradeAmount/100)
+                            return h('div','￥'+params.row.tradeAmount/100)
                         }
                     },
                     {
@@ -142,7 +142,6 @@
                             if(params.row.payType=='0'){
                                 str = '微信支付'
                             }else if(params.row.payType=='1'){
-
                                 str = '支付宝支付'
                             }else{
                                 str = '其他'
@@ -152,7 +151,13 @@
                     },
                     {   
                         title: '用户信息',
-                        key: 'storeName'
+                        key: 'memberNickname',
+                        render:(h,params)=>{
+                            return h('div',[
+                                h('div',params.row.memberNickname),
+                                h('div',params.row.registerPhone),
+                            ])
+                        }
                     },
                     {
                         title: '操作',
@@ -177,6 +182,32 @@
                                 }, '查看')
                             ]);
                         }
+                    }
+                ],
+                tableColumns2: [
+                    {
+                        title: '充值时间',
+                        key: 'useTime',
+                    },
+                    {
+                        title: '会员卡信息',
+                        key: 'cardName'
+                    },
+                    {
+                        title: '充值金额',
+                        key: 'tradeAmount',
+                    },
+                    {
+                        title: '支付方式',
+                        key: 'payType',
+                    },
+                    {   
+                        title: '用户昵称',
+                        key: 'memberNickname',
+                    },
+                    {   
+                        title: '用户注册手机号',
+                        key: 'registerPhone',
                     }
                 ],
                 table:{
@@ -234,16 +265,16 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path2+"memberCardTradeRecode/front/findByPage?pageNo="+start+"&pageSize="+size;
+                let url = common.path2+"memberCardTradeRecode/bg/queryListCardSaleRecode?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                     useType:0
                 }
-                console.log(vm.cd.brandId)
-                if(vm.cd.brandId){
-                    ajaxData.brandId = vm.cd.brandId //发卡方
-                }
                 if(vm.cd.inputVal){
                     ajaxData[vm.cd.selectType] = vm.cd.inputVal 
+                }
+                if(vm.cd.saleCardTime&&vm.cd.saleCardTime[0]&&vm.cd.saleCardTime[1]){
+                    ajaxData.startTime = common.formatDate(vm.cd.saleCardTime[0])
+                    ajaxData.endTime = common.formatDate(vm.cd.saleCardTime[0])
                 }
                 console.log(ajaxData)
                 vm.table.loading = true;
@@ -277,15 +308,28 @@
             },
             //导出Excel
             exportData(){
+                this.table.tableData1.filter((data, index) => {
+                    //充值时间
+                    data.useTime = '="'+common.formatDate(data.useTime)+'"';
+                    //充值金额 
+                    data.tradeAmount = data.tradeAmount/100;
+                    //支付方式 
+                    if(data.payType =='0'){
+                        data.payType = '微信支付'
+                    }else if(data.payType=='1'){
+                        data.payType = '支付宝支付'
+                    }else{
+                        data.payType = '其他'
+                    }
+                    //用户注册手机号 
+                    data.registerPhone = '="'+data.registerPhone+'"';
+                })
                 this.$refs.table.exportCsv({
-                    filename: '数据',
-                    original :true,                 
-                    data: this.table.tableData1.filter((data, index) => {
-                        // console.log(data)
-                        //订单总价
-                        data.amountTotal = data.amountTotal;
-                    })
+                    filename: '充值记录',
+                    columns: this.tableColumns2,               
+                    data: this.table.tableData1
                 });
+                this.getData();
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {

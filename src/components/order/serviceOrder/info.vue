@@ -1,6 +1,7 @@
 <template>
   <div class="testWrap">
-    <div class="infoPage boxStyle">
+    <RefundPage v-if="pageType == 'refund'" :refundId="refundId" v-on:return="goBackList"/>
+    <div class="infoPage boxStyle" v-if="pageType == 'info'">
     <Steps :current="progress">
         <Step title="提交订单" :content="common.formatDate(orderBase.addTime)"></Step>
         <Step title="付款时间" :content="showTime(orderBase.payTime)"></Step>
@@ -23,11 +24,11 @@
     <div class="order_info">
       <h4>买家信息</h4>
       <Row>
-        <Col span="8">购买人：{{orderBase.memberRealName}}</Col>
-        <Col span="8">联系电话：{{orderBase.memberPhone}}</Col>
+        <Col span="8">购买人：{{orderBase.type?orderBase.customerName:orderBase.memberName}}</Col>
+        <Col span="8">联系电话：{{orderBase.type?orderBase.customerPhone:orderBase.memberPhone}}</Col>
         <Col span="8"></Col>
       </Row>
-      <Row>
+      <Row v-if="orderBase.type">
         <Col span="8">上门地址：{{orderBase.memberAddress}}</Col>
       </Row>
       <Row>
@@ -43,6 +44,7 @@
       </Row>
       <Row>
         <Col span="8">地址：{{orderBase.storeAddress}}</Col>
+        <Col span="8"></Col>
         <Col span="8">服务美容师：{{orderBase.beauticianName}}</Col>
       </Row>
     </div>
@@ -62,7 +64,8 @@
             <Col span="6"><img :src="orderBase.productImg" alt=""><span>{{orderBase.productName}}</span></Col>
             <Col span="6">￥{{orderBase.productPrice/100}}</Col>
             <Col span="6">{{orderBase.amountTotal/100}}(含上门费：￥30.00)</Col>
-            <Col span="6">{{returnStatus}}</Col>
+            <Col span="6" v-if="orderBase.returnStatus=='0'">-</Button></Col>
+            <Col span="6" v-if="orderBase.returnStatus!='0'"><Button type="ghost" @click="changePageType('refund');">{{returnStatus}}</Button></Col>
           </Row>
         </div>
       </div>
@@ -83,6 +86,7 @@
   </div>
 </template>
 <script>
+import RefundPage from './refund.vue'
 import common from "../../../base.js";
 export default {
   data() {
@@ -90,6 +94,7 @@ export default {
       src:'../../../static/images/footer/1_1.png',
       orderBase:"",
       progress:0,
+      pageType:'info'
     };
   },
   computed:{
@@ -134,8 +139,10 @@ export default {
         str = '-'
       }else if(this.orderBase.returnStatus==1){
         str = '退款中'
-      }else{
+      }else if(this.orderBase.returnStatus==2){
         str = '退款完成'
+      }else if(this.orderBase.returnStatus==3){
+        str = '拒绝退款'
       }
       return str;
     },
@@ -150,9 +157,13 @@ export default {
       this.$http.get(url).then(res=>{
         console.log(res.data.data)
         vm.orderBase = res.data.data;
+        vm.refundId = res.data.data.id;
       }).catch(err=>{
         console.log(err)
       })
+    },
+    changePageType (type) {
+        this.pageType = type;
     },
     //进度条展示时间
     showTime:function(value){
@@ -166,13 +177,18 @@ export default {
     },
     returnHome(type){
         this.$emit('returnList',type)
+    },
+    goBackList(type){
+      this.$emit('returnList',type)
     }
   },
   mounted: function() {
     this.getData(this.message);
   },
   activated: function() {},
-  components: {},
+  components: {
+    RefundPage
+  },
   props:['message']
 };
 </script>
@@ -249,6 +265,9 @@ export default {
           border:1px solid #8a8d98;
         }
       }
+    }
+    .refund{
+      color:blue;
     }
   }
 </style>

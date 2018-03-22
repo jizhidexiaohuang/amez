@@ -24,23 +24,23 @@
             <Form :model="cd" inline>
                 <FormItem style="margin-bottom:10px;">
                     状态
-                    <Select v-model="cd.storeStatus" style="width:80px">
+                    <Select v-model="cd.storeStatus" style="width:110px">
                         <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
                 </FormItem>
                 <FormItem style="margin-bottom:10px;">
                     开店时间
-                    <DatePicker v-model="cd.time" type="date" placeholder="请选择评价时间" style="width:200px;"></DatePicker>
+                    <DatePicker v-model="cd.time" type="daterange" placement="bottom-start" placeholder="请选择开店时间" style="width:200px;"></DatePicker>
                 </FormItem>
                 <FormItem style="margin-bottom:10px;">
                     <Input v-model="cd.inputVal">
                     <Select v-model="cd.selectType" slot="prepend" style="width: 100px">
                         <Option value="storeName">门店名称</Option>
-                        <Option value="bossPhone">注册手机</Option>
+                        <Option value="bossPhone">老板注册手机</Option>
                     </Select>
                     </Input>
                 </FormItem>
-                <FormItem style="margin-bottom:10px; width:380px;" v-if="!!testCode">
+                <FormItem style="margin-bottom:10px; width:360px;" v-if="!!testCode">
                     <Row>
                         <CityLinkage :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
                     </Row>
@@ -59,8 +59,7 @@
                 :loading="table.loading" 
                 :data="table.tableData1" 
                 :columns="tableColumns1" 
-                stripe
-                border
+                stripe        
                 @on-select="fnSelect"
                 @on-select-all="fnSelectAll"
             ></Table>
@@ -103,10 +102,13 @@
                     },{
                         value:'3',
                         label:'已冻结'
+                    },{
+                        value:'1',
+                        label:'运营中'
                     },
                 ],
                 cd:{
-                    time:'',//评论时间范围
+                    time:[],//评论时间范围
                     operType:"1",//评论类型、不用重置
                     inputVal:'',
                     selectType:'storeName',
@@ -138,10 +140,15 @@
                     {
                         title: '门店地址',
                         key: 'storeAddress',
+                        width:180,
+                        render:(h,params)=>{
+                            return h('div',params.row.provinceName+params.row.cityName+params.row.storeAddress);
+                        }
                     },
                     {
                         title: '申请时间',
                         key: 'createTime',
+                        width:150,
                         render:(h,params)=>{
                             return h('div',common.formatDate(params.row.createTime))
                         }
@@ -330,7 +337,6 @@
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
                 let url = common.path2+"store/front/findByPage?pageNo="+start+'&pageSize='+size;
-                // let url = "http://172.16.20.151:8080/product/front/findByPage?pageNo=1&pageSize=1";
                 let ajaxData = {
                     // pageNo:start,
                     // pageSize: size
@@ -338,7 +344,7 @@
                 if(vm.cd.storeStatus){
                     ajaxData.storeState = vm.cd.storeStatus //状态
                 }
-                if(vm.cd.time){
+                if(vm.cd.time&&vm.cd.time[0]&&vm.cd.time[1]){
                     ajaxData.createTime = vm.cd.time //开店时间
                 }
                 if(vm.cd.inputVal){

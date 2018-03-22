@@ -100,6 +100,7 @@
             <FormItem>
                 <Button type="primary" @click="handleSubmit('formValidate')">审核通过</Button>
                 <Button type="error" @click="notPass()" style="margin-left: 8px;">审核不通过</Button>
+                <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
             </FormItem>
         </Form>
         <Modal

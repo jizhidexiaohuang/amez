@@ -112,6 +112,7 @@
                 serviceId:'',//服务订单id
                 rechargeId:'',//会员卡充值id
                 sellingId:'',//会员卡售卡id
+                storeId:'',
                 transactionList:[
                     {
                         value:'',
@@ -455,6 +456,9 @@
                 let size = vm.table.size;//每页条数
                 let url = common.path2+"platformTradeDetails/selectPlatformListByConditions?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {}
+                if(vm.storeId){
+                    ajaxData.storeId = vm.storeId;
+                }
                 if(vm.cd.transactionType){
                     ajaxData.tradeType = vm.cd.transactionType
                 }
@@ -640,6 +644,9 @@
             }
         },
         mounted: function(){
+            if(JSON.parse(window.localStorage.getItem('userInfo')).store){
+                this.storeId = JSON.parse(window.localStorage.getItem('userInfo')).store.id;
+            }
             this.getData();
         },
         activated: function(){

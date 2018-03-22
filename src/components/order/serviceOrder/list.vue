@@ -208,7 +208,11 @@
                         title: '订单总价',
                         key: 'amountTotal',
                         render:(h,params)=>{
-                            return params.row.amountTotal/100
+                            if(params.row.type){
+                                return params.row.amountTotal/100+'（含上门费30元）'
+                            }else{
+                                return params.row.amountTotal/100
+                            }
                         }
                     },
                     {
@@ -383,7 +387,8 @@
                     ajaxData[vm.cd.selectType] = vm.cd.inputVal 
                 }
                 if(vm.cd.addTime&&vm.cd.addTime[0]&&vm.cd.addTime[1]){
-                    ajaxData.addTime = vm.cd.addTime //地区
+                    ajaxData.startTime = common.formatDate(vm.cd.addTime[0]); 
+                    ajaxData.endTime = common.formatDate(vm.cd.addTime[1]); 
                 }
                 console.log(ajaxData)
                 vm.table.loading = true;

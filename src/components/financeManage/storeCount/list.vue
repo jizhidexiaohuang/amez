@@ -78,6 +78,7 @@
                     infoId:'',
                     storeId:''
                 },
+                storeId:'',
                 ids:'',
                 playMoneyStatusList:[
                     {
@@ -403,6 +404,9 @@
                 let size = vm.table.size;//每页条数
                 let url = common.path2+"storeTradeStatistics/selectListByConditions?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {}
+                if(vm.storeId){
+                    ajaxData.storeId = vm.storeId;
+                }
                 if(vm.cd.inputVal){
                     ajaxData[vm.cd.selectType] = vm.cd.inputVal;
                 }
@@ -552,6 +556,9 @@
             }
         },
         mounted: function(){
+            if(JSON.parse(window.localStorage.getItem('userInfo')).store){
+                this.storeId = JSON.parse(window.localStorage.getItem('userInfo')).store.id;
+            }
             this.getData();
         },
         activated: function(){

@@ -86,6 +86,8 @@
                 src:'../../../static/images/footer/1_1.png',
                 editId:'',
                 infoId:'',
+                storeId:'',
+                brandId:'',
                 makeCardList:[],//制卡方
                 cd:{
                     makeCardTime:[],//制卡时间
@@ -345,10 +347,11 @@
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
                 let url = common.path2+"memberCard/front/findByPage?pageNo="+start+"&pageSize="+size;
-                let ajaxData = {
-                    
+                let ajaxData = {}
+                if(vm.storeId){
+                    ajaxData.storeId = vm.storeId;
+                    ajaxData.brandId = vm.brandId;
                 }
-                console.log(vm.cd.brandId)
                 if(vm.cd.brandId){
                     ajaxData.brandId = vm.cd.brandId //发卡方
                 }
@@ -493,6 +496,10 @@
             }
         },
         mounted: function(){
+            if(JSON.parse(window.localStorage.getItem('userInfo')).store){
+                this.storeId = JSON.parse(window.localStorage.getItem('userInfo')).store.id;
+                this.brandId = JSON.parse(window.localStorage.getItem('userInfo')).store.brandId;
+            }
             this.getBrand();
             this.getData();
         },

@@ -1,13 +1,14 @@
 <template>
-  <div class="addPage">
+  <div class="addPage boxStyle">
     <Form  ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120">
+        <h2>编辑门店基本资料</h2>    
         <Row>
-          <div class="boxStyle divBox">
-            <h2>编辑门店基本资料</h2>          
-            <div class="box">
+            <Col span="12">
                 <FormItem label="门店名称" prop="storeName">
-                    <Input v-model="formValidate.storeName" disabled></Input>
+                    <Input v-model="formValidate.storeName"></Input>
                 </FormItem>
+            </Col>
+            <Col span="12">
                 <FormItem label="开店时间">
                     <Row type="flex" justify="start">
                         <Col span="11">
@@ -17,263 +18,366 @@
                         </Col>
                     </Row>
                 </FormItem>
+            </Col>
+        </Row>
+        <Row>
+            <Col span="12">
                 <FormItem label="门店电话" prop="storeTel">
                     <Input v-model="formValidate.storeTel"></Input>
                 </FormItem>
+            </Col>
+            <Col span="12">
                 <FormItem label="营业时间" prop="storeTime">
                     <Input v-model="formValidate.storeTime"></Input>
                 </FormItem>
+            </Col>
+        </Row>
+        <Row>
+            <Col span="12">
                 <FormItem label="老板姓名" prop="sellerAccount">
                     <Input v-model="formValidate.sellerAccount"></Input>
                 </FormItem>
+            </Col>
+            <Col span="12">
                 <FormItem label="老板账号" prop="bossPhone">
                     <Input v-model="formValidate.bossPhone" disabled></Input>
                 </FormItem>
+            </Col>
+        </Row>
+        <Row>
+            <Col span="12">
                 <FormItem label="店长姓名" prop="storeManagerAccount">
                     <Input v-model="formValidate.storeManagerAccount"></Input>
                 </FormItem>
+            </Col>
+            <Col span="12">
                 <FormItem label="店长账号" prop="sellerPhone">
                     <Input v-model="formValidate.sellerPhone" disabled></Input>
                 </FormItem>
+            </Col>
+        </Row>
+        <Row>
+            <Col span="12">
                 <FormItem label="所属品牌" prop="branchId">
                     <Select v-model="formValidate.branchId" label-in-value @on-change="getBranchName">
                         <Option :value="item.id" v-for='(item ,index) in branchList' :key="index">{{item.brandName}}</Option>
                     </Select>
                 </FormItem>
-                <FormItem label="主营特色项目" prop="mainProject" v-if="showProject">
-                    <CheckboxGroup v-model="formValidate.mainProject">
-                        <Checkbox v-for='(item,index) in projectList' :key="index" :label="item">{{item}}</Checkbox>
+            </Col>
+            <Col span="12"></Col>
+        </Row>     
+        <FormItem label="主营特色项目" prop="mainProject" v-if="showProject">
+            <CheckboxGroup v-model="formValidate.mainProject">
+                <Checkbox v-for='(item,index) in projectList' :key="index" :label="item">{{item}}</Checkbox>
+            </CheckboxGroup>
+        </FormItem>
+        <FormItem label="" prop="">
+            <Row type="flex" justify="start">
+                <Col span="8"><Input v-model="project" class="addProject"></Input></Col>
+                <Button type="primary" class="addBtn" @click="addProject">新增</Button>
+                <Button type="ghost" @click="resetProject">取消</Button>
+            </Row>
+        </FormItem>
+        <FormItem label="是否属于老店" prop="oldStore">
+            <Row type="flex" justify="start">
+                <Col span="12">
+                        <RadioGroup v-model="oldStore" @on-change="disabled = !disabled">
+                        <Radio label="1">是</Radio>
+                        <Radio label="0">否</Radio>
+                    </RadioGroup>
+                    <span>(连续经营超过5年)</span>
+                </Col>
+                <Col span="2">实际经营年限</Col>
+                <Col span="2">
+                    <InputNumber :max="10" :min="1" v-model="managerYear" :disabled="disabled"></InputNumber>
+                </Col>
+                <Col span="1" class="textAlign">年</Col>
+            </Row>
+        </FormItem>
+        <FormItem label="店铺地址" prop="">
+            <Row type="flex" justify="start">
+                <Col span="20">
+                    <CityLinkage v-if="cityCtrl" :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
+                </Col>
+            </Row>
+        </FormItem>
+        <FormItem label="店铺详细地址" prop="">
+            <Row type="flex" justify="start">
+                <Col span="8">
+                    <AutoComplete
+                    v-model="seat"
+                    :data="positionList"
+                    @on-search="handleSearch"
+                    @on-select="selectKeyWords"
+                    placeholder="具体地点关键字"
+                    style="width:300px"></AutoComplete>
+                </Col>
+                <Col span="4"><Button type="primary" @click="orientate">定位</Button></Col>
+            </Row>
+        </FormItem>
+        <FormItem label="" prop="">
+            <Row type="flex" justify="start">
+                <Col span="22">
+                    <div id="map" style="height:300px;"></div>
+                </Col>
+            </Row>
+        </FormItem>
+        <Row>
+            <Col span="12">
+                <FormItem label="店铺面积" prop="storeArea">
+                    <Input v-model="formValidate.storeArea" placeholder="请输入店铺面积"></Input>
+                </FormItem>
+            </Col>
+            <Col span="12">
+                <FormItem label="员工数" prop="beauticianTotal">
+                    <Input v-model="formValidate.beauticianTotal" placeholder="请输入店铺员工数量"></Input>
+                </FormItem>
+            </Col>
+        </Row>
+        <Row>
+            <Col span="12">
+                <FormItem label="附加服务" prop="additionalServices">
+                    <CheckboxGroup v-model="formValidate.additionalServices">
+                        <Checkbox v-for='(item,index) in additionalServicesList' :key="index" :label="item.name" :value="item.image">{{item.name}}</Checkbox>
                     </CheckboxGroup>
                 </FormItem>
-                <FormItem label="" prop="">
-                    <Row type="flex" justify="start">
-                        <Col span="8"><Input v-model="project" class="addProject"></Input></Col>
-                        <Button type="primary" class="addBtn" @click="addProject">新增</Button>
-                        <Button type="ghost" @click="resetProject">取消</Button>
-                    </Row>
+            </Col>
+            <Col span="12"></Col>
+        </Row>
+        <Row>
+            <Col span="12">
+                <FormItem label="店铺介绍" prop="description" >
+                    <Input v-model="formValidate.description" type="textarea" :autosize="{minRows: 6,maxRows: 10}" placeholder="店铺介绍（200字以内）"></Input>
                 </FormItem>
-                <FormItem label="是否属于老店" prop="oldStore">
-                    <Row type="flex" justify="start">
-                        <Col span="8">
-                             <RadioGroup v-model="oldStore" @on-change="disabled = !disabled">
-                                <Radio label="1">是</Radio>
-                                <Radio label="0">否</Radio>
-                            </RadioGroup>
-                        </Col>
-                        <Col span="3">实际经营年限</Col>
-                        <Col span="3">
-                            <InputNumber :max="10" :min="1" v-model="managerYear" :disabled="disabled"></InputNumber>
-                        </Col>
-                        <Col span="1" class="textAlign">年</Col>
-                    </Row>
-                </FormItem>
-                <FormItem label="店铺地址" prop="">
-                    <Row type="flex" justify="start">
-                        <Col span="20">
-                            <CityLinkage v-if="cityCtrl" :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
-                        </Col>
-                    </Row>
-                </FormItem>
-                <FormItem label="店铺详细地址" prop="">
-                    <Row type="flex" justify="start">
-                        <Col span="12">
-                            <AutoComplete
-                            v-model="seat"
-                            :data="positionList"
-                            @on-search="handleSearch"
-                            @on-select="selectKeyWords"
-                            placeholder="具体地点关键字"
-                            style="width:260px"></AutoComplete>
-                        </Col>
-                        <Col span="4"><Button type="primary" @click="orientate">定位</Button></Col>
-                    </Row>
-                </FormItem>
-                <FormItem label="" prop="">
-                    <Row type="flex" justify="start">
-                        <Col span="24">
-                            <div id="map" style="height:300px;"></div>
-                        </Col>
-                    </Row>
-                </FormItem>
-                <div class="box">
-                    <FormItem>
-                        <Button type="primary" @click="handleSubmit('formValidate')" style="margin:0px 8px;">保存</Button>
-                        <Button v-if="false" type="ghost" @click="handleReset('formValidate')" style="margin:0px 8px;">重置</Button>
-                        <Button type="success" @click.native="returnHome('list')">返回</Button>    
-                    </FormItem>
-                </div>
-            </div>
-          </div>  
-
-          <div class="boxStyle divBox">
-            <div class="box" v-show="false">
-                <h3>门店等级</h3>
-                <FormItem label="七星门店" prop="sevenStarStore">
-                    <RadioGroup v-model="sevenStarStore">
-                        <Radio label="1">是（限华苑会所，星源艾美）</Radio>
-                        <Radio label="2">否</Radio>
-                    </RadioGroup>
-                </FormItem>
-                <FormItem label="艾美合伙人" prop="amPartner">
-                    <RadioGroup v-model="amPartner">
-                        <Radio label="1">是</Radio>
-                        <Radio label="2">否</Radio>
-                    </RadioGroup>
-                </FormItem>
-                <FormItem label="百万合伙人" prop="millionPartner">
-                    <RadioGroup v-model="millionPartner">
-                        <Radio label="1">是</Radio>
-                        <Radio label="2">否</Radio>
-                    </RadioGroup>
-                </FormItem>
-                <FormItem label="皇冠店长" prop="crownManager">
-                    <RadioGroup v-model="crownManager">
-                        <Radio label="1">是</Radio>
-                        <Radio label="2">否</Radio>
-                    </RadioGroup>
-                </FormItem>
-                <FormItem label="上传合同">
-                    <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadFile">
-                        <Button type="ghost" icon="ios-cloud-upload-outline">上传文件</Button>
-                    </Upload>
-                </FormItem>
-            </div>
-            <div class="box">
-                <h3>认证照片</h3>
-                <FormItem label="营业执照" prop="">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadLicense">
-                        <!-- <Button type="ghost" icon="ios-cloud-upload-outline">正面照</Button> -->
-                        <Button v-if="!businessLicense" type="ghost" icon="ios-cloud-upload-outline">上传</Button>
-                        <img v-if="businessLicense" :src="businessLicense" alt="">
-                    </Upload>
-                </FormItem>
-                <FormItem label="身份证照片" prop="">
-                    <Row>
-                        <Col span="8">
-                            <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadPositivePhoto">
-                                <!-- <Button type="ghost" icon="ios-cloud-upload-outline">正面照</Button> -->
-                                <Button v-if="!idcardPositivePhoto" type="ghost" icon="ios-cloud-upload-outline">正面照</Button>
-                                <img v-if="idcardPositivePhoto" :src="idcardPositivePhoto" alt="">
-                            </Upload>
-                            <span v-if="idcardPositivePhoto">正面照</span>
-                        </Col>
-                        <Col span="8">
-                            <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadNegativePhoto">
-                                <!-- <Button type="ghost" icon="ios-cloud-upload-outline">反面照</Button> -->
-                                <Button v-if="!idcardNegativePhoto" type="ghost" icon="ios-cloud-upload-outline">反面照</Button>
-                                <img v-if="idcardNegativePhoto" :src="idcardNegativePhoto" alt="">
-                            </Upload>
-                            <span v-if="idcardNegativePhoto">反面照</span>
-                        </Col>
-                        <Col span="8">
-                            <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadHandheldPhoto">
-                                <!-- <Button type="ghost" icon="ios-cloud-upload-outline">手持照</Button> -->
-                                <Button v-if="!idcardHandheldPhoto" type="ghost" icon="ios-cloud-upload-outline">手持照</Button>
-                                <img v-if="idcardHandheldPhoto" :src="idcardHandheldPhoto" alt="">
-                            </Upload>
-                            <span v-if="idcardHandheldPhoto">手持照</span>
-                        </Col>
-                    </Row>
-                </FormItem>
-                <FormItem label="门店照片" prop="">
-                    <Row>
-                        <Col span="8">
-                            <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadDoorPhoto">
-                                <!-- <Button type="ghost" icon="ios-cloud-upload-outline">门头照</Button> -->
-                                <Button v-if="!storeDoorPhoto" type="ghost" icon="ios-cloud-upload-outline">门头照</Button>
-                                <img v-if="storeDoorPhoto" :src="storeDoorPhoto" alt="">
-                            </Upload>
-                            <span v-if="storeDoorPhoto">门头照</span>
-                        </Col>
-                        <Col span="8">
-                            <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadCashierPhoto">
-                                <!-- <Button type="ghost" icon="ios-cloud-upload-outline">收银台</Button> -->
-                                <Button v-if="!storeCashierPhoto" type="ghost" icon="ios-cloud-upload-outline">收银台</Button>
-                                <img v-if="storeCashierPhoto" :src="storeCashierPhoto" alt="">
-                            </Upload>
-                            <span v-if="storeCashierPhoto">收银台</span>
-                        </Col>
-                        <Col span="8">
-                            <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadInPhoto">
-                                <!-- <Button type="ghost" icon="ios-cloud-upload-outline">店内照</Button> -->
-                                <Button v-if="!storeInPhoto" type="ghost" icon="ios-cloud-upload-outline">店内照</Button>
-                                <img v-if="storeInPhoto" :src="storeInPhoto" alt="">
-                            </Upload>
-                            <span v-if="storeInPhoto">店内照</span>
-                        </Col>
-                    </Row>  
-                </FormItem>
-                <FormItem label="上传合同">
-                    <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadFile">
-                        <Button type="ghost" icon="ios-cloud-upload-outline">上传文件</Button>
-                    </Upload>
-                </FormItem>
-            </div>
-            <div class="box">
-                <h3>商户信息</h3>
+            </Col>
+            <Col span="12"></Col>
+        </Row>
+        <div class="box" v-show="false">
+            <h3>门店等级</h3>
+            <FormItem label="七星门店" prop="sevenStarStore">
+                <RadioGroup v-model="sevenStarStore">
+                    <Radio label="1">是（限华苑会所，星源艾美）</Radio>
+                    <Radio label="2">否</Radio>
+                </RadioGroup>
+            </FormItem>
+            <FormItem label="艾美合伙人" prop="amPartner">
+                <RadioGroup v-model="amPartner">
+                    <Radio label="1">是</Radio>
+                    <Radio label="2">否</Radio>
+                </RadioGroup>
+            </FormItem>
+            <FormItem label="百万合伙人" prop="millionPartner">
+                <RadioGroup v-model="millionPartner">
+                    <Radio label="1">是</Radio>
+                    <Radio label="2">否</Radio>
+                </RadioGroup>
+            </FormItem>
+            <FormItem label="皇冠店长" prop="crownManager">
+                <RadioGroup v-model="crownManager">
+                    <Radio label="1">是</Radio>
+                    <Radio label="2">否</Radio>
+                </RadioGroup>
+            </FormItem>
+            <FormItem label="上传合同">
+                <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadFile">
+                    <Button type="ghost" icon="ios-cloud-upload-outline">上传文件</Button>
+                </Upload>
+            </FormItem>
+        </div>
+        <div class="box">
+            <h3>认证照片</h3>
+            <FormItem label="营业执照" prop="">
+                <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadLicense">
+                    <!-- <Button type="ghost" icon="ios-cloud-upload-outline">正面照</Button> -->
+                    <Button v-if="!businessLicense" type="ghost" icon="ios-cloud-upload-outline">上传</Button>
+                    <img v-if="businessLicense" :src="businessLicense" alt="">
+                    <span>(三证合一只上传营业执照，非三证合一请分别上传营业执照，组织机构代码证，税务登记证)</span>
+                </Upload>
+            </FormItem>
+            <FormItem label="身份证照片" prop="">
+                <Row>
+                    <Col span="8">
+                        <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadPositivePhoto">
+                            <!-- <Button type="ghost" icon="ios-cloud-upload-outline">正面照</Button> -->
+                            <Button v-if="!idcardPositivePhoto" type="ghost" icon="ios-cloud-upload-outline">正面照</Button>
+                            <img v-if="idcardPositivePhoto" :src="idcardPositivePhoto" alt="">
+                        </Upload>
+                        <span v-if="idcardPositivePhoto">正面照</span>
+                    </Col>
+                    <Col span="8">
+                        <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadNegativePhoto">
+                            <!-- <Button type="ghost" icon="ios-cloud-upload-outline">反面照</Button> -->
+                            <Button v-if="!idcardNegativePhoto" type="ghost" icon="ios-cloud-upload-outline">反面照</Button>
+                            <img v-if="idcardNegativePhoto" :src="idcardNegativePhoto" alt="">
+                        </Upload>
+                        <span v-if="idcardNegativePhoto">反面照</span>
+                    </Col>
+                    <Col span="8">
+                        <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadHandheldPhoto">
+                            <!-- <Button type="ghost" icon="ios-cloud-upload-outline">手持照</Button> -->
+                            <Button v-if="!idcardHandheldPhoto" type="ghost" icon="ios-cloud-upload-outline">手持照</Button>
+                            <img v-if="idcardHandheldPhoto" :src="idcardHandheldPhoto" alt="">
+                        </Upload>
+                        <span v-if="idcardHandheldPhoto">手持照</span>
+                    </Col>
+                </Row>
+            </FormItem>
+            <FormItem label="门店照片" prop="">
+                <Row>
+                    <Col span="8">
+                        <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadDoorPhoto">
+                            <!-- <Button type="ghost" icon="ios-cloud-upload-outline">门头照</Button> -->
+                            <Button v-if="!storeDoorPhoto" type="ghost" icon="ios-cloud-upload-outline">门头照</Button>
+                            <img v-if="storeDoorPhoto" :src="storeDoorPhoto" alt="">
+                        </Upload>
+                        <span v-if="storeDoorPhoto">门头照</span>
+                    </Col>
+                    <Col span="8">
+                        <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadCashierPhoto">
+                            <!-- <Button type="ghost" icon="ios-cloud-upload-outline">收银台</Button> -->
+                            <Button v-if="!storeCashierPhoto" type="ghost" icon="ios-cloud-upload-outline">收银台</Button>
+                            <img v-if="storeCashierPhoto" :src="storeCashierPhoto" alt="">
+                        </Upload>
+                        <span v-if="storeCashierPhoto">收银台</span>
+                    </Col>
+                    <Col span="8">
+                        <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadInPhoto">
+                            <!-- <Button type="ghost" icon="ios-cloud-upload-outline">店内照</Button> -->
+                            <Button v-if="!storeInPhoto" type="ghost" icon="ios-cloud-upload-outline">店内照</Button>
+                            <img v-if="storeInPhoto" :src="storeInPhoto" alt="">
+                        </Upload>
+                        <span v-if="storeInPhoto">店内照</span>
+                    </Col>
+                </Row>  
+            </FormItem>
+            <FormItem label="店铺荣誉" prop="">
+                <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadStoreHonor">
+                    <Button v-if="!storeHonorPhoto" type="ghost" icon="ios-cloud-upload-outline">上传</Button>
+                    <img v-if="storeHonorPhoto" :src="storeHonorPhoto" alt="">
+                </Upload>
+                <span>(店铺相关的荣誉证书，获奖证书)</span>
+            </FormItem>
+            <FormItem label="上传合同">
+                <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadFile">
+                    <Button type="ghost" icon="ios-cloud-upload-outline">上传文件</Button>
+                </Upload>
+            </FormItem>
+        </div>
+        <h3>商户信息</h3>
+        <Row>
+            <Col span="12">
                 <FormItem label="公司名称" prop="companyName">
                     <Input v-model="formValidate.companyName"></Input>
                 </FormItem>
+            </Col>
+            <Col span="12">
                 <FormItem label="营业执照号码" prop="BusinessLicenseNumber">
                     <Input v-model="formValidate.BusinessLicenseNumber"></Input>
                 </FormItem>
+            </Col>
+        </Row>
+        <Row>
+            <Col span="12">
                 <FormItem label="法人姓名" prop="LegalPersonName">
                     <Input v-model="formValidate.LegalPersonName"></Input>
                 </FormItem>
+            </Col>
+            <Col span="12">
                 <FormItem label="身份证号码" prop="IdCardNum">
                     <Input v-model="formValidate.IdCardNum"></Input>
                 </FormItem>
-            </div>
-            <div class="box">
-                <h3>企业收款账号</h3>
+            </Col>
+        </Row>
+        <h3>企业收款账号</h3>
+        <Row>
+            <Col span="12">
                 <FormItem label="开户银行" prop="eraBank">
                     <Input v-model="formValidate.eraBank"></Input>
                 </FormItem>
+            </Col>
+            <Col span="12">
                 <FormItem label="开户地区" prop="eraArea">
                     <Input v-model="formValidate.eraArea"></Input>
                 </FormItem>
+            </Col>
+        </Row>
+        <Row>
+            <Col span="12">
                 <FormItem label="支行名称" prop="eraBankBranch">
                     <Input v-model="formValidate.eraBankBranch"></Input>
                 </FormItem>
+            </Col>
+            <Col span="12">
                 <FormItem label="公司名称" prop="eraCompanyName">
                     <Input v-model="formValidate.eraCompanyName"></Input>
                 </FormItem>
+            </Col>
+        </Row>
+        <Row>
+            <Col span="12">
                 <FormItem label="银行卡号" prop="eraBankCardNumber">
                     <Input v-model="formValidate.eraBankCardNumber"></Input>
                 </FormItem>
-            </div>
-            <div class="box">
-                <h3>商户个人收款账号</h3>
-                <FormItem label="开户银行" prop="AccountOpeningBank">
+            </Col>
+            <Col span="12"></Col>
+        </Row>
+        <h3>商户个人收款账号</h3>
+        <Row>
+            <Col span="12">
+                 <FormItem label="开户银行" prop="AccountOpeningBank">
                     <Input v-model="formValidate.AccountOpeningBank"></Input>
                 </FormItem>
+            </Col>
+            <Col span="12">
                 <FormItem label="开户地区" prop="OpeningArea">
                     <Input v-model="formValidate.OpeningArea"></Input>
                 </FormItem>
+            </Col>
+        </Row>
+        <Row>
+            <Col span="12">
                 <FormItem label="支行名称" prop="bankBranch">
                     <Input v-model="formValidate.bankBranch"></Input>
                 </FormItem>
+            </Col>
+            <Col span="12">
                 <FormItem label="开户名称" prop="accountName">
                     <Input v-model="formValidate.accountName"></Input>
                 </FormItem>
+            </Col>
+        </Row>
+        <Row>
+            <Col span="12">
                 <FormItem label="银行卡号" prop="BankCardNumber">
                     <Input v-model="formValidate.BankCardNumber"></Input>
                 </FormItem>
-            </div>
-            <div class="box">
-                <h3>保证金缴纳</h3>
+            </Col>
+            <Col span="12"></Col>
+        </Row>
+        <h3>保证金缴纳</h3>
+        <Row>
+            <Col span="12">
                 <FormItem label="保证金缴纳状态" prop="">
-                    <Select style="width:80px" v-model="marginPaymentStatus">
-                        <!-- <Option v-for="item in storeStatus" :value="item.value" :key="item.value">{{ item.label }}</Option> -->
+                    <Select style="width:160px" v-model="marginPaymentStatus">
                         <Option value="1">已缴纳</Option>
                         <Option value="0">未缴纳</Option>
                     </Select>
                 </FormItem>
+            </Col>
+            <Col span="12">
                 <FormItem label="缴纳金额" prop="premiumReceived">
-                <Col span="4"><Input v-model="formValidate.premiumReceived"></Input></Col>
+                    <Col span="8"><Input v-model="formValidate.premiumReceived"></Input></Col>
                 </FormItem>
-            </div>
-          </div> 
+            </Col>
+        </Row>
+        <Row>
+            <Col span="24">
+                <FormItem>
+                    <Button type="primary" @click="handleSubmit('formValidate')" style="margin:0px 8px;">保存</Button>
+                    <Button v-if="false" type="ghost" @click="handleReset('formValidate')" style="margin:0px 8px;">重置</Button>
+                    <Button type="success" @click.native="returnHome('list')">返回</Button>    
+                </FormItem>
+            </Col>
         </Row>
     </Form>
   </div>
@@ -310,6 +414,21 @@
                 latitude:39.915
                 },
                 projectList:['抗衰','面部','spa'],//主营特色项目
+                additionalServicesList:[
+                    {
+                        "image":"http://mrb.amez999.com/beautybondAdmin/image/shower.png|http://mrb.amez999.com/beautybondAdmin/image/showerDefault.png",
+                        "name":"淋浴"
+                    },{
+                        "image":"http://mrb.amez999.com/beautybondAdmin/image/park.png|http://mrb.amez999.com/beautybondAdmin/image/parkDefault.png",
+                        "name":"免费停车"
+                    },{
+                        "image":"http://mrb.amez999.com/beautybondAdmin/image/pet.png|http://mrb.amez999.com/beautybondAdmin/image/petDefault.png",
+                        "name":"宠物照看"
+                    },{
+                        "image":"http://mrb.amez999.com/beautybondAdmin/image/tea.png|http://mrb.amez999.com/beautybondAdmin/image/teaDefault.png",
+                        "name":"咖啡 / 茶"
+                    }
+                ],
                 showProject:false, //控制数组显示
                 projectStr:'',//特色项目
                 project:'',  //增加主营项目的value
@@ -324,6 +443,7 @@
                 branchName:'',//品牌名称
                 contract:'',//合同
                 businessLicense:'',//营业执照
+                storeHonorPhoto:'', //店铺荣誉
                 idcardPositivePhoto:'',//正面照
                 idcardNegativePhoto:'',//反面照
                 idcardHandheldPhoto:'',//手持照
@@ -345,6 +465,7 @@
                     branchId:'',  //品牌id
                     branchName:'',  //品牌名称
                     mainProject:[],   //主营特色项目
+                    additionalServices:[], //附加服务
                     companyName:'',//公司名称
                     BusinessLicenseNumber:"",//营业执照号码
                     LegalPersonName:'',//法人姓名
@@ -559,6 +680,10 @@
             //上传营业执照
             uploadLicense(res){
                 this.businessLicense = res.data
+            },
+            //上传店铺荣誉
+            uploadStoreHonor(res){
+                this.storeHonorPhoto = res.data
             },
             //上传正面照
             uploadPositivePhoto(res){

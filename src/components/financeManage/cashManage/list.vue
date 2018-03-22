@@ -74,6 +74,7 @@
             return {
                 infoId:'',//服务订单id
                 ids:'',
+                storeId:'',
                 playMoneyStatusList:[
                     {
                         value:'',
@@ -287,6 +288,9 @@
                 let size = vm.table.size;//每页条数
                 let url = common.path2+"beauticianTradeDetails/withdrawList?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {}
+                if(vm.storeId){
+                    ajaxData.storeId = vm.storeId;
+                }
                 if(vm.cd.playMoneyStatus){
                     ajaxData.playAmountStatus = vm.cd.playMoneyStatus;
                 }
@@ -427,6 +431,9 @@
             }
         },
         mounted: function(){
+            if(JSON.parse(window.localStorage.getItem('userInfo')).store){
+                this.storeId = JSON.parse(window.localStorage.getItem('userInfo')).store.id;
+            }
             this.getData();
         },
         activated: function(){

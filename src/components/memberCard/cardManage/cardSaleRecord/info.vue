@@ -9,18 +9,18 @@
               <Col span="8"></Col>
           </Row>
           <Row>
-              <Col span="8">发卡方：韵美美胸</Col>
-              <Col span="8">售卡方：平台售卡/雅美养生馆</Col>
+              <Col span="8">发卡方：{{orderBase.issueType?orderBase.issueStoreName:orderBase.brandName}}</Col>
+              <Col span="8">售卡方：{{orderBase.buycardType?orderBase.saleStoreName:'平台售卡'}}</Col>
               <Col span="8"></Col>
           </Row>
           <Row>
-              <Col span="8">买家：买家昵称(13862356996)</Col>
+              <Col span="8">买家：{{orderBase.memberNickname}}({{orderBase.registerPhone}})</Col>
               <Col span="8">支付方式：{{payType}}</Col>
               <Col span="8"></Col>
           </Row>
           <Row>
               <Col span="8">交易金额：￥{{orderBase.tradeAmount/100}}</Col>
-              <Col span="8">售卡方抽佣：￥100</Col>
+              <Col span="8">售卡方抽佣：{{Incentive?'￥'+Incentive/100:''}}</Col>
               <Col span="8"></Col>
           </Row>
         </div>
@@ -40,22 +40,22 @@
                 </div>
                 <div class="content">
                 <Row>
-                    <Col span="3">韵美会员卡</Col>
-                    <Col span="3">￥1000</Col>
+                    <Col span="3" class="normal">{{orderBase.cardName?orderBase.cardName:'韵美会员卡'}}</Col>
+                    <Col span="3" class="normal">￥{{orderBase.balance/100}}</Col>
                     <Col span="3" class="spec">
-                        <span>85折</span><br/>
-                        <span>支持充值</span>
+                        <span>{{(orderBase.discount/10+'').replace('.','')}}折</span><br/>
+                        <span>{{orderBase.supportRecharge?'不支持':'支持'}}充值</span>
                     </Col>
-                    <Col span="3">永久有效</Col>
+                    <Col span="3" class="normal">{{effectiveType}}</Col>
                     <Col span="3" class="spec">
-                        <span>189家</span><br/>
+                        <span>{{orderBase.useStoreListSize}}家</span><br/>
                         <Button size="small" @click="businessCtrl = true">查看</Button>
                     </Col>
                     <Col span="3" class="spec">
-                        <span>5项服务</span><br/>
+                        <span>{{orderBase.useServiceListSize}}项服务</span><br/>
                         <Button size="small" @click="serviceCtrl = true">查看</Button>
                     </Col>
-                    <Col span="3">会员卡说明</Col>
+                    <Col span="3" class="remark">{{orderBase.remark}}</Col>
                 </Row>
                 </div>
             </div>
@@ -65,6 +65,7 @@
             v-model="businessCtrl"
             title="适用门店"
             @on-ok="ok"
+            width=740
             @on-cancel="cancel">
             <businessList></businessList>
         </Modal>
@@ -72,8 +73,9 @@
             v-model="serviceCtrl"
             title="适用服务"
             @on-ok="ok"
+            width=740
             @on-cancel="cancel">
-            <serviceList></serviceList>
+            <serviceList :discount="discount"></serviceList>
         </Modal>
     </div>
 </template>
@@ -86,6 +88,8 @@
                 orderBase:'',
                 businessCtrl:false,
                 serviceCtrl:false,
+                discount:'',
+                Incentive:''
             }
         },
         computed:{
@@ -99,6 +103,17 @@
                     str = '其他'
                 }
                 return str;
+            },
+            effectiveType(){
+                let str ;
+                if(this.orderBase.effectiveType=='0'){
+                    str = '永久有效'
+                }else if(this.orderBase.effectiveType=='1'){
+                    str = '永久有效'
+                }else{
+                    str = '永久有效'
+                }
+                return str;
             }
         },
         methods:{
@@ -108,12 +123,32 @@
             },
             getData(id){
                 let vm = this;
-                let url = this.common.path2+'memberCardTradeRecode/queryById/'+id;
+                let url = this.common.path2+'memberCardTradeRecode/queryCardSaleDetailById/'+id;
                 this.$http.get(url).then(res=>{
                     console.log(res);
                     let oData = res.data.data;
                     console.log(oData)
                     vm.orderBase = oData;
+                    vm.discount = oData.discount/100;
+                    this.$store.commit('BUSINESS_ID',oData.useStoreList);
+                    this.$store.commit('SERVICE_ID',oData.useServiceList);
+                })
+            },
+            getIncentive(tradeNo){
+                let vm = this;
+                let url = this.common.path2+'storeTradeDetails/selectListByConditions';
+                let ajaxData = {}
+                ajaxData.orderNo = tradeNo;
+                this.$http.post(
+                    url,
+                    ajaxData,
+                    {
+                        headers: {
+                            'Content-type': 'application/json;charset=UTF-8'
+                        },
+                    }
+                    ).then(res=>{
+                    vm.Incentive = res.data.data.list[0].incentive;
                 })
             },
             ok () {
@@ -124,12 +159,10 @@
             }
         },
         mounted:function(){
-            this.getData(this.infoId);
+            this.getData(this.parentMsg.infoId);
+            this.getIncentive(this.parentMsg.tradeNo);
         },
-        watch:{
-
-        },
-        props:['infoId'],
+        props:['parentMsg'],
         components:{
             businessList,
             serviceList
@@ -175,13 +208,24 @@
                     text-align: center;        
                 }
                 .ivu-col-span-3{
-                    line-height: 80px;
+                    // line-height: 80px;
                 }
                 .spec{
                     line-height: 20px;
-                    padding-top:20px;
+                    padding:15px 0px;
+                }
+                .normal{
+                    padding-top:25px;
                 }
             }
         }
+    }
+    .remark{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        padding-top:10px;
     }
 </style>

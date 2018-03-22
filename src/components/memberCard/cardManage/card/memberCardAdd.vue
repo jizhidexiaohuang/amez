@@ -2,18 +2,18 @@
   <div class="addPage">
         <Form  ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120">
             <h2>新增会员卡</h2>
-            <FormItem label="会员卡名称" prop="cardName">
-                <Col span="6">
+            <FormItem label="会员卡名称" prop="cardName" style="width:300px;">
+                <Col>
                     <Input v-model="formValidate.cardName" placeholder="请输入会员卡名称"></Input>
                 </Col>
             </FormItem>
-            <FormItem label="会员卡所属品牌" prop="brandId" v-show="!storeShow">
+            <FormItem label="会员卡所属品牌" prop="brandId" v-if="!storeShow">
                 <Col span="6">
                 <Select v-model="formValidate.issuingUnit" label-in-value style="width:100px;" v-if="false">
                     <Option value="0" disabled>平台</Option>
                     <Option value="1">品牌</Option>
                 </Select>
-                <Select v-model="formValidate.brandId" label-in-value @on-change="getBrandName" style="width:120px;">
+                <Select v-model="formValidate.brandId" label-in-value @on-change="getBrandName" placeholder="请选择品牌" style="width:120px;">
                     <Option :value="item.id" v-for='(item ,index) in brandList' :key="index">{{item.brandName}}</Option>
                 </Select>
                 </Col>
@@ -23,11 +23,11 @@
                     <Input v-model="formValidate.cardTotal" placeholder="请输入发行数量"></Input>              
                 </Col>
             </FormItem>
-            <FormItem label="使用范围" v-show="!storeShow">
+            <FormItem label="使用范围" v-if="!storeShow" prop="useAbleStoreList">
                 <businessTable :brandId="brandId"></businessTable>
                 <businessList></businessList>
             </FormItem>
-            <FormItem label="服务项目" v-show="storeShow">
+            <FormItem label="服务项目" v-if="storeShow" prop="useAbleProductList">
                 <serviceTable :storeId="storeId"></serviceTable>
                 <serviceList :discount="discount"></serviceList>
             </FormItem>
@@ -36,18 +36,18 @@
                     <InputNumber :max="100000000" :min="1" v-model="formValidate.cardValue"></InputNumber>
                     <!-- <Input v-model="formValidate.cardValue" placeholder="请输入会员卡面值"></Input>               -->
                 </Col>
-                <Col span="2">元</Col>
+                <Col span="8">元（最高金额99999999.99）</Col>
             </FormItem>
             <FormItem label="会员卡折扣比率" prop="discount">
                 <Col span="2">
                     <InputNumber :max="99" :min="30" v-model="formValidate.discount"></InputNumber>
                     <!-- <Input v-model="formValidate.discount" placeholder="请输入门店电话"></Input>               -->
                 </Col>
-                <Col span="5">（输入89，即表示下单可打89折）</Col>
+                <Col span="8">（输入值范围30~100，输入89，即表示下单可打89折）</Col>
             </FormItem>
-            <FormItem label="选择卡面模版">
+            <FormItem label="选择卡面模版" prop="imgUrl">
                 <MyUpload v-if="false" :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
-                <CardTpl v-on:listenImg="getImgSrc" :radioCtrl="radioCtrl"></CardTpl>
+                <CardTpl v-on:listenImg="getImgSrc" :radioCtrl="radioCtrl" v-model="formValidate.imgUrl"></CardTpl>
             </FormItem>
             <FormItem label="是否支持充值" prop="isRecharge">
                 <RadioGroup v-model="formValidate.isRecharge">
@@ -65,11 +65,13 @@
             <FormItem label="有效期" prop="expiryDate" v-if="formValidate.termOfValidity==1">
                 <DatePicker v-model="formValidate.expiryDate" format="yyyy/MM/dd" type="daterange" placement="top-start" placeholder="请选择日期" style="width:316px;"></DatePicker>
             </FormItem>
-            <FormItem label="有效天数" prop="expiryDay" v-if="formValidate.termOfValidity==2">
-                <Col span="5">
+            <FormItem label="有效天数" prop="expiryDay" v-if="formValidate.termOfValidity==2" style="width:656px;">
+                <Row>
+                <Col span="14">
                     <Input v-model="formValidate.expiryDay" placeholder="请输入有效天数"></Input>  
                 </Col>
-                <Col span="4">天（从购买时开始）</Col>
+                <Col span="10">天（从购买时开始）</Col>
+                </Row>
             </FormItem>
             <FormItem label="卡面预览" prop="">
                 <div class="memberCard">
@@ -79,8 +81,8 @@
                     <div class="periodOfValidity">有效期 {{getPeriod}}</div>
                 </div>
             </FormItem>
-            <FormItem label="用卡说明" prop="cardExplain">
-                <Col span="7">
+            <FormItem label="用卡说明" prop="cardExplain" style="width:400px">
+                <Col>
                     <Input v-model="formValidate.cardExplain" type="textarea" :autosize="{minRows: 4,maxRows: 8}" placeholder="输入该卡的介绍，使用须知等"></Input>
                 </Col>
             </FormItem>
@@ -108,7 +110,7 @@
                 storeId:'',
                 storeShow:false,
                 issueType:0,
-                src:'../../../static/images/membercard.png',
+                src:'',
                 brandList:[], //渲染所属品牌下拉框数组
                 formValidate:{
                    cardName:'',
@@ -128,7 +130,36 @@
                    imgUrl:''
                 },
                 ruleValidate:{
-
+                    cardName:[
+                        { required: true, message: '请输入会员卡名称', pattern:/.+/, trigger: 'blur' }
+                    ],
+                    brandId:[
+                        { required: true, message: '请选择会员卡所属品牌', pattern:/.+/, trigger: 'change' }
+                    ],
+                    useAbleStoreList:[
+                        { required: true, message: '请选择会员卡支持使用的商家', pattern:/.+/, trigger: 'blur' }
+                    ],
+                    cardValue:[
+                        { required: true, message: '请输入会员卡面值', pattern:/.+/, trigger: 'blur' }
+                    ],
+                    discount:[
+                        { required: true, message: '请输入会员卡折扣比率', pattern:/.+/, trigger: 'blur' }
+                    ],
+                    imgUrl:[
+                        { required: true, message: '请选择会员卡卡面模版', pattern:/.+/, trigger: 'blur' }
+                    ],
+                    expiryDate:[
+                        { required: true, type: 'date', message: '请设置会员卡有效期', trigger: 'change' }
+                    ],
+                    expiryDay:[
+                        { required: true, message: '请设置会员卡有效天数', pattern:/.+/, trigger: 'blur' }
+                    ],
+                    cardExplain:[
+                        { required: true, message: '请填写用卡说明', pattern:/.+/, trigger: 'blur' },
+                    ],
+                    useAbleProductList:[
+                        { required: true, message: '请添加会员卡支持的服务项目', pattern:/.+/, trigger: 'blur' }
+                    ]
                 },
                 defaultList:[],
                 uploadConfig: {
@@ -172,6 +203,7 @@
             getImgSrc(val){
                 this.src = val;
                 this.formValidate.imgUrl = val;
+                console.log(this.formValidate.imgUrl)
             },
             //获取连锁品牌
             getBrand(){
@@ -262,7 +294,7 @@
                             }
                         })
                     } else {
-                        this.$Message.error('Fail!');
+                        this.$Message.error('请填写完整信息!');
                     }
                 })
             },
