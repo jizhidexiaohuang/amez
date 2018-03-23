@@ -370,7 +370,7 @@
                 <FormItem>
                     <Button type="primary" @click="handleSubmit('formValidate')" style="margin:0px 8px;">保存</Button>
                     <Button v-if="false" type="ghost" @click="handleReset('formValidate')" style="margin:0px 8px;">重置</Button>
-                    <Button type="success" @click.native="returnHome('list')">返回</Button>    
+                    <Button type="ghost" @click.native="returnHome('list')">返回</Button>    
                 </FormItem>
             </Col>
         </Row>
@@ -420,7 +420,7 @@
                     }
                 ],
                 projectStr:'',//特色项目
-                additionalServicesObj:[],
+                additionalServicesObj:'',
                 project:'',  //增加主营项目的value
                 sevenStarStore:'1', //七星门店
                 amPartner:'1',    //艾美合伙人
@@ -657,6 +657,7 @@
                             }
                         }
                         console.log(JSON.stringify(ajaxData))
+                        this.$Loading.start();
                         let url = common.path2 + 'store/add'
                         this.$http.post(
                             url,
@@ -670,7 +671,11 @@
                             console.log(res)
                             this.$Message.success(res.data.message);
                             if(res.data.code==200){
+                                this.$Loading.start();
                                 this.returnHome('list')
+                            }else{
+                                this.$Loading.error();
+                                this.$Message.error(res.data.message);
                             }
                         })
                     } else {

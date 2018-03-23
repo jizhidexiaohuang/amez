@@ -384,7 +384,7 @@
                 <FormItem>
                     <Button type="primary" @click="handleSubmit('formValidate')" style="margin:0px 8px;">保存</Button>
                     <Button v-if="false" type="ghost" @click="handleReset('formValidate')" style="margin:0px 8px;">重置</Button>
-                    <Button type="success" @click.native="returnHome('list')">返回</Button>    
+                    <Button type="ghost" @click.native="returnHome('list')">返回</Button>    
                 </FormItem>
             </Col>
         </Row>
@@ -438,7 +438,7 @@
                         "name":"咖啡 / 茶"
                     }
                 ],
-                additionalServicesObj:[],
+                additionalServicesObj:'',
                 showProject:false, //控制数组显示
                 projectStr:'',//特色项目
                 project:'',  //增加主营项目的value
@@ -679,6 +679,7 @@
                             }
                         }
                         console.log(JSON.stringify(ajaxData))
+                        this.$Loading.start();
                         let url = common.path2 + 'store/modify'
                         this.$http.put(
                             url,
@@ -691,9 +692,11 @@
                         ).then(res=>{
                             console.log(res)
                             if(res.status==200){
+                                this.$Loading.finish();
                                 this.$Message.success(res.data.message);
                                 this.returnHome('list')
                             }else{
+                                this.$Loading.error();
                                 this.$Message.error(res.data.message);
                             }
                         })
@@ -962,6 +965,7 @@
                     JSON.parse(storeExtend.otherService).forEach((item,index)=>{
                         this.formValidate.additionalServices.push(item.name)
                     })
+                    this.additionalServicesObj = storeExtend.otherService;
                 })
             },
             //获取连锁品牌
