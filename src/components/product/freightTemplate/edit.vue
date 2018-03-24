@@ -5,7 +5,7 @@
             <FormItem  label="模板名称" prop="templateName">
                 <Input v-model="freightTemplate.templateName" placeholder="请填写模板名称"></Input>
             </FormItem>
-            <FormItem  label="模板代码" prop="templateCode">
+            <FormItem  label="模板代码" prop="templateCode" v-if="false">
                 <Input v-model="freightTemplate.templateCode" placeholder="请填写模板代码"></Input>
             </FormItem>
             <FormItem label="计价方式" prop="pricingMethod">

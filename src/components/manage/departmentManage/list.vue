@@ -42,7 +42,6 @@
                     :loading="table.loading" 
                     :data="table.tableData1" 
                     :columns="table.tableColumns" 
-                    border
                     @on-select="fnSelect"
                     @on-select-all="fnSelectAll"
                 ></Table>

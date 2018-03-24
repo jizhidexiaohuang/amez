@@ -23,14 +23,14 @@
                 <InputNumber :min="0" v-model="formValidate.salePrice" style="width: 100%;"></InputNumber>
             </FormItem>
             <FormItem label="预约方式" prop="serverEffect1">
-                <CheckboxGroup v-model="formValidate.serverEffect1">
+                <CheckboxGroup v-model="formValidate.serverEffect1" @on-change="checkBoxChange">
                     <Checkbox label="store">到店服务</Checkbox>
                     <Checkbox label="home">上门服务</Checkbox>
                 </CheckboxGroup>
             </FormItem>
 
 
-            <FormItem label="上门费（元）" prop="homeFee" number='true'>
+            <FormItem label="上门费（元）" prop="homeFee" number='true' v-if="!!checkBoxCode">
                 <InputNumber :min="0" v-model="formValidate.homeFee" style="width: 100%;"></InputNumber>
             </FormItem>
             <FormItem label="正式美容师佣金（元）" number='true'>
@@ -90,8 +90,8 @@
             <FormItem label="轮播图" v-if="testCode">
                 <MyUpload :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
             </FormItem>
-            <FormItem label="图片地址" prop="img" style="position:absolute; left:-9999px;">
-                <Input v-model="formValidate.img" placeholder=""></Input>
+            <FormItem label="主图">
+                <img v-if="formValidate.coverImg" class='demo-img' :src="formValidate.coverImg">
             </FormItem>
             <FormItem label="注意事项" prop="serverAttention">
                 <Input v-model="formValidate.serverAttention" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请填写注意事项"></Input>
@@ -99,7 +99,7 @@
             <FormItem label="服务总时长（分）" prop="serverNeedTime">
                 <InputNumber :min="0" v-model="formValidate.serverNeedTime" style="width: 100%;"></InputNumber>
             </FormItem>
-            <FormItem label="功效" prop="serverEffect">
+            <FormItem label="功效" prop="serverEffect" v-if="false">
                 <CheckboxGroup v-model="formValidate.serverEffect">
                     <Checkbox label="美白">美白</Checkbox>
                     <Checkbox label="补水">补水</Checkbox>
@@ -205,7 +205,7 @@
                     coverImg:'',//图片地址
                     serverIntroduce: '',//服务详情
                     serverAttention: '',//注意事项
-                    serverNeedTime: '',//服务总时长
+                    serverNeedTime: 0,//服务总时长
                     serverEffect: [],//功效
                     formalWorker: "",//正式员工提成
                     ParTtimeWorker: "",//兼职员工服务提成
@@ -253,7 +253,7 @@
                 },
                 defaultList: [],
                 uploadConfig: {
-                    num:5
+                    num:6
                 },
                 uploadList:[],//图片列表 用来保存图片上传之后的数据
                 // path:"http://172.16.20.151:8009/system/api/file/uploadForKindeditor"
@@ -266,6 +266,7 @@
                 loginName:'', // 管理员身份
                 tableCtrl:false,
                 testSwitch: false,
+                checkBoxCode: false,
             }
         },
         props: ["sendChild"],
@@ -290,7 +291,7 @@
                             parttimeBeauticianCommission: !!vm.formValidate.parttimeBeauticianCommission?+vm.formValidate.parttimeBeauticianCommission*100:0, // 兼职美容师佣金
                             coverImg: vm.uploadList.length>0?vm.uploadList[0].url:"",//封面图
                             serverAttention: vm.formValidate.serverAttention, // 注意事项
-                            serverNeedTime: vm.formValidate.serverNeedTime, // 服务总时长
+                            serverNeedTime: +vm.formValidate.serverNeedTime, // 服务总时长
                             serverEffect: JSON.stringify(vm.formValidate.serverEffect), // 功效
                             serverIntroduce: vm.formValidate.serverIntroduce, // 商品介绍
                             isBrand: false,// 服务分类
@@ -416,6 +417,11 @@
             // 获取图片列表
             getUploadList (data) {
                 let vm = this;
+                if(data.length>0){
+                    vm.formValidate.coverImg = data[0].url;
+                }else{
+                    vm.formValidate.coverImg = '';
+                }
                 vm.uploadList = data;
             },
             // 服务分类接口数据
@@ -428,11 +434,6 @@
                 vm.$http.post(
                     url,
                     ajaxData,
-                    {
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded'
-                        }
-                    }
                 ).then(function(res){
                     let oData = res.data.data.list;
                     vm.serviceList = oData;
@@ -487,12 +488,6 @@
                 });
                 vm.$store.commit('SERVICE_STORE_LIST',storeArrs1);
                 // 服务产品 productProductPhysicalRefList
-                /* let productPhysicalList = data.productProductPhysicalRefList;
-                let productPhysicalListArrs = [];
-                productPhysicalList.forEach(function(item,index){
-                    productPhysicalListArrs.push(+item.productPhysicalId);
-                });
-                vm.$store.commit('PRODUCT_LIST',productPhysicalListArrs); */
                 let productPhysicalList = data.productProductPhysicalRefList;
                 let productPhysicalListArrs = [];
                 for(var i = 0;i<productPhysicalList.length;i++){
@@ -528,37 +523,23 @@
                     homeArrs.push(obj);
                 });
                 vm.$store.commit('TOHOME_LIST',homeArrs);
-
                 // 是否支持上门
                 if(data.product.isSupportHome == 1){
                     vm.formValidate.serverEffect1.push('home');
+                    vm.checkBoxCode = true;
                 }
                 // 是否支持到店
                 if(data.product.isSupportStore == 1){
                     vm.formValidate.serverEffect1.push('store');
                 }
-
-                
-
-
-
-
-
                 vm.formValidate.type = !!!data.productCategoryRef?"":data.productCategoryRef.categoryId;// 服务分类
                 vm.formValidate.brandId = data.product.brandId; // 服务所属品牌
                 vm.formValidate.serverName = data.product.serverName; // 服务名称
                 vm.formValidate.originalPrice = +data.product.originalPrice/100; // 市场价
                 vm.formValidate.salePrice = +data.product.salePrice/100; // 服务销售价
-
-
-
-                
                 vm.formValidate.homeFee = !!data.product.homeFee?+data.product.homeFee/100:0;// 上门费
-                vm.formValidate.formalBeauticianCommission = !!data.product.formalBeauticianCommission?+data.product.formalBeauticianCommission/100:'';// 正式美容师佣金
-                vm.formValidate.parttimeBeauticianCommission = !!data.product.parttimeBeauticianCommission?+data.product.parttimeBeauticianCommission/100:'';// 兼职美容师佣金
-
-
-
+                vm.formValidate.formalBeauticianCommission = !!data.product.formalBeauticianCommission?+data.product.formalBeauticianCommission/100:0;// 正式美容师佣金
+                vm.formValidate.parttimeBeauticianCommission = !!data.product.parttimeBeauticianCommission?+data.product.parttimeBeauticianCommission/100:0;// 兼职美容师佣金
                 vm.formValidate.coverImg = data.product.coverImg;//封面图
                 vm.formValidate.serverAttention = data.product.serverAttention; // 注意事项
                 vm.formValidate.serverNeedTime = +data.product.serverNeedTime; // 服务总时长
@@ -569,13 +550,11 @@
                 vm.formValidate.serverEffect = JSON.parse(data.product.serverEffect);
                 }
                 vm.formValidate.serverIntroduce = data.product.serverIntroduce // 服务详情
-
                 // 审核结果
                 vm.formValidate.auditStatus = data.product.auditStatus;
                 // 封面图以及轮播图的处理
                 vm.defaultList = [];
                 if(!!!data.product.coverImg){
-
                 }else{
                     vm.formValidate.coverImg = data.product.coverImg;//封面图
                     if(!!data.productImg&&!!data.productImg.url){
@@ -649,6 +628,20 @@
                     this.tableCtrl = true;
                 }
             },
+            // 多选框变化
+            checkBoxChange (list) {
+                let vm = this;
+                if(list.length>0){
+                    vm.checkBoxCode = false;
+                    list.forEach((item,index)=>{
+                        if(item == 'home'){
+                            vm.checkBoxCode = true;
+                        }
+                    })
+                }else{
+                    vm.checkBoxCode = false;
+                }
+            }
         },
         mounted: function(){
             let user = JSON.parse(window.localStorage.getItem("userInfo"));
@@ -676,5 +669,19 @@
     }
 </script>
 <style scoped>
+.demo-img{
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    line-height: 60px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+    box-shadow: 0 1px 1px rgba(0,0,0,.2);
+    margin-right: 4px;
+}
 </style>
 

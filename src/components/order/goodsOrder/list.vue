@@ -90,7 +90,6 @@
                 :columns="tableColumns1" 
                 ref="table"
                 stripe
-                border
                 @on-select="fnSelect"
                 @on-select-all="fnSelectAll"
             ></Table>
@@ -253,13 +252,14 @@
                             // red  yellow blue  green
                             const color = _s === 0 ? '#ccc' : _s === 1 ? 'red' : _s === 2 ? 'blue' : 'green';
                             const text = _s === 0 ? '待付款' : _s === 1 ? '待发货' : _s === 2 ? '待收货' : '已收货';
-                            return h('Tag', {
+                            return text;
+                            /* return h('Tag', {
                                 props: {
                                     type: 'border',
                                     color: color,
                                     // background: color,
                                 }
-                            }, text);
+                            }, text); */
                         }
                     },
                     {

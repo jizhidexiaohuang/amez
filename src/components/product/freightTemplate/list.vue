@@ -26,7 +26,6 @@
                     :loading="table.loading" 
                     :data="table.tableData1" 
                     :columns="table.tableColumns" 
-                    border
                 ></Table>
                 <div style="margin: 10px;overflow: hidden">
                     <div style="float: right;">
@@ -72,12 +71,13 @@
                                 const row = params.row;
                                 const color = row.pricingMethod == 1? 'green':'yellow';
                                 const text = row.pricingMethod == 1? '按件数':'按重量';
-                                return h('Tag', {
+                                return text;
+                                /* return h('Tag', {
                                     props: {
                                         type: 'border',
                                         color: color
                                     }
-                                }, text);
+                                }, text); */
                             }
                         },
                         {   
@@ -87,12 +87,13 @@
                                 const row = params.row;
                                 const color = row.transportMethod == 1? 'green':'yellow';
                                 const text = row.transportMethod == 1? '快递':'默认';
-                                return h('Tag', {
+                                return text;
+                                /* return h('Tag', {
                                     props: {
                                         type: 'border',
                                         color: color
                                     }
-                                }, text);
+                                }, text); */
                             }
                         },
                         {

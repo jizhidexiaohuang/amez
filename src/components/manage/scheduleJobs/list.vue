@@ -28,7 +28,6 @@
                     :loading="table.loading" 
                     :data="table.tableData1" 
                     :columns="table.tableColumns" 
-                    border
                 ></Table>
                 <div style="margin: 10px;overflow: hidden">
                     <div style="float: right;">
@@ -84,12 +83,13 @@
                                 const row = params.row;
                                 const color = !!row.isEnable == 1? 'green': 'red';
                                 const text = !!row.isEnable == 1? '启用': '禁用';
-                                return h('Tag', {
+                                /* return h('Tag', {
                                     props: {
                                         type: 'border',
                                         color: color
                                     }
-                                }, text);
+                                }, text); */
+                                return text;
                             }
                         },
                         {   
@@ -100,12 +100,13 @@
                                 const row = params.row;
                                 const color = !!row.isConcurrent == 1? 'green': 'red';
                                 const text = !!row.isConcurrent == 1? '可以': '不可以';
-                                return h('Tag', {
+                                /* return h('Tag', {
                                     props: {
                                         type: 'border',
                                         color: color
                                     }
-                                }, text);
+                                }, text); */
+                                return text;
                             }
                         },
                         {   
@@ -116,12 +117,13 @@
                                 const row = params.row;
                                 const color = !!row.isConcurrent == 1? 'green': 'red';
                                 const text = !!row.isConcurrent == 1? '正常运行': '运行异常';
-                                return h('Tag', {
+                                /* return h('Tag', {
                                     props: {
                                         type: 'border',
                                         color: color
                                     }
-                                }, text);
+                                }, text); */
+                                return text;
                             }
                         },
                         {

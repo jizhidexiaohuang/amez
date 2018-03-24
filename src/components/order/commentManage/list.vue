@@ -34,7 +34,6 @@
                     :loading="table.loading" 
                     :data="table.tableData1" 
                     :columns="table.tableColumns" 
-                    border
                 ></Table>
                 <div style="margin: 10px;overflow: hidden">
                     <div style="float: right;">

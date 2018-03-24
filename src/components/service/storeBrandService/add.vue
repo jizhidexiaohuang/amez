@@ -29,12 +29,12 @@
                 <InputNumber :min="0" v-model="formValidate.salePrice" style="width: 100%;"></InputNumber>
             </FormItem>
             <FormItem label="预约方式" prop="serverEffect1">
-                <CheckboxGroup v-model="formValidate.serverEffect1">
+                <CheckboxGroup v-model="formValidate.serverEffect1" @on-change="checkBoxChange">
                     <Checkbox label="store">到店服务</Checkbox>
                     <Checkbox label="home">上门服务</Checkbox>
                 </CheckboxGroup>
             </FormItem>
-            <FormItem label="上门费（元）" prop="homeFee" number='true'>
+            <FormItem label="上门费（元）" prop="homeFee" number='true' v-if="!!checkBoxCode">
                 <InputNumber :min="0" v-model="formValidate.homeFee" style="width: 100%;"></InputNumber>
             </FormItem>
             <FormItem label="正式美容师佣金（元）" number='true'>
@@ -78,8 +78,8 @@
             <FormItem label="轮播图">
                 <MyUpload :defaultList="defaultList" v-on:listenUpload="getUploadList" :uploadConfig="uploadConfig"></MyUpload>
             </FormItem>
-            <FormItem label="图片地址" prop="img" style="position:absolute; left:-9999px;">
-                <Input v-model="formValidate.img" placeholder=""></Input>
+            <FormItem label="主图">
+                <img v-if="formValidate.coverImg" class='demo-img' :src="formValidate.coverImg">
             </FormItem>
             <FormItem label="注意事项" prop="serverAttention">
                 <Input v-model="formValidate.serverAttention" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请填写注意事项"></Input>
@@ -87,7 +87,7 @@
             <FormItem label="服务总时长（分）" prop="serverNeedTime">
                 <InputNumber :min="0" v-model="formValidate.serverNeedTime" style="width: 100%;"></InputNumber>
             </FormItem>
-            <FormItem label="功效" prop="serverEffect">
+            <FormItem label="功效" prop="serverEffect" v-if="false">
                 <CheckboxGroup v-model="formValidate.serverEffect">
                     <Checkbox label="美白">美白</Checkbox>
                     <Checkbox label="补水">补水</Checkbox>
@@ -144,7 +144,7 @@
                     serverEffect: [],//功效
                     formalWorker: "",//正式员工提成
                     ParTtimeWorker: "",//兼职员工服务提成
-                    auditStatus: '0',// 审核状态 0 待审核 1已审核 2不同过
+                    auditStatus: '1',// 审核状态 0 待审核 1已审核 2不同过
                     serverEffect1: [], // 服务方式
                     isSupportHome:0, // 是否支持上门 1支持 0不支持
                     isSupportStore:0, // 是否支持到店 1支持 0不支持
@@ -191,10 +191,11 @@
                 serviceList:[],// 产品分类
                 brandList:[],// 品牌分类
                 uploadConfig:{
-                    num:5
+                    num:6
                 },
                 storeId:"",// 店铺id
                 isShow: true,
+                checkBoxCode: false,
             }
         },
         props: ["sendChild"],
@@ -318,6 +319,11 @@
             // 获取图片列表
             getUploadList (data) {
                 let vm = this;
+                if(data.length>0){
+                    vm.formValidate.coverImg = data[0].url;
+                }else{
+                    vm.formValidate.coverImg = '';
+                }
                 vm.uploadList = data;
             },
             // 服务分类接口数据
@@ -355,6 +361,20 @@
                 }).catch(function(err){
                 })
             },
+            // 多选框变化
+            checkBoxChange (list) {
+                let vm = this;
+                if(list.length>0){
+                    vm.checkBoxCode = false;
+                    list.forEach((item,index)=>{
+                        if(item == 'home'){
+                            vm.checkBoxCode = true;
+                        }
+                    })
+                }else{
+                    vm.checkBoxCode = false;
+                }
+            }
         },
         mounted: function(){
             let vm = this;
@@ -380,5 +400,19 @@
     }
 </script>
 <style scoped>
+.demo-img{
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    line-height: 60px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+    box-shadow: 0 1px 1px rgba(0,0,0,.2);
+    margin-right: 4px;
+}
 </style>
 

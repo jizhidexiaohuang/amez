@@ -28,7 +28,6 @@
                     :loading="table.loading" 
                     :data="table.tableData1" 
                     :columns="table.tableColumns" 
-                    border
                 ></Table>
                 <div style="margin: 10px;overflow: hidden">
                     <div style="float: right;">
@@ -85,12 +84,13 @@
                                 const row = params.row;
                                 const color = row.appClientType == 1? 'green': row.isEnable == 2? 'blue': 'red';
                                 const text = row.appClientType == 1? '门店端': row.isEnable == 2? '用户端': '美容师端';
-                                return h('Tag', {
+                                /* return h('Tag', {
                                     props: {
                                         type: 'border',
                                         color: color
                                     }
-                                }, text);
+                                }, text); */
+                                return text;
                             }
                         },
                         {   
@@ -101,12 +101,13 @@
                                 const row = params.row;
                                 const color = row.appSystemType == 1? 'green': 'red';
                                 const text = row.appSystemType == 1? '安卓': 'ios';
-                                return h('Tag', {
+                                /* return h('Tag', {
                                     props: {
                                         type: 'border',
                                         color: color
                                     }
-                                }, text);
+                                }, text); */
+                                return text;
                             }
                         },
                         {   
@@ -117,12 +118,13 @@
                                 const row = params.row;
                                 const color = row.forced == 2? 'green': 'red';
                                 const text = row.forced == 2? '手动更新': '强制更新';
-                                return h('Tag', {
+                                /* return h('Tag', {
                                     props: {
                                         type: 'border',
                                         color: color
                                     }
-                                }, text);
+                                }, text); */
+                                return text;
                             }
                         },
                         {   
@@ -133,12 +135,13 @@
                                 const row = params.row;
                                 const color = row.ignoreUpdate == 1? 'green': 'red';
                                 const text = row.ignoreUpdate == 1? '不忽略': '忽略';
-                                return h('Tag', {
+                                /* return h('Tag', {
                                     props: {
                                         type: 'border',
                                         color: color
                                     }
-                                }, text);
+                                }, text); */
+                                return text;
                             }
                         },
                         {

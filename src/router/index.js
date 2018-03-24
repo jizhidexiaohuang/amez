@@ -25,7 +25,7 @@ import BrandManage from '@/components/store/brandManage/list'
 /*=====================================服务管理=========================*/
 //品牌服务
 import BrandService from '@/components/service/brandService/list'
-//门店自营服务
+//服务审核
 import StoreBrandService from '@/components/service/storeBrandService/list'
 //审核服务
 import ExamineService from '@/components/service/examineService/list'
@@ -167,12 +167,12 @@ const menuRouter = [
     children: [
       {
         path: '/service/brandService',
-        name: '门店自营服务',
-        title: '门店自营服务',
+        name: '服务审核',
+        title: '服务审核',
         component: BrandService,
         meta:{
           type:"菜单",
-          name:"门店自营服务"
+          name:"服务审核"
         }
       },
       {

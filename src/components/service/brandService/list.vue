@@ -42,8 +42,8 @@
                         状态
                         <Select v-model="cd.saleStatus" style="width:200px">
                             <Option value="">全部</Option>
-                            <Option value="0">下架</Option>
-                            <Option value="1">上架</Option>
+                            <Option value="0">已下架</Option>
+                            <Option value="1">销售中</Option>
                         </Select>
                     </FormItem>
                     <FormItem style="margin-bottom:10px;">
@@ -77,7 +77,6 @@
                     :loading="table.loading" 
                     :data="table.tableData1" 
                     :columns="table.tableColumns" 
-                    border
                 ></Table>
                 <div style="margin: 10px;overflow: hidden">
                     <div style="float: right;">
@@ -137,12 +136,12 @@
                     ],
                     //门店自营服务表头
                     buyerColumns: [
-                        {
+                        /* {
                             type: 'index',
                             width: 80,
                             align: 'center',
                             title: '序号'
-                        },
+                        }, */
                         {
                             title: '服务名称',
                             key: 'serverName',
@@ -150,14 +149,16 @@
                         {
                             title: '价格',
                             key: 'salePrice',
+                            width: 100,
                             render: (h,params) => {
                                 const row = params.row;
                                 return +row.salePrice/100
                             }
                         },
                         {   
-                            title: '是否支持上门',
+                            title: '服务方式',
                             key: 'isSupportHome',
+                            width: 120,
                             render: (h,params) => {
                                 const row = params.row;
                                 // const color = !!!row.isSupportHome ? 'blue' : row.isSupportHome === 1 ? 'green' : 'yellow';
@@ -165,12 +166,13 @@
 
                                 const color = !!!row.isSupportHome ? 'yellow' : 'blue';
                                 const text = !!!row.isSupportHome ? '到店' : '上门';
-                                return h('Tag', {
+                                return text;
+                               /*  return h('Tag', {
                                     props: {
                                         type: 'border',
                                         color: color
                                     }
-                                }, text);
+                                }, text); */
                             }
                         },
                         {
@@ -184,31 +186,35 @@
                         {
                             title: '状态',
                             key: 'saleStatus',
+                            width: 100,
                             render: (h,params) => {
                                 const row = params.row;
                                 const color = row.saleStatus === 0 ? 'red' : 'blue';
-                                const text = row.saleStatus === 0 ? '下架' : '上架';
-                                return h('Tag', {
+                                const text = row.saleStatus === 0 ? '已下架' : '销售中';
+                                /* return h('Tag', {
                                     props: {
                                         type: 'border',
                                         color: color
                                     }
-                                }, text);
+                                }, text); */
+                                return text;
                             }
                         },
                         {
                             title: '审核结果',
                             key: 'auditStatus',
+                            width: 100,
                             render: (h,params) => {
                                 const row = params.row;
                                 const color = row.auditStatus === 0 ? 'blue' : row.auditStatus === 1 ? 'green':'red';
                                 const text = row.auditStatus === 0 ? '待审核' : row.auditStatus === 1 ? '通过':'未通过';
-                                return h('Tag', {
+                                /* return h('Tag', {
                                     props: {
                                         type: 'border',
                                         color: color
                                     }
-                                }, text);
+                                }, text); */
+                                return text;
                             }
                         },
                         {

@@ -54,7 +54,6 @@
                     :columns="table.tableColumns" 
                     @on-select="fnSelect"
                     @on-select-all="fnSelectAll"
-                    border
                 ></Table>
                 <div style="margin: 10px;overflow: hidden">
                     <div style="float: right;">
@@ -131,12 +130,13 @@
                                 const row = params.row;
                                 const color = !!!row.isEnabled ? 'red' : 'blue';
                                 const text = !!!row.isEnabled ? '关闭' : '开启';
-                                return h('Tag', {
+                                return text;
+                                /* return h('Tag', {
                                     props: {
                                         type: 'border',
                                         color: color
                                     }
-                                }, text);
+                                }, text); */
                             }
                         },
                         {

@@ -21,7 +21,7 @@
                     </div>
                     <div style="position: relative;">
                         <Spin fix v-if="spinShow"></Spin>
-                        <Table border class="editTable" :columns="columns" :data="menuList"></Table>
+                        <Table class="editTable" :columns="columns" :data="menuList"></Table>
                     </div>
                 </Col>
             </Row>

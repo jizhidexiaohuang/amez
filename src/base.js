@@ -86,7 +86,7 @@ const common = {
             type:"ios-people",
             childList: [
                 {
-                    name:"门店自营服务",
+                    name:"服务审核",
                     hasChildList: false,
                     href:"/service/brandService"
                 },

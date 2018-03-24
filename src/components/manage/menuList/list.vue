@@ -54,7 +54,6 @@
                     :columns="table.tableColumns" 
                     @on-select="fnSelect"
                     @on-select-all="fnSelectAll"
-                    border
                 ></Table>
                 <div style="margin: 10px;overflow: hidden">
                     <div style="float: right;">
