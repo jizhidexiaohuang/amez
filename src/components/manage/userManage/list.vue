@@ -63,7 +63,6 @@
                 :data="table.tableData1" 
                 :columns="tableColumns1" 
                 stripe
-                border
                 @on-select="fnSelect"
                 @on-select-all="fnSelectAll"
             ></Table>

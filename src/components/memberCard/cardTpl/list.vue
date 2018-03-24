@@ -58,7 +58,7 @@
             </Modal>
             <Row style="margin-bottom:10px;">
                 <Col span="10">
-                    <Button style="float:left;margin-right:10px;" @click.native="addTemplate()" type="success" icon="android-add">新建模板组</Button>
+                    <Button v-if="operators.add" style="float:left;margin-right:10px;" @click.native="addTemplate()" type="success" icon="android-add">新建模板组</Button>
                     <Button style="float:left;" @click.native="changePageType('list')" type="primary" icon="android-add" v-show="false">成长规则设置</Button>
                 </Col>
             </Row>
@@ -91,6 +91,7 @@
     export default {
         data () {
             return {
+                operators:{},
                 parent:{
                     parentId:'',
                     parentName:'',
@@ -152,8 +153,36 @@
                         key: 'action',
                         width: 220,
                         render: (h, params) => {
-                            return h('div', [
-                            h('Button', {
+                            let arr = [];
+                            let editButton = h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small'
+                                },
+                                style: {
+                                    marginRight: '5px'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.editTemplate(params.row.id);
+                                    }
+                                }
+                            }, '编辑');
+                            let deleteButton = h('Button', {
+                                props: {
+                                    type: 'error',
+                                    size: 'small'
+                                },
+                                style: {
+                                    marginRight: '5px'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.removeTemplate(params.row.id);
+                                    }
+                                }
+                            }, '删除');
+                            let addTplButton = h('Button', {
                                 props: {
                                     type: 'primary',
                                     size: 'small'
@@ -168,36 +197,17 @@
                                         this.changePageType('edit');
                                     }
                                 }
-                            }, '添加模板'),
-                            h('Button', {
-                                props: {
-                                    type: 'primary',
-                                    size: 'small'
-                                },
-                                style: {
-                                    marginRight: '5px'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.editTemplate(params.row.id);
-                                    }
-                                }
-                               }, '编辑'),
-                            h('Button', {
-                                props: {
-                                    type: 'error',
-                                    size: 'small'
-                                },
-                                style: {
-                                    marginRight: '5px'
-                                },
-                                on: {
-                                    click: () => {
-                                        this.removeTemplate(params.row.id);
-                                    }
-                                }
-                               }, '删除')
-                             ]);
+                            }, '添加模板');
+                            if(this.operators.addTpl){
+                                arr.push(addTplButton)
+                            }
+                            if(this.operators.edit){
+                                arr.push(editButton)
+                            }
+                            if(this.operators.delete){
+                                arr.push(deleteButton)
+                            }
+                            return h('div', arr);
                         }
                     }
                 ],
@@ -370,9 +380,60 @@
                 this.modal.title = '新建模板组';
                 this.modal.show = true;
                 this.modal.loading = false;
+            },
+            /*===================== 菜单权限配置 start ====================*/
+            /* 获取该菜单拥有的权限 */
+            fnGetOperators () {
+                let vm = this;
+                function fnGetDatas (id,vm) {
+                    let list = [];
+                    let menuArrs = []; // 相同menuId的数组
+                    let strArrs = []; // 权限数组 ["add","edit"]
+                    /* 菜单对应的权限组 */
+                    if(!!JSON.parse(window.localStorage.getItem("userInfo")).operator.list){
+                        list = JSON.parse(window.localStorage.getItem("userInfo")).operator.list;
+                    }
+                    /* 每个用户有可能被分配了多个角色，所以需要合并相同menuId的权限组 */
+                    for(var c = 0;c<list.length;c++){
+                        if(list[c].menuId == id){
+                            menuArrs.push(list[c]);
+                        }
+                    }
+
+                    for(var j = 0;j<menuArrs.length;j++){
+                        if(!!menuArrs[j].operCode){
+                            vm.fnChangeOperators(menuArrs[j].operCode.split(","));
+                        }
+                    }
+                }
+                /* 得到所有的菜单 */
+                let arrs = JSON.parse(window.localStorage.getItem("userInfo")).menu;
+                for(var i = 0;i<arrs.length;i++){
+                    if(!!arrs[i].hasChildList){
+                        for(var j = 0;j<arrs[i].childList.length;j++){
+                            if(arrs[i].childList[j].href == this.$route.path){
+                                fnGetDatas(arrs[i].childList[j].menuId,vm)
+                            }
+                        }
+                    }else{
+                        if(arrs[i].href == this.$route.path){
+                            fnGetDatas(arrs[i].menuId,vm)
+                        }
+                    }
+                }
+            },
+            /* 权限的遍历 */
+            fnChangeOperators (arrs) {
+                // operators{}是开关对象
+                let vm = this;
+                arrs.forEach(function(item,index){
+                    vm.operators[item] = true;
+                })
             }
+            /*=================== 菜单权限配置 end ===========================*/
         },
         mounted: function(){
+            this.fnGetOperators();
             this.getData();
         },
         activated: function(){

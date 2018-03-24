@@ -18,7 +18,7 @@
                 </Col>
             </Row>
             <Form :model="cd" inline>
-                <Button style="float:left;margin-right:10px;" @click="exportData" type="success">Excel导出</Button>
+                <Button v-if="operators.excel" style="float:left;margin-right:10px;" @click="exportData" type="success">Excel导出</Button>
                 <FormItem style="margin-bottom:10px;">
                     发卡方
                     <Select v-model="cd.brandId" style="width:120px">
@@ -45,12 +45,9 @@
                     </Select>
                     </Input>
                 </FormItem>
-                <FormItem style="margin-bottom:10px; width:220px;" v-show="false">
-                    
-                </FormItem>
                 <FormItem style="margin-bottom:10px;">
-                    <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
-                    <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
+                    <Button v-if="operators.see" style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
+                    <Button v-if="operators.refresh" style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     <Button v-if="false" style="margin-left:5px;" @click.native="changePageType('add')" type="success" icon="android-add">新增会员卡</Button>
                 </FormItem>
             </Form>
@@ -85,6 +82,7 @@
     export default {
         data () {
             return {
+                operators:{},
                 src:'../../../static/images/footer/1_1.png',
                 editId:'',
                 parentMsg:{},
@@ -196,24 +194,27 @@
                         key: 'action',
                         align: 'center',
                         render: (h, params) => {
-                            return h('div', [
-                                h('Button', {
-                                    props: {
-                                        type: 'primary',
-                                        size: 'small'
-                                    },
-                                    style: {
-                                        marginRight: '5px'
-                                    },
-                                    on: {
-                                        click: () => {
-                                            this.parentMsg.infoId = params.row.id;
-                                            this.parentMsg.tradeNo = params.row.tradeNo;
-                                            this.changePageType('info');
-                                        }
+                            let arr = [];
+                            let infoButton = h('Button', {
+                                props: {
+                                    type: 'primary',
+                                    size: 'small'
+                                },
+                                style: {
+                                    marginRight: '5px'
+                                },
+                                on: {
+                                    click: () => {
+                                        this.parentMsg.infoId = params.row.id;
+                                        this.parentMsg.tradeNo = params.row.tradeNo;
+                                        this.changePageType('info');
                                     }
-                                }, '查看')
-                            ]);
+                                }
+                            }, '查看');
+                            if(this.operators.info){
+                                arr.push(infoButton)
+                            }
+                            return h('div', arr);
                         }
                     }
                 ],
@@ -441,9 +442,60 @@
                 }
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
+            /*===================== 菜单权限配置 start ====================*/
+            /* 获取该菜单拥有的权限 */
+            fnGetOperators () {
+                let vm = this;
+                function fnGetDatas (id,vm) {
+                    let list = [];
+                    let menuArrs = []; // 相同menuId的数组
+                    let strArrs = []; // 权限数组 ["add","edit"]
+                    /* 菜单对应的权限组 */
+                    if(!!JSON.parse(window.localStorage.getItem("userInfo")).operator.list){
+                        list = JSON.parse(window.localStorage.getItem("userInfo")).operator.list;
+                    }
+                    /* 每个用户有可能被分配了多个角色，所以需要合并相同menuId的权限组 */
+                    for(var c = 0;c<list.length;c++){
+                        if(list[c].menuId == id){
+                            menuArrs.push(list[c]);
+                        }
+                    }
+
+                    for(var j = 0;j<menuArrs.length;j++){
+                        if(!!menuArrs[j].operCode){
+                            vm.fnChangeOperators(menuArrs[j].operCode.split(","));
+                        }
+                    }
+                }
+                /* 得到所有的菜单 */
+                let arrs = JSON.parse(window.localStorage.getItem("userInfo")).menu;
+                for(var i = 0;i<arrs.length;i++){
+                    if(!!arrs[i].hasChildList){
+                        for(var j = 0;j<arrs[i].childList.length;j++){
+                            if(arrs[i].childList[j].href == this.$route.path){
+                                fnGetDatas(arrs[i].childList[j].menuId,vm)
+                            }
+                        }
+                    }else{
+                        if(arrs[i].href == this.$route.path){
+                            fnGetDatas(arrs[i].menuId,vm)
+                        }
+                    }
+                }
+            },
+            /* 权限的遍历 */
+            fnChangeOperators (arrs) {
+                // operators{}是开关对象
+                let vm = this;
+                arrs.forEach(function(item,index){
+                    vm.operators[item] = true;
+                })
+            }
+            /*=================== 菜单权限配置 end ===========================*/
         },
         mounted: function(){
             this.getBrand();
+            this.fnGetOperators();
             this.getData();
         },
         activated: function(){

@@ -7,13 +7,13 @@
                     <Input v-model="formValidate.cardName" placeholder="请输入会员卡名称"></Input>
                 </Col>
             </FormItem>
-            <FormItem label="会员卡所属品牌" prop="brandId" v-if="!storeShow">
-                <Col span="6">
+            <FormItem label="会员卡所属品牌" prop="brandId" v-if="!storeShow" style="width:300px;">
+                <Col>
                 <Select v-model="formValidate.issuingUnit" label-in-value style="width:100px;" v-if="false">
                     <Option value="0" disabled>平台</Option>
                     <Option value="1">品牌</Option>
                 </Select>
-                <Select v-model="formValidate.brandId" label-in-value @on-change="getBrandName" placeholder="请选择品牌" style="width:120px;">
+                <Select v-model="formValidate.brandId" label-in-value @on-change="getBrandName" placeholder="请选择品牌">
                     <Option :value="item.id" v-for='(item ,index) in brandList' :key="index">{{item.brandName}}</Option>
                 </Select>
                 </Col>
@@ -260,7 +260,7 @@
                         }
                         let ajaxData = {
                             memberCardName:this.formValidate.cardName,
-                            balance:this.formValidate.cardValue-0,
+                            balance:this.formValidate.cardValue*100,
                             discount:this.formValidate.discount-0,
                             brandId:this.formValidate.brandId,
                             brandName:this.formValidate.brandName,

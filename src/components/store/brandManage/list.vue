@@ -22,32 +22,32 @@
                 </Col>
             </Row>
             <Form :model="cd" inline v-show="false">
-                        <FormItem style="margin-bottom:10px;">
-                            状态
-                            <Select v-model="storeStatus" style="width:80px">
-                                <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                            </Select>
-                        </FormItem>
-                        <FormItem style="margin-bottom:10px;">
-                            开店时间
-                            <DatePicker v-model="cd.time" type="date" placeholder="请选择评价时间" style="width:200px;"></DatePicker>
-                        </FormItem>
-                        <FormItem style="margin-bottom:10px;">
-                           <Input v-model="value">
-                            <Select v-model="selectType" slot="prepend" style="width: 80px">
-                                <Option value="门店名称">门店名称</Option>
-                                <Option value="注册手机">注册手机</Option>
-                            </Select>
-                          </Input>
-                        </FormItem>
-                        <FormItem style="margin-bottom:10px; width:250px;">
-                            <Row>
-                                <Col span="4">地区</Col>
-                                <Col span="20">
-                                    <Input v-model="area" placeholder="全部（省-市-区）"></Input>
-                                </Col>
-                            </Row>
-                        </FormItem>
+                <FormItem style="margin-bottom:10px;">
+                    状态
+                    <Select v-model="storeStatus" style="width:80px">
+                        <Option v-for="item in statusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+                </FormItem>
+                <FormItem style="margin-bottom:10px;">
+                    开店时间
+                    <DatePicker v-model="cd.time" type="date" placeholder="请选择评价时间" style="width:200px;"></DatePicker>
+                </FormItem>
+                <FormItem style="margin-bottom:10px;">
+                    <Input v-model="value">
+                    <Select v-model="selectType" slot="prepend" style="width: 80px">
+                        <Option value="门店名称">门店名称</Option>
+                        <Option value="注册手机">注册手机</Option>
+                    </Select>
+                    </Input>
+                </FormItem>
+                <FormItem style="margin-bottom:10px; width:250px;">
+                    <Row>
+                        <Col span="4">地区</Col>
+                        <Col span="20">
+                            <Input v-model="area" placeholder="全部（省-市-区）"></Input>
+                        </Col>
+                    </Row>
+                </FormItem>
             </Form>
             <Row style="margin-bottom:10px;">
                 <!-- <Col span="5">
@@ -55,7 +55,7 @@
                     <Button style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">重置</Button>
                 </Col> -->
                 <Col span="10">
-                    <Button style="float:left;margin-right:10px;" @click.native="changePageType('add')" type="success" icon="android-add">新增连锁品牌</Button>
+                    <Button v-if="operators.add" style="float:left;margin-right:10px;" @click.native="changePageType('add')" type="success" icon="android-add">新增连锁品牌</Button>
                     <Button style="float:left;" @click.native="changePageType('list')" type="primary" icon="android-add" v-show="false">成长规则设置</Button>
                 </Col>
             </Row>
@@ -90,6 +90,7 @@
     export default {
         data () {
             return {
+                operators:{},
                 value:'',
                 editId:'',//编辑id
                 infoId:'',//查看详情Id
@@ -173,11 +174,9 @@
                         title: '操作',
                         key: 'action',
                         width: 180,
-                        // align: 'center',
-                        // fixed: 'right',
                         render: (h, params) => {
-                            return h('div', [
-                            h('Button', {
+                            let arr = [];
+                            let editButton = h('Button', {
                                 props: {
                                     type: 'primary',
                                     size: 'small'
@@ -191,8 +190,8 @@
                                         this.changePageType('edit');
                                     }
                                 }
-                            }, '编辑'),
-                            h('Button', {
+                            }, '编辑');
+                            let infoButton = h('Button', {
                                 props: {
                                     type: 'primary',
                                     size: 'small'
@@ -206,8 +205,14 @@
                                         this.changePageType('info');
                                     }
                                 }
-                               }, '查看')
-                             ]);
+                            }, '查看');
+                            if(!!this.operators.edit){
+                                arr.push(editButton)
+                            }
+                            if(!!this.operators.info){
+                                arr.push(infoButton)
+                            }
+                            return h('div', arr);
                         }
                     }
                 ],
@@ -301,9 +306,60 @@
                     }
                 }
                 vm.activatedType = true;//主要解决mounted和activated重复调用
+            },
+            /*===================== 菜单权限配置 start ====================*/
+            /* 获取该菜单拥有的权限 */
+            fnGetOperators () {
+                let vm = this;
+                function fnGetDatas (id,vm) {
+                    let list = [];
+                    let menuArrs = []; // 相同menuId的数组
+                    let strArrs = []; // 权限数组 ["add","edit"]
+                    /* 菜单对应的权限组 */
+                    if(!!JSON.parse(window.localStorage.getItem("userInfo")).operator.list){
+                        list = JSON.parse(window.localStorage.getItem("userInfo")).operator.list;
+                    }
+                    /* 每个用户有可能被分配了多个角色，所以需要合并相同menuId的权限组 */
+                    for(var c = 0;c<list.length;c++){
+                        if(list[c].menuId == id){
+                            menuArrs.push(list[c]);
+                        }
+                    }
+
+                    for(var j = 0;j<menuArrs.length;j++){
+                        if(!!menuArrs[j].operCode){
+                            vm.fnChangeOperators(menuArrs[j].operCode.split(","));
+                        }
+                    }
+                }
+                /* 得到所有的菜单 */
+                let arrs = JSON.parse(window.localStorage.getItem("userInfo")).menu;
+                for(var i = 0;i<arrs.length;i++){
+                    if(!!arrs[i].hasChildList){
+                        for(var j = 0;j<arrs[i].childList.length;j++){
+                            if(arrs[i].childList[j].href == this.$route.path){
+                                fnGetDatas(arrs[i].childList[j].menuId,vm)
+                            }
+                        }
+                    }else{
+                        if(arrs[i].href == this.$route.path){
+                            fnGetDatas(arrs[i].menuId,vm)
+                        }
+                    }
+                }
+            },
+            /* 权限的遍历 */
+            fnChangeOperators (arrs) {
+                // operators{}是开关对象
+                let vm = this;
+                arrs.forEach(function(item,index){
+                    vm.operators[item] = true;
+                })
             }
+            /*=================== 菜单权限配置 end ===========================*/
         },
         mounted: function(){
+            this.fnGetOperators();
             this.getData();
         },
         activated: function(){

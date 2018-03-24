@@ -12,9 +12,9 @@
             <Row style="margin-bottom:10px;" v-show="false">
                 <Col span="5">
                     <ButtonGroup>
-                        <Button v-if="!!operators.add" @click.native="changePageType('list')" type="primary" size="small" icon="ios-search">新增</Button>
-                        <Button v-if="!!operators.refresh" @click.native="refreshTable" type="warning" size="small" icon="refresh">刷新</Button>
-                        <Button v-if="!!operators.delete" type="error" size="small" icon="android-delete">删除</Button>
+                        <Button @click.native="changePageType('list')" type="primary" size="small" icon="ios-search">新增</Button>
+                        <Button @click.native="refreshTable" type="warning" size="small" icon="refresh">刷新</Button>
+                        <Button type="error" size="small" icon="android-delete">删除</Button>
                     </ButtonGroup>
                 </Col>
                 <Col span="3" offset="16">
@@ -48,11 +48,11 @@
             </Form>
             <Row style="margin-bottom:10px;">
                 <Col span="5">
-                    <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
-                    <Button style="margin-left:5px;" @click.native="getData('init')" @click="ievent" type="warning" icon="refresh">刷新</Button>
+                    <Button v-if="!!operators.see" style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
+                    <Button v-if="!!operators.refresh" style="margin-left:5px;" @click.native="getData('init')" @click="ievent" type="warning" icon="refresh">刷新</Button>
                 </Col>
                 <Col span="3" offset="16">
-                    <Button style="float:right;" @click.native="changePageType('add')" type="success" icon="android-add">新增门店</Button>
+                    <Button v-if="!!operators.add" style="float:right;" @click.native="changePageType('add')" type="success" icon="android-add">新增门店</Button>
                 </Col>
             </Row>
             <Table
