@@ -276,6 +276,9 @@
                             expiredTime:end,
                             effectiveDay:effectiveDay    //有效天数
                         }
+                        if(this.storeId){
+                            ajaxData.storeId = this.storeId;
+                        }
                         console.log(JSON.stringify(ajaxData))
                         let url = this.common.path2+'memberCard/releaseMemberCard';
                         this.$http.post(

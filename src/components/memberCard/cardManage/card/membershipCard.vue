@@ -56,7 +56,6 @@
                 :columns="tableColumns1" 
                 ref="table"
                 stripe
-                border
                 @on-select="fnSelect"
                 @on-select-all="fnSelectAll"
             ></Table>
@@ -151,7 +150,104 @@
                         width: 260,
                         align: 'center',
                         render: (h, params) => {
-                            if(params.row.sellStatus==0){
+                            if(this.storeId){
+                                if(params.row.issueType==0){
+                                    return h('div', [
+                                        h('Button', {
+                                            props: {
+                                                type: 'info',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                marginRight: '5px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    this.infoId = params.row.id
+                                                    this.changePageType('info');
+                                                }
+                                            }
+                                        }, '查看'),
+                                        h('Button', {
+                                            props: {
+                                                type: 'info',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                marginRight: '5px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    this.$store.commit('TAB_CTRL','cardSaleRecord')
+                                                    this.$store.commit('CARD_NAME',params.row.cardName)
+                                                }
+                                            }
+                                        }, '售卡记录')
+                                    ]);
+                                }else{
+                                    return h('div', [
+                                        h('Button', {
+                                            props: {
+                                                type: 'info',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                marginRight: '5px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    this.infoId = params.row.id
+                                                    this.changePageType('info');
+                                                }
+                                            }
+                                        }, '查看'),
+                                        h('Button', {
+                                            props: {
+                                                type: 'primary',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                marginRight: '5px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    this.editId = params.row.id
+                                                    this.changePageType('edit');
+                                                }
+                                            }
+                                        }, '编辑'),
+                                        h('Button', {
+                                            props: {
+                                                type: 'error',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                marginRight: '5px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    this.upAndDown(params.row.id,params.row.sellStatus)
+                                                }
+                                            }
+                                        }, params.row.sellStatus?'上架':'下架'),
+                                        h('Button', {
+                                            props: {
+                                                type: 'info',
+                                                size: 'small'
+                                            },
+                                            style: {
+                                                marginRight: '5px'
+                                            },
+                                            on: {
+                                                click: () => {
+                                                    this.$store.commit('TAB_CTRL','cardSaleRecord')
+                                                    this.$store.commit('CARD_NAME',params.row.cardName)
+                                                }
+                                            }
+                                        }, '售卡记录')
+                                    ]);
+                                }
+                            }else{
                                 return h('div', [
                                     h('Button', {
                                         props: {
@@ -196,7 +292,7 @@
                                                 this.upAndDown(params.row.id,params.row.sellStatus)
                                             }
                                         }
-                                    }, '下架'),
+                                    }, params.row.sellStatus?'上架':'下架'),
                                     h('Button', {
                                         props: {
                                             type: 'info',
@@ -207,55 +303,6 @@
                                         },
                                         on: {
                                             click: () => {
-                                                // this.historyId = params.row.id
-                                                this.$store.commit('TAB_CTRL','cardSaleRecord')
-                                                this.$store.commit('CARD_NAME',params.row.cardName)
-                                            }
-                                        }
-                                    }, '售卡记录')
-                                ]);
-                            }else{
-                                return h('div', [
-                                    h('Button', {
-                                        props: {
-                                            type: 'info',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                this.infoId = params.row.id
-                                                this.changePageType('info');
-                                            }
-                                        }
-                                    }, '查看'),
-                                    h('Button', {
-                                        props: {
-                                            type: 'error',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                this.upAndDown(params.row.id,params.row.sellStatus)
-                                            }
-                                        }
-                                    }, '上架'),
-                                    h('Button', {
-                                        props: {
-                                            type: 'info',
-                                            size: 'small'
-                                        },
-                                        style: {
-                                            marginRight: '5px'
-                                        },
-                                        on: {
-                                            click: () => {
-                                                // this.historyId = params.row.id
                                                 this.$store.commit('TAB_CTRL','cardSaleRecord')
                                                 this.$store.commit('CARD_NAME',params.row.cardName)
                                             }

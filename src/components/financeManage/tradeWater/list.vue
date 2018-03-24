@@ -81,7 +81,6 @@
                 :columns="tableColumns1" 
                 ref="table"
                 stripe
-                border
                 @on-select="fnSelect"
                 @on-select-all="fnSelectAll"
             ></Table>
