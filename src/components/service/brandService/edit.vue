@@ -130,7 +130,7 @@
                 ></editor>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+                <Button :disabled="!!btnCode" type="primary" @click="handleSubmit('formValidate')">提交</Button>
                 <Button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">重置</Button>
                 <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
             </FormItem>
@@ -148,6 +148,7 @@
     export default {
         data () {
             return {
+                btnCode: false,
                 table:{
                     tableData1: [],
                     recordsTotal:0,
@@ -320,6 +321,7 @@
                             ajaxData.recruitProductBeauticianRefList.push(obj);
                         }
                         let url = vm.common.path2 + "product/modify/self"
+                        vm.btnCode = true;
                         vm.$http.post(
                             url,
                             ajaxData,
@@ -327,8 +329,10 @@
                             let oData = res.data
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
+                            vm.btnCode = false;
                         }).catch(function(err){
-                            vm.$Message.success(err);
+                            vm.$Message.error('提交失败!');
+                            vm.btnCode = false;
                         })
                     } else {
                         this.$Message.error('提交失败!');

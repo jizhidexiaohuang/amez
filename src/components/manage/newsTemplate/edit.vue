@@ -24,7 +24,7 @@
                 <Input v-model="formValidate.img" placeholder=""></Input>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+                <Button :disabled="!!btnCode" type="primary" @click="handleSubmit('formValidate')">提交</Button>
                 <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
             </FormItem>
         </Form>
@@ -35,6 +35,7 @@
     export default {
         data () {
             return {
+                btnCode: false,
                 formValidate: {
                     smsName: '',// 短信名称
                     smsCode: '',// 短信编码
@@ -74,15 +75,18 @@
                             id:vm.sendChild.id,
                         }
                         let url = vm.common.path2 + "baseSmsTemplates/update"
+                        vm.btnCode = true;
                         vm.$http.put(
                             url,
                             ajaxData,
                         ).then(function(res){
                             let oData = res.data
                             vm.$emit('returnList', 'list'); 
+                            vm.btnCode = false;
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            vm.$Message.success(err);
+                            vm.btnCode = false;
+                            this.$Message.error('提交失败!');
                         })
                     } else {
                         this.$Message.error('提交失败!');

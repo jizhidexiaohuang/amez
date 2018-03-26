@@ -11,7 +11,7 @@
                 <Input v-model="formValidate.menuUrl" placeholder="请填写菜单请求地址"></Input>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+                <Button :disabled="!!btnCode" type="primary" @click="handleSubmit('formValidate')">提交</Button>
                 <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
             </FormItem>
         </Form>
@@ -23,6 +23,7 @@
         props: ["twoChild"],
         data () {
             return {
+                btnCode: false,
                 formValidate: {
                     menuName: '',// 分类名称
                 },
@@ -57,6 +58,7 @@
                             parentId: vm.twoChild.parentId, // 父类id
                         }
                         let url = vm.common.path2+"baseMenus/insert";
+                        vm.btnCode = true;
                         vm.$http.post(
                             url,
                             JSON.stringify(ajaxData),
@@ -67,9 +69,11 @@
                             }
                         ).then(function(res){
                             vm.$emit('returnList', 'list'); 
+                            vm.btnCode = false;
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            vm.$Message.success(err);
+                            this.$Message.error('提交失败!');
+                            vm.btnCode = false;
                         })
                     } else {
                         this.$Message.error('提交失败!');

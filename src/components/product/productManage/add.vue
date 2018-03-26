@@ -50,10 +50,6 @@
             <FormItem label="运输邮费" prop="serverName" v-if="false">
                 <Input v-model="formValidate.serverName" placeholder="请填写运输邮费"></Input>
             </FormItem>
-
-        
-           
-          
             <FormItem label="产品详情" prop="physicalDetail">
                 <editor id="editor_id" height="700px" width="100%;" :content="formValidate.physicalDetail"
                     :uploadJson="path"
@@ -63,7 +59,7 @@
                 ></editor>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+                <Button :disabled="!!btnCode" type="primary" @click="handleSubmit('formValidate')">提交</Button>
                 <Button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">重置</Button>
                 <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
             </FormItem>
@@ -75,6 +71,7 @@
     export default {
         data () {
             return {
+                btnCode: false,
                 tplList: [], // 模板列表
                 bookTypeList:['件','个','支','盒','片','套','瓶','箱','罐'],
                 formValidate: {
@@ -156,6 +153,7 @@
                         /* 封面图 */
                         ajaxData.coverImg = vm.uploadList.length>0?vm.uploadList[0].url:"";//封面图
                         let url = vm.common.path2+"productPhysical/insert";
+                        vm.btnCode = true;
                         vm.$http.post(
                             url,
                             JSON.stringify(ajaxData),
@@ -167,9 +165,11 @@
                         ).then(function(res){
                             let oData = res.data
                             vm.$emit('returnList', 'list'); 
+                            vm.btnCode = false;
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            vm.$Message.success(err);
+                            this.$Message.error('提交失败!');
+                            vm.btnCode = false;
                         })
                     } else {
                         this.$Message.error('提交失败!');

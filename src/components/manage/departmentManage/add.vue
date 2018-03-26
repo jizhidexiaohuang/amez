@@ -21,7 +21,7 @@
                 </FormItem>
                 <Tree @on-check-change="fnCheckMenuList" :data="treeList" show-checkbox multiple style="margin-left:30px; margin-bottom:20px;"></Tree>
                 <FormItem style="margin-left:5px;">
-                    <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+                    <Button :disabled="!!btnCode" type="primary" @click="handleSubmit('formValidate')">提交</Button>
                     <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
                 </FormItem>        
             </Form>
@@ -33,6 +33,7 @@
     export default {
         data () {
             return {
+                btnCode: false,
                 formValidate: {
                     roleName: '',//角色名称
                     roleCode: '',//角色描述
@@ -114,6 +115,7 @@
                             roleCode:vm.formValidate.roleCode
                         }
                         let url = vm.common.path2+"system/api/baseRole/";
+                        vm.btnCode = true;
                         vm.$http.post(
                             url,
                             JSON.stringify(ajaxData),
@@ -125,9 +127,11 @@
                         ).then(function(res){
                             let oData = res.data
                             vm.$emit('returnList', 'list'); 
+                            vm.btnCode = false;
                             vm.$Message.success(oData.message);
                         }).catch(function(err){
-                            vm.$Message.success(err);
+                            vm.btnCode = false;
+                            this.$Message.error('提交失败!');
                         })
                         
                     } else {

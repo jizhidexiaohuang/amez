@@ -16,7 +16,7 @@
                     <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="90">
                         <Tree @on-check-change="fnCheckMenuList" @on-select-change="fnDoSome" :data="treeList" show-checkbox style="margin-left:30px; margin-bottom:20px;"></Tree>
                         <FormItem style="margin-left:5px;">
-                            <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+                            <Button :disabled="!!btnCode" type="primary" @click="handleSubmit('formValidate')">提交</Button>
                             <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
                         </FormItem>        
                     </Form>
@@ -35,6 +35,7 @@
         props:["roleId","allMenus"],
         data () {
             return {
+                btnCode: false,
                 formValidate: {
                 },
                 ruleValidate: {
@@ -100,15 +101,18 @@
                     roleId:vm.roleId,
                     resourcesIds:vm.resourcesIds
                 }
+                vm.btnCode = true;
                 let url = vm.common.path2+"baseRoleResources/distributionBaseRoleResources?roleId="+vm.roleId+"&resourcesIds="+vm.resourcesIds;
                 vm.$http.get(
                     url
                 ).then(function(res){
                     let oData = res.data
                     vm.$emit('returnList', 'list'); 
+                    vm.btnCode = false;
                     vm.$Message.success(oData.message);
                 }).catch(function(err){
-                    vm.$Message.success(err);
+                    this.$Message.error('提交失败!');
+                    vm.btnCode = false;
                 })
                     
             },

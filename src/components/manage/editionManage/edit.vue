@@ -23,7 +23,7 @@
                     <Radio label="2">ios</Radio>
                 </RadioGroup>
             </FormItem>
-            <FormItem label="描述" prop="des">
+            <FormItem label="描述" prop="des" v-if="false">
                 <Input v-model="formValidate.des" placeholder="请填写描述"></Input>
             </FormItem>
             <FormItem label="更新类型" prop="forced">
@@ -42,7 +42,7 @@
                 <Input v-model="formValidate.remarks" type="textarea" :autosize="{minRows: 5,maxRows: 10}" placeholder="请填写备注..."></Input>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+                <Button :disabled="!!btnCode" type="primary" @click="handleSubmit('formValidate')">提交</Button>
                 <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
             </FormItem>
         </Form>
@@ -53,6 +53,7 @@
     export default {
         data () {
             return {
+                btnCode: false,
                 formValidate: {
                     'versionName':'',
                     'updateUrl':'',
@@ -104,15 +105,18 @@
                             id:vm.sendChild.id,
                         }
                         let url = vm.common.path2 + "baseAppUpdateVersions/update"
+                        vm.btnCode = true;
                         vm.$http.put(
                             url,
                             ajaxData,
                         ).then(function(res){
                             let oData = res.data
                             vm.$emit('returnList', 'list'); 
+                            vm.btnCode = false;
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            vm.$Message.success(err);
+                            this.$Message.error('提交失败!');
+                            vm.btnCode = false;
                         })
                     } else {
                         this.$Message.error('提交失败!');

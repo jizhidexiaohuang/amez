@@ -39,7 +39,7 @@
             </FormItem>
 
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+                <Button :disabled="!!btnCode" type="primary" @click="handleSubmit('formValidate')">提交</Button>
                 <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
             </FormItem>
         </Form>
@@ -50,6 +50,7 @@
     export default {
         data () {
             return {
+                btnCode: false,
                 formValidate: {
                     'jobName': '', // 定时任务名称
                     'cronExpression': '', // 定时任务Corn表达式
@@ -101,15 +102,18 @@
                             id:vm.sendChild.id,
                         }
                         let url = vm.common.path2 + "scheduleJob/edit"
+                        vm.btnCode = true;
                         vm.$http.post(
                             url,
                             ajaxData,
                         ).then(function(res){
                             let oData = res.data
                             vm.$emit('returnList', 'list'); 
+                            vm.btnCode = false;
                             vm.$Message.success(res.data.message);
                         }).catch(function(err){
-                            vm.$Message.success(err);
+                            this.$Message.error('提交失败!');
+                            vm.btnCode = false;
                         })
                     } else {
                         this.$Message.error('提交失败!');

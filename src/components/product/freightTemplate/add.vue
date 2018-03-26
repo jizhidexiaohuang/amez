@@ -90,7 +90,7 @@
                 <a @click="fnAddCitys">为指定省份设置运费</a>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+                <Button :disabled="!!btnCode" type="primary" @click="handleSubmit('formValidate')">提交</Button>
                 <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
             </FormItem> 
         </Form>
@@ -130,6 +130,7 @@
     export default {
         data () {
             return {
+                btnCode: false,
                 freightTemplate: {
                     templateName: '', // 模板名称
                     pricingMethod: '1', // 计费方式
@@ -205,6 +206,7 @@
                         !!vm.cityList.length&&vm.cityList.forEach((item,index)=>{
                             ajaxData.cityList.push(item);
                         })
+                        vm.btnCode = true;
                         vm.$http.post(
                             url,
                             JSON.stringify(ajaxData),
@@ -216,8 +218,10 @@
                         ).then(function(res){
                             vm.$emit('returnList', 'list'); 
                             vm.$Message.success('成功');
+                            vm.btnCode = false;
                         }).catch(function(err){
-                            vm.$Message.success(err);
+                            this.$Message.error('提交失败!');
+                            vm.btnCode = false;
                         })
                     } else {
                         this.$Message.error('提交失败!');

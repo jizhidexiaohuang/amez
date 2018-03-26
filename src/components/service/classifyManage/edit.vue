@@ -50,7 +50,7 @@
                 </div>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+                <Button :disabled="!!btnCode" type="primary" @click="handleSubmit('formValidate')">提交</Button>
                 <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
             </FormItem>
         </Form>
@@ -61,6 +61,7 @@
     export default {
         data () {
             return {
+                btnCode: false,
                 formValidate: {
                     categoryName: '',// 分类名称
                     categoryLogo:'',//图片地址
@@ -120,15 +121,18 @@
                             storeId: vm.storeId, // 店铺id
                         }
                         let url = vm.common.path2 + "productCategory/edit"
+                        vm.btnCode = true;
                         vm.$http.put(
                             url,
                             ajaxData,
                         ).then(function(res){
                             let oData = res.data
                             vm.$emit('returnList', 'list'); 
+                            vm.btnCode = false;
                             vm.$Message.success('成功');
                         }).catch(function(err){
-                            vm.$Message.success(err);
+                            this.$Message.error('提交失败!');
+                            vm.btnCode = false;
                         })
                     } else {
                         this.$Message.error('提交失败!');
