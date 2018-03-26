@@ -199,6 +199,7 @@
                 isShow:true,
                 storeId:'',// 店铺id
                 checkBoxCode: false,
+                storeCheckBoxCode: false,
             }
         },
         props: ["sendChild"],
@@ -420,6 +421,7 @@
                 // 是否支持到店
                 if(data.product.isSupportStore == 1){
                     vm.formValidate.serverEffect1.push('store');
+                    vm.storeCheckBoxCode = true;
                 }
 
 
@@ -474,13 +476,17 @@
                 let vm = this;
                 if(list.length>0){
                     vm.checkBoxCode = false;
+                    vm.storeCheckBoxCode = false;
                     list.forEach((item,index)=>{
                         if(item == 'home'){
                             vm.checkBoxCode = true;
                         }
+                        if(item == 'store'){
+                            vm.storeCheckBoxCode = true;
+                        }
                     })
                 }else{
-                    vm.checkBoxCode = false;
+                    vm.storeCheckBoxCode = false;
                 }
             }
         },

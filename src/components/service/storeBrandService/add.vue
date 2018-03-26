@@ -196,6 +196,7 @@
                 storeId:"",// 店铺id
                 isShow: true,
                 checkBoxCode: false,
+                storeCheckBoxCode: false,
                 btnCode: false,
             }
         },
@@ -370,13 +371,18 @@
                 let vm = this;
                 if(list.length>0){
                     vm.checkBoxCode = false;
+                    vm.storeCheckBoxCode = false;
                     list.forEach((item,index)=>{
                         if(item == 'home'){
                             vm.checkBoxCode = true;
                         }
+                        if(item == 'store'){
+                            vm.storeCheckBoxCode = true;
+                        }
                     })
                 }else{
                     vm.checkBoxCode = false;
+                    vm.storeCheckBoxCode = false;
                 }
             }
         },

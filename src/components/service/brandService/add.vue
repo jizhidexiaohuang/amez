@@ -67,12 +67,12 @@
                     </div>
                 </div>
             </FormItem>
-            <FormItem label="到店服务员工" v-if="!!isShowBox">
+            <FormItem label="到店服务员工" v-if="!!isShowBox&&!!storeCheckBoxCode">
                 <storeTable></storeTable>
                 <storeList></storeList>
                 <!--<businessList></businessList>-->
             </FormItem>
-            <FormItem label="上门服务员工" v-if="!!isShowBox">
+            <FormItem label="上门服务员工" v-if="!!isShowBox&&!!checkBoxCode">
                 <homeTable></homeTable>
                 <homeList></homeList>
                 <!--<businessList></businessList>-->
@@ -228,6 +228,7 @@
                 isShowBox: false,
                 isAdmin: true,
                 checkBoxCode: false,
+                storeCheckBoxCode: false,
                 btnCode: false,
             }
         },
@@ -476,13 +477,18 @@
                 let vm = this;
                 if(list.length>0){
                     vm.checkBoxCode = false;
+                    vm.storeCheckBoxCode = false;
                     list.forEach((item,index)=>{
                         if(item == 'home'){
                             vm.checkBoxCode = true;
                         }
+                        if(item == 'store'){
+                            vm.storeCheckBoxCode = true;
+                        }
                     })
                 }else{
                     vm.checkBoxCode = false;
+                    vm.storeCheckBoxCode = false;
                 }
             }
         },

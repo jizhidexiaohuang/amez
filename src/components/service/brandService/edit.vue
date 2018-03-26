@@ -68,11 +68,11 @@
                     </div>
                 </div>
             </FormItem>
-            <FormItem label="到店服务员工" v-if="!!isShowBox">
+            <FormItem label="到店服务员工" v-if="!!isShowBox&&!!storeCheckBoxCode">
                 <storeTable></storeTable>
                 <storeList></storeList>
             </FormItem>
-            <FormItem label="上门服务员工" v-if="!!isShowBox">
+            <FormItem label="上门服务员工" v-if="!!isShowBox&&!!checkBoxCode">
                 <homeTable></homeTable>
                 <homeList></homeList>
             </FormItem>
@@ -223,6 +223,7 @@
                 isShowBox: true,
                 isAdmin: true,
                 checkBoxCode: false,
+                storeCheckBoxCode: false,
             }
         },
         props: ["sendChild"],
@@ -459,6 +460,7 @@
                 // 是否支持到店
                 if(data.product.isSupportStore == 1){
                     vm.formValidate.serverEffect1.push('store');
+                    vm.storeCheckBoxCode = true;
                 }
                 vm.formValidate.type = !!!data.productCategoryRef?"":data.productCategoryRef.categoryId;// 服务分类
                 // vm.formValidate.brandId = data.product.brandId; // 服务所属品牌
@@ -571,13 +573,18 @@
                 let vm = this;
                 if(list.length>0){
                     vm.checkBoxCode = false;
+                    vm.storeCheckBoxCode = false;
                     list.forEach((item,index)=>{
                         if(item == 'home'){
                             vm.checkBoxCode = true;
                         }
+                        if(item == 'store'){
+                            vm.storeCheckBoxCode = true;
+                        }
                     })
                 }else{
                     vm.checkBoxCode = false;
+                    vm.storeCheckBoxCode = false;
                 }
             }
         },
