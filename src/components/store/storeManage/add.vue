@@ -627,7 +627,7 @@
                             },
                             storeExtend:{
                                 companyName:this.formValidate.companyName,//公司名称
-                                businessLicenseUmber:this.formValidate.businessLicenseNumber,//营业执照号码
+                                businessLicenseNumber:this.formValidate.businessLicenseNumber,//营业执照号码
                                 legalPersonName:this.formValidate.LegalPersonName,//法人姓名
                                 legalPersonIdcard:this.formValidate.IdCardNum,//身份证号码
                                 praBank:this.formValidate.AccountOpeningBank,//商户--开户银行
@@ -669,14 +669,11 @@
                             }
                         ).then(res=>{
                             console.log(res)
+                            this.$Loading.finish();
+                            this.returnHome('list')
                             this.$Message.success(res.data.message);
-                            if(res.data.code==200){
-                                this.$Loading.start();
-                                this.returnHome('list')
-                            }else{
-                                this.$Loading.error();
-                                this.$Message.error(res.data.message);
-                            }
+                        }).catch(err=>{
+                            this.$Loading.error();
                         })
                     } else {
                         this.$Message.error('请填写完整信息!');

@@ -691,14 +691,12 @@
                             }
                         ).then(res=>{
                             console.log(res)
-                            if(res.status==200){
-                                this.$Loading.finish();
-                                this.$Message.success(res.data.message);
-                                this.returnHome('list')
-                            }else{
-                                this.$Loading.error();
-                                this.$Message.error(res.data.message);
-                            }
+                            this.$Loading.finish();
+                            this.returnHome('list')
+                            this.$Message.success(res.data.message);
+                        }).catch(res=>{
+                            this.$Loading.error();
+                            console.log(res)
                         })
                     } else {
                         this.$Message.error('信息不完整!');
