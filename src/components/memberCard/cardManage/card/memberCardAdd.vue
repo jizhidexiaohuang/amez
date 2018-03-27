@@ -109,6 +109,7 @@
                 discount:'',
                 brandId:'',
                 storeId:'',
+                storeName:'',
                 storeShow:false,
                 issueType:0,
                 src:'',
@@ -280,6 +281,9 @@
                         if(this.storeId){
                             ajaxData.storeId = this.storeId;
                         }
+                        if(this.storeName){
+                            ajaxData.storeName = this.storeName;
+                        }
                         console.log(JSON.stringify(ajaxData))
                         let url = this.common.path2+'memberCard/releaseMemberCard';
                         this.btnCtrl = true;
@@ -345,6 +349,7 @@
                 this.issueType = 1;//店铺
                 this.storeRange = '限本店适用';
                 this.storeId = JSON.parse(window.localStorage.getItem('userInfo')).store.id;
+                this.storeName = JSON.parse(window.localStorage.getItem('userInfo')).store.storeName;
                 this.formValidate.useAbleStoreList.push(JSON.parse(window.localStorage.getItem('userInfo')).store.id);
                 this.formValidate.brandId = JSON.parse(window.localStorage.getItem('userInfo')).store.brandId;
                 this.formValidate.brandName = JSON.parse(window.localStorage.getItem('userInfo')).store.brandName;

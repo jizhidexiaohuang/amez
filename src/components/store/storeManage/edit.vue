@@ -188,11 +188,13 @@
         <Row>
             <Col span="24">
                 <FormItem label="营业执照" prop="businessLicense">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadLicense">
+                    <!-- <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadLicense">
                         <Button v-if="!formValidate.businessLicense" type="ghost" icon="ios-cloud-upload-outline">上传</Button>
                         <img v-if="formValidate.businessLicense" :src="formValidate.businessLicense" alt="">
                         <span>(三证合一只上传营业执照，非三证合一请分别上传营业执照，组织机构代码证，税务登记证)</span>
-                    </Upload>
+                    </Upload> -->
+                    <MyUpload v-if="formValidate.businessLicense" :defaultList="defaultListLicense" :uploadConfig="uploadConfigLicense" v-on:listenUpload="v=>{getUploadList(v,'license')}"></MyUpload>
+                    <span>(三证合一只上传营业执照，非三证合一请分别上传营业执照，组织机构代码证，税务登记证)</span>
                 </FormItem>
             </Col>
         </Row>
@@ -257,10 +259,11 @@
         <Row>
             <Col span="12">
                 <FormItem label="店铺荣誉" prop="">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadStoreHonor">
+                    <!-- <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadStoreHonor">
                         <Button v-if="!storeHonorPhoto" type="ghost" icon="ios-cloud-upload-outline">上传</Button>
                         <img v-if="storeHonorPhoto" :src="storeHonorPhoto" alt="">
-                    </Upload>
+                    </Upload> -->
+                    <MyUpload v-if="storeHonorPhoto" :defaultList="defaultListHonor" :uploadConfig="uploadConfigHonor" v-on:listenUpload="v=>{getUploadList(v,'honor')}"></MyUpload>
                     <span>(店铺相关的荣誉证书，获奖证书)</span>
                 </FormItem>
             </Col>
@@ -405,6 +408,14 @@
                     title:'',
                     type:'linkage',
                     cityList:[],
+                },
+                defaultListHonor:[],
+                uploadConfigHonor:{
+                    num:6
+                },
+                defaultListLicense:[],
+                uploadConfigLicense:{
+                    num:3
                 },
                 cityCtrl:false, //控制子组件是否创建
                 extendId:0,//扩展id
@@ -570,7 +581,7 @@
                         { required: true, message: '请设置保证金缴纳状态', pattern:/.+/, trigger: 'change' }
                     ],
                     premiumReceived:[
-                        { required: true, message: '请填写缴费金额', pattern:/.+/, trigger: 'blur' }
+                        // { required: true, message: '请填写缴费金额', pattern:/.+/, trigger: 'blur' }
                     ],
                     businessLicense:[
                         { required: true, message: '请上传营业执照', pattern:/.+/, trigger: 'blur' }
@@ -841,8 +852,22 @@
                 this.formValidate.contract = res.data
             },
             //上传营业执照
-            uploadLicense(res){
-                this.businessLicense = res.data
+            getUploadList(data,type){
+                console.log(data)
+                let tempArr = [];
+                if(data.length!=0){
+                    if(type=='honor'){
+                        data.forEach((item,index)=>{
+                            tempArr.push(data[index].url)
+                            this.storeHonorPhoto = tempArr.join(',');
+                        })
+                    }else if(type=='license'){
+                        for(var i=0;i<data.length;i++){
+                            tempArr.push(data[i].url);
+                            this.formValidate.businessLicense = tempArr.join(',');                         
+                        }
+                    }
+                }
             },
             //上传店铺荣誉
             uploadStoreHonor(res){
@@ -936,7 +961,10 @@
                     //------------扩展表----------------------------------------
                     this.extendId = storeExtend.id;
                     this.formValidate.companyName = storeExtend.companyName; //公司名称
-                    this.formValidate.businessLicense = storeExtend.businessLicense;  //营业执照(暂时用横幅代替营业执照)
+                    this.formValidate.businessLicense = storeExtend.businessLicense;  //营业执照
+                    this.defaultListLicense = storeExtend.businessLicense.split(',');
+                    this.storeHonorPhoto = storeExtend.storeHonorPhoto;  //店铺荣誉
+                    this.defaultListHonor = storeExtend.storeHonorPhoto.split(',');
                     this.formValidate.idcardPositivePhoto = storeExtend.idcardPositivePhoto;//正面照
                     this.formValidate.idcardNegativePhoto = storeExtend.idcardNegativePhoto;//正面照
                     this.formValidate.idcardHandheldPhoto = storeExtend.idcardHandheldPhoto;//手持照

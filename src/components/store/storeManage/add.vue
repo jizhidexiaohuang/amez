@@ -174,10 +174,7 @@
         <Row>
             <Col span="24">
                 <FormItem label="营业执照" prop="businessLicense">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadLicense">
-                        <Button v-if="!formValidate.businessLicense" type="ghost" icon="ios-cloud-upload-outline">上传</Button>
-                        <img v-if="formValidate.businessLicense" :src="formValidate.businessLicense" alt="">
-                    </Upload>
+                    <MyUpload :defaultList="defaultListLicense" :uploadConfig="uploadConfigLicense" v-on:listenUpload="v=>{getUploadList(v,'license')}"></MyUpload>
                     <span>(三证合一只上传营业执照，非三证合一请分别上传营业执照，组织机构代码证，税务登记证)</span>
                 </FormItem>
             </Col>
@@ -243,10 +240,7 @@
         <Row>
             <Col span="16">
                 <FormItem label="店铺荣誉" prop="storeHonorPhoto">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadStoreHonor">
-                        <Button v-if="!storeHonorPhoto" type="ghost" icon="ios-cloud-upload-outline">上传</Button>
-                        <img v-if="storeHonorPhoto" :src="storeHonorPhoto" alt="">
-                    </Upload>
+                    <MyUpload :defaultList="defaultListHonor" :uploadConfig="uploadConfigHonor" v-on:listenUpload="v=>{getUploadList(v,'honor')}"></MyUpload>
                     <span>(店铺相关的荣誉证书，获奖证书)</span>
                 </FormItem>
             </Col>
@@ -381,7 +375,7 @@
     import common from '../../../base.js'
     import VDistpicker from 'v-distpicker'
     import CityLinkage from '../../common/city.vue'
-    // import MyUpload from '../../common/upload.vue'
+    import MyUpload from '../../common/upload.vue'
     export default {
         data () {
             return {
@@ -390,6 +384,14 @@
                     key:false,
                     title:'',
                     type:'linkage'
+                },
+                defaultListHonor:[],
+                uploadConfigHonor:{
+                    num:6
+                },
+                defaultListLicense:[],
+                uploadConfigLicense:{
+                    num:3
                 },
                 branchList:[], //渲染所属品牌下拉框数组
                 province:'',//城市级联的值
@@ -549,7 +551,7 @@
                         { required: true, message: '请设置保证金缴纳状态', pattern:/.+/, trigger: 'change' }
                     ],
                     premiumReceived:[
-                        { required: true, message: '请填写缴费金额', pattern:/.+/, trigger: 'blur' }
+                        // { required: true, message: '请填写缴费金额', pattern:/.+/, trigger: 'blur' }
                     ],
                     businessLicense:[
                         { required: true, message: '请上传营业执照', pattern:/.+/, trigger: 'blur' }
@@ -580,6 +582,7 @@
         },
         methods: {
             handleSubmit (name) {
+                let vm = this;
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         //处理几年老店
@@ -809,8 +812,22 @@
                 this.formValidate.contract = res.data
             },
             //上传营业执照
-            uploadLicense(res){
-                this.formValidate.businessLicense = res.data
+            getUploadList(data,type){
+                console.log(data)
+                let tempArr = [];
+                if(data.length!=0){
+                    if(type=='honor'){
+                        data.forEach((item,index)=>{
+                            tempArr.push(data[index].url)
+                            this.storeHonorPhoto = tempArr.join(',');
+                        })
+                    }else if(type=='license'){
+                        for(var i=0;i<data.length;i++){
+                            tempArr.push(data[i].url);
+                            this.formValidate.businessLicense = tempArr.join(',');                         
+                        }
+                    }
+                }
             },
             //上传店铺荣誉
             uploadStoreHonor(res){
@@ -877,8 +894,8 @@
         },
         components:{
            VDistpicker,
-           CityLinkage
-        //    MyUpload
+           CityLinkage,
+           MyUpload
         }
     }
 </script>
