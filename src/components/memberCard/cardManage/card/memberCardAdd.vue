@@ -87,7 +87,7 @@
                 </Col>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+                <Button type="primary" :disabled="btnCtrl" @click="handleSubmit('formValidate')">提交</Button>
                 <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
             </FormItem>
         </Form>
@@ -103,6 +103,7 @@
     export default {
         data() {
             return {
+                btnCtrl:false,
                 storeRange:'',
                 radioCtrl:'',
                 discount:'',
@@ -281,6 +282,7 @@
                         }
                         console.log(JSON.stringify(ajaxData))
                         let url = this.common.path2+'memberCard/releaseMemberCard';
+                        this.btnCtrl = true;
                         this.$http.post(
                             url,
                             JSON.stringify(ajaxData),
@@ -294,7 +296,11 @@
                             if(res.data.code==200){
                                 vm.handReturn('list');
                                 this.$Message.success('添加成功!');
+                                vm.btnCtrl = false;
                             }
+                        }).catch(err=>{
+                            this.$Message.success('添加失败!');
+                            vm.btnCtrl = false;
                         })
                     } else {
                         this.$Message.error('请填写完整信息!');

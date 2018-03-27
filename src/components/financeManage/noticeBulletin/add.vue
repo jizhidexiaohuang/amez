@@ -22,7 +22,7 @@
                 <DatePicker v-model="formValidate.announcementTime" format="yyyy/MM/dd" type="daterange" placement="top-start" placeholder="请选择日期" style="width:280px;"></DatePicker>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')" style="margin:0px 8px">保存</Button>
+                <Button type="primary" :disabled="btnCtrl" @click="handleSubmit('formValidate')" style="margin:0px 8px">保存</Button>
                 <Button v-if="false" type="ghost" @click="handleReset('formValidate')" style="margin:0px 8px">取消</Button>
                 <Button type="success" @click.native="returnHome('list')">返回</Button>
             </FormItem>
@@ -36,6 +36,7 @@
     export default {
         data () {
             return {
+                btnCtrl:false,
                 defaultList:[],//默认图片
                 uploadConfig:{
                     num:1
@@ -66,6 +67,7 @@
                             noticeEndTime:common.simpleFormatDate(this.formValidate.announcementTime[1],3)
                         }
                         console.log(ajaxData)
+                        this.btnCtrl = true;
                         this.$http.post(
                             url,
                             ajaxData,
@@ -79,7 +81,11 @@
                             if(res.status==200){
                                 this.$Message.success('操作成功!');
                                 this.returnHome('list');
+                                vm.btnCtrl = false;
                             }
+                        }).catch(err=>{
+                            this.$Message.error('操作失败!');
+                            this.btnCtrl = false;
                         })
                     } else {
                         this.$Message.error('操作失败!');

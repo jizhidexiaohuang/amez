@@ -98,7 +98,7 @@
                 </Select>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')">审核通过</Button>
+                <Button type="primary" :disabled="btnCtrl" @click="handleSubmit('formValidate')">审核通过</Button>
                 <Button type="error" @click="notPass()" style="margin-left: 8px;">审核不通过</Button>
                 <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
             </FormItem>
@@ -122,6 +122,7 @@
     export default {
         data () {
             return {
+                btnCtrl:false,
                 cityConfig:{
                     key:false,
                     title:'',
@@ -240,6 +241,7 @@
                         }
                         console.log(ajaxData)
                         let url = vm.common.path2+"storeBeautician/edit";
+                        this.btnCtrl = true;
                         vm.$http.put(
                             url,
                             JSON.stringify(ajaxData),
@@ -251,10 +253,12 @@
                         ).then(function(res){
                             let oData = res.data
                             vm.$emit('returnList', 'list'); 
-                            vm.$Message.success('成功');
+                            vm.btnCtrl = false;
+                            vm.$Message.success('提交成功');
                         }).catch(function(err){
                             console.log(err);
-                            vm.$Message.success(err);
+                            vm.$Message.success('提交失败！');
+                            vm.btnCtrl = false;
                         })
                     } else {
                         this.$Message.error('提交失败!');

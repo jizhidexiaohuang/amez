@@ -48,7 +48,7 @@
             </Form>
             <Row style="margin-bottom:10px;">
                 <Col span="5">
-                    <Button v-if="!!operators.see" style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
+                    <Button v-if="!!operators.see" style="margin-left:5px;" @click.native="getData('see')" type="primary" icon="ios-search">查询</Button>
                     <Button v-if="!!operators.refresh" style="margin-left:5px;" @click.native="getData('init')" @click="ievent" type="warning" icon="refresh">刷新</Button>
                 </Col>
                 <Col span="3" offset="16">
@@ -302,7 +302,9 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path2+"store/front/findByPage?pageNo="+start+'&pageSize='+size;
+                if(!!init&&init=='see'){
+                    start = 1;
+                }
                 let ajaxData = {
                     // pageNo:start,
                     // pageSize: size
@@ -339,6 +341,7 @@
                     }
                 }
                 console.log(ajaxData)
+                let url = common.path2+"store/front/findByPage?pageNo="+start+'&pageSize='+size;
                 vm.table.loading = true;
                 this.$http.post(
                     url,

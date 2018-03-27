@@ -25,8 +25,8 @@
                 </Col>
             </Row>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
-                <Button type="ghost" @click="handleReset('formValidate')" style="margin:0px 8px">取消</Button>
+                <Button type="primary" :disabled="btnCtrl" @click="handleSubmit('formValidate')">保存</Button>
+                <Button v-if="false" type="ghost" @click="handleReset('formValidate')" style="margin:0px 8px">取消</Button>
                 <Button type="success" @click.native="returnHome('list')">返回</Button>
             </FormItem>
         </Form>
@@ -39,18 +39,22 @@
     export default {
         data () {
             return {
+                btnCtrl:false,
                 defaultList:[],//默认图片
                 uploadConfig:{
                     num:1
                 },
-                brandLogo:[],//图片途径
                 formValidate: {
                     brandName: '',
+                    brandLogo:'',//图片途径
                     brandOwnershipCompany: '',
                 },
                  ruleValidate: {
                     brandName: [
                         { required: true, message: '品牌名称不能为空', trigger: 'blur' }
+                    ],
+                    brandLogo:[
+                        { required: true, message: '品牌Logo不能为空', trigger: 'blur' }
                     ],
                     brandOwnershipCompany: [
                         { required: true, message: '品牌所属公司不能为空', trigger: 'blur' }
@@ -69,9 +73,10 @@
                         let ajaxData = {
                             brandName:this.formValidate.brandName,
                             brandOwnershipCompany:this.formValidate.brandOwnershipCompany,
-                            brandLogo:this.brandLogo,
+                            brandLogo:this.formValidate.brandLogo,
                         }
                         console.log(ajaxData)
+                        this.btnCtrl = true;
                         this.$http.post(
                             url,
                             ajaxData,
@@ -85,7 +90,11 @@
                             if(res.status==200){
                                 this.$Message.success('操作成功!');
                                 this.returnHome('list');
+                                this.btnCtrl = false;
                             }
+                        }).catch(err=>{
+                            this.$Message.error('操作失败!');
+                            this.btnCtrl = false;
                         })
                     } else {
                         this.$Message.error('操作失败!');
@@ -99,7 +108,7 @@
                 let vm = this;
                 console.log(data)
                 if(data[0]){
-                    vm.brandLogo = data[0].response.data;
+                    vm.formValidate.brandLogo = data[0].response.data;
                 }
             }
         },

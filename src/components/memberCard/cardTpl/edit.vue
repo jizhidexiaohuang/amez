@@ -11,7 +11,7 @@
                 </Col>
             </Row>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')" style="margin-left:55px">保存</Button>
+                <Button type="primary" :disabled="btnCtrl" @click="handleSubmit('formValidate')" style="margin-left:55px">保存</Button>
                 <Button v-show="false" type="ghost" @click="handleReset('formValidate')" style="margin:0px 8px">取消</Button>
                 <Button type="success" @click.native="returnHome('list')">返回</Button>
             </FormItem>
@@ -25,6 +25,7 @@
     export default {
         data () {
             return {
+                btnCtrl:false,
                 testCode: false,
                 defaultList:[],//默认图片
                 uploadConfig:{
@@ -49,6 +50,7 @@
                             bgImgList:this.imgList
                         }
                         console.log(JSON.stringify(ajaxData))
+                        this.btnCtrl = true;
                         this.$http.put(
                             url,
                             JSON.stringify(ajaxData),
@@ -62,7 +64,11 @@
                             if(res.status==200){
                                 this.$Message.success('操作成功!');
                                 this.returnHome('list');
+                                vm.btnCtrl = false;
                             }
+                        }).catch(err=>{
+                            vm.btnCtrl = false;
+                            this.$Message.error('操作失败!');
                         })
                     } else {
                         this.$Message.error('操作失败!');

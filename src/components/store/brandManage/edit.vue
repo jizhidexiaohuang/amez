@@ -25,7 +25,7 @@
                 </Col>
             </Row>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')">保存</Button>
+                <Button type="primary" :disabled="btnCtrl" @click="handleSubmit('formValidate')">保存</Button>
                 <Button v-show="false" type="ghost" @click="handleReset('formValidate')" style="margin:0px 8px">取消</Button>
                 <Button type="success" @click.native="returnHome('list')">返回</Button>
             </FormItem>
@@ -39,15 +39,16 @@
     export default {
         data () {
             return {
+                btnCtrl:false,
                 testCode: false,
                 defaultList:[],//默认图片
                 uploadConfig:{
                     num:1
                 },
-                brandLogo:'',//图片途径
                 formValidate: {
                     brandName: '',
                     brandOwnershipCompany: '',
+                    brandLogo:'',//图片途径
                 },
                 ruleValidate: {
                     brandName: [
@@ -71,9 +72,10 @@
                             id:this.editId,
                             brandName:this.formValidate.brandName,
                             brandOwnershipCompany:this.formValidate.brandOwnershipCompany,
-                            brandLogo:this.brandLogo[0].response.data,
+                            brandLogo:this.formValidate.brandLogo,
                         }
                         console.log(ajaxData)
+                        this.btnCtrl = true;
                         this.$http.put(
                             url,
                             JSON.stringify(ajaxData),
@@ -87,7 +89,11 @@
                             if(res.status==200){
                                 this.$Message.success('操作成功!');
                                 this.returnHome('list');
+                                this.btnCtrl = false;
                             }
+                        }).catch(err=>{
+                            this.btnCtrl = false;
+                            this.$Message.error('操作失败!');
                         })
                     } else {
                         this.$Message.error('操作失败!');
@@ -99,8 +105,10 @@
             },
             getUploadList(data){
                 let vm = this;
-                vm.brandLogo = data;
                 console.log(data);
+                if(data[0]){
+                    vm.formValidate.brandLogo = data[0].response.data;
+                }
             },
             //根据id查数据
             getDataById(id){
@@ -113,6 +121,7 @@
                     this.defaultList.push({
                         'url':data.brandLogo
                     });
+                    this.formValidate.brandLogo = data.brandLogo;
                     this.testCode = true;
                 })
             }

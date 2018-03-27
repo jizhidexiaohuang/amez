@@ -85,7 +85,7 @@
                 </Col>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+                <Button type="primary" :disabled="btnCtrl" @click="handleSubmit('formValidate')">提交</Button>
                 <Button type="ghost" @click="handReturn('list')" style="margin-left: 8px;">返回</Button>
             </FormItem>
         </Form>
@@ -101,6 +101,7 @@
     export default {
         data() {
             return {
+                btnCtrl:false,
                 storeRange:'',
                 businessId:[],
                 serviceId:[],
@@ -260,6 +261,7 @@
                         }
                         console.log(JSON.stringify(ajaxData))
                         let url = this.common.path2+'memberCard/editMemberCardInfo';
+                        this.btnCtrl = true;
                         this.$http.put(
                             url,
                             JSON.stringify(ajaxData),
@@ -273,7 +275,11 @@
                             if(res.data.code==200){
                                 vm.handReturn('list');
                                 this.$Message.success('修改成功!');
+                                vm.btnCtrl = false;
                             }
+                        }).catch(err=>{
+                            this.$Message.error('修改失败!');
+                            vm.btnCtrl = false;
                         })
                     } else {
                         this.$Message.error('修改失败!');

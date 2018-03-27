@@ -65,7 +65,7 @@
                     </Row>
                 </FormItem>
                 <FormItem style="margin-bottom:10px;">
-                    <Button v-if="operators.see" style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
+                    <Button v-if="operators.see" style="margin-left:5px;" @click.native="getData('see')" type="primary" icon="ios-search">查询</Button>
                     <Button v-if="operators.refresh" style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                 </FormItem>
             </Form>
@@ -372,6 +372,9 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
+                if(!!init&&init=='see'){
+                    start = 1;
+                }
                 let url = common.path2+"orderBase/queryOrderList";
                 let ajaxData = {
                     pageNo:start,

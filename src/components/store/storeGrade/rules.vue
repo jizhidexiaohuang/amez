@@ -82,7 +82,7 @@
                 </Row>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formDynamic')" style="margin-right:8px">保存</Button>
+                <Button type="primary" :disabled="btnCtrl" @click="handleSubmit('formDynamic')" style="margin-right:8px">保存</Button>
                 <Button v-if="false" type="ghost" @click="handleReset('formDynamic')" style="margin:0px 8px">取消</Button>
                 <Button type="success" @click.native="returnHome('list')">返回</Button>
             </FormItem>
@@ -95,6 +95,7 @@
     export default {
         data () {
             return {
+                btnCtrl:false,
                 index: 1,
                 rulesArr:[],
                 itemsArr:[],
@@ -132,6 +133,7 @@
                         let ajaxData = {
                           ruleList:ruleList
                         }
+                        this.btnCtrl = true;
                         this.$http.post(
                           url,
                           JSON.stringify(ajaxData),
@@ -145,7 +147,11 @@
                           if(res.status==200){
                             this.returnHome('list')
                             this.$Message.success('提交成功!');
+                            this.btnCtrl = false;
                           }
+                        }).catch(err=>{
+                            this.$Message.error('提交失败!');
+                            this.btnCtrl = false;
                         })
                     } else {
                         this.$Message.error('Fail!');

@@ -368,7 +368,7 @@
         <Row>
             <Col span="24">
                 <FormItem>
-                    <Button type="primary" @click="handleSubmit('formValidate')" style="margin:0px 8px;">保存</Button>
+                    <Button type="primary" :disabled="btnCtrl" @click="handleSubmit('formValidate')" style="margin:0px 8px;">保存</Button>
                     <Button v-if="false" type="ghost" @click="handleReset('formValidate')" style="margin:0px 8px;">重置</Button>
                     <Button type="ghost" @click.native="returnHome('list')">返回</Button>    
                 </FormItem>
@@ -385,6 +385,7 @@
     export default {
         data () {
             return {
+                btnCtrl:false,
                 cityConfig:{
                     key:false,
                     title:'',
@@ -657,8 +658,8 @@
                             }
                         }
                         console.log(JSON.stringify(ajaxData))
-                        this.$Loading.start();
                         let url = common.path2 + 'store/add'
+                        this.btnCtrl = true;
                         this.$http.post(
                             url,
                             JSON.stringify(ajaxData),
@@ -669,11 +670,12 @@
                             }
                         ).then(res=>{
                             console.log(res)
-                            this.$Loading.finish();
                             this.returnHome('list')
+                            vm.btnCtrl = false;
                             this.$Message.success(res.data.message);
                         }).catch(err=>{
-                            this.$Loading.error();
+                            vm.btnCtrl = false;
+                            this.$Message.error('提交失败');
                         })
                     } else {
                         this.$Message.error('请填写完整信息!');

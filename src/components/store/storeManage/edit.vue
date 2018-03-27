@@ -382,7 +382,7 @@
         <Row>
             <Col span="24">
                 <FormItem>
-                    <Button type="primary" @click="handleSubmit('formValidate')" style="margin:0px 8px;">保存</Button>
+                    <Button type="primary" :disabled="btnCtrl" @click="handleSubmit('formValidate')" style="margin:0px 8px;">保存</Button>
                     <Button v-if="false" type="ghost" @click="handleReset('formValidate')" style="margin:0px 8px;">重置</Button>
                     <Button type="ghost" @click.native="returnHome('list')">返回</Button>    
                 </FormItem>
@@ -399,6 +399,7 @@
     export default {
         data () {
             return {
+                btnCtrl:false,
                 cityConfig:{
                     key:false,
                     title:'',
@@ -679,8 +680,8 @@
                             }
                         }
                         console.log(JSON.stringify(ajaxData))
-                        this.$Loading.start();
                         let url = common.path2 + 'store/modify'
+                        this.btnCtrl = true;
                         this.$http.put(
                             url,
                             JSON.stringify(ajaxData),
@@ -691,12 +692,13 @@
                             }
                         ).then(res=>{
                             console.log(res)
-                            this.$Loading.finish();
                             this.returnHome('list')
+                            vm.btnCtrl = false;
                             this.$Message.success(res.data.message);
                         }).catch(res=>{
-                            this.$Loading.error();
+                            vm.btnCtrl = false;
                             console.log(res)
+                            this.$Message.error('提交失败！');
                         })
                     } else {
                         this.$Message.error('信息不完整!');
@@ -836,7 +838,7 @@
             },
             //上传文件成功的回调
             uploadFile(res){
-                this.contract = res.data
+                this.formValidate.contract = res.data
             },
             //上传营业执照
             uploadLicense(res){
@@ -960,9 +962,11 @@
                     this.formValidate.premiumReceived = storeExtend.paymentAmount; //缴纳金额
                     this.formValidate.storeArea = storeExtend.storeArea //店铺面积
                     console.log(JSON.parse(storeExtend.otherService))
-                    JSON.parse(storeExtend.otherService).forEach((item,index)=>{
-                        this.formValidate.additionalServices.push(item.name)
-                    })
+                    if(storeExtend.otherService){
+                        JSON.parse(storeExtend.otherService).forEach((item,index)=>{
+                            this.formValidate.additionalServices.push(item.name)
+                        })
+                    }
                     this.additionalServicesObj = storeExtend.otherService;
                 })
             },

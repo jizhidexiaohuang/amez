@@ -32,7 +32,7 @@
                         </Input>
                     </FormItem>
                     <FormItem style="margin-bottom:10px;">
-                        <Button v-if="operators.see" style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
+                        <Button v-if="operators.see" style="margin-left:5px;" @click.native="getData('see')" type="primary" icon="ios-search">查询</Button>
                         <Button v-if="operators.refresh" style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     </FormItem>
                 </Form>
@@ -182,9 +182,7 @@
                             title: '认证时间',
                             key: 'auditTime',
                             render: (h,params) => {
-                                const row = params.row;
-                                const time = this.common.formatDate(row.auditTime);
-                                return time
+                                return h('div',params.row.auditTime?this.common.formatDate(row.auditTime):'')
                             }
                         },
                         {   
@@ -247,6 +245,9 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
+                if(!!init&&init=='see'){
+                    start = 1;
+                }
                 let url = vm.common.path2+"memberRealNameAuth/bg/findByPageForBg?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                    
