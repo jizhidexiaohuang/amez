@@ -183,10 +183,10 @@
                                 return !!row.visitPrice?+row.visitPrice/100:"0"
                             }
                         },
-                        /* {
+                        {
                             title: '服务门店',
                             key: 'storeName'
-                        }, */
+                        },
                         {
                             title: '状态',
                             key: 'saleStatus',
