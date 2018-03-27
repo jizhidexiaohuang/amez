@@ -328,7 +328,7 @@ export default {
                     default:
                         vm.menu.menuList = arrs;  // 不走存储拿菜拿菜单数据
                 }
-            })(2)
+            })(1)
         },
         /* 激活菜单 */
         fnMenuChange () {

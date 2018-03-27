@@ -336,7 +336,7 @@
                             vm.btnCode = false;
                         })
                     } else {
-                        this.$Message.error('提交失败!');
+                        vm.$Message.error('提交失败!');
                     }
                 })
             },

@@ -111,7 +111,7 @@
                     vm.btnCode = false;
                     vm.$Message.success(oData.message);
                 }).catch(function(err){
-                    this.$Message.error('提交失败!');
+                    vm.$Message.error('提交失败!');
                     vm.btnCode = false;
                 })
                     

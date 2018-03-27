@@ -131,10 +131,10 @@
                             vm.$Message.success('成功');
                         }).catch(function(err){
                             vm.btnCode = false;
-                            this.$Message.error('提交失败!');
+                            vm.$Message.error('提交失败!');
                         })
                     } else {
-                        this.$Message.error('提交失败!');
+                        vm.$Message.error('提交失败!');
                     }
                 })
             },

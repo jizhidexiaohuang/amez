@@ -220,11 +220,11 @@
                             vm.$Message.success('成功');
                             vm.btnCode = false;
                         }).catch(function(err){
-                            this.$Message.error('提交失败!');
+                            vm.$Message.error('提交失败!');
                             vm.btnCode = false;
                         })
                     } else {
-                        this.$Message.error('提交失败!');
+                        vm.$Message.error('提交失败!');
                     }
                 })
             },

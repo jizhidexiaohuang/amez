@@ -44,12 +44,12 @@
                 <InputNumber :min="0" v-model="formValidate.parttimeBeauticianCommission" style="width: 100%;"></InputNumber>
             </FormItem>
 
-            <FormItem label="到店服务员工">
+            <FormItem label="到店服务员工" v-if="!!storeId">
                 <storeTable></storeTable>
                 <storeList></storeList>
                 <!--<businessList></businessList>-->
             </FormItem>
-            <FormItem label="上门服务员工">
+            <FormItem label="上门服务员工" v-if="!!storeId">
                 <homeTable></homeTable>
                 <homeList></homeList>
                 <!--<businessList></businessList>-->
@@ -299,11 +299,11 @@
                             vm.$Message.success('成功');
                             vm.btnCode = false;
                         }).catch(function(err){
-                            this.$Message.error('提交失败!');
+                            vm.$Message.error('提交失败!');
                             vm.btnCode = false;
                         })
                     } else {
-                        this.$Message.error('提交失败!');
+                        vm.$Message.error('提交失败!');
                     }
                 })
             },
@@ -492,6 +492,10 @@
         },
         mounted: function(){
             let vm = this;
+            let store = JSON.parse(window.localStorage.getItem("userInfo")).store;
+            if(store!=null){
+                vm.storeId = store.id;
+            }
             if(!!vm.sendChild.brandId){
                 vm.isShow = false;
                 vm.formValidate.brandId = vm.sendChild.brandId;
