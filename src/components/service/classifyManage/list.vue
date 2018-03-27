@@ -41,7 +41,7 @@
                 </Form>
                 <Row style="margin-bottom:10px;">
                     <Col span="5">
-                        <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search" v-if="false">查询</Button>
+                        <Button style="margin-left:5px;" @click.native="getData('see')" type="primary" icon="ios-search" v-if="false">查询</Button>
 		                <Button v-if="!!operators.refresh" style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     </Col>
                     <Col span="3" offset="16" v-if="!!operators.add">
@@ -289,6 +289,9 @@
                 let vm = this;
                 if(!!init&&init=='init'){
                     vm.fnInit();
+                }
+                if(!!init&&init=='see'){
+                    vm.table.pageNun = 1;
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数

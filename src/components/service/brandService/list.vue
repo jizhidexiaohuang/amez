@@ -66,7 +66,7 @@
                         </Input>
                     </Col>
                     <Col span="5">
-                        <Button v-if="!!operators.see" style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
+                        <Button v-if="!!operators.see" style="margin-left:5px;" @click.native="getData('see')" type="primary" icon="ios-search">查询</Button>
 		                <Button v-if="!!operators.refresh" style="margin-left:5px;" @click.native="getData('init')" type="warning" icon="refresh">刷新</Button>
                     </Col>
                     <Col span="3" offset="11" v-if="!!operators.add">
@@ -399,6 +399,9 @@
                 let vm = this;
                 if(!!init&&init=='init'){
                     vm.fnInit();
+                }
+                if(!!init&&init=='see'){
+                    vm.table.pageNun = 1;
                 }
                 /* 买家和卖家的表头不一样 */
                 if(!!!vm.cd.isBrand){
