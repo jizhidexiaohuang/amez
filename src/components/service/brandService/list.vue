@@ -161,18 +161,17 @@
                             width: 120,
                             render: (h,params) => {
                                 const row = params.row;
-                                // const color = !!!row.isSupportHome ? 'blue' : row.isSupportHome === 1 ? 'green' : 'yellow';
-                                // const text = !!!row.isSupportHome ? '默认' : row.isSupportHome === 1 ? '到店' : '上门';
-
-                                const color = !!!row.isSupportHome ? 'yellow' : 'blue';
-                                const text = !!!row.isSupportHome ? '到店' : '上门';
+                                let text = '';
+                                if(!!row.isSupportHome&&!!!row.isSupportStore){
+                                    text = '上门';
+                                }else if(!!row.isSupportStore&&!!!row.isSupportHome){
+                                    text = '到店';
+                                }else if(!!row.isSupportStore&&!!row.isSupportHome){
+                                    text = '到店和上门';
+                                }else{
+                                    text = '无';
+                                }
                                 return text;
-                               /*  return h('Tag', {
-                                    props: {
-                                        type: 'border',
-                                        color: color
-                                    }
-                                }, text); */
                             }
                         },
                         {
