@@ -193,7 +193,7 @@
                         <img v-if="formValidate.businessLicense" :src="formValidate.businessLicense" alt="">
                         <span>(三证合一只上传营业执照，非三证合一请分别上传营业执照，组织机构代码证，税务登记证)</span>
                     </Upload> -->
-                    <MyUpload v-if="formValidate.businessLicense" :defaultList="defaultListLicense" :uploadConfig="uploadConfigLicense" v-on:listenUpload="v=>{getUploadList(v,'license')}"></MyUpload>
+                    <MyUpload v-if="license" :defaultList="defaultListLicense" :uploadConfig="uploadConfigLicense" v-on:listenUpload="v=>{getUploadList(v,'license')}"></MyUpload>
                     <span>(三证合一只上传营业执照，非三证合一请分别上传营业执照，组织机构代码证，税务登记证)</span>
                 </FormItem>
             </Col>
@@ -201,58 +201,64 @@
         <Row>
             <Col span="8">
                 <FormItem label="身份证正面照" prop="idcardPositivePhoto">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadPositivePhoto">
+                    <!-- <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadPositivePhoto">
                         <Button v-if="!formValidate.idcardPositivePhoto" type="ghost" icon="ios-cloud-upload-outline">正面照</Button>
                         <img v-if="formValidate.idcardPositivePhoto" :src="formValidate.idcardPositivePhoto" alt="">
                     </Upload>
-                    <span v-if="formValidate.idcardPositivePhoto">正面照</span>
+                    <span v-if="formValidate.idcardPositivePhoto">正面照</span> -->
+                    <MyUpload v-if="formValidate.idcardPositivePhoto" :defaultList="defaultList[0]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,'idcardPositivePhoto')}"></MyUpload>
                 </FormItem>
             </Col>
             <Col span="8">
                 <FormItem label="身份证反面照" prop="idcardNegativePhoto">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadNegativePhoto">
+                    <!-- <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadNegativePhoto">
                         <Button v-if="!formValidate.idcardNegativePhoto" type="ghost" icon="ios-cloud-upload-outline">反面照</Button>
                         <img v-if="formValidate.idcardNegativePhoto" :src="formValidate.idcardNegativePhoto" alt="">
                     </Upload>
-                    <span v-if="formValidate.idcardNegativePhoto">反面照</span>
+                    <span v-if="formValidate.idcardNegativePhoto">反面照</span> -->
+                    <MyUpload v-if="formValidate.idcardNegativePhoto" :defaultList="defaultList[1]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,'idcardNegativePhoto')}"></MyUpload>
                 </FormItem>
             </Col>
             <Col span="8">
                 <FormItem label="身份证手持照" prop="idcardHandheldPhoto">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadHandheldPhoto">
+                    <!-- <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadHandheldPhoto">
                         <Button v-if="!formValidate.idcardHandheldPhoto" type="ghost" icon="ios-cloud-upload-outline">手持照</Button>
                         <img v-if="formValidate.idcardHandheldPhoto" :src="formValidate.idcardHandheldPhoto" alt="">
                     </Upload>
-                    <span v-if="formValidate.idcardHandheldPhoto">手持照</span>
+                    <span v-if="formValidate.idcardHandheldPhoto">手持照</span> -->
+                    <MyUpload v-if="formValidate.idcardHandheldPhoto" :defaultList="defaultList[2]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,'idcardHandheldPhoto')}"></MyUpload>
                 </FormItem>
             </Col>
         </Row>
         <Row>
             <Col span="8">
                 <FormItem label="门头照" prop="storeDoorPhoto">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadDoorPhoto">
+                    <!-- <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadDoorPhoto">
                         <Button v-if="!formValidate.storeDoorPhoto" type="ghost" icon="ios-cloud-upload-outline">门头照</Button>
                         <img v-if="formValidate.storeDoorPhoto" :src="formValidate.storeDoorPhoto" alt="">
                     </Upload>
-                    <span v-if="formValidate.storeDoorPhoto">门头照</span>
+                    <span v-if="formValidate.storeDoorPhoto">门头照</span> -->
+                    <MyUpload v-if="formValidate.storeDoorPhoto" :defaultList="defaultList[3]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,'storeDoorPhoto')}"></MyUpload>
                 </FormItem>
             </Col>
             <Col span="8">
                 <FormItem label="收银台" prop="storeCashierPhoto">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadCashierPhoto">
+                    <!-- <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadCashierPhoto">
                         <Button v-if="!formValidate.storeCashierPhoto" type="ghost" icon="ios-cloud-upload-outline">收银台</Button>
                         <img v-if="formValidate.storeCashierPhoto" :src="formValidate.storeCashierPhoto" alt="">
                     </Upload>
-                    <span v-if="formValidate.storeCashierPhoto">收银台</span>
+                    <span v-if="formValidate.storeCashierPhoto">收银台</span> -->
+                    <MyUpload v-if="formValidate.storeCashierPhoto" :defaultList="defaultList[4]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,'storeCashierPhoto')}"></MyUpload>
                 </FormItem>
             </Col>
             <Col span="8">
                 <FormItem label="店内照" prop="storeInPhoto">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadInPhoto">
+                    <!-- <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadInPhoto">
                         <Button v-if="!formValidate.storeInPhoto" type="ghost" icon="ios-cloud-upload-outline">店内照</Button>
                         <img v-if="formValidate.storeInPhoto" :src="formValidate.storeInPhoto" alt="">
                     </Upload>
-                    <span v-if="formValidate.storeInPhoto">店内照</span>
+                    <span v-if="formValidate.storeInPhoto">店内照</span> -->
+                    <MyUpload v-if="formValidate.storeInPhoto" :defaultList="defaultList[5]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,'storeInPhoto')}"></MyUpload>
                 </FormItem>
             </Col>
         </Row>
@@ -263,8 +269,8 @@
                         <Button v-if="!storeHonorPhoto" type="ghost" icon="ios-cloud-upload-outline">上传</Button>
                         <img v-if="storeHonorPhoto" :src="storeHonorPhoto" alt="">
                     </Upload> -->
-                    <MyUpload v-if="storeHonorPhoto" :defaultList="defaultListHonor" :uploadConfig="uploadConfigHonor" v-on:listenUpload="v=>{getUploadList(v,'honor')}"></MyUpload>
-                    <span>(店铺相关的荣誉证书，获奖证书)</span>
+                    <MyUpload v-if="honorCtrl" :defaultList="defaultListHonor" :uploadConfig="uploadConfigHonor" v-on:listenUpload="v=>{getUploadList(v,'honor')}"></MyUpload>
+                    <span>(店铺相关的荣誉证书，获奖证书，最多上传6张)</span>
                 </FormItem>
             </Col>
             <Col span="12">
@@ -398,16 +404,24 @@
     import common from '../../../base.js'
     import VDistpicker from 'v-distpicker'
     import CityLinkage from '../../common/city.vue'
-    // import MyUpload from '../../common/upload.vue'
+    import MyUpload from '../../common/upload.vue'
     export default {
         data () {
             return {
+                honorCtrl:false,
+                license:false,
                 btnCtrl:false,
                 cityConfig:{
                     key:false,
                     title:'',
                     type:'linkage',
                     cityList:[],
+                },
+                defaultList:[
+                    [],[],[],[],[],[]
+                ],
+                uploadConfig:{
+                    num:1
                 },
                 defaultListHonor:[],
                 uploadConfigHonor:{
@@ -654,7 +668,7 @@
                                 storeLabel:this.storeLabel,//店铺标签(五年老店)
                                 specialProject:this.projectStr,//特色项目
                                 storeCompanyName:this.formValidate.companyName,//公司名称
-                                storeBanner:this.storeDoorPhoto,//横幅图
+                                storeBanner:this.formValidate.storeDoorPhoto,//横幅图
                                 beauticianTotal:this.formValidate.beauticianTotal, //店铺员工数
                                 description:this.formValidate.description, //店铺简介
                             },
@@ -704,10 +718,10 @@
                         ).then(res=>{
                             console.log(res)
                             this.returnHome('list')
-                            vm.btnCtrl = false;
+                            this.btnCtrl = false;
                             this.$Message.success(res.data.message);
                         }).catch(res=>{
-                            vm.btnCtrl = false;
+                            this.btnCtrl = false;
                             console.log(res)
                             this.$Message.error('提交失败！');
                         })
@@ -866,6 +880,18 @@
                             tempArr.push(data[i].url);
                             this.formValidate.businessLicense = tempArr.join(',');                         
                         }
+                    }else if(type=='idcardPositivePhoto'){
+                        this.formValidate.idcardPositivePhoto = data[0].url;
+                    }else if(type=='idcardNegativePhoto'){
+                        this.formValidate.idcardNegativePhoto = data[0].url;
+                    }else if(type=='idcardHandheldPhoto'){
+                        this.formValidate.idcardHandheldPhoto = data[0].url;
+                    }else if(type=='storeDoorPhoto'){
+                        this.formValidate.storeDoorPhoto = data[0].url;
+                    }else if(type=='storeCashierPhoto'){
+                        this.formValidate.storeCashierPhoto = data[0].url;
+                    }else if(type=='storeInPhoto'){
+                        this.formValidate.storeInPhoto = data[0].url;
                     }
                 }
             },
@@ -962,15 +988,43 @@
                     this.extendId = storeExtend.id;
                     this.formValidate.companyName = storeExtend.companyName; //公司名称
                     this.formValidate.businessLicense = storeExtend.businessLicense;  //营业执照
-                    this.defaultListLicense = storeExtend.businessLicense.split(',');
+                    storeExtend.businessLicense.split(',').forEach((item,index)=>{
+                        this.defaultListLicense.push({
+                            url:item
+                        })
+                    })
+                    this.license = true;
                     this.storeHonorPhoto = storeExtend.storeHonorPhoto;  //店铺荣誉
-                    this.defaultListHonor = storeExtend.storeHonorPhoto.split(',');
+                    storeExtend.storeHonorPhoto.split(',').forEach((item,index)=>{
+                        this.defaultListHonor.push({
+                            url:item
+                        })
+                    })
+                    this.honorCtrl = true;
                     this.formValidate.idcardPositivePhoto = storeExtend.idcardPositivePhoto;//正面照
-                    this.formValidate.idcardNegativePhoto = storeExtend.idcardNegativePhoto;//正面照
+                    this.defaultList[0].push({
+                        url:storeExtend.idcardPositivePhoto
+                    })
+                    this.formValidate.idcardNegativePhoto = storeExtend.idcardNegativePhoto;//反面照
+                    this.defaultList[1].push({
+                        url:storeExtend.idcardNegativePhoto
+                    })
                     this.formValidate.idcardHandheldPhoto = storeExtend.idcardHandheldPhoto;//手持照
+                    this.defaultList[2].push({
+                        url:storeExtend.idcardHandheldPhoto
+                    })
                     this.formValidate.storeDoorPhoto = storeExtend.storeDoorPhoto;//门头照
+                    this.defaultList[3].push({
+                        url:storeExtend.storeDoorPhoto
+                    })
                     this.formValidate.storeCashierPhoto = storeExtend.storeCashierPhoto;//收银照
+                    this.defaultList[4].push({
+                        url:storeExtend.storeCashierPhoto
+                    })
                     this.formValidate.storeInPhoto = storeExtend.storeInPhoto;//店内照
+                    this.defaultList[5].push({
+                        url:storeExtend.storeInPhoto
+                    })
                     this.formValidate.contract = storeExtend.contract;//合同
                    
                     this.formValidate.businessLicenseNumber = storeExtend.businessLicenseNumber; //营业执照号码
@@ -1040,7 +1094,8 @@
         },
         components:{
            VDistpicker,
-           CityLinkage
+           CityLinkage,
+           MyUpload
         },
         props:['editId']
     }

@@ -223,7 +223,9 @@
                             let oData = res.data
                             vm.$emit('returnList', 'list'); 
                             vm.btnCtrl = false;
-                            vm.$Message.success('提交成功');
+                            if(res.data.code==200){
+                                vm.$Message.success('提交成功');
+                            }
                         }).catch(function(err){
                             console.log(err);
                             vm.btnCtrl = false;

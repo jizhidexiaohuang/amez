@@ -182,58 +182,64 @@
         <Row>
             <Col span="8">
                 <FormItem label="身份证正面照" prop="idcardPositivePhoto">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadPositivePhoto">
+                    <!-- <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadPositivePhoto">
                         <Button v-if="!formValidate.idcardPositivePhoto" type="ghost" icon="ios-cloud-upload-outline">正面照</Button>
                         <img v-if="formValidate.idcardPositivePhoto" :src="formValidate.idcardPositivePhoto" alt="">
                     </Upload>
-                    <span v-if="formValidate.idcardPositivePhoto">正面照</span>
+                    <span v-if="formValidate.idcardPositivePhoto">正面照</span> -->
+                    <MyUpload :defaultList="defaultList[0]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,'idcardPositivePhoto')}"></MyUpload>
                 </FormItem>
             </Col>    
             <Col span="8">
                 <FormItem label="身份证反面照" prop="idcardNegativePhoto">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadNegativePhoto">
+                    <!-- <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadNegativePhoto">
                         <Button v-if="!formValidate.idcardNegativePhoto" type="ghost" icon="ios-cloud-upload-outline">反面照</Button>
                         <img v-if="formValidate.idcardNegativePhoto" :src="formValidate.idcardNegativePhoto" alt="">
                     </Upload>
-                    <span v-if="formValidate.idcardNegativePhoto">反面照</span>
+                    <span v-if="formValidate.idcardNegativePhoto">反面照</span> -->
+                    <MyUpload :defaultList="defaultList[1]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,'idcardNegativePhoto')}"></MyUpload>
                 </FormItem>
             </Col>    
             <Col span="8">
                 <FormItem label="身份证手持照" prop="idcardHandheldPhoto">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadHandheldPhoto">
+                    <!-- <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadHandheldPhoto">
                         <Button v-if="!formValidate.idcardHandheldPhoto" type="ghost" icon="ios-cloud-upload-outline">手持照</Button>
                         <img v-if="formValidate.idcardHandheldPhoto" :src="formValidate.idcardHandheldPhoto" alt="">
                     </Upload>
-                    <span v-if="formValidate.idcardHandheldPhoto">手持照</span>
+                    <span v-if="formValidate.idcardHandheldPhoto">手持照</span> -->
+                    <MyUpload :defaultList="defaultList[2]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,'idcardHandheldPhoto')}"></MyUpload>
                 </FormItem>
             </Col>    
         </Row>
         <Row>
             <Col span="8">
                 <FormItem label="门头照" prop="storeDoorPhoto">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadDoorPhoto">
+                    <!-- <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadDoorPhoto">
                         <Button v-if="!formValidate.storeDoorPhoto" type="ghost" icon="ios-cloud-upload-outline">门头照</Button>
                         <img v-if="formValidate.storeDoorPhoto" :src="formValidate.storeDoorPhoto" alt="">
                     </Upload>
-                    <span v-if="formValidate.storeDoorPhoto">门头照</span>
+                    <span v-if="formValidate.storeDoorPhoto">门头照</span> -->
+                    <MyUpload :defaultList="defaultList[3]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,'storeDoorPhoto')}"></MyUpload>
                 </FormItem>
             </Col>    
             <Col span="8">
                 <FormItem label="收银台" prop="storeCashierPhoto">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadCashierPhoto">
+                    <!-- <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadCashierPhoto">
                         <Button v-if="!formValidate.storeCashierPhoto" type="ghost" icon="ios-cloud-upload-outline">收银台</Button>
                         <img v-if="formValidate.storeCashierPhoto" :src="formValidate.storeCashierPhoto" alt="">
                     </Upload>
-                    <span v-if="formValidate.storeCashierPhoto">收银台</span>
+                    <span v-if="formValidate.storeCashierPhoto">收银台</span> -->
+                    <MyUpload :defaultList="defaultList[4]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,'storeCashierPhoto')}"></MyUpload>
                 </FormItem>
             </Col>    
             <Col span="8">
                 <FormItem label="店内照" prop="storeInPhoto">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadInPhoto">
+                    <!-- <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadInPhoto">
                         <Button v-if="!formValidate.storeInPhoto" type="ghost" icon="ios-cloud-upload-outline">店内照</Button>
                         <img v-if="formValidate.storeInPhoto" :src="formValidate.storeInPhoto" alt="">
                     </Upload>
-                    <span v-if="formValidate.storeInPhoto">店内照</span>
+                    <span v-if="formValidate.storeInPhoto">店内照</span> -->
+                    <MyUpload :defaultList="defaultList[5]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,'storeInPhoto')}"></MyUpload>
                 </FormItem>
             </Col>    
         </Row>
@@ -241,7 +247,7 @@
             <Col span="16">
                 <FormItem label="店铺荣誉" prop="storeHonorPhoto">
                     <MyUpload :defaultList="defaultListHonor" :uploadConfig="uploadConfigHonor" v-on:listenUpload="v=>{getUploadList(v,'honor')}"></MyUpload>
-                    <span>(店铺相关的荣誉证书，获奖证书)</span>
+                    <span>(店铺相关的荣誉证书，获奖证书，最多上传6张)</span>
                 </FormItem>
             </Col>
             <Col span="8">
@@ -384,6 +390,10 @@
                     key:false,
                     title:'',
                     type:'linkage'
+                },
+                defaultList:[],
+                uploadConfig:{
+                    num:1
                 },
                 defaultListHonor:[],
                 uploadConfigHonor:{
@@ -826,6 +836,18 @@
                             tempArr.push(data[i].url);
                             this.formValidate.businessLicense = tempArr.join(',');                         
                         }
+                    }else if(type=='idcardPositivePhoto'){
+                        this.formValidate.idcardPositivePhoto = data[0].url;
+                    }else if(type=='idcardNegativePhoto'){
+                        this.formValidate.idcardNegativePhoto = data[0].url;
+                    }else if(type=='idcardHandheldPhoto'){
+                        this.formValidate.idcardHandheldPhoto = data[0].url;
+                    }else if(type=='storeDoorPhoto'){
+                        this.formValidate.storeDoorPhoto = data[0].url;
+                    }else if(type=='storeCashierPhoto'){
+                        this.formValidate.storeCashierPhoto = data[0].url;
+                    }else if(type=='storeInPhoto'){
+                        this.formValidate.storeInPhoto = data[0].url;
                     }
                 }
             },
