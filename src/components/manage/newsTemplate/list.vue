@@ -75,10 +75,7 @@
                     let value = vm.edittingStore[param.index][key];
                     vm.edittingStore[param.index].edittingCell[param.column.key] = false;
                     vm.table.tableData1 = JSON.parse(JSON.stringify(vm.edittingStore));
-                    if(value == oldValue){
-                        return false;
-                    }
-                    vm.handleSubmit(param.row.id,param.column.key,vm.edittingStore[param.index][key]);
+                    vm.handleSubmit(id,key,value);
                 }
             }
         });
@@ -279,8 +276,20 @@
                     url,
                     ajaxData,
                 ).then(function(res){
+                    let _switch = false;
                     vm.$Message.success('修改成功');
-                    // vm.getData();
+                    vm.edittingStore.forEach((item,index) => {
+                        for(var i in item.edittingCell){
+                            console.log(item.edittingCell[i]);
+                            if(!!item.edittingCell[i]){
+                                _switch = true;
+                            }
+                        }
+                    })
+                    if(!!_switch){
+                        return false;
+                    }
+                    vm.getData();
                 }).catch(function(err){
                     vm.$Message.error('提交失败!');
                 })
