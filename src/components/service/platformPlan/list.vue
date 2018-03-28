@@ -42,7 +42,7 @@
                         状态
                         <Select v-model="cd.saleStatus" style="width:200px">
                             <Option value="">全部</Option>
-                            <Option value="0">已下架</Option>
+                            <Option value="0">仓库中</Option>
                             <Option value="1">销售中</Option>
                         </Select>
                     </FormItem>
@@ -189,7 +189,7 @@
                             render: (h,params) => {
                                 const row = params.row;
                                 const color = row.saleStatus === 0 ? 'red' : 'blue';
-                                const text = row.saleStatus === 0 ? '已下架' : '销售中';
+                                const text = row.saleStatus === 0 ? '仓库中' : '销售中';
                                 /* return h('Tag', {
                                     props: {
                                         type: 'border',
@@ -275,7 +275,7 @@
                                         }
                                     }
                                 }, text)
-                                if(!!!this.storeId&&!!this.operators.adminUpdown){
+                                if(!!!this.storeId&&!!this.operators.adminUpdown&&row.auditStatus!=0){
                                     arrs.push(obj2);
                                 }
                                 /* 门店上下架 */
@@ -302,7 +302,7 @@
                                         }
                                     }
                                 }, text1)
-                                if(!!this.storeId&&!!this.operators.storeUpdown){
+                                if(!!this.storeId&&!!this.operators.storeUpdown&&row.auditStatus!=0){
                                     arrs.push(obj4);
                                 }
                                 let obj7 = h('Button', {

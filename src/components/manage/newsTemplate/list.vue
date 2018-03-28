@@ -1,3 +1,4 @@
+
 <template>
     <div>
         <!-- 详情容器 -->
@@ -46,12 +47,112 @@
     </div>
 </template>
 <script>
+    /* =======================可编辑表格 start====================== */
+    const cellInput = (vm, h, param, key) => {
+        return h('Input', {
+            props: {
+                type: 'text',
+                value: vm.edittingStore[param.index][key]
+            },
+            on: {
+                'on-change' (event) {
+                    vm.edittingStore[param.index][key] = event.target.value;
+                }
+            }
+        });
+    };
+    const saveIncellEditBtn = (vm, h, param) => {
+        return h('Button', {
+            props: {
+                type: 'text',
+                icon: 'checkmark'
+            },
+            on: {
+                click: (event) => {
+                    let key = param.column.key;
+                    let oldValue = vm.table.tableData1[param.index][key];
+                    let id = param.row.id;
+                    let value = vm.edittingStore[param.index][key];
+                    vm.edittingStore[param.index].edittingCell[param.column.key] = false;
+                    vm.table.tableData1 = JSON.parse(JSON.stringify(vm.edittingStore));
+                    if(value == oldValue){
+                        return false;
+                    }
+                    vm.handleSubmit(param.row.id,param.column.key,vm.edittingStore[param.index][key]);
+                }
+            }
+        });
+    };
+    const incellEditBtn = (vm, h, param) => {
+        if (vm.hoverShow) {
+            return h('div', {
+                'class': {
+                    'show-edit-btn': vm.hoverShow
+                }
+            }, [
+                h('Button', {
+                    props: {
+                        type: 'text',
+                        icon: 'edit'
+                    },
+                    on: {
+                        click: (event) => {
+                            vm.edittingStore[param.index].edittingCell[param.column.key] = true;
+                            vm.table.tableData1 = JSON.parse(JSON.stringify(vm.edittingStore));
+                        }
+                    }
+                })
+            ]);
+        }else{
+            return h('Button', {
+                props: {
+                    type: 'text',
+                    icon: 'edit'
+                },
+                on: {
+                    click: (event) => {
+                        vm.edittingStore[param.index].edittingCell[param.column.key] = true;
+                        vm.table.tableData1 = JSON.parse(JSON.stringify(vm.edittingStore));
+                    }
+                }
+            });
+        }
+    };
+    const commonRender = (vm, h, params) => {
+        let currentRow = vm.table.tableData1[params.index];
+        return h('Row',{
+            props: {
+                type: 'flex',
+                align: 'middle',
+                justify: 'center'
+            }
+        },[
+            h('Col',{
+                props: {
+                    span: '22'
+                }
+            },[
+                !currentRow.edittingCell[params.column.key] ? h('span', currentRow[params.column.key]) : cellInput(vm, h, params, params.column.key)
+            ]),
+            h('Col',{
+                props: {
+                    span: '2'
+                }
+            },[
+                currentRow.edittingCell[params.column.key] ? saveIncellEditBtn(vm, h, params) : incellEditBtn(vm, h, params)
+            ])
+        ])
+    }
+    /* =====================可编辑表格 end============================ */
+
     import MyUpload from '../../common/upload.vue'
     import AddPage from './add.vue'
     import EditPage from './edit.vue'
     export default {
         data () {
             return {
+                hoverShow: true,
+                edittingStore: [], // 可编辑表格的数据备份
                 operators: {},
                 table:{
                     pageSize:10,//每页显示的数量
@@ -65,13 +166,15 @@
                         {
                             title: '短信名称',
                             key: 'smsName',
+                            render: (h,params) => {
+                                return commonRender(this,h,params)
+                            }
                         },
                         {
                             title: '短信编码',
                             key: 'smsCode',
                             render: (h,params) => {
-                                const row = params.row;
-                                return !!row.smsCode?row.smsCode:"无"
+                                return commonRender(this,h,params)
                             }
                         },
                         {   
@@ -79,14 +182,8 @@
                             key: 'smsType',
                             render: (h,params) => {
                                 const row = params.row;
-                                const color = !!!row.smsType ? 'red' : row.smsType == 0 ? 'yellow': row.smsType == 1 ? 'green': row.smsType == 2?'blue':'white';
-                                const text = !!!row.smsType ? '无' : row.smsType == 0 ? '验证码': row.smsType == 1?'短信通知': row.smsType == 2? '短信推广': '';
-                                /* return h('Tag', {
-                                    props: {
-                                        type: 'border',
-                                        color: color
-                                    }
-                                }, text); */
+                                const color = row.smsType == 0 ? 'yellow': row.smsType == 1 ? 'green': row.smsType == 2?'blue':'white';
+                                const text = row.smsType == 0 ? '验证码': row.smsType == 1?'短信通知': row.smsType == 2? '短信推广': '';
                                 return text;
                             }
                         },
@@ -102,8 +199,6 @@
                             title: '操作',
                             key: 'action',
                             width: 210,
-                            // align: 'center',
-                            // fixed: 'right',
                             render: (h, params) => {
                                 let arrs = [];
                                 let obj1 = h('Button', {
@@ -154,6 +249,44 @@
             }
         },
         methods: {
+            /* ==============================可编辑表格 start ==================== */
+            /* 表格数据过滤 */
+            dataInit(res) {
+                let vm = this;
+                let cloneData = JSON.parse(JSON.stringify(res.data.data.list));
+                let arrs = [];
+                arrs = cloneData.map(item =>{
+                    let edittingCell = {};
+                    edittingCell['smsName'] = false;
+                    vm.$set(item,'edittingCell',edittingCell);
+                    return item;
+                })
+                vm.table.tableData1 = arrs;
+                // 深拷贝数组
+                vm.edittingStore = JSON.parse(JSON.stringify(vm.table.tableData1));
+                vm.table.recordsTotal = res.data.data.total; // 总数量
+                vm.table.loading = false;
+            },
+            /* 单行编辑 */
+            handleSubmit (id,key,value) {
+                let ajaxData = {};
+                let vm = this;
+                ajaxData['id'] = id;
+                ajaxData[key] = value;
+                console.log(ajaxData);
+                let url = vm.common.path2 + "baseSmsTemplates/update"
+                vm.$http.put(
+                    url,
+                    ajaxData,
+                ).then(function(res){
+                    vm.$Message.success('修改成功');
+                    // vm.getData();
+                }).catch(function(err){
+                    vm.$Message.error('提交失败!');
+                })
+            },
+            /* ==============================可编辑表格 end ==================== */
+
             /* 分页回掉函数 */
             changePage (page) {
                 let vm = this;
@@ -190,11 +323,7 @@
                         }
                     }
                 ).then(function(res){
-                    let oData = res.data
-                    vm.table.recordsTotal = res.data.data.total;
-
-                    vm.table.tableData1 = res.data.data.list;
-                    vm.table.loading = false;
+                    vm.dataInit(res);
                 }).catch(function(err){
                 })
             },

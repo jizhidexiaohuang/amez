@@ -46,3 +46,12 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.show-edit-btn {
+  display: none !important;
+  margin-left: -10px !important;
+}
+
+.ivu-table-cell:hover .show-edit-btn {
+  display: inline-block !important;
+}
