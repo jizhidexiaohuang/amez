@@ -292,7 +292,8 @@
                         }
                         /* 店铺 */
                         ajaxData.productStoreRef = {
-                            storeId:vm.storeId // 店铺id
+                            storeId:vm.storeId, // 店铺id
+                            storeName:vm.formValidate.storeName, // 店铺名称
                         }
                         /*  商品-美容师-关联集合（到店） storeProductBeauticianRefList*/
                         ajaxData.storeProductBeauticianRefList = [];

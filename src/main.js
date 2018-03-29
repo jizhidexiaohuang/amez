@@ -13,7 +13,8 @@ import '../static/sass/common.min.css'
 import qs from 'qs'
 // 引入 vue-kikindeditor 需要的文件
 import VueKindEditor from 'vue-kindeditor'
-import 'kindeditor/kindeditor-all-min.js'
+// import 'kindeditor/kindeditor-all-min.js'
+import '../static/js/kindeditor-all-min.js'
 import 'kindeditor/themes/default/default.css'
 // 注册 vue-kikindeditor plugin
 import VueDND from 'awe-dnd'

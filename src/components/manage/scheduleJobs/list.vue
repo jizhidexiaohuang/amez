@@ -129,7 +129,7 @@
                         {
                             title: '操作',
                             key: 'action',
-                            width: 160,
+                            width: 350,
                             // align: 'center',
                             // fixed: 'right',
                             render: (h, params) => {
@@ -158,6 +158,9 @@
                                         type: 'error',
                                         size: 'small'
                                     },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
                                     on: {
                                         click: () => {
                                             let row = params.row;
@@ -168,6 +171,58 @@
                                 if(!!this.operators.delete){
                                     arrs.push(obj2);
                                 }
+                                /* 启动任务 */
+                                let obj3 =  h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            let row = params.row;
+                                            this.fnJobManage(row.id,'start');
+                                        }
+                                    }
+                                }, '启动任务');
+                                arrs.push(obj3);
+
+
+                                /* 停止任务 */
+                                let obj4=  h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            let row = params.row;
+                                            this.fnJobManage(row.id,'end');
+                                        }
+                                    }
+                                }, '停止任务');
+                                arrs.push(obj4);
+
+                                /* 执行任务 */
+                                let obj5 =  h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                        size: 'small'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            let row = params.row;
+                                            this.fnJobManage(row.id,'run');
+                                        }
+                                    }
+                                }, '执行任务');
+                                arrs.push(obj5);
+
                                 return h('div', arrs);
                             }
                         }
@@ -245,6 +300,32 @@
                             }else{
                                 vm.$Message.error(oData.message);
                             }
+                        }).catch(function(err){
+                            vm.$Message.error(err);
+                        })
+                    }
+                })
+            },
+            /* 启动和停止任务 */
+            fnJobManage (id,type) {
+                let vm = this;
+                let text = type == 'start'?'启动任务':type == 'end'?'停止任务':'执行任务';
+                let url = '';
+                if(type == 'start'){
+                    url = vm.common.path2 + "scheduleJob/resumeJob?id="+id;
+                }else if(type == 'end'){
+                    url = vm.common.path2 + "scheduleJob/pauseJob?id="+id;
+                }else if(type == 'run'){
+                    url = vm.common.path2 + "scheduleJob/runJobNow?id="+id;
+                }
+                this.$Modal.confirm({
+                    title: text,
+                    content: '确定要'+text+'吗？',
+                    onOk: function(){
+                        this.$http.get(
+                            url
+                        ).then(function(res){
+                            vm.$Message.success('成功');
                         }).catch(function(err){
                             vm.$Message.error(err);
                         })

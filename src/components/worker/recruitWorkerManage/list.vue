@@ -15,28 +15,28 @@
                     <Button v-if="false" style="float:left;margin-right:5px;" @click.native="changePageType('add')" type="success" icon="android-add">新增员工</Button>
                     <FormItem style="margin-bottom:10px;">
                         审核状态
-                        <Select v-model="cd.auditStatus" style="width:100px">
-                            <Option v-for="item in auditStatusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        <Select v-model="cd.authStatus" style="width:100px">
+                            <Option v-for="item in authStatusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                         </Select>
                     </FormItem>
                     <FormItem style="margin-bottom:10px;">
-                        员工类型
-                        <Select v-model="cd.beauticianType" style="width:100px">
-                            <Option v-for="item in beauticianTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        同意状态
+                        <Select v-model="cd.agreeStatus" style="width:100px">
+                            <Option v-for="item in agreeStatusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                         </Select>
                     </FormItem>
                     <FormItem style="margin-bottom:10px;">
-                        员工状态
-                        <Select v-model="cd.beauticianStatus" style="width:100px">
-                            <Option v-for="item in beauticianStatusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        服务类型
+                        <Select v-model="cd.serverType" style="width:100px">
+                            <Option v-for="item in serverTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                         </Select>
                     </FormItem>
                     <FormItem style="margin-bottom:10px;">
                         <Input v-model="cd.inputVal">
                         <Select v-model="cd.selectType" slot="prepend" style="width: 100px">
-                            <Option value="beauticianName">员工姓名</Option>
+                            <Option value="beauticianNickName">美容师昵称</Option>
+                            <Option value="serverName">商品名称</Option>
                             <Option value="storeName">店铺名称</Option>
-                            <Option value="phone">注册手机</Option>
                         </Select>
                         </Input>
                     </FormItem>
@@ -65,6 +65,24 @@
                 </div>
             </div>
         </div>
+        <!-- 审核 模态框 -->
+        <Modal
+            v-model="audit.mineModal"
+            title="审核招募美容师"
+            :loading="audit.loading"
+            @on-ok="fnAsyncOK1">
+            <Form>
+                <FormItem label="审核状态">
+                    <RadioGroup v-model="audit.authStatus">
+                        <Radio label="1">通过</Radio>
+                        <Radio label="2">不通过</Radio>
+                    </RadioGroup>
+                </FormItem>
+                <FormItem label="审核原因">
+                    <Input v-model="audit.authReason" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入审核原因"></Input>
+                </FormItem>
+            </Form>
+        </Modal>
     </div>
 </template>
 <script>
@@ -76,10 +94,17 @@
     export default {
         data () {
             return {
+                audit:{
+                    mineModal: false,
+                    loading: true,
+                    authStatus: '1', // 审核状态
+                    authReason: '', // 审核原因
+                    id: '' 
+                },
                 storeId: '', // 店铺id
                 examineId:'', //审核的id
                 infoId:'', //查看的id
-                auditStatusList:[
+                authStatusList:[
                     {
                         value:'',
                         label:'全部'
@@ -90,47 +115,53 @@
                     },
                     {
                         value:'1',
-                        label:'审核通过'
+                        label:'通过'
                     },
                     {
                         value:'2',
                         label:'不通过'
                     },
                 ],
-                beauticianTypeList:[
+                agreeStatusList:[
                     {
                         value:'',
                         label:'全部'
-                    },
-                    {
-                        value:'2',
-                        label:'正式员工'
-                    },
-                    {
-                        value:'3',
-                        label:'兼职员工'
-                    },
-                ],
-                beauticianStatusList:[
-                    {
-                        value:'',
-                        label:'全部'
-                    },
-                    {
-                        value:'1',
-                        label:'在职'
                     },
                     {
                         value:'0',
-                        label:'离职'
+                        label:'待处理'
+                    },
+                    {
+                        value:'1',
+                        label:'已同意'
+                    },
+                    {
+                        value:'2',
+                        label:'已拒绝'
+                    },
+                ],
+                serverTypeList:[
+                    {
+                        value:'',
+                        label:'全部'
+                    },
+                    {
+                        value:'0',
+                        label:'到店'
+                    },
+                    {
+                        value:'1',
+                        label:'上门'
                     },
                 ],
                 cd: {
-                    auditStatus:'', //审核状态
+                    authStatus:'', //审核状态
+                    agreeStatus: '', // 同意状态
+                    serverType: '', // 服务类型
                     beauticianType:'', //员工类型
                     beauticianStatus:'', //员工状态
                     inputVal: '', //选择的值
-                    selectType:'beauticianName',//input类型
+                    selectType:'beauticianNickName',//input类型
                 },
                 formValidate: {
                     roleName: '',//角色名称
@@ -157,12 +188,11 @@
                         },
                         {
                             title: '员工信息',
-                            width:140,
-                            key: 'beauticianName',
+                            key: 'beauticianNickName',
                             render:(h,params)=>{
                                 return h('div',[
                                     h('img',{
-                                        attrs:{src:params.row.headImgUrl},
+                                        attrs:{src:params.row.beauticianHeadImgUrl},
                                         style:{
                                             width:'32px',
                                             height:'32px',
@@ -173,174 +203,98 @@
                                             verticalAlign:'middle'
                                         }
                                     }),
-                                    h('span',params.row.beauticianName)
+                                    h('span',params.row.beauticianNickName)
                                 ])
                             }
                         },
                         {
-                            title: '注册手机',
-                            key: 'phone',
-                            width:120
-                        },
-                        {
-                            title: '性别',
-                            key: 'sex',
-                            width:70,
-                            render: (h,params) => {
-                                const row = params.row;
-                                const color = row.sex == 1 ? 'blue' : 'red';
-                                const text = row.sex == 1 ? '男' : '女';
-                                return h('Tag', {
-                                    props: {
-                                        type: 'border',
-                                        color: color
-                                    }
-                                }, text);
-                            }
-                        },
-                        {
-                            title: '员工类型',
-                            key: 'beauticianType',
-                            width:90,
-                            render:(h,params)=>{
-                                let str = '';
-                                if(params.row.beauticianType==0){
-                                    str = '老板'
-                                }else if(params.row.beauticianType==1){
-                                    str = '店长'
-                                }else if(params.row.beauticianType==2){
-                                    str = '正式员工'
-                                }else if(params.row.beauticianType==3){
-                                    str = '兼职员工'
-                                }
-                                return str;
-                            }
-                        },
-                        {
-                            title: '员工状态',
-                            key: 'beauticianStatus',
-                            width:70,
-                            render:(h,params)=>{
-                                let str = '';
-                                if(params.row.beauticianStatus==0){
-                                    str = '离职'
-                                }else if(params.row.beauticianStatus==1){
-                                    str = '在职'
-                                }else if(params.row.beauticianStatus==2){
-                                    str = '休息'
-                                }
-                                return str;
-                            }
+                            title: '服务名称',
+                            key: 'serverName',
                         },
                         {
                             title: '所属门店',
                             key: 'storeName',
-                            width:120
                         },
                         {
-                            title: '创建时间',
-                            key: 'createTime',
-                            width:150,
-                            render: (h,params) => {
+                            title: '服务耗时（分）',
+                            key: 'serverNeedTime',
+                        },
+                        {
+                            title: '服务类型',
+                            key: 'serverType',
+                            render:(h,params)=>{
                                 const row = params.row;
-                                const time = this.common.formatDate(row.createTime);
-                                return time
+                                let text = row.serverType == 0? '到店': '上门';
+                                return text;
                             }
                         },
-                        {   
+                        {
                             title: '审核状态',
-                            key: 'auditStatus',
-                            width:110,
-                            render: (h,params) => {
-                                const auditStatus = params.row.auditStatus;
-                                let color = '';
-                                let text = '';
-                                switch (auditStatus){
-                                    case 0:color = 'yellow';text = '待审核';break;
-                                    case 1:color = 'green';text = '审核通过';break;
-                                    case 2:color = 'red';text = '不通过';break;
-                                }
-                                return h('Tag', {
-                                    props: {
-                                        type: 'border',
-                                        color: color,
-                                        size:'small'
-                                    }
-                                }, text);
+                            key: 'authStatus',
+                            render:(h,params)=>{
+                                const row = params.row;
+                                let text = row.authStatus == 0? '待审核': row.authStatus == 1? '通过': '不通过';
+                                return text;
+                            }
+                        },
+                        {
+                            title: '同意状态',
+                            key: 'agreeStatus',
+                            render:(h,params)=>{
+                                const row = params.row;
+                                let text = row.agreeStatus == 0? '待处理': row.agreeStatus == 1? '已同意': '已拒绝';
+                                return text;
                             }
                         },
                         {
                             title: '操作',
                             key: 'action',
+                            width: 160,
                             render: (h, params) => {
-                                if(params.row.auditStatus==0){
-                                    return h('div', [
-                                        h('Button', {
-                                            props: {
-                                                type: 'error',
-                                                size: 'small'
-                                            },
-                                            style: {
-                                                marginRight: '5px'
-                                            },
-                                            on: {
-                                                click: () => {
-                                                    let row = params.row;
-                                                    this.examineId = row.id;
-                                                    this.changePageType('examine');
-                                                }
-                                            }
-                                        }, '审核')
-                                    ]);
-                                }else if(params.row.auditStatus==1){
-                                    return h('div', [
-                                        /* h('Button', {
-                                            props: {
-                                                type: 'primary',
-                                                size: 'small'
-                                            },
-                                            style: {
-                                                marginRight: '5px'
-                                            },
-                                            on: {
-                                                click: () => {
-                                                    let row = params.row;
-                                                    this.sendChild.id = row.id;
-                                                    this.changePageType('edit');
-                                                }
-                                            }
-                                        }, '编辑'), */
-                                        h('Button', {
-                                            props: {
-                                                type: 'info',
-                                                size: 'small'
-                                            },
-                                            on: {
-                                                click: () => {
-                                                    let row = params.row;
-                                                    this.infoId = row.id;
-                                                    this.changePageType('info');
-                                                }
-                                            }
-                                        }, '查看')
-                                    ]);
-                                }else if(params.row.auditStatus==2){
-                                    return h('div', [
-                                        h('Button', {
-                                            props: {
-                                                type: 'info',
-                                                size: 'small'
-                                            },
-                                            on: {
-                                                click: () => {
-                                                    let row = params.row;
-                                                    this.infoId = row.id;
-                                                    this.changePageType('info');
-                                                }
-                                            }
-                                        }, '查看')
-                                    ]);
+                                const row = params.row;
+                                let arrs = [];
+                                /* 审核 */
+                                let obj1 = h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            let row = params.row;
+                                            console.log(row);
+                                            // this.examineId = row.id;
+                                            // this.changePageType('examine');
+                                            this.audit.id = row.id;
+                                            this.audit.authStatus = row.authStatus;
+                                            this.audit.auditReason = row.authReason;
+                                            this.fnShowModal1();
+                                        }
+                                    }
+                                }, '审核');
+                                /* 查看 */
+                                let obj2 = h('Button', {
+                                    props: {
+                                        type: 'warning',
+                                        size: 'small'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            let row = params.row;
+                                            this.infoId = row.id;
+                                            this.changePageType('info');
+                                        }
+                                    }
+                                }, '查看')
+                                if(row.authStatus == 0){
+                                    // 待审核
+                                    arrs.push(obj1);
                                 }
+                                arrs.push(obj2);
+                                return h('div', arrs);
                             }
                         }
                     ],
@@ -355,6 +309,38 @@
             }
         },
         methods: {
+            /* 审核 */
+            fnShowModal1 () {
+                let vm = this;
+                vm.audit.mineModal = true;
+            },
+            /* 审核的模态框点击确定事件 */
+            fnAsyncOK1 () {
+                let vm = this;
+                let id = vm.audit.id;
+                let authStatus = vm.audit.authStatus;
+                let ajaxData = {
+                    "authReason": vm.audit.authReason,
+                    "id": id,
+                    "authStatus": authStatus,
+                }
+                // let url = vm.common.path2 + "productBeauticianRef/auth/"+id+"/"+auditStatus+"?auditReason="+vm.audit.auditReason;
+                let url = vm.common.path2 + "productBeauticianRef/auth";
+                vm.$http.put(
+                    url,
+                    JSON.stringify(ajaxData),
+                    {
+                        headers:{
+                            'Content-type':'application/json;charset=UTF-8'
+                        }
+                    }
+                ).then(function(res){
+                    vm.getData();
+                    vm.audit.loading = true;
+                    vm.audit.mineModal = false;
+                }).catch(function(err){
+                })
+            },
             /* 分页回掉函数 */
             changePage (page) {
                 let vm = this;
@@ -366,10 +352,10 @@
                 let vm = this;
                 vm.table.size = 10;//页数
                 vm.table.pageNun = 1;//索引
-                vm.cd.auditStatus = "";// 审核状态
-                vm.cd.beauticianType = "";// 员工类型
-                vm.cd.beauticianStatus = "";// 员工状态
-                vm.cd.selectType = "beauticianName";// 输入框类型
+                vm.cd.authStatus = "";
+                vm.cd.agreeStatus = "";
+                vm.cd.serverType = "";
+                vm.cd.selectType = "beauticianNickName";// 输入框类型
                 vm.cd.inputVal = "";// 输入框的值
             },
             /* 数据获取 */
@@ -380,21 +366,21 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = vm.common.path2+"storeBeautician/findByPageForRecruit?pageNo="+start+"&pageSize="+size;
+                let url = vm.common.path2+"productBeauticianRef/findByPage?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
                    
                 }
                 if(!!vm.storeId){
                     ajaxData.storeId = vm.storeId;
                 }
-                if(vm.cd.auditStatus){
-                    ajaxData.auditStatus = vm.cd.auditStatus
+                if(vm.cd.authStatus){
+                    ajaxData.authStatus = vm.cd.authStatus
                 }
-                if(vm.cd.beauticianType){
-                    ajaxData.beauticianType = vm.cd.beauticianType
+                if(vm.cd.agreeStatus){
+                    ajaxData.agreeStatus = vm.cd.agreeStatus
                 }
-                if(vm.cd.beauticianStatus){
-                    ajaxData.beauticianStatus = vm.cd.beauticianStatus
+                if(vm.cd.serverType){
+                    ajaxData.serverType = vm.cd.serverType
                 }
                 if(!!vm.cd.inputVal){
                     ajaxData[vm.cd.selectType] = vm.cd.inputVal;

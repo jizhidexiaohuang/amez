@@ -287,7 +287,8 @@
                         }
                         /* 店铺 */
                         ajaxData.productStoreRef = {
-                            storeId:vm.storeId // 店铺id
+                            storeId:vm.storeId, // 店铺id
+                            storeName:vm.formValidate.storeName, // 店铺名称
                         }
                         /*  商品-美容师-关联集合（到店） storeProductBeauticianRefList*/
                         ajaxData.storeProductBeauticianRefList = [];
@@ -474,9 +475,10 @@
                 vm.formValidate.serverAttention = data.product.serverAttention; // 注意事项
                 vm.formValidate.serverNeedTime = +data.product.serverNeedTime; // 服务总时长
                 // serverEffect: JSON.stringify(vm.formValidate.serverEffect), // 功效
-                if(vm.loginName == 'admin'&&!!data.product.storeId){
+                /* if(vm.loginName == 'admin'&&!!data.product.storeId){
                     vm.formValidate.storeName = data.product.storeId
-                }
+                } */
+                vm.formValidate.storeName = data.product.storeId
                 vm.storeId = data.product.storeId; // 店铺id
                 vm.$store.commit('STORE_ID',vm.storeId);
                 if(!!!data.product.serverEffect){

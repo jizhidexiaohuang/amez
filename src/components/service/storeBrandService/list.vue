@@ -147,7 +147,7 @@
                             title: '序号'
                         },
                         {
-                            title: '服务名称（e）',
+                            title: '服务名称',
                             key: 'serverName',
                         },
                         {
