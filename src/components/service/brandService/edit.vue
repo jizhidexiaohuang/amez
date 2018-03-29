@@ -296,20 +296,25 @@
                         for(var i = 0;i<storeList.length;i++){
                             var obj = {};
                             obj.beauticianId = storeList[i].id;
-                            obj.beauticianNickname = storeList[i].beauticianNickName;
+                            obj.beauticianNickName = storeList[i].beauticianNickName;
                             obj.beauticianHeadImgUrl = storeList[i].headImgUrl;
                             obj.serverType = 0;
+                            obj.memberId = storeList[i].memberId;
                             ajaxData.storeProductBeauticianRefList.push(obj);
                         }
+
+
+                        console.log(storeList);
                         /* 商品-美容师-关联集合（上门） homeProductBeauticianRefList */
                         ajaxData.homeProductBeauticianRefList = [];
                         var homeList = vm.$store.getters.tohomeList;
                         for(var j = 0;j<homeList.length;j++){
                             var obj = {};
                             obj.beauticianId = homeList[j].id;
-                            obj.beauticianNickname = homeList[j].beauticianNickName;
+                            obj.beauticianNickName = homeList[j].beauticianNickName;
                             obj.beauticianHeadImgUrl = homeList[j].headImgUrl;
                             obj.serverType = 1;
+                            obj.memberId = homeList[j].memberId;
                             ajaxData.homeProductBeauticianRefList.push(obj);
                         }
                         /* 商品-美容师-关联集合（招募） recruitProductBeauticianRefList */
@@ -318,8 +323,9 @@
                         for(var b = 0;b<recruitList.length;b++){
                             var obj = {};
                             obj.beauticianId = recruitList[b].id;
-                            obj.beauticianNickname = recruitList[b].beauticianNickName;
+                            obj.beauticianNickName = recruitList[b].beauticianNickName;
                             obj.beauticianHeadImgUrl = recruitList[b].headImgUrl;
+                            obj.memberId = recruitList[b].memberId;
                             ajaxData.recruitProductBeauticianRefList.push(obj);
                         }
                         let url = vm.common.path2 + "product/modify/self"
@@ -425,9 +431,14 @@
                         'id' : +item.beauticianId,
                         'beauticianNickName': item.beauticianNickName,
                         'headImgUrl': item.beauticianHeadImgUrl,
+                        'memberId': item.memberId,
                     }
                     storeArrs.push(obj);
                 });
+
+
+                console.log(storeArrs);
+                console.log('~~~~~~~~~~~~~~');
                 vm.$store.commit('STORE_LIST',storeArrs);
                 // 上门服务员工 homeProductBeauticianRefList
                 let homeList = data.homeProductBeauticianRefList;
@@ -437,6 +448,7 @@
                         'id' : +item.beauticianId,
                         'beauticianNickName': item.beauticianNickName,
                         'headImgUrl': item.beauticianHeadImgUrl,
+                        'memberId': item.memberId,
                     }
                     homeArrs.push(obj);
                 });
@@ -449,6 +461,7 @@
                         'id' : +item.beauticianId,
                         'beauticianNickName': item.beauticianNickName,
                         'headImgUrl': item.beauticianHeadImgUrl,
+                        'memberId': item.memberId,
                     }
                     recruitArrs.push(obj);
                 });

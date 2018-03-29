@@ -362,9 +362,10 @@
                         for(var i = 0;i<storeList.length;i++){
                             var obj = {};
                             obj.beauticianId = storeList[i].id;
-                            obj.beauticianNickname = storeList[i].beauticianNickName;
+                            obj.beauticianNickName = storeList[i].beauticianNickName;
                             obj.beauticianHeadImgUrl = storeList[i].headImgUrl;
                             obj.serverType = 0;
+                            obj.memberId = storeList[i].memberId;
                             ajaxData.storeProductBeauticianRefList.push(obj);
                         }
                         /* 商品-美容师-关联集合（上门） homeProductBeauticianRefList */
@@ -373,9 +374,10 @@
                         for(var j = 0;j<homeList.length;j++){
                             var obj = {};
                             obj.beauticianId = homeList[j].id;
-                            obj.beauticianNickname = homeList[j].beauticianNickName;
+                            obj.beauticianNickName = homeList[j].beauticianNickName;
                             obj.beauticianHeadImgUrl = homeList[j].headImgUrl;
                             obj.serverType = 1;
+                            obj.memberId = homeList[j].memberId;
                             ajaxData.homeProductBeauticianRefList.push(obj);
                         }
 

@@ -8,6 +8,14 @@
             @on-ok="fnAsyncOK">
             {{ modal.info }}
         </Modal>
+        <!-- 模态框 店长上架 -->
+        <Modal
+            v-model="server.mineModal"
+            title="上架服务"
+            :loading="server.loading"
+            @on-ok="fnAsyncOK2">
+            确定上架？
+        </Modal>
         <!-- 审核 模态框 -->
         <Modal
             v-model="audit.mineModal"
@@ -103,6 +111,11 @@
     export default {
         data () {
             return {
+                server:{
+                    loading: true,
+                    mineModal: false,
+                },
+                mainStoreName:'', //店铺名称
                 operators: {},
                 modal:{
                     mineModal: false,
@@ -248,11 +261,13 @@
                                     on: {
                                         click: () => {
                                             let row = params.row;
-                                            this.fnOffShelves(row.id,row.storeId);
+                                            // this.fnOffShelves(row.id,row.storeId);
                                             if(row.saleStatus  == 0){
                                                 // 商品上架
                                                 this.sendChild.itemId = row.id;
-                                                this.changePageType('onSale');
+                                                // this.changePageType('onSale');
+                                                this.server.mineModal = true;
+                                                this.fnOnShelves(row.id);
                                             }else if(row.saleStatus  == 1){
                                                 // 商品下架
                                                 this.fnOffShelves(row.id,row.storeId);
@@ -346,6 +361,11 @@
                 // 如果是店长进来，就不显示一些按钮
                 isShow:true,
                 brandId:'', // 品牌id
+                formValidate:{
+                    homeFee:'',
+                    productId:'',
+                    storeId:'',
+                }
             }
         },
         methods: {
@@ -605,6 +625,107 @@
                     vm.getData();
                 })
             },
+            /* 店长上架 */
+            fnOnShelves (id) {
+                let vm = this;
+                let url = vm.common.path2 + "product/detail/"+id;
+                vm.$http.get(
+                    url
+                ).then(function(res){
+                    let oData = res.data.data;
+                    vm.fnInitQuery(oData);
+                }).catch(function(err){
+                })
+            },
+            /* 上架需要用到的信息 */
+            fnInitQuery (data) {
+                let vm = this;
+                vm.formValidate.homeFee = !!data.product.homeFee?+data.product.homeFee/100:'';// 上门费
+                vm.formValidate.productId = data.id;
+                vm.formValidate.storeId = vm.storeId;
+                // 上门服务员工 homeProductBeauticianRefList
+                let homeList = data.homeProductBeauticianRefList;
+                let homeArrs = [];
+                homeList.forEach(function(item,index){
+                    var obj = {
+                        'id' : +item.beauticianId,
+                        'beauticianNickName': item.beauticianNickName,
+                        'headImgUrl': item.beauticianHeadImgUrl,
+                        'memberId': item.memberId,
+                    }
+                    homeArrs.push(obj);
+                });
+                vm.$store.commit('TOHOME_LIST',homeArrs);
+                // 到店服务员工 storeProductBeauticianRefList
+                let storeList = data.storeProductBeauticianRefList;
+                let storeArrs = [];
+                storeList.forEach(function(item,index){
+                    var obj = {
+                        'id' : +item.beauticianId,
+                        'beauticianNickName': item.beauticianNickName,
+                        'headImgUrl': item.beauticianHeadImgUrl,
+                        'memberId': item.memberId,
+                    }
+                    storeArrs.push(obj);
+                });
+                vm.$store.commit('STORE_LIST',storeArrs);
+            },
+            /* 确定上架 */
+            fnAsyncOK2 () {
+                let vm = this;
+                let url = vm.common.path2 + "product/store/onSale"
+                //添加品牌服务 
+                let ajaxData = {};
+                /* 店铺名称 */
+                ajaxData.storeName = vm.mainStoreName;
+                /* 上门费 */ 
+                ajaxData.homeFee = !!vm.formValidate.homeFee?+vm.formValidate.homeFee*100:"";
+                /* 商品id */
+                ajaxData.productId = vm.sendChild.itemId;
+                /* 店铺id */
+                ajaxData.storeId = vm.storeId;
+                /* 商品-美容师-关联集合（上门） homeProductBeauticianRefList */
+                ajaxData.homeProductBeauticianRefList = [];
+                var homeList = vm.$store.getters.tohomeList;
+                for(var j = 0;j<homeList.length;j++){
+                    var obj = {};
+                    obj.beauticianId = homeList[j].id;
+                    obj.beauticianNickName = homeList[j].beauticianNickName;
+                    obj.beauticianHeadImgUrl = homeList[j].headImgUrl;
+                    obj.serverType = 1;
+                    obj.memberId = homeList[j].memberId;
+                    ajaxData.homeProductBeauticianRefList.push(obj);
+                }
+                /*  商品-美容师-关联集合（到店） storeProductBeauticianRefList*/
+                ajaxData.storeProductBeauticianRefList = [];
+                var storeList = vm.$store.getters.storeList;
+                for(var i = 0;i<storeList.length;i++){
+                    var obj = {};
+                    obj.beauticianId = storeList[i].id;
+                    obj.beauticianNickName = storeList[i].beauticianNickName;
+                    obj.beauticianHeadImgUrl = storeList[i].headImgUrl;
+                    obj.serverType = 0;
+                    obj.memberId = storeList[i].memberId;
+                    ajaxData.storeProductBeauticianRefList.push(obj);
+                }
+                /* 商品-美容师-关联集合（招募） recruitProductBeauticianRefList */
+                ajaxData.recruitProductBeauticianRefList = [];
+                console.log(ajaxData);
+                /* ajax提交 */
+                vm.$http.post(
+                    url,
+                    ajaxData,
+                ).then(function(res){
+                    let oData = res.data
+                    vm.getData();
+                    vm.$Message.success('成功');
+                }).catch(function(err){
+                    vm.$Message.success('失败');
+                    vm.getData();
+                })
+                vm.server.loading = true;
+                vm.server.mineModal = false;
+            },
             /*===================== 菜单权限配置 start ====================*/
             /* 获取该菜单拥有的权限 */
             fnGetOperators () {
@@ -662,6 +783,7 @@
                 vm.storeId = store.id;
                 vm.brandId = store.brandId;
                 vm.sendChild.brandId = vm.brandId;
+                vm.mainStoreName = store.storeName;
                 vm.isShow = false;
             }else{
                 vm.isShow = true;
