@@ -435,10 +435,6 @@
                     }
                     storeArrs.push(obj);
                 });
-
-
-                console.log(storeArrs);
-                console.log('~~~~~~~~~~~~~~');
                 vm.$store.commit('STORE_LIST',storeArrs);
                 // 上门服务员工 homeProductBeauticianRefList
                 let homeList = data.homeProductBeauticianRefList;
@@ -488,10 +484,7 @@
                 vm.formValidate.serverAttention = data.product.serverAttention; // 注意事项
                 vm.formValidate.serverNeedTime = +data.product.serverNeedTime; // 服务总时长
                 // serverEffect: JSON.stringify(vm.formValidate.serverEffect), // 功效
-                /* if(vm.loginName == 'admin'&&!!data.product.storeId){
-                    vm.formValidate.storeName = data.product.storeId
-                } */
-                vm.formValidate.storeName = data.product.storeId
+                vm.formValidate.storeName = data.product.storeName
                 vm.storeId = data.product.storeId; // 店铺id
                 vm.$store.commit('STORE_ID',vm.storeId);
                 if(!!!data.product.serverEffect){
