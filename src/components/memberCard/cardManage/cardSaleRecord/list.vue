@@ -57,7 +57,6 @@
                 :columns="tableColumns1" 
                 ref="table"
                 stripe
-                border
                 @on-select="fnSelect"
                 @on-select-all="fnSelectAll"
             ></Table>
@@ -85,6 +84,8 @@
                 operators:{},
                 src:'../../../static/images/footer/1_1.png',
                 editId:'',
+                storeId:'',
+                cardId:'',
                 parentMsg:{},
                 makeCardList:[],//制卡方
                 salesTypeList:[
@@ -172,10 +173,12 @@
                         title: '售卡方',
                         key: 'saleStoreName',
                         render:(h,params)=>{
-                            if(params.row.buycardType){
+                            if(params.row.buycardType==1){
                                 return h('div',params.row.saleStoreName)
-                            }else{
+                            }else if(params.row.buycardType==0){
                                 return h('div','平台售卡')
+                            }else{
+                                return h('div','')
                             }
                         }
                     },
@@ -316,7 +319,11 @@
                 }
                 let url = common.path2+"memberCardTradeRecode/bg/queryListCardSaleRecode?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
-                    useType:2
+                    useType:2,
+                    payStatus:1
+                }
+                if(this.storeId){
+                    ajaxData.storeId = this.storeId;
                 }
                 if(vm.cd.brandId){
                     ajaxData.brandId = vm.cd.brandId //发卡方
@@ -325,10 +332,8 @@
                     ajaxData.buycardType = vm.cd.salesType //发卡方
                 }
                 if(vm.cd.inputVal){
-                    ajaxData[vm.cd.selectType] = vm.cd.inputVal 
-                    if(vm.cd.selectType=='cardName'){
-                        vm.$store.commit('CARD_NAME',vm.cd.inputVal)
-                    }
+                    ajaxData[vm.cd.selectType] = vm.cd.inputVal;
+                    ajaxData.memberCardId = this.cardId;
                 }
                 if(vm.cd.saleCardTime&&vm.cd.saleCardTime[0]&&vm.cd.saleCardTime[1]){
                     ajaxData.startTime = common.formatDate(vm.cd.saleCardTime[0]);
@@ -497,6 +502,9 @@
             /*=================== 菜单权限配置 end ===========================*/
         },
         mounted: function(){
+            if(JSON.parse(window.localStorage.getItem('userInfo')).store){
+                this.storeId = JSON.parse(window.localStorage.getItem('userInfo')).store.id;
+            }
             this.getBrand();
             this.fnGetOperators();
             this.getData();
@@ -512,7 +520,9 @@
             getCardName:{
                 handler(val){
                     if(val){
-                        this.cd.inputVal = val;
+                        console.log(val)
+                        this.cd.inputVal = val.cardName;
+                        this.cardId = val.id;
                         this.getData();
                     }
                 }

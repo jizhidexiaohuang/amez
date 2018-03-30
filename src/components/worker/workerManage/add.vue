@@ -1,6 +1,7 @@
 <template>
     <div>
         <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120" style="padding-bottom: 20px;">
+            <h2>新增员工</h2>
             <FormItem  label="员工姓名" prop="beauticianName">
                 <Input v-model="formValidate.beauticianName" placeholder="请填写员工姓名"></Input>
             </FormItem>
@@ -156,6 +157,7 @@
                     address:'',// 详细地址
                 },
                 ruleValidate: {
+
                 },
                 defaultList: [], //默认图片
                 uploadList:[],//图片列表
@@ -221,10 +223,12 @@
                             }
                         ).then(function(res){
                             let oData = res.data
-                            vm.$emit('returnList', 'list'); 
                             vm.btnCtrl = false;
                             if(res.data.code==200){
-                                vm.$Message.success('提交成功');
+                                vm.$emit('returnList', 'list'); 
+                                vm.$Message.success(res.data.message);
+                            }else{
+                                vm.$Message.error(res.data.message);
                             }
                         }).catch(function(err){
                             console.log(err);
@@ -335,6 +339,9 @@
     }
 </script>
 <style lang="scss" scoped>
+h2{
+    padding-left:10px;
+}
 .tableBox{
     width:380px;
     position: absolute;

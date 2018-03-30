@@ -204,7 +204,7 @@
                                 on: {
                                     click: () => {
                                         this.$store.commit('TAB_CTRL','cardSaleRecord')
-                                        this.$store.commit('CARD_NAME',params.row.cardName)
+                                        this.$store.commit('CARD_NAME',params.row)
                                     }
                                 }
                             }, '售卡记录');

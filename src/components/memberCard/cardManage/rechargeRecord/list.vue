@@ -58,7 +58,6 @@
                 :columns="tableColumns1" 
                 ref="table"
                 stripe
-                border
                 @on-select="fnSelect"
                 @on-select-all="fnSelectAll"
             ></Table>
@@ -87,6 +86,7 @@
                 src:'../../../static/images/footer/1_1.png',
                 editId:'',
                 infoId:'',
+                storeId:'',
                 makeCardList:[],//制卡方
                 salesTypeList:[
                     {
@@ -274,7 +274,11 @@
                 }
                 let url = common.path2+"memberCardTradeRecode/bg/queryListCardSaleRecode?pageNo="+start+"&pageSize="+size;
                 let ajaxData = {
-                    useType:0
+                    useType:0,
+                    payStatus:1
+                }
+                if(this.storeId){
+                    ajaxData.storeId = this.storeId;
                 }
                 if(vm.cd.inputVal){
                     ajaxData[vm.cd.selectType] = vm.cd.inputVal 
@@ -431,6 +435,9 @@
             /*=================== 菜单权限配置 end ===========================*/
         },
         mounted: function(){
+            if(JSON.parse(window.localStorage.getItem('userInfo')).store){
+                this.storeId = JSON.parse(window.localStorage.getItem('userInfo')).store.id;
+            }
             this.getBrand();
             this.fnGetOperators();
             this.getData();

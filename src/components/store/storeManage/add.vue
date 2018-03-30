@@ -413,8 +413,8 @@
                 // seat:"",//输入框中具体的地址
                 positionList:[], //将要展示的列表中的定位的值
                 mapData:{  //地图数据
-                longitude:116.404,
-                latitude:39.915
+                    longitude:116.404,
+                    latitude:39.915
                 },
                 projectList:[],//主营特色项目
                 additionalServicesList:[
@@ -684,8 +684,12 @@
                         ).then(res=>{
                             console.log(res)
                             this.returnHome('list')
+                            if(res.data.code==200){
+                                this.$Message.success('保存成功！');
+                            }else{
+                                this.$Message.success(res.data.message);
+                            }
                             vm.btnCtrl = false;
-                            this.$Message.success(res.data.message);
                         }).catch(err=>{
                             vm.btnCtrl = false;
                             this.$Message.error('提交失败');
@@ -758,14 +762,8 @@
                 console.log(this.additionalServicesObj)
             },
             //省市联动选择的值
-            onSelected(data) {
-                this.province = data.province.value
-                this.city = data.city.value
-                this.area = data.area.value
-            },
             getCity(data){
                 console.log(data)
-                // this.cd.cityArr = data
                 this.province = data[0].label
                 this.city = data[1].label
                 this.area = data[2].label
@@ -775,18 +773,34 @@
             },
             //定位按钮
             orientate(){
-                console.log(this.formValidate.storeAddress+this.city)
-                let url = common.path2 + 'store/findListByBaiduMapLocation/'+this.formValidate.storeAddress+'/'+this.city;
-                this.$http.get(url).then(res=>{
-                    console.log(res)
-                    this.mapData.latitude = res.data.data[0].location.lat;
-                    this.mapData.longitude = res.data.data[0].location.lng;
-                    console.log(this.mapData.latitude+'--'+this.mapData.longitude)
-                    //重新初始化地图
-                   this.mapInit(this.mapData.longitude,this.mapData.latitude)
-                }).catch(err=>{
-                    console.log(err)
-                })
+                // console.log(this.formValidate.storeAddress+this.city)
+                // let url = common.path2 + 'store/findListByBaiduMapLocation/'+this.formValidate.storeAddress+'/'+this.city;
+                // this.$http.get(url).then(res=>{
+                //     console.log(res)
+                //     this.mapData.latitude = res.data.data[0].location.lat;
+                //     this.mapData.longitude = res.data.data[0].location.lng;
+                //     console.log(this.mapData.latitude+'--'+this.mapData.longitude)
+                //     //重新初始化地图
+                //    this.mapInit(this.mapData.longitude,this.mapData.latitude)
+                // }).catch(err=>{
+                //     console.log(err)
+                // })
+                let vm = this;
+                var map = new BMap.Map("map");          
+                // 创建地址解析器实例     
+                var myGeo = new BMap.Geocoder();      
+                // 将地址解析结果显示在地图上，并调整地图视野 
+                var address = this.city+this.area+this.formValidate.storeAddress;
+                myGeo.getPoint(address, function(point){      
+                    if (point) {      
+                        map.centerAndZoom(point, 16);      
+                        map.addOverlay(new BMap.Marker(point)); 
+                        console.log(point)
+                        vm.mapData.latitude = point.lat;
+                        vm.mapData.longitude = point.lng;
+                    }
+                }, 
+                this.city);
             },
             //初始化地图
             mapInit(longitude,latitude){
@@ -798,17 +812,17 @@
             },
             //输入关键字联想
             handleSearch (value) {
-                let url = common.path2 + 'store/findListByBaiduMapLocation/'+value+'/'+this.city;
-                this.$http.get(url).then(res=>{
-                    let storeList = [];
-                    res.data.data.forEach(item=>{
-                        storeList.push(item.name)
-                    })
-                    console.log(storeList)
-                    this.positionList = !value ? [] : storeList;
-                }).catch(err=>{
-                    console.log(err)
-                })
+                // let url = common.path2 + 'store/findListByBaiduMapLocation/'+value+'/'+this.city;
+                // this.$http.get(url).then(res=>{
+                //     let storeList = [];
+                //     res.data.data.forEach(item=>{
+                //         storeList.push(item.name)
+                //     })
+                //     console.log(storeList)
+                //     this.positionList = !value ? [] : storeList;
+                // }).catch(err=>{
+                //     console.log(err)
+                // })
             },
             selectKeyWords (value) {
                 console.log(value)
@@ -851,34 +865,6 @@
                     }
                 }
             },
-            //上传店铺荣誉
-            uploadStoreHonor(res){
-                this.storeHonorPhoto = res.data
-            },
-            //上传正面照
-            uploadPositivePhoto(res){
-                this.formValidate.idcardPositivePhoto = res.data
-            },
-            //上传反面照
-            uploadNegativePhoto(res){
-                this.formValidate.idcardNegativePhoto = res.data
-            },
-            //上传手持照
-            uploadHandheldPhoto(res){
-                this.formValidate.idcardHandheldPhoto = res.data
-            },
-            //上传门头照
-            uploadDoorPhoto(res){
-                this.formValidate.storeDoorPhoto = res.data
-            },
-            //上传收银台照
-            uploadCashierPhoto(res){
-                this.formValidate.storeCashierPhoto = res.data
-            },
-            //上传店内照
-            uploadInPhoto(res){
-                this.formValidate.storeInPhoto = res.data
-            },
             //获取连锁品牌
             getBranch(){
                 let url = common.path2+"storeChainBrand/front/findByPage";
@@ -909,7 +895,7 @@
         },
         mounted: function(){
             //初始化地图
-　　　　　　this.mapInit(this.mapData.longitude,this.mapData.latitude);
+　　　　　　 this.mapInit(this.mapData.longitude,this.mapData.latitude);
         },
         activated: function(){
             
@@ -976,5 +962,8 @@
     }
     .ivu-upload-list{
         display: none;
+    }
+    #map{
+        border-radius:15px;
     }
 </style>

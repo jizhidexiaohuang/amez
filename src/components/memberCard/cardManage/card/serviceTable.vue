@@ -145,7 +145,9 @@
                 let size = vm.table.size;//每页条数
                 let url = common.path2+"product/findByPageForStore?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {}
-                ajaxData.storeId = this.storeId;
+                if(this.storeId){
+                    ajaxData.storeId = this.storeId;
+                }
                 if(vm.cd.branchId){
                     ajaxData.brandId = vm.cd.branchId;
                 }
@@ -338,12 +340,12 @@
                     // this.getData();
                 }
             },
-            storeId:{
-                deep:true,
-                handler(val){
-                    this.getData()
-                }
-            }
+            // storeId:{
+            //     deep:true,
+            //     handler(val){
+            //         this.getData()
+            //     }
+            // }
         }
     }
 </script>

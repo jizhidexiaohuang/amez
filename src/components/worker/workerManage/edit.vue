@@ -189,7 +189,7 @@
                     if (valid) {
                         //添加品牌服务
                         let ajaxData = {
-                            id:vm.sendChild.id, //id
+                            id:vm.editId, //id
                             beauticianName: vm.formValidate.beauticianName, // 员工姓名
                             beauticianNickName: vm.formValidate.beauticianNickName, // 员工昵称
                             headImgUrl: vm.uploadList.length>0?vm.uploadList[0].url:vm.defaultList[0].url, // 员工头像
@@ -364,7 +364,7 @@
             }
         },
         beforeMount:function(){
-            this.getDataById(this.sendChild.id)
+            this.getDataById(this.editId)
         },
         mounted: function(){
             this.getData();
@@ -373,7 +373,7 @@
             MyUpload,
             CityLinkage
         },
-        props:['sendChild']
+        props:['editId']
     }
 </script>
 <style lang="scss" scoped>

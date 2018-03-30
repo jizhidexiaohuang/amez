@@ -718,8 +718,12 @@
                         ).then(res=>{
                             console.log(res)
                             this.returnHome('list')
+                            if(res.data.code){
+                                this.$Message.success('保存成功！');
+                            }else{
+                                this.$Message.success(res.data.message);
+                            }
                             this.btnCtrl = false;
-                            this.$Message.success(res.data.message);
                         }).catch(res=>{
                             this.btnCtrl = false;
                             console.log(res)
@@ -817,18 +821,34 @@
             },
             //定位按钮
             orientate(){
-                console.log(this.formValidate.storeAddress+this.city)
-                let url = common.path2 + 'store/findListByBaiduMapLocation/'+this.formValidate.storeAddress+'/'+this.city;
-                this.$http.get(url).then(res=>{
-                    console.log(res)
-                    this.mapData.latitude = res.data.data[0].location.lat;
-                    this.mapData.longitude = res.data.data[0].location.lng;
-                    console.log(this.mapData.latitude+'--'+this.mapData.longitude)
-                    //重新初始化地图
-                   this.mapInit(this.mapData.longitude,this.mapData.latitude)
-                }).catch(err=>{
-                    console.log(err)
-                })
+                // console.log(this.formValidate.storeAddress+this.city)
+                // let url = common.path2 + 'store/findListByBaiduMapLocation/'+this.formValidate.storeAddress+'/'+this.city;
+                // this.$http.get(url).then(res=>{
+                //     console.log(res)
+                //     this.mapData.latitude = res.data.data[0].location.lat;
+                //     this.mapData.longitude = res.data.data[0].location.lng;
+                //     console.log(this.mapData.latitude+'--'+this.mapData.longitude)
+                //     //重新初始化地图
+                //    this.mapInit(this.mapData.longitude,this.mapData.latitude)
+                // }).catch(err=>{
+                //     console.log(err)
+                // })
+                let vm = this;
+                var map = new BMap.Map("map");          
+                // 创建地址解析器实例     
+                var myGeo = new BMap.Geocoder();      
+                // 将地址解析结果显示在地图上，并调整地图视野 
+                var address = this.city+this.area+this.formValidate.storeAddress;
+                myGeo.getPoint(address, function(point){      
+                    if (point) {      
+                        map.centerAndZoom(point, 16);      
+                        map.addOverlay(new BMap.Marker(point)); 
+                        console.log(point)
+                        vm.mapData.latitude = point.lat;
+                        vm.mapData.longitude = point.lng;
+                    }
+                }, 
+                this.city);
             },
             //初始化地图
             mapInit(longitude,latitude){
@@ -841,18 +861,18 @@
             },
             //输入关键字联想
             handleSearch (value) {
-                let url = common.path2 + 'store/findListByBaiduMapLocation/'+value+'/'+this.city;
-                this.$http.get(url).then(res=>{
-                    console.log(res)
-                    let storeList = [];
-                    res.data.data.forEach(item=>{
-                        storeList.push(item.name)
-                    })
-                    console.log(storeList)
-                    this.positionList = !value ? [] : storeList;
-                }).catch(err=>{
-                    console.log(err)
-                })
+                // let url = common.path2 + 'store/findListByBaiduMapLocation/'+value+'/'+this.city;
+                // this.$http.get(url).then(res=>{
+                //     console.log(res)
+                //     let storeList = [];
+                //     res.data.data.forEach(item=>{
+                //         storeList.push(item.name)
+                //     })
+                //     console.log(storeList)
+                //     this.positionList = !value ? [] : storeList;
+                // }).catch(err=>{
+                //     console.log(err)
+                // })
             },
             selectKeyWords (value) {
                 console.log(value)
@@ -894,34 +914,6 @@
                         this.formValidate.storeInPhoto = data[0].url;
                     }
                 }
-            },
-            //上传店铺荣誉
-            uploadStoreHonor(res){
-                this.storeHonorPhoto = res.data
-            },
-            //上传正面照
-            uploadPositivePhoto(res){
-                this.idcardPositivePhoto = res.data
-            },
-            //上传反面照
-            uploadNegativePhoto(res){
-                this.idcardNegativePhoto = res.data
-            },
-            //上传手持照
-            uploadHandheldPhoto(res){
-                this.idcardHandheldPhoto = res.data
-            },
-            //上传门头照
-            uploadDoorPhoto(res){
-                this.storeDoorPhoto = res.data
-            },
-            //上传收银台照
-            uploadCashierPhoto(res){
-                this.storeCashierPhoto = res.data
-            },
-            //上传店内照
-            uploadInPhoto(res){
-                this.storeInPhoto = res.data
             },
             //获取数据
             getDataById(id){
@@ -966,8 +958,8 @@
                     }  //控制年限的可用
                     this.mapData.longitude = store.storeLongitude; //经度
                     this.mapData.latitude = store.storeLatitude; //纬度
-                    this.mapInit(this.mapData.longitude,this.mapData.latitude); //重新初始化地图
                     this.formValidate.storeAddress = store.storeAddress;  //店铺地址
+                    // this.mapInit(this.mapData.longitude,this.mapData.latitude); //重新初始化地图
                     this.city = store.cityName;
                     //省市区
                     this.cityArr.push({
@@ -981,7 +973,8 @@
                         label:store.areaName
                     })
                     this.cityConfig.cityList = this.cityArr;
-                    this.cityCtrl = true
+                    this.cityCtrl = true;
+                    this.orientate();
                     this.formValidate.beauticianTotal = store.beauticianTotal;
                     this.formValidate.description = store.description;
                     //------------扩展表----------------------------------------

@@ -51,7 +51,7 @@
                     <Input v-model="cd.inputVal">
                     <Select v-model="cd.selectType" slot="prepend" style="width: 100px">
                         <Option value="orderNo">订单号</Option>
-                        <Option value="storeName">门店名称</Option>
+                        <Option v-if="!storeName" value="storeName">门店名称</Option>
                         <Option value="memberRealName">收货人姓名</Option>
                         <Option value="phone">收货人手机</Option>
                     </Select>
@@ -104,6 +104,7 @@
                 src:'../../../static/images/footer/1_1.png',
                 area:'',
                 parentMsg:'',
+                storeName:'',
                 orderTypeList:[
                     {
                         value:'',
@@ -380,6 +381,9 @@
                     pageNo:start,
                     pageSize: size,
                 }
+                if(vm.storeName){
+                    ajaxData.storeName = vm.storeName;
+                }
                 if(vm.cd.orderType){
                     ajaxData.type = vm.cd.orderType //类型
                 }
@@ -565,6 +569,9 @@
             /*=================== 菜单权限配置 end ===========================*/
         },
         mounted: function(){
+            if(JSON.parse(window.localStorage.getItem('userInfo')).store){
+                this.storeName = JSON.parse(window.localStorage.getItem('userInfo')).store.storeName;
+            }
             this.fnGetOperators();
             this.getData();
         },

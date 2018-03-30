@@ -7,7 +7,7 @@
         <!-- 审核 -->
         <ExaminePage v-if="pageType == 'examine'" :examineId="examineId"  class="testWrap" v-on:returnList="changePageType"></ExaminePage>
         <!-- 编辑 -->
-        <EditPage v-if="pageType == 'edit'" :sendChild="sendChild"  class="testWrap" v-on:returnList="changePageType"></EditPage>
+        <EditPage v-if="pageType == 'edit'" :editId="editId"  class="testWrap" v-on:returnList="changePageType"></EditPage>
         <!-- 列表容器 -->
         <div v-if="pageType == 'list'" class="testWrap">
             <div class="boxStyle">
@@ -78,6 +78,7 @@
                 operators:{},
                 examineId:'', //审核的id
                 infoId:'', //查看的id
+                storeId:'',
                 auditStatusList:[
                     {
                         value:'',
@@ -286,7 +287,7 @@
                                     on: {
                                         click: () => {
                                             let row = params.row;
-                                            this.sendChild.id = row.id;
+                                            this.editId = row.id;
                                             this.changePageType('edit');
                                         }
                                     }
@@ -347,9 +348,7 @@
                 pageType: 'list',//子页面类型
                 uploadList: [],//图片
                  /* 传递给子组件的数据 */
-                sendChild:{
-                    id: "", // 编辑选项的id
-                },
+                editId: "", // 编辑选项的id
             }
         },
         methods: {
@@ -382,8 +381,9 @@
                     start = 1;
                 }
                 let url = vm.common.path2+"storeBeautician/front/findByPage?pageNo="+start+"&pageSize="+size;
-                let ajaxData = {
-                   
+                let ajaxData = {}
+                if(this.storeId){
+                    ajaxData.storeId = this.storeId;
                 }
                 if(vm.cd.auditStatus){
                     ajaxData.auditStatus = vm.cd.auditStatus
@@ -533,6 +533,9 @@
         },
         mounted: function(){
             this.fnGetOperators();
+            if(JSON.parse(window.localStorage.getItem('userInfo')).store){
+                this.storeId = JSON.parse(window.localStorage.getItem('userInfo')).store.id;
+            }
             this.getData();
         },
         activated: function(){
