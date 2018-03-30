@@ -19,7 +19,7 @@
         <!-- 审核 模态框 -->
         <Modal
             v-model="audit.mineModal"
-            title="审核品牌"
+            title="审核平台自营服务"
             :loading="audit.loading"
             @on-ok="fnAsyncOK1">
             <Form>
@@ -618,46 +618,6 @@
             },
 
             /*===================== 菜单权限配置 start ====================*/
-            /* 获取该菜单拥有的权限 */
-            fnGetOperators () {
-                let vm = this;
-                function fnGetDatas (id,vm) {
-                    let list = [];
-                    let menuArrs = []; // 相同menuId的数组
-                    let strArrs = []; // 权限数组 ["add","edit"]
-                    /* 菜单对应的权限组 */
-                    if(!!JSON.parse(window.localStorage.getItem("userInfo")).operator.list){
-                        list = JSON.parse(window.localStorage.getItem("userInfo")).operator.list;
-                    }
-                    /* 每个用户有可能被分配了多个角色，所以需要合并相同menuId的权限组 */
-                    for(var c = 0;c<list.length;c++){
-                        if(list[c].menuId == id){
-                            menuArrs.push(list[c]);
-                        }
-                    }
-
-                    for(var j = 0;j<menuArrs.length;j++){
-                        if(!!menuArrs[j].operCode){
-                            vm.fnChangeOperators(menuArrs[j].operCode.split(","));
-                        }
-                    }
-                }
-                /* 得到所有的菜单 */
-                let arrs = JSON.parse(window.localStorage.getItem("userInfo")).menu;
-                for(var i = 0;i<arrs.length;i++){
-                    if(!!arrs[i].hasChildList){
-                        for(var j = 0;j<arrs[i].childList.length;j++){
-                            if(arrs[i].childList[j].href == this.$route.path){
-                                fnGetDatas(arrs[i].childList[j].menuId,vm)
-                            }
-                        }
-                    }else{
-                        if(arrs[i].href == this.$route.path){
-                            fnGetDatas(arrs[i].menuId,vm)
-                        }
-                    }
-                }
-            },
             /* 店长下架 */
             //product/store/offShelves
             fnOffShelves (productId,storeId) {
@@ -780,14 +740,6 @@
                 vm.server.loading = true;
                 vm.server.mineModal = false;
             },
-            /* 权限的遍历 */
-            fnChangeOperators (arrs) {
-                // operators{}是开关对象
-                let vm = this;
-                arrs.forEach(function(item,index){
-                    vm.operators[item] = true;
-                })
-            }
             /*=================== 菜单权限配置 end ===========================*/
         },
         mounted: function(){
@@ -800,7 +752,7 @@
             }else{
                 vm.isShow = true;       
             }
-            this.fnGetOperators();
+            this._u.operatorsEdit(this); // 控制页面按钮的显示
             this.fnGetProductCategory();
             this.fnGetStoreChainBrand();
             this.getData();

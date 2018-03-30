@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="140" style="padding-bottom: 20px;">
+        <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="160" style="padding-bottom: 20px;">
             <Spin fix v-if="spinShow"></Spin>
             <FormItem label="服务分类" prop="type">
                 <Select disabled v-model="formValidate.type" placeholder="选择服务分类">
@@ -144,7 +144,7 @@
                     </div>
                 </div>
             </FormItem>
-            <FormItem label="服务详情" prop="serverIntroduce">
+            <FormItem label="服务详情（图片最大1M）" prop="serverIntroduce">
                 <editor id="editor_id" height="700px" width="100%;" :content="formValidate.serverIntroduce"
                     :uploadJson="path"
                     :loadStyleMode="false"

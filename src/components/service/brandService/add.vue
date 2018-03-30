@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="140" style="padding-bottom: 20px;">
+        <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="160" style="padding-bottom: 20px;">
             <FormItem label="服务分类" prop="type">
                 <Select v-model="formValidate.type" placeholder="选择服务分类">
                     <Option :value="item.id" v-for="item in serviceList" :key="item.id">{{ item.categoryName }}</Option>
@@ -124,7 +124,7 @@
                 </RadioGroup>
             </FormItem>
             
-            <FormItem label="服务详情" prop="serverIntroduce">
+            <FormItem label="服务详情（图片最大1M）" prop="serverIntroduce">
                 <editor id="editor_id" height="700px" width="100%;" :content="formValidate.serverIntroduce"
                     :uploadJson="path"
                     :loadStyleMode="false"
@@ -259,6 +259,7 @@
                             auditStatus: vm.formValidate.auditStatus, // 审核状态，0待审核，1通过，2不通过
                             // brandId: vm.formValidate.brandId, // 服务所属品牌
                             storeId:vm.storeId,//店铺id
+                            storeName: vm.formValidate.storeName, // 店铺名称
                             isPlatform: false,
                         }
                         /* 是否支持到店 isSupportStore */
@@ -504,6 +505,7 @@
             vm.loginName = user.user.loginName;
             if(store!=null){
                 vm.storeId = store.id;
+                vm.formValidate.storeName = store.storeName;
                 vm.isAdmin = false;
                 vm.isShowBox = true;
                 vm.$store.commit('STORE_ID',vm.storeId);

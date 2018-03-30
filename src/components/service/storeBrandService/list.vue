@@ -788,7 +788,8 @@
             }else{
                 vm.isShow = true;
             }
-            this.fnGetOperators();
+            this._u.operatorsEdit(this); // 控制页面按钮的显示
+            // this.fnGetOperators();
             this.fnGetProductCategory();
             this.fnGetStoreChainBrand();
             this.getData();
