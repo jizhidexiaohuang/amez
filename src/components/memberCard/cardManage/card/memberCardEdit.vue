@@ -33,7 +33,7 @@
             </FormItem>
             <FormItem label="会员卡面值" prop="cardValue">
                 <Col span="2">
-                    <InputNumber :max="100000000" :min="1" v-model="formValidate.cardValue"></InputNumber>
+                    <InputNumber :max="100000000" :min="0.01" v-model="formValidate.cardValue"></InputNumber>
                     <!-- <Input v-model="formValidate.cardValue" placeholder="请输入会员卡面值"></Input>               -->
                 </Col>
                 <Col span="2">元</Col>
@@ -242,7 +242,7 @@
                             memberCard:{
                                 id:this.editId,
                                 cardName:this.formValidate.cardName,
-                                balance:this.formValidate.cardValue-0,
+                                balance:this.formValidate.cardValue*100,
                                 discount:this.formValidate.discount-0,
                                 brandId:this.formValidate.brandId,
                                 brandName:this.formValidate.brandName,
@@ -313,7 +313,7 @@
                     vm.tempBrandId = oData.memberCard.brandId-0;
                     vm.formValidate.brandName = oData.memberCard.brandName; //品牌名字
                     vm.formValidate.discount = oData.memberCard.discount; //折扣
-                    vm.formValidate.cardValue = oData.memberCard.balance; //面值
+                    vm.formValidate.cardValue = oData.memberCard.balance/100; //面值
                     vm.formValidate.cardTotal = oData.memberCard.issueNum; //发行数量
                     vm.defaultList.push({
                         url:oData.memberCard.stylePattern

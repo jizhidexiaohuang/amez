@@ -33,7 +33,7 @@
             </FormItem>
             <FormItem label="会员卡面值" prop="cardValue">
                 <Col span="2">
-                    <InputNumber :max="100000000" :min="1" v-model="formValidate.cardValue"></InputNumber>
+                    <InputNumber :max="100000000" :min="0.01" v-model="formValidate.cardValue"></InputNumber>
                     <!-- <Input v-model="formValidate.cardValue" placeholder="请输入会员卡面值"></Input>               -->
                 </Col>
                 <Col span="8">元（最高金额99999999.99）</Col>
@@ -150,12 +150,12 @@
                     imgUrl:[
                         { required: true, message: '请选择会员卡卡面模版', pattern:/.+/, trigger: 'blur' }
                     ],
-                    expiryDate:[
-                        { required: true, type: 'date', message: '请设置会员卡有效期', trigger: 'change' }
-                    ],
-                    expiryDay:[
-                        { required: true, message: '请设置会员卡有效天数', pattern:/.+/, trigger: 'blur' }
-                    ],
+                    // expiryDate:[
+                    //     { required: true, type: 'date', message: '请设置会员卡有效期', trigger: 'blur' }
+                    // ],
+                    // expiryDay:[
+                    //     { required: true, message: '请设置会员卡有效天数', pattern:/.+/, trigger: 'blur' }
+                    // ],
                     cardExplain:[
                         { required: true, message: '请填写用卡说明', pattern:/.+/, trigger: 'blur' },
                     ],

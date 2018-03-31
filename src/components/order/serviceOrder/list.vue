@@ -380,6 +380,7 @@
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
+                    // status:-1
                 }
                 if(vm.storeName){
                     ajaxData.storeName = vm.storeName;

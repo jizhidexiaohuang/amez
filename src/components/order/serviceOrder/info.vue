@@ -125,7 +125,7 @@ export default {
     // 支付方式
     payType:function(){
       let str = '';
-      if(this.orderBase.payType=='wechatpay'){
+      if(this.orderBase.payType=='wxpay'){
         str = '微信支付'
       }else if(this.orderBase.payType=='alipay'){
         str = '支付宝支付'

@@ -455,7 +455,7 @@
                 this.pageType = type;
                 if(type == "list"){
                     this.table.pageSize = this.table.size;
-                    this.getData();
+                    this.getData('see');
                 }
             },
             /* 判断页签中是否有该模块，如果有则使用缓存，如果没有则重新加载数据 */

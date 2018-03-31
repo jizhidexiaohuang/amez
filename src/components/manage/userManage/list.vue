@@ -169,7 +169,7 @@
                         width: 260,
                         render: (h, params) => {
                             let arr = [];
-                            let powerBotton = h('Button', {
+                            let powerButton = h('Button', {
                                 props: {
                                     type: 'primary',
                                     size: 'small'
@@ -214,14 +214,14 @@
                                     }
                                 }
                             }, '删除');
+                            if(this.operators.power){
+                                arr.push(powerButton)
+                            }
                             if(this.operators.edit){
                                 arr.push(editButton)
                             }
                             if(this.operators.delete){
                                 arr.push(deleteButton)
-                            }
-                            if(this.operators.power){
-                                arr.push(powerButton)
                             }
                             return h('div', arr);
                         }

@@ -823,6 +823,11 @@
                 // }).catch(err=>{
                 //     console.log(err)
                 // })
+                // 跨域
+                // let url = "http://api.map.baidu.com/place/v2/suggestion?query="+value+"&region="+this.city+"&city_limit=true&output=jsonp&ak=cFIbalyCak0xIGYQaPP4MHcpSh8PBhEL"
+                // this.$http.get(url).then(res=>{
+                //     console.log(res)
+                // })
             },
             selectKeyWords (value) {
                 console.log(value)

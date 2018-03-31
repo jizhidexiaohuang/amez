@@ -1,19 +1,42 @@
 <template>
     <div>
         <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120" style="padding-bottom: 20px;">
-            <FormItem  label="员工姓名" prop="beauticianName">
-                <Input v-model="formValidate.beauticianName" placeholder="请填写员工姓名"></Input>
+            <h2>查看员工信息</h2>
+            <Alert style="width:440px;margin-left:60px;" type="warning">{{auditStatus==1?'审核已通过':auditReason+',审核不通过'}}</Alert>
+            <FormItem  label="员工姓名" prop="beauticianName" style="width:500px;">
+                <Row>
+                    <Col span="23">
+                        <Input v-model="formValidate.beauticianName" placeholder="请填写员工姓名"></Input>
+                    </Col>
+                    <Col span="1">
+                        <span>(0/30)</span>
+                    </Col>
+                </Row>
             </FormItem>
-            <FormItem  label="员工昵称" prop="beauticianNickName">
-                <Input v-model="formValidate.beauticianNickName" placeholder="请填写员工姓名"></Input>
+            <FormItem  label="员工昵称" prop="beauticianNickName" style="width:500px;">
+                <Row>
+                    <Col span="23">
+                        <Input v-model="formValidate.beauticianNickName" placeholder="请填写员工姓名"></Input>
+                    </Col>
+                    <Col span="1">
+                        <span>(0/30)</span>
+                    </Col>
+                </Row>
             </FormItem>
             <FormItem label="员工照片">
                 <MyUpload v-if="imgCtrl" :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
             </FormItem>
-            <FormItem  label="工牌号" prop="workCardNo">
-                <Input v-model="formValidate.workCardNo" placeholder="请填写工牌号"></Input>
+            <FormItem  label="工牌号" prop="workCardNo" style="width:500px;">
+                <Row>
+                    <Col span="23">
+                        <Input v-model="formValidate.workCardNo" placeholder="请填写工牌号"></Input>
+                    </Col>
+                    <Col span="1">
+                        <span>(0/4)</span>
+                    </Col>
+                </Row>
             </FormItem>
-            <FormItem  label="注册手机" prop="mobile">
+            <FormItem  label="注册手机" prop="mobile" style="width:500px;">
                 <Input v-model="formValidate.mobile" disabled placeholder="请填写注册手机"></Input>
             </FormItem>
             <FormItem label="员工类型" prop="position">
@@ -41,8 +64,15 @@
                     </Col>
                 </Row>
             </FormItem>
-            <FormItem  label="从业经验" prop="experience">
-                <Input v-model="formValidate.experience" placeholder=""></Input>
+            <FormItem  label="从业经验" prop="experience" style="width:500px;">
+                <Row>
+                    <Col span="6">
+                        <InputNumber :max="20" :min="0" v-model="formValidate.experience" placeholder="请填写从业时间"></InputNumber>
+                    </Col>
+                    <Col span="2">
+                        <span>年</span> 
+                    </Col>
+                </Row>
             </FormItem>
             <FormItem label="员工住址" prop="">
                 <Row>
@@ -51,7 +81,7 @@
                     </Col>
                 </Row>
             </FormItem>
-            <FormItem  label="详细地址" prop="address">
+            <FormItem  label="详细地址" prop="address" style="width:500px;">
                 <Input v-model="formValidate.address" placeholder=""></Input>
             </FormItem>
             <FormItem label="员工状态" prop="beauticianStatus">
@@ -60,7 +90,7 @@
                     <Radio label="0">离职</Radio>
                 </RadioGroup>
             </FormItem>
-            <FormItem label="所属门店" prop="storeName" style="width:500px;">
+            <FormItem label="所属门店" prop="storeName" style="width:500px;" v-if="!storeId">
                 <Input v-model="formValidate.storeName" placeholder="请选择所属门店" @click.native="selectStore"></Input>
                 <div class="tableBox" v-show="tableCtrl">
                     <Table
@@ -91,7 +121,7 @@
                     </div>
                 </div>
             </FormItem>
-            <FormItem label="员工等级" prop="workerGrade">
+            <FormItem label="员工等级" prop="workerGrade" style="width:500px;">
                 <Select v-model="formValidate.workerGrade">
                     <Option :value="item.value" v-for='(item ,index) in formValidate.workerGradeList' :key="index">{{item.label}}</Option>
                 </Select>
@@ -115,6 +145,7 @@
                     type:'linkage',
                     cityList:[],
                 },
+                storeId:'',
                 cityCtrl:false, //控制子组件是否创建
                 imgCtrl:false,
                 tableCtrl:false,
@@ -124,15 +155,26 @@
                 provinceId:'',//城市级联的Id
                 cityId:'',//城市级联的Id
                 areaId:'',//城市级联的Id
+                defaultList: [], //默认列表
+                uploadList:[],//图片列表
+                path:this.common.path2+"system/api/file/uploadForKindeditor",
+                switch1: false,
+                uploadConfig: {
+                    num:1
+                },
+                auditReason:'', //审核不通过原因
+                auditStatus:'', //审核状态
                 formValidate: {
                     beauticianName:"",//员工名称
                     beauticianNickName:"",//员工昵称
+                    headImgUrl:'',//员工头像
                     workCardNo:"",//员工编号
                     mobile:"",//注册手机
                     position:"1",//员工类型
                     beauticianStatus:"0",//员工状态
                     birthday:'',//出生年月
                     joinTime:'',//入职时间
+                    experience:0, //从业经验
                     storeName:'', //店铺名称
                     storeId:'',//店铺id
                     workerGrade:'', //员工等级
@@ -157,13 +199,6 @@
                     address:'',// 详细地址
                 },
                 ruleValidate: {
-                },
-                defaultList: [], //默认列表
-                uploadList:[],//图片列表
-                path:this.common.path2+"system/api/file/uploadForKindeditor",
-                switch1: false,
-                uploadConfig: {
-                    num:1
                 },
                 table:{
                     tableData1: [],
@@ -191,7 +226,7 @@
                             id:vm.sendChild.id, //id
                             beauticianName: vm.formValidate.beauticianName, // 员工姓名
                             beauticianNickName: vm.formValidate.beauticianNickName, // 员工昵称
-                            headImgUrl: vm.uploadList.length>0?vm.uploadList[0].url:vm.defaultList[0].url, // 员工头像
+                            headImgUrl: vm.formValidate.headImgUrl, // 员工头像
                             workCardNo: vm.formValidate.workCardNo, // 员工编号
                             phone:vm.formValidate.mobile, //注册手机
                             beauticianType:vm.formValidate.position, //员工类型
@@ -240,8 +275,9 @@
             // 获取图片列表
             getUploadList (data) {
                 let vm = this;
-                vm.uploadList = data;
-                console.log(vm.uploadList);
+                if(data.length!=0){
+                    vm.formValidate.headImgUrl = data[0].url
+                }
             },
             // 开关控制
             changeSwitch1 (status) {
@@ -261,7 +297,7 @@
                 console.log(page)
                 let vm = this;
                 vm.table.pageNun = page;   
-                vm.getData();             
+                vm.getData('see');             
             },
             /* 页码改变的回掉函数 */
             changeSize (size) {
@@ -356,6 +392,8 @@
                         label:oData.areaName
                     });
                     vm.cityCtrl = true;
+                    vm.auditStatus = oData.auditStatus;
+                    vm.auditReason = oData.auditReason
                 })
             }
         },
@@ -363,6 +401,11 @@
             this.getDataById(this.infoId)
         },
         mounted: function(){
+            if(JSON.parse(window.localStorage.getItem('userInfo')).store){
+                this.storeId = JSON.parse(window.localStorage.getItem('userInfo')).store.id;
+                this.formValidate.storeId = JSON.parse(window.localStorage.getItem('userInfo')).store.id;
+                this.formValidate.storeName = JSON.parse(window.localStorage.getItem('userInfo')).store.storeName;
+            }
             this.getData();
         },
         components:{
@@ -373,6 +416,10 @@
     }
 </script>
 <style lang="scss" scoped>
+h2{
+    padding-left:10px;
+    margin-bottom:10px;
+}
 .tableBox{
     width:380px;
     position: absolute;
