@@ -19,7 +19,7 @@
         <Col span="8"></Col>
       </Row>
       <Row>
-        <Col span="8">退款金额：{{orderBase.refundAmount/100}}</Col>
+        <Col span="8">退款金额：￥{{orderBase.refundAmount/100}}</Col>
         <Col span="8">退款原因：{{orderBase.reason}}</Col>
         <Col span="8"></Col>
       </Row>

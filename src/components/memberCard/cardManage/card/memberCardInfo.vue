@@ -88,7 +88,7 @@
                     vm.formValidate.brandId = oData.memberCard.brandId-0; //品牌id
                     vm.formValidate.brandName = oData.memberCard.brandName; //品牌名字
                     vm.formValidate.discount = oData.memberCard.discount; //折扣
-                    vm.formValidate.cardValue = oData.memberCard.balance; //面值
+                    vm.formValidate.cardValue = oData.memberCard.balance/100; //面值
                     vm.formValidate.cardTotal = oData.memberCard.issueNum; //发行数量
                     vm.formValidate.imgUrl = oData.memberCard.stylePattern; //卡面样式
                     vm.src = oData.memberCard.stylePattern;

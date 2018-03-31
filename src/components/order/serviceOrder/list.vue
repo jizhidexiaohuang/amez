@@ -137,20 +137,20 @@
                         value:'0',
                         label:'待付款'
                     },{
-                        value:'1',
-                        label:'交易关闭'
-                    },{
                         value:'2',
                         label:'待服务'
                     },{
-                        value:'4',
-                        label:'服务中'
+                        value:'待退款',
+                        label:'待退款'
                     },{
-                        value:'5',
+                        value:'4',
                         label:'待评价'
                     },{
-                        value:'6',
-                        label:'评价完成'
+                        value:'100',
+                        label:'退款中'
+                    },{
+                        value:'5',
+                        label:'服务完成'
                     },
                 ],//订单状态
                 cd:{
@@ -256,17 +256,16 @@
                     },
                     {   
                         title: '买家信息',
-                        key: 'memberNickName',
+                        key: 'customerName',
                         render:(h,params)=>{
                             let str = '';
-                            if(params.row.type==0){
-                                str = params.row.memberNickName
+                            if(params.row.type){
+                                str = params.row.customerName
                             }else{
-                                str = params.row.memberRealName
+                                str = params.row.memberNickName 
                             }
                             return h('div',[
-                                h('div',str),
-                                h('div',params.row.phone)
+                                h('div',str)
                             ])
                         }
                     },
@@ -392,7 +391,13 @@
                     ajaxData.orderSource = vm.cd.orderOrigin //来源
                 }
                 if(vm.cd.orderStatus){
-                    ajaxData.status = vm.cd.orderStatus //状态
+                    if(vm.cd.orderStatus=='待退款'){
+                        ajaxData.returnStatus = 1;
+                    }else if(vm.cd.orderStatus=='100'){
+                        ajaxData.returnStatus = vm.cd.orderStatus;
+                    }else{
+                        ajaxData.status = vm.cd.orderStatus //状态
+                    }
                 }
                 if(vm.cd.inputVal){
                     ajaxData[vm.cd.selectType] = vm.cd.inputVal 
