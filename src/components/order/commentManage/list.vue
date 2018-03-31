@@ -96,7 +96,7 @@
                             }
                         },
                         {   
-                            title: '订单编号',
+                            title: '订单id',
                             key: 'orderId',
                         },
                         {
@@ -150,7 +150,7 @@
                             }
                         },
                         {
-                            title: '订单编号',
+                            title: '订单id',
                             key: 'orderId',
                         },
                         {
