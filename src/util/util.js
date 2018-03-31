@@ -41,6 +41,21 @@ export const operatorsEdit = (vm) =>{
         }
     }
 }
+/*==================================== 判断页签是否有该组件模块 =========================*/
+// vm.activatedType 默认false
+export const existTabList = (vm) => {
+    if(!!vm.activatedType){
+        let arrs = [];
+        let type = vm.$store.getters.tabTrue;
+        if(!!!type){
+            vm.table.tableData1 = [];//为了处理进来的时候看到之前缓存的页面
+            vm.table.loading = true;//进一步模拟第一次进来时的页面效果
+            vm.pageType = 'list'//显示列表页，放在这里是给上边的处理留点时间，也就是初始化放在这段代码上边
+            vm.getData('init');//再次请求数据
+        }
+    }
+    vm.activatedType = true;//主要解决mounted和activated重复调用
+}
 
 
 
@@ -49,7 +64,8 @@ export const operatorsEdit = (vm) =>{
 
 
 const BASE_UTIL = {
-    operatorsEdit
+    operatorsEdit,
+    existTabList
 };
 
 export default BASE_UTIL;

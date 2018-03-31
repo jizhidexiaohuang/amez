@@ -37,10 +37,10 @@
                 <InputNumber :min="0" v-model="formValidate.homeFee" style="width: 100%;"></InputNumber>
             </FormItem>
 
-            <FormItem label="正式美容师佣金（元）" number='true'>
+            <FormItem label="正式美容师佣金（元）" number='true' prop="formalBeauticianCommission">
                 <InputNumber :min="0" v-model="formValidate.formalBeauticianCommission" style="width: 100%;"></InputNumber>
             </FormItem>
-            <FormItem label="兼职美容师佣金（元）" number='true'>
+            <FormItem label="兼职美容师佣金（元）" number='true' prop="parttimeBeauticianCommission">
                 <InputNumber :min="0" v-model="formValidate.parttimeBeauticianCommission" style="width: 100%;"></InputNumber>
             </FormItem>
 
@@ -157,12 +157,39 @@
                     brandId: [
                         {required: true, message: '请选择品牌分类', pattern: /.+/, trigger: 'change'}
                     ],
+                    originalPrice: [
+                        {required: true, message: '请填写市场价', pattern: /.+/, trigger: 'change'}
+                    ],
+                    salePrice: [
+                        {required: true, message: '请填写服务销售价', pattern: /.+/, trigger: 'change'}
+                    ],
                     serverName: [
                         {required: true, message: '请填写服务名称', pattern: /.+/, trigger: 'change'}
                     ],
                     serverEffect1: [
                         {required: true, message: '请选择预约方式', pattern: /.+/, trigger: 'change'}
                     ],
+                    homeFee: [
+                        {required: true, message: '请填写上门费', pattern: /.+/, trigger: 'change'}
+                    ],
+                    formalBeauticianCommission: [
+                        {required: true, message: '请填写正式美容师佣金', pattern: /.+/, trigger: 'change'}
+                    ],
+                    parttimeBeauticianCommission: [
+                        {required: true, message: '请填写兼职美容师佣金', pattern: /.+/, trigger: 'change'}
+                    ],
+                    serverAttention: [
+                        {required: true, message: '请填写注意事项', pattern: /.+/, trigger: 'change'}
+                    ],
+                    serverNeedTime: [
+                        {required: true, message: '请填写服务总时长', pattern: /.+/, trigger: 'change'}
+                    ],
+                    serverIntroduce: [
+                        {required: true, message: '请填写品牌详情', pattern: /.+/, trigger: 'change'}
+                    ],
+
+
+
                     storeName: [
                         {required: true, message: '请选择门店', pattern: /.+/, trigger: 'change'}
                     ],

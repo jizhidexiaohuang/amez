@@ -54,8 +54,21 @@
                             <Option value="1">销售中</Option>
                         </Select>
                     </FormItem>
+
                     <FormItem style="margin-bottom:10px;">
-                        评价时间
+                        审核状态
+                        <Select v-model="cd.auditStatus" style="width:200px">
+                            <Option value="">全部</Option>
+                            <Option value="0">待审核</Option>
+                            <Option value="1">通过</Option>
+                            <Option value="2">不通过</Option>
+                        </Select>
+                    </FormItem>
+
+
+
+                    <FormItem style="margin-bottom:10px;">
+                        发布时间
                         <DatePicker v-model="cd.time" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="请填写时间范围" style="width: 300px"></DatePicker>
                     </FormItem>
                     <FormItem style="margin-bottom:10px;" v-if="false">
@@ -134,6 +147,7 @@
                 cd:{
                     time:[],//评论时间范围
                     saleStatus:"",//上下架状态
+                    auditStatus:"",//上下架状态
                     inputval:'',//选择的值
                     inputType:'serverName',//input类型
                     isBrand:false,// 门店自营还是产品
@@ -189,10 +203,10 @@
                         },
                         {
                             title: '上门费用',
-                            key: 'visitPrice',
+                            key: 'homeFee',
                             render: (h,params) => {
                                 const row = params.row;
-                                return !!row.visitPrice?+row.visitPrice/100:"0"
+                                return !!row.homeFee?+row.homeFee/100:"0"
                             }
                         },
                         {
@@ -314,7 +328,7 @@
                                     on: {
                                         click: () => {
                                             let row = params.row;
-                                            // this.fnOffShelves(row.id,row.storeId);
+                                            this.fnOffShelves(row.id,row.storeId);
                                             if(row.saleStatus  == 0){
                                                 // 商品上架
                                                 this.sendChild.itemId = row.id;
@@ -329,8 +343,6 @@
                                         }
                                     }
                                 }, text1)
-                                console.log(this.storeId);
-                                console.log(this.operators.adminUpdown);
                                 if(!!this.operators.adminUpdown&&row.auditStatus!=0){
                                     if(!!this.storeId){
                                         arrs.push(obj3);
@@ -413,10 +425,12 @@
             /* 初始化表格筛选条件 */
             fnInit () {
                 let vm = this;
+                vm.cd.isBrand = false
                 vm.table.pageNun = 1;//索引
                 vm.table.size = 10;//页数
                 vm.cd.time = [];//评价时间
                 vm.cd.saleStatus = "";// 状态
+                vm.cd.auditStatus = "";// 状态
                 vm.cd.inputType = "serverName";// 输入框类型
                 vm.cd.inputval = "";// 输入框的值
             },
@@ -453,9 +467,17 @@
                 if(!!vm.cd.saleStatus){
                     ajaxData.saleStatus = vm.cd.saleStatus;
                 }
+
+                if(!!vm.cd.auditStatus){
+                    ajaxData.auditStatus = vm.cd.auditStatus;
+                }
+
                 if(!!vm.cd.inputval){
                     ajaxData[vm.cd.inputType] = vm.cd.inputval
                 }
+
+
+
                 vm.table.loading = true;
                 this.$http.post(
                     url,
@@ -702,7 +724,6 @@
                     obj.memberId = recruitList[b].memberId;
                     ajaxData.recruitProductBeauticianRefList.push(obj);
                 }
-                console.log(ajaxData);
                 /* ajax提交 */
                 vm.$http.post(
                     url,
@@ -764,7 +785,6 @@
                         vm.table.loading = true;//进一步模拟第一次进来时的页面效果
                         vm.pageType = 'list'//显示列表页，放在这里是给上边的处理留点时间，也就是初始化放在这段代码上边
                         
-                        vm.cd.isBrand = false
                         vm.getData('init');//再次请求数据
                     }
                 }
@@ -775,8 +795,6 @@
             let store = JSON.parse(window.localStorage.getItem("userInfo")).store;
             let vm = this;
             // storeId 用来区分门店还是管理员
-            console.log('~~~~~~~~~~~~');
-            console.log(vm.storeId);
             if(store!=null){
                 vm.storeId = store.id;
                 vm.mainStoreName = store.storeName;

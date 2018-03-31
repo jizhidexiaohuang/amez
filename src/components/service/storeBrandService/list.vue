@@ -54,6 +54,17 @@
                             <Option value="1">销售中</Option>
                         </Select>
                     </FormItem>
+
+                    <FormItem style="margin-bottom:10px;">
+                        审核状态
+                        <Select v-model="cd.auditStatus" style="width:200px">
+                            <Option value="">全部</Option>
+                            <Option value="0">待审核</Option>
+                            <Option value="1">通过</Option>
+                            <Option value="2">不通过</Option>
+                        </Select>
+                    </FormItem>
+
                     <FormItem style="margin-bottom:10px;">
                         发布时间
                         <DatePicker v-model="cd.time" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="请填写时间范围" style="width: 300px"></DatePicker>
@@ -135,6 +146,7 @@
                 cd:{
                     time:[],//评论时间范围
                     saleStatus:"",//上下架状态
+                    auditStatus:"",//上下架状态
                     inputval:'',//选择的值
                     inputType:'serverName',//input类型
                     isBrand:true,// 门店自营还是产品
@@ -261,13 +273,13 @@
                                     on: {
                                         click: () => {
                                             let row = params.row;
-                                            // this.fnOffShelves(row.id,row.storeId);
+                                            this.fnOffShelves(row.id,row.storeId);
                                             if(row.saleStatus  == 0){
                                                 // 商品上架
                                                 this.sendChild.itemId = row.id;
-                                                // this.changePageType('onSale');
-                                                this.server.mineModal = true;
-                                                this.fnOnShelves(row.id);
+                                                this.changePageType('onSale');
+                                                // this.server.mineModal = true;
+                                                // this.fnOnShelves(row.id);
                                             }else if(row.saleStatus  == 1){
                                                 // 商品下架
                                                 this.fnOffShelves(row.id,row.storeId);
@@ -415,6 +427,11 @@
                 if(!!vm.cd.saleStatus){
                     ajaxData.saleStatus = vm.cd.saleStatus;
                 }
+
+                if(!!vm.cd.auditStatus){
+                    ajaxData.auditStatus = vm.cd.auditStatus;
+                }
+
                 if(!!vm.cd.inputval){
                     ajaxData[vm.cd.inputType] = vm.cd.inputval
                 }
@@ -578,11 +595,11 @@
                 let url = _url + "storeChainBrand/front/findByPage?pageSize=1000";
                 vm.$http.post(
                     url,
-                    {
+                    /* {
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
                         }
-                    }
+                    } */
                 ).then(function(res){
                     let oData = res.data.data.list;
                     vm.sendChild.brandList = oData

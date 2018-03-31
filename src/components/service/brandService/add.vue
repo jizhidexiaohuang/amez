@@ -29,10 +29,10 @@
             <FormItem label="上门费（元）" prop="homeFee" number='true' v-if="!!checkBoxCode">
                 <InputNumber :min="0" v-model="formValidate.homeFee" style="width: 100%;"></InputNumber>
             </FormItem>
-            <FormItem label="正式美容师佣金（元）" number='true'>
+            <FormItem label="正式美容师佣金（元）" number='true' prop="formalBeauticianCommission">
                 <InputNumber :min="0" v-model="formValidate.formalBeauticianCommission" style="width: 100%;"></InputNumber>
             </FormItem>
-            <FormItem label="兼职美容师佣金（元）" number='true'>
+            <FormItem label="兼职美容师佣金（元）" number='true' prop="parttimeBeauticianCommission">
                 <InputNumber :min="0" v-model="formValidate.parttimeBeauticianCommission" style="width: 100%;"></InputNumber>
             </FormItem>
             <!-- 店铺选择  只有管理员可以看到 -->
@@ -207,6 +207,37 @@
                     storeName: [
                         {required: true, message: '请选择门店', pattern: /.+/, trigger: 'change'}
                     ],
+                    originalPrice: [
+                        {required: true, message: '请填写市场价', pattern: /.+/, trigger: 'change'}
+                    ],
+                    salePrice: [
+                        {required: true, message: '请填写服务销售价', pattern: /.+/, trigger: 'change'}
+                    ],
+                    homeFee: [
+                        {required: true, message: '请填写上门费', pattern: /.+/, trigger: 'change'}
+                    ],
+                    formalBeauticianCommission: [
+                        {required: true, message: '请填写正式美容师佣金', pattern: /.+/, trigger: 'change'}
+                    ],
+                    parttimeBeauticianCommission: [
+                        {required: true, message: '请填写兼职美容师佣金', pattern: /.+/, trigger: 'change'}
+                    ],
+                    formalWorker: [
+                        {required: true, message: '请填写正式员工服务提成', pattern: /.+/, trigger: 'change'}
+                    ],
+                    serverNeedTime: [
+                        {required: true, message: '请填写服务总时长', pattern: /.+/, trigger: 'change'}
+                    ],
+                    serverAttention: [
+                        {required: true, message: '请填写注意事项', pattern: /.+/, trigger: 'change'}
+                    ],
+                    serverIntroduce: [
+                        {required: true, message: '请填写服务详情', pattern: /.+/, trigger: 'change'}
+                    ],
+
+
+
+                    
                     desc: [
                         { required: true, message: '请填写服务详情', trigger: 'blur' },
                         { type: 'string', min: 20, message: '不少于20字', trigger: 'blur' }
@@ -331,6 +362,9 @@
                             obj.memberId = recruitList[b].memberId;
                             ajaxData.recruitProductBeauticianRefList.push(obj);
                         }
+
+                        console.log('~~~~~~~~~~~~~~~~');
+                        console.log(JSON.stringify(ajaxData));
                         let url = vm.common.path2+"product/add/self";
                         vm.btnCode = true;
                         vm.$http.post(
