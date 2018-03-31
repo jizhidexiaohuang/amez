@@ -339,7 +339,8 @@
                     pageNun:1,
                     loading: false,
                     size: 10,
-                }
+                },
+                storeId:'',
             }
         },
         methods: {
@@ -403,6 +404,9 @@
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
+                }
+                if(!!vm.storeId){
+                    ajaxData.storeId = vm.storeId;
                 }
                 if(vm.cd.orderType){
                     ajaxData.type = vm.cd.orderType //类型
@@ -517,6 +521,11 @@
             },
         },
         mounted: function(){
+            let vm = this;
+            let store = JSON.parse(window.localStorage.getItem("userInfo")).store;
+            if(store!=null){
+                vm.storeId = store.id;
+            }
             this._u.operatorsEdit(this); // 控制页面按钮的显示
             this.fnGetCompanyList();
             this.getData();

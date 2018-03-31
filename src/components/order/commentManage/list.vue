@@ -183,6 +183,7 @@
                 },
                 activatedType: false,//主要解决mounted和activated重复调用
                 pageType: 'list',//子页面类型
+                storeId: '',
             }
         },
         methods: {
@@ -218,6 +219,9 @@
                     pageNo:start,
                     pageSize: size,
                     operType: vm.cd.operType
+                }
+                if(!!vm.storeId){
+                    ajaxData.storeId = vm.storeId;
                 }
                 vm.table.loading = true;
                 this.$http.post(
@@ -291,6 +295,11 @@
             },
         },
         mounted: function(){
+            let vm = this;
+            let store = JSON.parse(window.localStorage.getItem("userInfo")).store;
+            if(store!=null){
+                vm.storeId = store.id;
+            }
             this._u.operatorsEdit(this); // 控制页面按钮的显示
             this.getData();
         },

@@ -336,6 +336,9 @@
                     pageNo:start,
                     pageSize: size,
                 }
+                if(!!vm.storeId){
+                    ajaxData.storeId = vm.storeId;
+                }
                
                 /* 需要传storeId 就放开 */
                 /* if(!!!vm.isShow){

@@ -40,6 +40,8 @@
         <EditPage v-if="pageType == 'edit'" :sendChild="sendChild" class="testWrap" v-on:returnList="changePageType"/>
         <!-- 上架容器 -->
         <OnSalePage v-if="pageType == 'onSale'" :sendChild="sendChild" class="testWrap" v-on:returnList="changePageType"/>
+        <!-- 详情 -->
+        <OnSaleInfoPage v-if="pageType == 'onSaleInfo'" :sendChild="sendChild" class="testWrap" v-on:returnList="changePageType"/>
         <!-- 详情容器 -->
         <div v-if="pageType == 'info'" class="testWrap">详情</div>
         <!-- 列表容器 -->
@@ -119,6 +121,7 @@
     import AddPage from './add.vue'
     import EditPage from './edit.vue'
     import OnSalePage from './onSale.vue'
+    import OnSaleInfoPage from './onSaleInfo.vue'
     export default {
         data () {
             return {
@@ -353,6 +356,29 @@
                                         arrs.push(obj1);
                                     }
                                 }
+
+                                let obj_info = h('Button', {
+                                    props: {
+                                        type: 'success',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            let row = params.row;
+                                            this.sendChild.itemId = row.id;
+                                            this.changePageType('onSaleInfo');
+                                        }
+                                    }
+                                }, '查看')
+                                console.log(this.storeId);
+                                if(!!this.storeId&&row.saleStatus!=0){
+                                    arrs.push(obj_info);
+                                }
+
+
                                 return h('div',arrs);
                             }
                         }
@@ -511,7 +537,7 @@
                     this.table.pageSize = this.table.size;
                     this.getData();
                 }
-                if(type == "add" || type == "onSale"){
+                if(type == "add" || type == "onSale" || type == "onSaleInfo"){
                     this.$store.commit('CITY_LIST',[]);
                     this.$store.commit('STORE_LIST',[]);
                     this.$store.commit('TOHOME_LIST',[]);
@@ -818,7 +844,8 @@
         components:{
             AddPage,
             EditPage,
-            OnSalePage
+            OnSalePage,
+            OnSaleInfoPage
         }
     }
 </script>
