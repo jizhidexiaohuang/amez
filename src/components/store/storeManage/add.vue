@@ -1,6 +1,6 @@
 <template>
-  <div class="addPage boxStyle">
-    <Form  ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120">
+  <div class="addPage testWrap">
+    <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120">
         <h2>新增门店基本资料</h2>
         <Row>
             <Col span="12">
@@ -773,34 +773,34 @@
             },
             //定位按钮
             orientate(){
-                // console.log(this.formValidate.storeAddress+this.city)
-                // let url = common.path2 + 'store/findListByBaiduMapLocation/'+this.formValidate.storeAddress+'/'+this.city;
-                // this.$http.get(url).then(res=>{
-                //     console.log(res)
-                //     this.mapData.latitude = res.data.data[0].location.lat;
-                //     this.mapData.longitude = res.data.data[0].location.lng;
-                //     console.log(this.mapData.latitude+'--'+this.mapData.longitude)
-                //     //重新初始化地图
-                //    this.mapInit(this.mapData.longitude,this.mapData.latitude)
-                // }).catch(err=>{
-                //     console.log(err)
-                // })
-                let vm = this;
-                var map = new BMap.Map("map");          
-                // 创建地址解析器实例     
-                var myGeo = new BMap.Geocoder();      
-                // 将地址解析结果显示在地图上，并调整地图视野 
-                var address = this.city+this.area+this.formValidate.storeAddress;
-                myGeo.getPoint(address, function(point){      
-                    if (point) {      
-                        map.centerAndZoom(point, 16);      
-                        map.addOverlay(new BMap.Marker(point)); 
-                        console.log(point)
-                        vm.mapData.latitude = point.lat;
-                        vm.mapData.longitude = point.lng;
-                    }
-                }, 
-                this.city);
+                console.log(this.formValidate.storeAddress+this.city)
+                let url = common.path2 + 'store/findListByBaiduMapLocation/'+this.formValidate.storeAddress+'/'+this.city;
+                this.$http.get(url).then(res=>{
+                    console.log(res)
+                    this.mapData.latitude = res.data.data[0].location.lat;
+                    this.mapData.longitude = res.data.data[0].location.lng;
+                    console.log(this.mapData.latitude+'--'+this.mapData.longitude)
+                    //重新初始化地图
+                   this.mapInit(this.mapData.longitude,this.mapData.latitude)
+                }).catch(err=>{
+                    console.log(err)
+                })
+                // let vm = this;
+                // var map = new BMap.Map("map");          
+                // // 创建地址解析器实例     
+                // var myGeo = new BMap.Geocoder();      
+                // // 将地址解析结果显示在地图上，并调整地图视野 
+                // var address = this.city+this.area+this.formValidate.storeAddress;
+                // myGeo.getPoint(address, function(point){      
+                //     if (point) {      
+                //         map.centerAndZoom(point, 16);      
+                //         map.addOverlay(new BMap.Marker(point)); 
+                //         console.log(point)
+                //         vm.mapData.latitude = point.lat;
+                //         vm.mapData.longitude = point.lng;
+                //     }
+                // }, 
+                // this.city);
             },
             //初始化地图
             mapInit(longitude,latitude){
@@ -812,22 +812,17 @@
             },
             //输入关键字联想
             handleSearch (value) {
-                // let url = common.path2 + 'store/findListByBaiduMapLocation/'+value+'/'+this.city;
-                // this.$http.get(url).then(res=>{
-                //     let storeList = [];
-                //     res.data.data.forEach(item=>{
-                //         storeList.push(item.name)
-                //     })
-                //     console.log(storeList)
-                //     this.positionList = !value ? [] : storeList;
-                // }).catch(err=>{
-                //     console.log(err)
-                // })
-                // 跨域
-                // let url = "http://api.map.baidu.com/place/v2/suggestion?query="+value+"&region="+this.city+"&city_limit=true&output=jsonp&ak=cFIbalyCak0xIGYQaPP4MHcpSh8PBhEL"
-                // this.$http.get(url).then(res=>{
-                //     console.log(res)
-                // })
+                let url = common.path2 + 'store/findListByBaiduMapLocation/'+value+'/'+this.city;
+                this.$http.get(url).then(res=>{
+                    let storeList = [];
+                    res.data.data.forEach(item=>{
+                        storeList.push(item.name)
+                    })
+                    console.log(storeList)
+                    this.positionList = !value ? [] : storeList;
+                }).catch(err=>{
+                    console.log(err)
+                })
             },
             selectKeyWords (value) {
                 console.log(value)

@@ -5,7 +5,7 @@
             <h4>会员卡卡面</h4>
             <div class="memberCard">
                 <img :src="src" alt="">
-                <div class="brand">{{formValidate.brandName}}·会员卡（下单享{{formValidate.discount}}折）</div>
+                <div class="brand">{{formValidate.brandName}}·会员卡（下单享{{(formValidate.discount/10+'').replace('.','')}}折）</div>
                 <div class="quota">￥{{formValidate.cardValue}} （全国通用）</div>
                 <div class="periodOfValidity">有效期 {{getPeriod}}</div>
             </div>
