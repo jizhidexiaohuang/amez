@@ -25,7 +25,7 @@
             <Form>
                 <FormItem label="审核状态">
                     <RadioGroup v-model="audit.auditStatus">
-                        <Radio label="1">已审核</Radio>
+                        <Radio label="1">通过</Radio>
                         <Radio label="2">不通过</Radio>
                     </RadioGroup>
                 </FormItem>
@@ -368,11 +368,9 @@
                                         }
                                     }
                                 }, '审核')
-                                if(row.auditStatus == 0){
-                                    if(!!!this.storeId&&!!this.operators.examine){
-                                        arrs.push(obj6);
-                                    }
-                                }   
+                                if(row.auditStatus == 0&&!!!this.storeId&&!!this.operators.examine){
+                                    arrs.push(obj6);
+                                }  
                                 let obj4 = h('Button', {
                                     props: {
                                         type: 'error',

@@ -25,7 +25,7 @@
             <Form>
                 <FormItem label="审核状态">
                     <RadioGroup v-model="audit.auditStatus">
-                        <Radio label="1">已审核</Radio>
+                        <Radio label="1">通过</Radio>
                         <Radio label="2">不通过</Radio>
                     </RadioGroup>
                 </FormItem>
@@ -40,6 +40,8 @@
         <EditPage v-if="pageType == 'edit'" :sendChild="sendChild" class="testWrap" v-on:returnList="changePageType"/>
         <!-- 上架容器 -->
         <OnSalePage v-if="pageType == 'onSale'" :sendChild="sendChild" class="testWrap" v-on:returnList="changePageType"/>
+        <!-- 详情 -->
+        <OnSaleInfoPage v-if="pageType == 'onSaleInfo'" :sendChild="sendChild" class="testWrap" v-on:returnList="changePageType"/>
         <!-- 详情容器 -->
         <div v-if="pageType == 'info'" class="testWrap">详情</div>
         <!-- 列表容器 -->
@@ -56,7 +58,7 @@
                     </FormItem>
 
 
-                    <FormItem style="margin-bottom:10px;">
+                    <FormItem style="margin-bottom:10px;" v-if="false">
                         审核状态
                         <Select v-model="cd.auditStatus" style="width:200px">
                             <Option value="">全部</Option>
@@ -117,6 +119,7 @@
     import AddPage from './add.vue'
     import EditPage from './edit.vue'
     import OnSalePage from './onSale.vue'
+    import OnSaleInfoPage from './onSaleInfo.vue'
     export default {
         data () {
             return {
@@ -315,13 +318,13 @@
                                     on: {
                                         click: () => {
                                             let row = params.row;
-                                            this.fnOffShelves(row.id,row.storeId);
+                                            // this.fnOffShelves(row.id,row.storeId);
                                             if(row.saleStatus  == 0){
                                                 // 商品上架
                                                 this.sendChild.itemId = row.id;
-                                                // this.changePageType('onSale');
-                                                this.server.mineModal = true;
-                                                this.fnOnShelves(row.id);
+                                                this.changePageType('onSale');
+                                                // this.server.mineModal = true;
+                                                // this.fnOnShelves(row.id);
                                             }else if(row.saleStatus  == 1){
                                                 // 商品下架
                                                 this.fnOffShelves(row.id,row.storeId);
@@ -373,6 +376,28 @@
                                         arrs.push(obj3);
                                     }
                                 }
+
+                                let obj_info = h('Button', {
+                                    props: {
+                                        type: 'success',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            let row = params.row;
+                                            this.sendChild.itemId = row.id;
+                                            this.changePageType('onSaleInfo');
+                                        }
+                                    }
+                                }, '查看')
+                                console.log(this.storeId);
+                                if(!!this.storeId&&row.saleStatus!=0){
+                                    arrs.push(obj_info);
+                                }
+
                                 return h('div', arrs);
                             }
                         }
@@ -515,7 +540,7 @@
                     this.table.pageSize = this.table.size;
                     this.getData();
                 }
-                if(type == "add" || type == "onSale"){
+                if(type == "add" || type == "onSale" || type == "onSaleInfo"){
                     this.$store.commit('SERVICE_STORE_LIST',[]);
                     this.$store.commit('PRODUCT_LIST',[]);
 
@@ -779,7 +804,8 @@
         components:{
             AddPage,
             EditPage,
-            OnSalePage
+            OnSalePage,
+            OnSaleInfoPage
         }
     }
 </script>

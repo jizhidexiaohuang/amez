@@ -96,8 +96,9 @@
             <FormItem label="佣金价格" prop="commission" number='true' v-if="false">
                 <Input v-model="formValidate.commission" placeholder="请填写佣金价格，单位元"></Input>
             </FormItem>
-            <FormItem label="轮播图" v-if="testCode">
+            <FormItem label="轮播图" v-if="testCode" prop="uploadList">
                 <MyUpload :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
+                <Input style="position:absolute; left: 9999px;" v-model="formValidate.uploadList" placeholder="请上传轮播图"></Input>
             </FormItem>
             <FormItem label="主图">
                 <img v-if="formValidate.coverImg" class='demo-img' :src="formValidate.coverImg">
@@ -184,6 +185,7 @@
                     isSupportStore:0, // 是否支持到店 1支持 0不支持
                     formalBeauticianCommission: 0, // 正式美容师佣金
                     parttimeBeauticianCommission: 0, // 兼职美容师佣金
+                    uploadList: '', // 轮播图
                 },
                 ruleValidate: {
                     type: [
@@ -200,6 +202,9 @@
                     ],
                     salePrice: [
                         {required: true, message: '请填写服务销售价', pattern: /.+/, trigger: 'change'}
+                    ],
+                    uploadList: [
+                        {required: true, message: ' ', pattern: /.+/, trigger: 'change'}
                     ],
                     homeFee: [
                         {required: true, message: '请填写上门费', pattern: /.+/, trigger: 'change'}
@@ -258,6 +263,9 @@
             // 提交验证
             handleSubmit (name) {
                 let vm = this;
+
+                vm.formValidate.uploadList = !!vm.uploadList.length?'存在':'';
+
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         //添加品牌服务 
@@ -284,7 +292,10 @@
                             id:vm.sendChild.itemId,
                             isPlatform: false,
                         }
-                         /* 是否支持到店 isSupportStore */
+                        if(!!!vm.isAdmin){
+                            ajaxData.product.auditStatus = 0;
+                        }
+                        /* 是否支持到店 isSupportStore */
                         ajaxData.product.isSupportStore = 0;
                         vm.formValidate.serverEffect1.forEach(function(item,index){
                             if(item == 'store'){

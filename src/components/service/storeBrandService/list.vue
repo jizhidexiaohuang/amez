@@ -25,7 +25,7 @@
             <Form>
                 <FormItem label="审核状态">
                     <RadioGroup v-model="audit.auditStatus">
-                        <Radio label="1">已审核</Radio>
+                        <Radio label="1">通过</Radio>
                         <Radio label="2">不通过</Radio>
                     </RadioGroup>
                 </FormItem>
@@ -57,7 +57,7 @@
                         </Select>
                     </FormItem>
 
-                    <FormItem style="margin-bottom:10px;">
+                    <FormItem style="margin-bottom:10px;" v-if="false">
                         审核状态
                         <Select v-model="cd.auditStatus" style="width:200px">
                             <Option value="">全部</Option>
@@ -219,10 +219,6 @@
                             }
                         },
                         {
-                            title: '累计销量',
-                            key: 'saleVolume',
-                        },
-                        {
                             title: '发布时间',
                             key: 'createTime',
                             render: (h,params) =>{
@@ -313,10 +309,8 @@
                                         }
                                     }
                                 }, '审核')
-                                if(row.auditStatus == 0 && !!!this.storeId){
-                                    if(!!this.operators.examine){
-                                        arrs.push(obj3);
-                                    }
+                                if(row.auditStatus == 0 && !!!this.storeId&&!!this.operators.examine){
+                                    arrs.push(obj3);
                                 }   
                                 let obj1 = h('Button', {
                                     props: {

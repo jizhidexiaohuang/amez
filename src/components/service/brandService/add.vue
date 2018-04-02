@@ -77,11 +77,13 @@
                 <homeList></homeList>
                 <!--<businessList></businessList>-->
             </FormItem>
-            <FormItem label="招募员工" v-if="!!isShowBox">
-                <recruitTable></recruitTable>
-                <recruitList></recruitList>
-                <!--<businessList></businessList>-->
-            </FormItem>
+            <div>
+                <FormItem label="招募员工" v-if="!!isShowBox">
+                    <recruitTable></recruitTable>
+                    <recruitList></recruitList>
+                    <!--<businessList></businessList>-->
+                </FormItem>
+            </div>
             <FormItem label="正式员工服务提成" prop="formalWorker" v-if="false">
                 <Input v-model="formValidate.formalWorker" placeholder="请填写正式员工服务提成"></Input>
             </FormItem>
@@ -98,8 +100,9 @@
             <FormItem label="佣金价格" prop="commission" number='true' v-if="false">
                 <Input v-model="formValidate.commission" placeholder="请填写佣金价格，单位元"></Input>
             </FormItem>
-            <FormItem label="轮播图">
+            <FormItem label="轮播图" prop="uploadList">
                 <MyUpload :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
+                <Input style="position:absolute; left: 9999px;" v-model="formValidate.uploadList" placeholder="请上传轮播图"></Input>
             </FormItem>
             <FormItem label="主图">
                 <img v-if="formValidate.coverImg" class='demo-img' :src="formValidate.coverImg">
@@ -190,6 +193,7 @@
                     isSupportStore:0, // 是否支持到店 1支持 0不支持
                     parttimeBeauticianCommission: 0, // 兼职美容师佣金
                     formalBeauticianCommission: 0, // 正式美容师佣金
+                    uploadList: '', // 轮播图
                 },
                 ruleValidate: {
                     type: [
@@ -200,6 +204,9 @@
                     ],
                     serverName: [
                         {required: true, message: '请填写服务名称', pattern: /.+/, trigger: 'change'}
+                    ],
+                    uploadList: [
+                        {required: true, message: ' ', pattern: /.+/, trigger: 'change'}
                     ],
                     serverEffect1: [
                         {required: true, message: '请选择预约方式', pattern: /.+/, trigger: 'change'}
@@ -268,6 +275,9 @@
             // 提交验证
             handleSubmit (name) {
                 let vm = this;
+
+                vm.formValidate.uploadList = !!vm.uploadList.length?'存在':'';
+
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         //添加品牌服务

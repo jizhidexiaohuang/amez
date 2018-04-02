@@ -52,9 +52,10 @@
             </FormItem>
 
 
-            <FormItem label="服务支持商家">
+            <FormItem label="服务支持商家" prop="productStoreRefList">
                 <shopTable></shopTable>
                 <shopList></shopList>
+                <Input style="position:absolute; left: 9999px;" v-model="formValidate.productStoreRefList" placeholder="请选择服务支持商家"></Input>
                 <!--<businessList></businessList>-->
             </FormItem>
             <FormItem label="服务产品" v-if="false">
@@ -63,8 +64,9 @@
                 <!--<businessList></businessList>-->
             </FormItem>
 
-            <FormItem label="服务产品">
+            <FormItem label="服务产品" prop="productProductPhysicalRefList">
                 <productTable v-if="!!testSwitch"></productTable>
+                <Input style="position:absolute; left: 9999px;" v-model="formValidate.productProductPhysicalRefList" placeholder="请选择服务支持产品"></Input>
             </FormItem>
             
 
@@ -87,8 +89,9 @@
             <FormItem label="佣金价格" prop="commission" number='true' v-if="false">
                 <Input v-model="formValidate.commission" placeholder="请填写佣金价格，单位元"></Input>
             </FormItem>
-            <FormItem label="轮播图" v-if="testCode">
+            <FormItem label="轮播图" v-if="testCode" prop="uploadList">
                 <MyUpload :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
+                <Input style="position:absolute; left: 9999px;" v-model="formValidate.uploadList" placeholder="请上传轮播图"></Input>
             </FormItem>
             <FormItem label="主图">
                 <img v-if="formValidate.coverImg" class='demo-img' :src="formValidate.coverImg">
@@ -195,6 +198,8 @@
                     }
                 ],
                 formValidate: {
+                    productStoreRefList: '', // 服务支持商家
+                    productProductPhysicalRefList: '', // 产品
                     type: '',//服务分类
                     brandId: '',//服务所属品牌
                     serverName: '',//服务名称
@@ -216,6 +221,7 @@
                     isSupportStore:0, // 是否支持到店 1支持 0不支持
                     formalBeauticianCommission: 0, // 正式美容师佣金
                     parttimeBeauticianCommission: 0, // 兼职美容师佣金
+                    uploadList: '', // 轮播图
                 },
                 ruleValidate: {
                     type: [
@@ -227,8 +233,17 @@
                     serverName: [
                         {required: true, message: '请填写服务名称', pattern: /.+/, trigger: 'change'}
                     ],
+                    productStoreRefList: [
+                        {required: true, message: ' ', pattern: /.+/, trigger: 'change'}
+                    ],
+                    productProductPhysicalRefList: [
+                        {required: true, message: ' ', pattern: /.+/, trigger: 'change'}
+                    ],
                     originalPrice: [
                         {required: true, message: '请填写市场价', pattern: /.+/, trigger: 'change'}
+                    ],
+                    uploadList: [
+                        {required: true, message: ' ', pattern: /.+/, trigger: 'change'}
                     ],
                     salePrice: [
                         {required: true, message: '请填写服务销售价', pattern: /.+/, trigger: 'change'}
@@ -304,6 +319,11 @@
             // 提交验证
             handleSubmit (name) {
                 let vm = this;
+
+                vm.formValidate.productStoreRefList = !!vm.$store.getters.serviceStoreList.length?'存在':'';
+                vm.formValidate.productProductPhysicalRefList = !!vm.$store.getters.testData.length?'存在':'';
+                vm.formValidate.uploadList = !!vm.uploadList.length?'存在':'';
+
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         //添加品牌服务 
@@ -370,14 +390,6 @@
                             obj.storeName = productStoreList[i].storeName;
                             ajaxData.productStoreRefList.push(obj);
                         }
-                        /*  商品-产品-关联集合  productProductPhysicalRefList */ 
-                        /* ajaxData.productProductPhysicalRefList = [];
-                        var productPhysicalList = vm.$store.getters.productList;
-                        for(var j = 0;j<productPhysicalList.length;j++){
-                            var obj = {};
-                            obj.productPhysicalId = productPhysicalList[j];
-                            ajaxData.productProductPhysicalRefList.push(obj);
-                        } */
                         ajaxData.productProductPhysicalRefList = [];
                         var productPhysicalList = vm.$store.getters.testData;
                         for(var j = 0;j<productPhysicalList.length;j++){

@@ -17,8 +17,9 @@
                 <Input v-model="formValidate.serverName" placeholder="请填写服务名称"></Input>
             </FormItem>
 
-            <FormItem label="服务支持城市">
+            <FormItem label="服务支持省份" prop="productCityList">
                 <cityTable></cityTable>
+                <Input style="position: absolute; left: 9999px;" v-model="formValidate.productCityList" placeholder="请填写服务名称"></Input>
             </FormItem>
 
             <FormItem label="市场价（元）" prop="originalPrice" number='true'>
@@ -73,8 +74,9 @@
             <FormItem label="佣金价格" prop="commission" number='true' v-if="false">
                 <Input v-model="formValidate.commission" placeholder="请填写佣金价格，单位元"></Input>
             </FormItem>
-            <FormItem label="轮播图" v-if="testCode">
+            <FormItem label="轮播图" v-if="testCode" prop="uploadList">
                 <MyUpload :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
+                <Input style="position:absolute; left: 9999px;" v-model="formValidate.uploadList" placeholder="请上传轮播图"></Input>
             </FormItem>
             <FormItem label="主图">
                 <img v-if="formValidate.coverImg" class='demo-img' :src="formValidate.coverImg">
@@ -149,6 +151,8 @@
                     isSupportStore:0, // 是否支持到店 1支持 0不支持
                     formalBeauticianCommission: 0, // 正式美容师佣金
                     parttimeBeauticianCommission: 0, // 兼职美容师佣金
+                    productCityList: '',
+                    uploadList: '', // 轮播图
                 },
                 ruleValidate: {
                     type: [
@@ -160,8 +164,14 @@
                     originalPrice: [
                         {required: true, message: '请填写市场价', pattern: /.+/, trigger: 'change'}
                     ],
+                    uploadList: [
+                        {required: true, message: ' ', pattern: /.+/, trigger: 'change'}
+                    ],
                     salePrice: [
                         {required: true, message: '请填写服务销售价', pattern: /.+/, trigger: 'change'}
+                    ],
+                    productCityList: [
+                        {required: true, message: '请填写服务支持省份', pattern: /.+/, trigger: 'change'}
                     ],
                     serverName: [
                         {required: true, message: '请填写服务名称', pattern: /.+/, trigger: 'change'}
@@ -234,6 +244,10 @@
             // 提交验证
             handleSubmit (name) {
                 let vm = this;
+
+                vm.formValidate.productCityList = !!vm.$store.getters.cityList.length?'存在':'';
+                vm.formValidate.uploadList = !!vm.uploadList.length?'存在':'';
+
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         //添加品牌服务
@@ -316,6 +330,7 @@
                         }
                         /* 商品-美容师-关联集合（招募） recruitProductBeauticianRefList */
                         ajaxData.recruitProductBeauticianRefList = [];
+
 
                         let url = vm.common.path2 + "product/modify/brand"
                         vm.btnCode = true;
@@ -413,7 +428,7 @@
             fnInitQuery (data) {
                 let vm = this;
 
-                // 服务支持城市
+                // 服务支持省份
                 let cityList = data.productCityList;
                 vm.$store.commit('CITY_LIST',cityList);
 
