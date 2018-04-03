@@ -613,11 +613,11 @@
                 let url = vm.common.path2 + "storeChainBrand/front/findByPage?pageSize=1000";
                 vm.$http.post(
                     url,
-                    /* {
+                    {
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
                         }
-                    } */
+                    }
                 ).then(function(res){
                     let oData = res.data.data.list;
                     vm.sendChild.brandList = oData
