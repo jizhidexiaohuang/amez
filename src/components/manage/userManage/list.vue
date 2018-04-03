@@ -408,7 +408,7 @@
             },
             //模态框点击取消
             cancel(){
-                this.$Message.info('Clicked cancel');
+                this.$Message.info('取消！');
                 this.modal = false;
             },
             getMockData () {

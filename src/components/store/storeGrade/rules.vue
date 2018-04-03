@@ -173,7 +173,7 @@
             },
             getAjaxData(){
               console.log(this.index)
-              for(var i=0;i<this.index;i++){
+              for(var i=0;i<this.formDynamic.items.length;i++){
                 let temp1 = {
                     sort:i+1,
                     levelUpgradeType:1,
@@ -216,6 +216,7 @@
             //删除一行
             handleRemove (index) {
                 this.formDynamic.items[index].status = 0;
+                this.formDynamic.items.splice(index,1);
                 this.index--;
             },
             //获取数据

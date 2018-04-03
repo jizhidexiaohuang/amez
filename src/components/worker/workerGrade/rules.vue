@@ -82,7 +82,7 @@
                 </Row>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formDynamic')" style="margin-right:8px">保存</Button>
+                <Button type="primary" :disabled="btnCtrl" @click="handleSubmit('formDynamic')" style="margin-right:8px">保存</Button>
                 <Button v-if="false" type="ghost" @click="handleReset('formDynamic')" style="margin:0px 8px">取消</Button>
                 <Button type="success" @click.native="returnHome('list')">返回</Button>
             </FormItem>
@@ -95,6 +95,7 @@
     export default {
         data () {
             return {
+                btnCtrl:false,
                 index: 1,
                 rulesArr:[],
                 itemsArr:[],
@@ -131,6 +132,7 @@
                     ruleList:ruleList
                 }
                 console.log(ajaxData)
+                this.btnCtrl = true;
                 this.$http.post(
                     url,
                     JSON.stringify(ajaxData),
@@ -142,7 +144,8 @@
                 ).then(res=>{
                     console.log(res)
                     if(res.status==200){
-                    this.returnHome('list')
+                    this.returnHome('list');
+                    this.btnCtrl = false;
                     this.$Message.success('提交成功!');
                     }
                 })
@@ -155,15 +158,13 @@
             handleAdd () {
                 this.index++;
                 this.formDynamic.items.push({
-                    value: '',
                     index: this.index,
                     status: 1
                 });
             },
             getAjaxData(){
               console.log(this.index)
-              for(var i=0;i<this.index;i++){
-                  console.log(this.formDynamic.items[i].condition1)
+              for(var i=0;i<this.formDynamic.items.length;i++){
                 let temp1 = {
                     sort:i+1,
                     levelUpgradeType:1,
@@ -207,6 +208,7 @@
             //删除一行
             handleRemove (index) {
                 this.formDynamic.items[index].status = 0;
+                this.formDynamic.items.splice(index,1);
                 this.index--;
             },
             //获取数据

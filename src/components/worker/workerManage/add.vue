@@ -45,6 +45,12 @@
                     <Radio label="3">兼职员工</Radio>
                 </RadioGroup>
             </FormItem>
+            <FormItem label="明星美容师" prop="isStar" v-if="!storeId">
+                <RadioGroup v-model="formValidate.isStar">
+                    <Radio label="1">是</Radio>
+                    <Radio label="0">否</Radio>
+                </RadioGroup>
+            </FormItem>
             <FormItem label="出生年月">
                 <Row>
                     <Col span="11">
@@ -166,6 +172,7 @@
                     workCardNo:"",//员工编号
                     mobile:"", //注册手机
                     position:"1",//员工类型
+                    isStar:'0', //明星美容师
                     beauticianStatus:"1",//员工状态
                     birthday:'',//出生年月
                     joinTime:'',//入职时间
@@ -251,6 +258,7 @@
                             workCardNo: vm.formValidate.workCardNo, // 员工编号
                             phone:vm.formValidate.mobile, //注册手机
                             beauticianType:vm.formValidate.position, //员工类型
+                            isStar:this.formValidate.isStar, //明星美容师
                             birthDate:vm.common.simpleFormatDate(vm.formValidate.birthday,1), //出生年月
                             entryDate:vm.common.simpleFormatDate(vm.formValidate.joinTime,1), //入职时间
                             years:vm.formValidate.experience, //从业经验

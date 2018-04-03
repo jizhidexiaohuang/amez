@@ -107,7 +107,7 @@
                         title: '原价',
                         key: 'salePrice',
                         render:(h,params)=>{
-                            return h('div','￥'+params.row.salePrice);
+                            return h('div','￥'+params.row.salePrice/100);
                         }
                     }
                 ],
@@ -313,11 +313,11 @@
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
             ok () {
-                this.$Message.info('Clicked ok');
+                this.$Message.info('操作成功！');
                 this.$store.commit('SERVICE_ID',this.listId);
             },
             cancel () {
-                this.$Message.info('Clicked cancel');
+                this.$Message.info('取消！');
             }
         },
         beforeMount:function(){

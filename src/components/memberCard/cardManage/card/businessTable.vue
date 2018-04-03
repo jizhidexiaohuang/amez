@@ -353,11 +353,11 @@
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
             ok () {
-                this.$Message.info('Clicked ok');
                 this.$store.commit('BUSINESS_ID',this.listId);
+                this.$Message.info('操作成功！');
             },
             cancel () {
-                this.$Message.info('Clicked cancel');
+                this.$Message.info('取消！');
             }
         },
         beforeMount:function(){

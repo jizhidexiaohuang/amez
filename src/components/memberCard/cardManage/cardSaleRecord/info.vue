@@ -154,10 +154,10 @@
                 })
             },
             ok () {
-                this.$Message.info('Clicked ok');
+                
             },
             cancel () {
-                this.$Message.info('Clicked cancel');
+                
             }
         },
         mounted:function(){

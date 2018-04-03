@@ -247,6 +247,7 @@
                                 brandId:this.formValidate.brandId,
                                 brandName:this.formValidate.brandName,
                                 issueType:this.issueType,
+                                useRange:this.issueType, //单店多店
                                 issueNum:this.formValidate.cardTotal-0,
                                 stylePattern:this.formValidate.imgUrl,
                                 supportRecharge:this.formValidate.isRecharge=='0'?false:true,
