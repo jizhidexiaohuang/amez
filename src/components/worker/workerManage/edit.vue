@@ -398,6 +398,7 @@
                         url:oData.headImgUrl
                     }); //员工头像
                     vm.imgCtrl = true;
+                    vm.formValidate.headImgUrl = oData.headImgUrl;
                     vm.formValidate.workCardNo = oData.workCardNo;
                     vm.formValidate.mobile = oData.phone;
                     vm.formValidate.position = oData.beauticianType;

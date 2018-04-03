@@ -123,7 +123,16 @@
                     },
                     {
                         title: '发卡方',
-                        key: 'brandName'
+                        key: 'brandName',
+                        render:(h,params)=>{
+                            let str = '';
+                            if(params.row.issueType){
+                                str = params.row.storeName;
+                            }else{
+                                str = params.row.brandName;
+                            }
+                            return h('div',str);
+                        }
                     },
                     {   
                         title: '状态',
@@ -386,6 +395,10 @@
                         data.supportRecharge = '不支持'
                     }else{
                         data.supportRecharge = '支持'
+                    }
+                    //发卡方
+                    if(data.issueType){
+                        data.brandName = data.storeName;
                     }
                     //状态
                     if(data.sellStatus){

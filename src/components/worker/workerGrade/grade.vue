@@ -1,7 +1,7 @@
 <template>
   <div class="testWrap">
       <div class="addPage boxStyle">
-        <h2>新增店铺等级</h2>
+        <h2>新增技师等级</h2>
         <Form ref="formDynamic" :model="formDynamic" :label-width="80" style="width: 80%;">
             <FormItem style="margin-bottom:0px;">
                 <Row>
@@ -49,7 +49,7 @@
             <FormItem>
                 <Row>
                     <Col span="4">
-                        <Button type="success" long @click="handleAdd" icon="plus-round">增加店铺等级</Button>
+                        <Button type="success" long @click="handleAdd" icon="plus-round">增加技师等级</Button>
                     </Col>
                 </Row>
             </FormItem>

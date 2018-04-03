@@ -439,6 +439,7 @@
                     vm.defaultList.push({
                         url:oData.headImgUrl
                     }); //员工头像
+                    vm.formValidate.headImgUrl = oData.headImgUrl;
                     vm.imgCtrl = true;
                     vm.formValidate.workCardNo = oData.workCardNo;
                     vm.formValidate.mobile = oData.phone;

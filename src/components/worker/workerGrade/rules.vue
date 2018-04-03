@@ -77,7 +77,7 @@
             <FormItem>
                 <Row>
                     <Col span="3">
-                        <Button type="success" long @click="handleAdd" icon="plus-round">增加店铺等级</Button>
+                        <Button type="success" long @click="handleAdd" icon="plus-round">添加</Button>
                     </Col>
                 </Row>
             </FormItem>

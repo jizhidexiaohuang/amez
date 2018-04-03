@@ -1,13 +1,13 @@
 <template>
     <div>
         <!-- 新增 -->
-        <AddPage v-if="pageType == 'add'"  class="testWrap" v-on:returnList="changePageType"></AddPage>
+        <AddPage v-if="pageType == 'add'"  class="testWrap" v-on:returnList="fnBackformAdd"></AddPage>
         <!-- 查看 -->
-        <InfoPage v-if="pageType == 'info'" :infoId="infoId"  class="testWrap" v-on:returnList="changePageType"></InfoPage>
+        <InfoPage v-if="pageType == 'info'" :infoId="infoId"  class="testWrap" v-on:returnList="fnBackformAdd"></InfoPage>
         <!-- 审核 -->
-        <ExaminePage v-if="pageType == 'examine'" :examineId="examineId"  class="testWrap" v-on:returnList="changePageType"></ExaminePage>
+        <ExaminePage v-if="pageType == 'examine'" :examineId="examineId"  class="testWrap" v-on:returnList="fnBackformAdd"></ExaminePage>
         <!-- 编辑 -->
-        <EditPage v-if="pageType == 'edit'" :editId="editId"  class="testWrap" v-on:returnList="changePageType"></EditPage>
+        <EditPage v-if="pageType == 'edit'" :editId="editId"  class="testWrap" v-on:returnList="fnBackformAdd"></EditPage>
         <!-- 列表容器 -->
         <div v-if="pageType == 'list'" class="testWrap">
             <div class="boxStyle">
@@ -450,13 +450,13 @@
                 vm.table.size = size;
                 vm.getData();
             },
+            fnBackformAdd () {
+                this.changePageType("list");
+                this.getData();
+            },
             /* 控制当前显示页面的类型 */
             changePageType (type) {
                 this.pageType = type;
-                if(type == "list"){
-                    this.table.pageSize = this.table.size;
-                    this.getData('see');
-                }
             },
             /* 判断页签中是否有该模块，如果有则使用缓存，如果没有则重新加载数据 */
             fnExistTabList () {
