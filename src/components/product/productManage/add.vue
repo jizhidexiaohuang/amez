@@ -176,18 +176,34 @@
                 this.inventoryWarningSwitch = !!status?1:0;
                 console.log(this.inventoryWarningSwitch)
             },
+            // 获取分类详情
+            getCategoryInfo (id) {
+                let vm = this;
+                let list = vm.serviceList;
+                console.log(list);
+                let val = '';
+                list.forEach((item,index) => {
+                    if(item.id == id){
+                        val = item;
+                    }
+                });
+                console.log(val);
+                let obj = {
+                    categoryId: val.id, // id
+                    categoryCode: val.categoryCode, // 编码
+                    categoryName: val.categoryName, // 分类名称
+                }
+                return obj;
+            },
             // 提交验证
             handleSubmit (name) {
                 let vm = this;
-                console.log(vm.formValidate.type)
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         /* 产品提交的数据 */
                         let ajaxData = {};
                         /* 产品分类 */
-                        ajaxData.productPhysicalCategoryRef = {
-                            categoryId: vm.formValidate.type, // 分类id
-                        }
+                        ajaxData.productPhysicalCategoryRef = vm.getCategoryInfo(vm.formValidate.type);
                         /* 产品 */
                         ajaxData.productPhysical = {
                             coverImg: vm.formValidate.coverImg, // 封面图

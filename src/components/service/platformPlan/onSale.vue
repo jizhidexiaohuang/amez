@@ -5,16 +5,24 @@
             <FormItem label="上门费" v-if="!!isSupportHome">
                 <Input v-model="formValidate.homeFee" placeholder="请填写上门费，单位元"></Input>
             </FormItem>
-            <FormItem label="到店服务员工" v-if="!!isSupportStore">
-                <storeTable></storeTable>
-                <storeList></storeList>
-                <!--<businessList></businessList>-->
-            </FormItem>
-            <FormItem label="上门服务员工" v-if="!!isSupportHome">
-                <homeTable></homeTable>
-                <homeList></homeList>
-                <!--<businessList></businessList>-->
-            </FormItem>
+            <div v-if="!!isSupportStore" class="ivu-form" style="margin-bottom: 20px;">
+                <div class="ivu-form-item-label" style="width: 160px; float:left; text-align:right;">
+                    <span style="color:#ed3f14; font-size:12px; font-family: 'SimSun'; margin-right:4px;">*</span>到店服务员工
+                </div>
+                <div style="margin-left:160px;">
+                    <storeTable></storeTable>
+                    <storeList></storeList>
+                </div>
+            </div>
+            <div v-if="!!isSupportHome" class="ivu-form" style="margin-bottom: 20px;">
+                <div class="ivu-form-item-label" style="width: 160px; float:left; text-align:right;">
+                    <span style="color:#ed3f14; font-size:12px; font-family: 'SimSun'; margin-right:4px;">*</span>上门服务员工
+                </div>
+                <div style="margin-left:160px;">
+                    <homeTable></homeTable>
+                    <homeList></homeList>
+                </div>
+            </div>
             <div v-if="false">
                 <FormItem label="服务分类" prop="type">
                     <Select disabled v-model="formValidate.type" placeholder="选择服务分类">
@@ -239,6 +247,23 @@
             // 提交验证
             handleSubmit (name) {
                 let vm = this;
+                // 到店服务员工
+                if(!!!vm.$store.getters.storeList.length){
+                    if(!!vm.isSupportStore){
+                        vm.$Message.error('请选择到店服务员工!');
+                        return false;
+                    }
+                }
+                // 上门服务员工
+                if(!!!vm.$store.getters.tohomeList.length){
+                    if(!!vm.isSupportHome){
+                        vm.$Message.error('请选择上门服务员工!');
+                        return false;
+                    }
+                }
+
+
+                
                 let url = vm.common.path2 + "product/store/onSale"
                 //添加品牌服务 
                 let ajaxData = {};
@@ -331,8 +356,7 @@
             // 服务所属品牌接口数据
             fnGetStoreChainBrand () {
                 let vm = this;
-                let _url = "http://120.79.42.13:8080/";
-                let url = _url + "storeChainBrand/front/findByPage?pageSize=1000";
+                let url = vm.common.path2 + "storeChainBrand/front/findByPage?pageSize=1000";
                 vm.$http.post(
                     url,
                     {

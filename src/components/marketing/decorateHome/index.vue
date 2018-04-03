@@ -85,7 +85,8 @@
             /* 获取数据 */
             fnajaxData () {
                 let vm = this;
-                let url = "http://120.79.42.13:8005/app/baseHomeTemplate/front/findByPage?pageSize=1000";
+                // let url = "http://120.79.42.13:8005/app/baseHomeTemplate/front/findByPage?pageSize=1000";
+                let url = vm.common.path2 + "baseHomeTemplate/front/findByPage?pageSize=1000";
                 this.$http.post(
                     url,
                     {
@@ -340,7 +341,8 @@
                 var data = vm.fnRefreshData(data);
                 if(!!data.id){
                     // 这是编辑
-                    let url = "http://120.79.42.13:8005/app/baseHomeTemplate/edit";
+                    // let url = "http://120.79.42.13:8005/app/baseHomeTemplate/edit";
+                    let url = vm.common.path2 + "baseHomeTemplate/edit";
                     vm.$http.put(
                         url,
                         data,
@@ -349,7 +351,8 @@
                     })
                 }else{
                     // 这是新增
-                    let url = "http://120.79.42.13:8005/app/baseHomeTemplate/insert";
+                    // let url = "http://120.79.42.13:8005/app/baseHomeTemplate/insert";
+                    let url = vm.common.path2 + "baseHomeTemplate/insert";
                     vm.$http.post(
                         url,
                         data,

@@ -38,7 +38,7 @@
                     return false;
                 }
                 let vm = this;
-                let url = common.path2+'baseRegions/selectListByConditions?pageNo=1&pageSize=1000';
+                let url = vm.common.path2+'baseRegions/selectListByConditions?pageNo=1&pageSize=1000';
                 let ajaxData = {
                     "parentId": parentId
                 }
@@ -100,7 +100,7 @@
                     return false;
                 }
                 let vm = this;
-                let url = common.path2+'baseRegions/selectListByConditions?pageNo=1&pageSize=1000';
+                let url = vm.common.path2+'baseRegions/selectListByConditions?pageNo=1&pageSize=1000';
                 let ajaxData = {
                     "parentId": parentId
                 }

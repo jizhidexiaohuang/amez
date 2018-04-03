@@ -490,8 +490,7 @@
             // 服务所属品牌接口数据
             fnGetStoreChainBrand () {
                 let vm = this;
-                let _url = "http://120.79.42.13:8080/";
-                let url = _url + "storeChainBrand/front/findByPage?pageSize=1000";
+                let url = vm.common.path2 + "storeChainBrand/front/findByPage?pageSize=1000";
                 vm.$http.post(
                     url,
                     {
