@@ -2,21 +2,15 @@
     <div>
         <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120" style="padding-bottom: 20px;">
             <FormItem label="产品分类" prop="type">
-                <Select v-model="formValidate.type" placeholder="选择产品分类">
+                <Select v-model="formValidate.type" placeholder="选择产品分类" disabled>
                     <Option :value="item.id" v-for="item in serviceList" :key="item.id">{{ item.categoryName }}</Option>
                 </Select>
             </FormItem>
             <FormItem label="产品名称" prop="physicalName">
                 <Input v-model="formValidate.physicalName" placeholder="请填写产品名称"></Input>
             </FormItem>
-            <FormItem label="产品价格（元）" prop="salePrice" number='true'>
-                <InputNumber :min="0" v-model="formValidate.salePrice" style="width: 100%;"></InputNumber>
-            </FormItem>
-            <FormItem label="产品编码" prop="physicalCode">
+            <FormItem label="产品编码">
                 <Input v-model="formValidate.physicalCode" placeholder="请填写产品编码"></Input>
-            </FormItem>
-            <FormItem label="销量" prop="saleVolume">
-                <InputNumber :min="0" v-model="formValidate.saleVolume" style="width: 100%;"></InputNumber>
             </FormItem>
             <FormItem label="产品图片" v-if="!!testCode">
                 <MyUpload :defaultList="defaultList" v-on:listenUpload="v=>{getUploadList(v,'physicalImg')}" :uploadConfig="uploadConfig"></MyUpload>
@@ -24,44 +18,57 @@
             <FormItem label="封面图" v-if="!!testCode">
                 <MyUpload :defaultList="defaultList1" v-on:listenUpload="v=>{getUploadList(v,'coverImg')}" :uploadConfig="uploadConfig1"></MyUpload>
             </FormItem>
-            <FormItem label="运费模板" prop="templateId">
-                <Select v-model="formValidate.templateId" placeholder="选择运费模板">
-                    <Option :value="item.id" v-for="(item,index) in tplList" :key="item.id">{{ item.templateName }}</Option>
-                </Select>
-            </FormItem>
-             <FormItem label="邮费类型" prop="postageType">
-                <RadioGroup v-model="formValidate.postageType">
-                    <Radio label="1">买家承担</Radio>
-                    <Radio label="2">卖家包邮</Radio>
-                </RadioGroup>
+            <FormItem label="产品价格（元）" prop="salePrice" number='true'>
+                <InputNumber :min="0" v-model="formValidate.salePrice" style="width: 100%;"></InputNumber>
             </FormItem>
             <FormItem label="单位" prop="unit">
                 <Select v-model="formValidate.unit" placeholder="选择产品单位">
                     <Option :value="item" v-for="item in bookTypeList" :key="item">{{ item }}</Option>
                 </Select>
             </FormItem>
-            <FormItem label="重量（KG）" prop="weight">
-                <InputNumber :min="0" v-model="formValidate.weight" style="width: 100%;"></InputNumber>
+            <FormItem label="库存总数" prop="inventoryTotal">
+                <InputNumber :min="0" v-model="formValidate.inventoryTotal" style="width: 100%;"></InputNumber>
             </FormItem>
             <FormItem label="发货地" prop="deliveryPlace">
                 <Input v-model="formValidate.deliveryPlace" placeholder="请填写发货地"></Input>
             </FormItem>
-            <FormItem label="库存可消耗数" prop="inventoryConsumable">
+            <FormItem label="邮费类型" prop="postageType">
+                <RadioGroup v-model="formValidate.postageType">
+                    <Radio label="1">买家承担</Radio>
+                    <Radio label="2">卖家包邮</Radio>
+                </RadioGroup>
+            </FormItem>
+            <FormItem label="运费模板" prop="templateId" v-if="formValidate.postageType == 2">
+                <Select v-model="formValidate.templateId" placeholder="选择运费模板">
+                    <Option :value="item.id" v-for="(item,index) in tplList" :key="item.id">{{ item.templateName }}</Option>
+                </Select>
+            </FormItem>
+            
+            <FormItem label="销量" prop="saleVolume" v-if="false">
+                <InputNumber :min="0" v-model="formValidate.saleVolume" style="width: 100%;"></InputNumber>
+            </FormItem>
+            
+            
+            
+            
+            <FormItem label="重量（KG）" prop="weight">
+                <InputNumber :min="0" v-model="formValidate.weight" style="width: 100%;"></InputNumber>
+            </FormItem>
+            
+            <FormItem label="库存可消耗数" prop="inventoryConsumable" v-if="false">
                 <InputNumber :min="0" v-model="formValidate.inventoryConsumable" style="width: 100%;"></InputNumber>
             </FormItem>
-            <FormItem label="库存订单预约数" prop="inventoryOrderReservation">
+            <FormItem label="库存订单预约数" prop="inventoryOrderReservation" v-if="false">
                 <InputNumber :min="0" v-model="formValidate.inventoryOrderReservation" style="width: 100%;"></InputNumber>
             </FormItem>
-            <FormItem label="库存总数" prop="inventoryTotal">
-                <InputNumber :min="0" v-model="formValidate.inventoryTotal" style="width: 100%;"></InputNumber>
-            </FormItem>
-            <FormItem label="预警开关" prop="inventoryWarningSwitch">
+            
+            <FormItem label="预警开关" prop="inventoryWarningSwitch" v-if="false">
                 <iSwitch size="large" v-model="switch1" @on-change="switchChange">
                     <span slot="open">ON</span>
                     <span slot="close">OFF</span>
                 </iSwitch>
             </FormItem>
-            <FormItem label="库存预警数" prop="inventoryWarning">
+            <FormItem label="库存预警数" prop="inventoryWarning" v-if="false">
                 <InputNumber :min="0" v-model="formValidate.inventoryWarning" style="width: 100%;"></InputNumber>
             </FormItem>
             <FormItem label="产品详情" prop="physicalDetail">
@@ -320,7 +327,7 @@
             fnQueryById () {
                 let vm = this;
                 let id = vm.sendChild.itemId;
-                let url = vm.common.path2 + "productPhysical/queryById/"+id;
+                let url = vm.common.path2 + "productPhysical/detail/"+id;
                 vm.spinShow = true;
                 vm.$http.get(
                     url
@@ -333,7 +340,7 @@
                 })
             },
             // 产品的信息遍历踹
-            fnInitQuery (data) {
+            fnInitQuery (data1) {
                 // coverImg: vm.formValidate.coverImg, // 封面图
                 // deliveryPlace: vm.formValidate.deliveryPlace, // 发货地
                 // inventoryConsumable: vm.formValidate.inventoryConsumable, // 库存可消耗数
@@ -352,6 +359,8 @@
                 // weight: vm.formValidate.weight, // 重量
                 // id: vm.sendChild.itemId, // 产品id
                 let vm = this;
+                let data = data1.productPhysical;
+                let data2 = data1.productPhysicalCategoryRef;
                 // 封面图
                 vm.defaultList1 = [];
                 if(!!data.coverImg){
@@ -376,6 +385,7 @@
                 vm.testCode = true;
                 vm.uploadList = vm.defaultList;
                 // 产品分类
+                vm.formValidate.type = data2.categoryId;
 
                 // 产品名称
                 vm.formValidate.physicalName = data.physicalName;

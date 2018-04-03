@@ -14,6 +14,8 @@
                                 员工类型
                                 <Select v-model="cd.beauticianType" style="width:100px">
                                     <!--<Option v-for="item in branchList" :value="item.id" :key="item.id">{{ item.brandName }}</Option>-->
+                                    <Option :value="0" :key="0">老板</Option>
+                                    <Option :value="1" :key="1">店长</Option>
                                     <Option :value="2" :key="2">正式员工</Option>
                                     <Option :value="3" :key="3">兼职员工</Option>
                                 </Select>
@@ -104,6 +106,9 @@
                         key: 'beauticianType',
                         render: (h,params) =>{
                             const row = params.row
+                            if(row.beauticianType == 0){
+                                return '老板'
+                            }
                             if(row.beauticianType == 1){
                                 return '店长'
                             }
@@ -146,9 +151,9 @@
                 }
                 let start = vm.table.pageNun;//从第几个开始
                 let size = vm.table.size;//每页条数
-                let url = common.path2+"storeBeautician/front/findByPage?pageNo="+start+'&pageSize='+size;
+                let url = vm.common.path2+"storeBeautician/findByPageForFullTimeAndPartTime?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {
-                    "auditStatus":1
+                    // "beauticianType":2
                 }
                 if(!!vm.cd.beauticianType){
                     ajaxData.beauticianType = vm.cd.beauticianType;
@@ -288,7 +293,7 @@
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
             ok () {
-                this.$Message.info('Clicked ok');
+                this.$Message.info('成功');
                 this.$store.commit('TOHOME_LIST',this.listId);
             },
             fnOpenModal () {

@@ -46,17 +46,18 @@
             <FormItem label="兼职美容师佣金（元）" number='true' prop="parttimeBeauticianCommission">
                 <InputNumber :min="0" v-model="formValidate.parttimeBeauticianCommission" style="width: 100%;"></InputNumber>
             </FormItem>
-
-            <FormItem label="到店服务员工">
-                <storeTable></storeTable>
-                <storeList></storeList>
-                <!--<businessList></businessList>-->
-            </FormItem>
-            <FormItem label="上门服务员工">
-                <homeTable></homeTable>
-                <homeList></homeList>
-                <!--<businessList></businessList>-->
-            </FormItem>
+            <div>
+                <FormItem label="到店服务员工">
+                    <storeTable v-if="false"></storeTable>
+                    <storeList></storeList>
+                </FormItem>
+            </div>
+            <div>
+                <FormItem label="上门服务员工">
+                    <homeTable v-if="false"></homeTable>
+                    <homeList></homeList>
+                </FormItem>
+            </div>
 
 
             <FormItem label="服务支持商家" prop="productStoreRefList">

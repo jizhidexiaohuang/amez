@@ -275,7 +275,7 @@
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
             ok () {
-                this.$Message.info('Clicked ok');
+                this.$Message.info('成功');
                 this.$store.commit('SERVICE_STORE_LIST',this.listId);
             },
             fnOpenModal () {

@@ -26,6 +26,7 @@
     export default {
         data (){
             return {
+                storeId:'',
                 businessCtrl:false,
                 pageType: 'list',
                 openPage: false,
@@ -101,8 +102,12 @@
                 let size = vm.table.size;//每页条数
                 let ajaxData = {
                 }
+                if(!!vm.storeId){
+                    ajaxData.storeId = vm.storeId;
+                }
                 // let url = this.common.path2+'store/findByPageForMemberCard?pageNo='+start+'&pageSize='+size;
-                let url = this.common.path2+'storeBeautician/front/findByPage?pageSize=100000';
+                // let url = this.common.path2+'storeBeautician/front/findByPage?pageSize=100000';
+                let url = vm.common.path2+"storeBeautician/findByPageForFullTimeAndPartTime?pageNo="+start+'&pageSize='+size;
                 this.$http.post(
                     url,
                     ajaxData,
@@ -174,6 +179,10 @@
         mounted: function () {
             let vm = this;
             let arrs = vm.$store.getters.storeList;
+            let store = JSON.parse(window.localStorage.getItem("userInfo")).store;
+            if(store!=null){
+                vm.storeId = store.id;
+            }
             this.listId = arrs;
             if(arrs.length>0){
                 this.businessCtrl = true;
