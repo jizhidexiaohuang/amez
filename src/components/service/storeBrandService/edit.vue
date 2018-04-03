@@ -17,6 +17,14 @@
                 <Input v-model="formValidate.serverName" placeholder="请填写服务名称"></Input>
             </FormItem>
 
+            <FormItem label="品牌标签" v-if="!!!storeId">
+                <RadioGroup v-model="formValidate.label">
+                    <Radio label="0">默认</Radio>
+                    <Radio label="1">推荐</Radio>
+                    <Radio label="2">新品</Radio>
+                </RadioGroup>
+            </FormItem>
+
             <FormItem label="服务支持省份" prop="productCityList">
                 <cityTable></cityTable>
                 <Input style="position: absolute; left: 9999px;" v-model="formValidate.productCityList" placeholder="请填写服务名称"></Input>
@@ -130,6 +138,7 @@
             return {
                 btnCode: false,
                 formValidate: {
+                    label: '0', // 品牌标签
                     type: '',//服务分类
                     brandId: '',//服务所属品牌
                     serverName: '',//服务名称
@@ -271,6 +280,9 @@
                             brandId: vm.formValidate.brandId, // 服务所属品牌
                             id:vm.sendChild.itemId,
                             isPlatform: false,
+                        }
+                        if(!!!vm.storeId){
+                            ajaxData.product.label = vm.formValidate.label;
                         }
                         /* 是否支持到店 isSupportStore */
                         ajaxData.product.isSupportStore = 0;
@@ -463,6 +475,8 @@
                     vm.formValidate.serverEffect1.push('home');
                     vm.checkBoxCode = true;
                 }
+                // 商品标签
+                vm.formValidate.label = data.product.label;
                 // 是否支持到店
                 if(data.product.isSupportStore == 1){
                     vm.formValidate.serverEffect1.push('store');

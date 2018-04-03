@@ -16,6 +16,13 @@
             <FormItem label="服务名称" prop="serverName">
                 <Input v-model="formValidate.serverName" placeholder="请填写服务名称"></Input>
             </FormItem>
+            <FormItem label="服务标签" v-if="!!!storeId">
+                <RadioGroup v-model="formValidate.label">
+                    <Radio label="0">默认</Radio>
+                    <Radio label="1">推荐</Radio>
+                    <Radio label="2">新品</Radio>
+                </RadioGroup>
+            </FormItem>
             <FormItem label="市场价（元）" prop="originalPrice" number='true'>
                 <InputNumber :min="0" v-model="formValidate.originalPrice" style="width: 100%;"></InputNumber>
             </FormItem>
@@ -198,6 +205,7 @@
                     }
                 ],
                 formValidate: {
+                    label: '0', // 商品标签
                     productStoreRefList: '', // 服务支持商家
                     productProductPhysicalRefList: '', // 产品
                     type: '',//服务分类
@@ -349,6 +357,9 @@
                             brandId: vm.formValidate.brandId, // 服务所属品牌
                             id:vm.sendChild.itemId,
                             isPlatform: true,
+                        }
+                        if(!!!vm.storeId){
+                            ajaxData.product.label = vm.formValidate.label;
                         }
                         /* 是否支持到店 isSupportStore */
                         ajaxData.product.isSupportStore = 0;
@@ -576,6 +587,8 @@
                     vm.formValidate.serverEffect1.push('home');
                     vm.checkBoxCode = true;
                 }
+                // 商品标签
+                vm.formValidate.label = data.product.label;
                 // 是否支持到店
                 if(data.product.isSupportStore == 1){
                     vm.formValidate.serverEffect1.push('store');

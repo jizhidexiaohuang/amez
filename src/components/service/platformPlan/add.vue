@@ -16,6 +16,14 @@
                 <Input v-model="formValidate.serverName" placeholder="请填写服务名称"></Input>
             </FormItem>
 
+            <FormItem label="服务标签" v-if="!!!storeId">
+                <RadioGroup v-model="formValidate.label">
+                    <Radio label="0">默认</Radio>
+                    <Radio label="1">推荐</Radio>
+                    <Radio label="2">新品</Radio>
+                </RadioGroup>
+            </FormItem>
+
             
 
 
@@ -199,6 +207,7 @@
                     }
                 ],
                 formValidate: {
+                    label: '0', // 商品标签
                     productStoreRefList: '', // 服务支持商家
                     productProductPhysicalRefList: '', // 产品
                     type: '',//服务分类
@@ -347,6 +356,9 @@
                             homeFee: !!vm.formValidate.homeFee?+vm.formValidate.homeFee*100:"", // 上门费
                             formalBeauticianCommission: !!vm.formValidate.formalBeauticianCommission?+vm.formValidate.formalBeauticianCommission*100:'', // 正式美容师佣金
                             parttimeBeauticianCommission: !!vm.formValidate.parttimeBeauticianCommission?+vm.formValidate.parttimeBeauticianCommission*100:'', // 兼职美容师佣金
+                        }
+                        if(!!!vm.storeId){
+                            ajaxData.product.label = vm.formValidate.label;
                         }
                         /* 是否支持到店 isSupportStore */
                         ajaxData.product.isSupportStore = 0;

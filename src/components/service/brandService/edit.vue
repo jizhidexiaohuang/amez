@@ -15,6 +15,13 @@
             <FormItem label="服务名称" prop="serverName">
                 <Input v-model="formValidate.serverName" placeholder="请填写服务名称"></Input>
             </FormItem>
+            <FormItem label="服务标签" v-if="!!isAdmin">
+                <RadioGroup v-model="formValidate.label">
+                    <Radio label="0">默认</Radio>
+                    <Radio label="1">推荐</Radio>
+                    <Radio label="2">新品</Radio>
+                </RadioGroup>
+            </FormItem>
             <FormItem label="市场价（元）" prop="originalPrice" number='true'>
                 <InputNumber :min="0" v-model="formValidate.originalPrice" style="width: 100%;"></InputNumber>
             </FormItem>
@@ -179,6 +186,7 @@
                     }
                 ],
                 formValidate: {
+                    label: '0', // 商品标签
                     type: '',//服务分类
                     brandId: '',//服务所属品牌
                     serverName: '',//服务名称
@@ -329,6 +337,10 @@
                             id:vm.sendChild.itemId,
                             isPlatform: false,
                         }
+                        if(!!vm.isAdmin){
+                            ajaxData.product.label = vm.formValidate.label;
+                        }
+
                         if(!!!vm.isAdmin){
                             ajaxData.product.auditStatus = 0;
                         }
@@ -542,6 +554,8 @@
                     vm.formValidate.serverEffect1.push('home');
                     vm.checkBoxCode = true;
                 }
+                // 商品标签
+                vm.formValidate.label = data.product.label;
                 // 是否支持到店
                 if(data.product.isSupportStore == 1){
                     vm.formValidate.serverEffect1.push('store');

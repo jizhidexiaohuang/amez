@@ -22,14 +22,14 @@ const common = {
         switch (i) {
             case 1:
                 // 测试环境
-                return "http://mrb.amez999.com/pc/"  
+                return "http://mrb.amez999.com/pc/"
                 break;
             case 2:
                 // 正式环境
                 return "http://www.52mrb.com/pc/"
                 break;
             default:
-                return "http://mrb.amez999.com/pc/"  
+                return "http://mrb.amez999.com/pc/"
         } 
     })(1),
     /* 富文本 */
