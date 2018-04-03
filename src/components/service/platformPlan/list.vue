@@ -206,6 +206,7 @@
                         {
                             title: '上门费用',
                             key: 'homeFee',
+                            width: 100,
                             render: (h,params) => {
                                 const row = params.row;
                                 return !!row.homeFee?+row.homeFee/100:"0"
@@ -214,6 +215,7 @@
                         {
                             title: '状态',
                             key: 'saleStatus',
+                            width: 100,
                             render: (h,params) => {
                                 const row = params.row;
                                 const color = row.saleStatus === 0 ? 'red' : 'blue';
@@ -230,6 +232,7 @@
                         {
                             title: '审核结果',
                             key: 'auditStatus',
+                            width: 100,
                             render: (h,params) => {
                                 const row = params.row;
                                 const color = row.auditStatus === 0 ? 'blue' : row.auditStatus === 1 ? 'green':'red';

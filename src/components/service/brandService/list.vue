@@ -204,6 +204,7 @@
                         {
                             title: '上门费用',
                             key: 'homeFee',
+                            width: 100,
                             render: (h,params) => {
                                 const row = params.row;
                                 return !!row.homeFee?+row.homeFee/100:"0"
@@ -253,14 +254,14 @@
                                 return text;
                             }
                         },
-                        {
+                        /* {
                             title: '发布时间',
                             key: 'createTime',
                             render: (h,params) =>{
                                 const row = params.row
                                 return this.common.baseFormatDate(row.createTime)
                             }
-                        },
+                        }, */
                         {
                             title: '操作',
                             key: 'action',
