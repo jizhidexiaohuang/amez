@@ -67,22 +67,32 @@
                     </div>
                 </div>
             </FormItem>
-            <FormItem label="到店服务员工" v-if="!!isShowBox&&!!storeCheckBoxCode">
-                <storeTable></storeTable>
-                <storeList></storeList>
-                <!--<businessList></businessList>-->
-            </FormItem>
-            <FormItem label="上门服务员工" v-if="!!isShowBox&&!!checkBoxCode">
-                <homeTable></homeTable>
-                <homeList></homeList>
-                <!--<businessList></businessList>-->
-            </FormItem>
-            <div>
-                <FormItem label="招募员工" v-if="!!isShowBox">
+            <div v-if="!!isShowBox&&!!storeCheckBoxCode" class="ivu-form" style="margin-bottom: 20px;">
+                <div class="ivu-form-item-label" style="width: 160px; float:left; text-align:right;">
+                    <span style="color:#ed3f14; font-size:12px; font-family: 'SimSun'; margin-right:4px;">*</span>到店服务员工
+                </div>
+                <div style="margin-left:160px;">
+                    <storeTable></storeTable>
+                    <storeList></storeList>
+                </div>
+            </div>
+            <div v-if="!!isShowBox&&!!checkBoxCode" class="ivu-form" style="margin-bottom: 20px;">
+                <div class="ivu-form-item-label" style="width: 160px; float:left; text-align:right;">
+                    <span style="color:#ed3f14; font-size:12px; font-family: 'SimSun'; margin-right:4px;">*</span>上门服务员工
+                </div>
+                <div style="margin-left:160px;">
+                    <homeTable></homeTable>
+                    <homeList></homeList>
+                </div>
+            </div>
+            <div v-if="!!isShowBox" class="ivu-form" style="margin-bottom: 20px;">
+                <div class="ivu-form-item-label" style="width: 160px; float:left; text-align:right;">
+                    <span style="color:#ed3f14; font-size:12px; font-family: 'SimSun'; margin-right:4px;">*</span>招募员工
+                </div>
+                <div style="margin-left:160px;">
                     <recruitTable></recruitTable>
                     <recruitList></recruitList>
-                    <!--<businessList></businessList>-->
-                </FormItem>
+                </div>
             </div>
             <FormItem label="正式员工服务提成" prop="formalWorker" v-if="false">
                 <Input v-model="formValidate.formalWorker" placeholder="请填写正式员工服务提成"></Input>
@@ -277,6 +287,29 @@
                 let vm = this;
 
                 vm.formValidate.uploadList = !!vm.uploadList.length?'存在':'';
+                // 到店服务员工
+                if(!!!vm.$store.getters.storeList.length){
+                    if(!!vm.isShowBox&&!!vm.storeCheckBoxCode){
+                        vm.$Message.error('请选择到店服务员工!');
+                        return false;
+                    }
+                }
+                // 上门服务员工
+                if(!!!vm.$store.getters.tohomeList.length){
+                    if(!!vm.isShowBox&&!!vm.checkBoxCode){
+                        vm.$Message.error('请选择上门服务员工!');
+                        return false;
+                    }
+                }
+
+                // 招募员工
+                if(!!!vm.$store.getters.recruitList.length){
+                    if(!!vm.isShowBox){
+                        vm.$Message.error('请选择招募员工!');
+                        return false;
+                    }
+                }
+
 
                 this.$refs[name].validate((valid) => {
                     if (valid) {

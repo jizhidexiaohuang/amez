@@ -160,27 +160,28 @@
                             }
                         },
                         {
-                            title: '状态',
-                            key: 'saleStatus',
-                            /* render: (h,params) => {
+                            title: '库存数',
+                            key: 'inventoryTotal',
+                        },
+                        {
+                            title: '库存可消耗数',
+                            key: 'inventoryConsumable',
+                        },
+                        {
+                            title: '订单预约数',
+                            key: 'inventoryOrderReservation',
+                        },
+                        {
+                            title: '邮费类型',
+                            key: 'postageType',
+                            render: (h,params) => {
                                 const row = params.row;
-                                const color = row.saleStatus === 0 ? 'red' : 'blue';
-                                const text = row.saleStatus === 0 ? '下架' : '上架';
-                                return h('Tag', {
-                                    props: {
-                                        type: 'border',
-                                        color: color
-                                    }
-                                }, text);
-                            } */
-                        },
-                        {
-                            title: '所属分类',
-                            key: 'saleStatus',
-                        },
-                        {
-                            title: '库存量',
-                            key: 'inventory',
+                                if(row.postageType == 1){
+                                    return '买家承担'
+                                }else if(row.postageType == 2){
+                                    return '卖家包邮'
+                                }
+                            }
                         },
                             {
                             title: '操作',
