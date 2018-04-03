@@ -41,7 +41,7 @@
                         {required: true, message: '请填写菜单logo', pattern: /.+/, trigger: 'change'}
                     ],
                 },
-                path:this.common.path1+"system/api/file/uploadForKindeditor",
+                path: this.common.path2 + "system/api/file/uploadForKindeditor",
                 table:{
                     tableData1: [],
                     recordsTotal:0,

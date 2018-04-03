@@ -228,7 +228,7 @@
                 },
                 uploadList:[],//图片列表
                 // path:"http://172.16.20.151:8009/system/api/file/uploadForKindeditor"
-                path:this.common.path1+"system/api/file/uploadForKindeditor",
+                path: this.common.path2 + "system/api/file/uploadForKindeditor",
                 testCode: false,
                 serviceList:[],// 产品分类
                 brandList:[],// 品牌分类

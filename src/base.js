@@ -7,6 +7,7 @@ const common = {
     path: (function(i){
         switch (i) {
             case 1:
+                // 测试环境
                 return "http://mrb.amez999.com/pc/"  
                 break;
             case 2:
@@ -16,7 +17,7 @@ const common = {
             default:
                 return "http://mrb.amez999.com/pc/"
         } 
-    })(2),
+    })(1),
     path2: (function(i){
         switch (i) {
             case 1:
@@ -30,7 +31,7 @@ const common = {
             default:
                 return "http://mrb.amez999.com/pc/"  
         } 
-    })(2),
+    })(1),
     /* 富文本 */
     path1: "http://mrb.amez999.com/pc/", // 测试环境
     // path1: "http://www.52mrb.com/pc/", // 正式环境
