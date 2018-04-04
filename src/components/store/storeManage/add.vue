@@ -68,8 +68,8 @@
             <Row type="flex" justify="start">
                 <Col span="12">
                     <RadioGroup v-model="oldStore" @on-change="disabled = !disabled">
-                        <Radio label="1">是</Radio>
-                        <Radio label="0">否</Radio>
+                        <Radio label="true">是</Radio>
+                        <Radio label="false">否</Radio>
                     </RadioGroup>
                     <span>(连续经营超过5年)</span>
                 </Col>
@@ -84,8 +84,8 @@
             <Row type="flex" justify="start">
                 <Col span="12">
                     <RadioGroup v-model="formValidate.selectStore">
-                        <Radio label="1">是</Radio>
-                        <Radio label="0">否</Radio>
+                        <Radio label="true">是</Radio>
+                        <Radio label="false">否</Radio>
                     </RadioGroup>
                 </Col>
             </Row>
@@ -420,13 +420,13 @@
                 amPartner:'1',    //艾美合伙人
                 millionPartner:'1', //百万合伙人
                 crownManager:'1',  //皇冠店长
-                oldStore:'1',     //老店
+                oldStore:'true',     //老店
                 disabled:false,  //实际经营年限控制变量
                 storeLabel:'',//店铺标签(店铺标签)
                 storeHonorPhoto:'', //店铺荣誉
                 //formValidate对象
                 formValidate: {
-                    selectStore:'0', //是否属于精选门店
+                    selectStore:'false', //是否属于精选门店
                     storeName: '',   //店名
                     storeTel:'', //门店电话
                     storeTime:'', //营业时间
@@ -578,7 +578,7 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         //处理几年老店
-                        if(this.oldStore=='1'){
+                        if(this.oldStore=='true'){
                             this.storeLabel = this.formValidate.managerYear + '年老店'
                         }else{
                             this.storeLabel = ''
