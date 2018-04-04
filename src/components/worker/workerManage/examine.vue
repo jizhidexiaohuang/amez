@@ -47,8 +47,8 @@
             </FormItem>
             <FormItem label="明星美容师" prop="isStar" v-if="!storeId">
                 <RadioGroup v-model="formValidate.isStar">
-                    <Radio label="1">是</Radio>
-                    <Radio label="0">否</Radio>
+                    <Radio label="true">是</Radio>
+                    <Radio label="false">否</Radio>
                 </RadioGroup>
             </FormItem>
             <FormItem label="出生年月">
@@ -188,7 +188,7 @@
                     workCardNo:"",//员工编号
                     mobile:"",//注册手机
                     position:"1",//员工类型
-                    isStar:'0', //明星美容师
+                    isStar:'false', //明星美容师
                     beauticianStatus:"0",//员工状态
                     birthday:'',//出生年月
                     joinTime:'',//入职时间
@@ -452,7 +452,7 @@
                     vm.formValidate.workCardNo = oData.workCardNo;
                     vm.formValidate.mobile = oData.phone;
                     vm.formValidate.position = oData.beauticianType;
-                    vm.formValidate.isStar = oData.isStar?'1':'0';
+                    vm.formValidate.isStar = oData.isStar?'true':'false';
                     vm.formValidate.birthday = oData.birthDate;
                     vm.formValidate.joinTime = oData.entryDate;
                     vm.formValidate.experience = oData.years;

@@ -38,9 +38,9 @@
                 </div>
                 <div class="content">
                 <Row>
-                    <Col span="4">{{data.membershiCard}}</Col>
+                    <Col span="4">{{data.membershiCard||'空'}}</Col>
                     <Col span="4">{{data.faceValue/100}}</Col>
-                    <Col span="4">{{data.cardContent}}</Col>
+                    <Col span="4" class="spec">{{data.cardContent}}</Col>
                     <Col span="4">{{payMethod}}</Col>
                     <Col span="4">{{data.actuallyAmount/100}}</Col>
                 </Row>
@@ -51,7 +51,7 @@
         <div class="transactionDetail">
             <Row>
                 <Col span="8">交易状态：{{tradeStatus}}</Col>
-                <Col span="8">结算时间：{{common.formatDate(data.settlementTime)}}</Col>
+                <Col span="8">结算时间：{{data.settlementTime?common.formatDate(data.settlementTime):'空'}}</Col>
                 <Col span="8"></Col>
             </Row>
             <Row>
@@ -114,7 +114,7 @@
                 return str
             },
             payMethod:function(){
-                let str = ''
+                let str = '未知'
                 if(this.data.payMethod=='1'){
                     str = '支付宝'
                 }else if(this.data.payMethod=='2'){
@@ -218,5 +218,14 @@
     button{
         margin-top:20px;
     }
+}
+.spec{
+    line-height: 20px;
+    padding-top:15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
 }
 </style>
