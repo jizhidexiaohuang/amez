@@ -9,7 +9,7 @@
                 width="700">
                 <div v-if="pageType == 'list'">
                     <div>
-                        <Form :model="cd" inline>
+                        <Form :model="cd" inline v-if="false">
                             <FormItem style="margin-bottom:10px;">
                                 员工类型
                                 <Select v-model="cd.beauticianType" style="width:100px">

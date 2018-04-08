@@ -328,7 +328,7 @@
                                                 this.changePageType('onSale');
                                                 // this.server.mineModal = true;
                                                 // this.fnOnShelves(row.id);
-                                            }else if(row.saleStatus  == 1){
+                                            }else if(row.saleStatus  == 1 || !!!row.saleStatus){
                                                 // 商品下架
                                                 this.fnOffShelves(row.id,row.storeId);
                                             }

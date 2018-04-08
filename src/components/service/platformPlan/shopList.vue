@@ -87,6 +87,7 @@
                 let start = vm.table.pageNun;
                 let size = vm.table.size;//每页条数
                 let ajaxData = {
+                    "storeState" : 1 
                 }
                 // let url = this.common.path2+'store/findByPageForMemberCard?pageNo='+start+'&pageSize='+size;
                 let url = this.common.path2+'store/front/findByPage?pageSize=100000';

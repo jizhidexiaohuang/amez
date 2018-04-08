@@ -136,6 +136,7 @@
                 let size = vm.table.size;//每页条数
                 let url = common.path2+"store/front/findByPage?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {
+                    "storeState" : 1
                 }
                 if(!!vm.cd.beauticianType){
                     ajaxData.beauticianType = vm.cd.beauticianType;

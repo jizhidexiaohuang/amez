@@ -17,7 +17,7 @@ const common = {
             default:
                 return "http://mrb.amez999.com/pc/"
         } 
-    })(2),
+    })(1),
     path2: (function(i){
         switch (i) {
             case 1:
@@ -33,8 +33,8 @@ const common = {
         } 
     })(1),
     /* 富文本 */
-    // path1: "http://mrb.amez999.com/pc/", // 测试环境
-    path1: "http://www.52mrb.com/pc/", // 正式环境
+    path1: "http://mrb.amez999.com/pc/", // 测试环境
+    // path1: "http://www.52mrb.com/pc/", // 正式环境
     /* 用户信息 */
     u: (function(){
         let data = JSON.parse(window.localStorage.getItem("userInfo"));

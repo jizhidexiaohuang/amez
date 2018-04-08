@@ -107,7 +107,7 @@
                 }
                 // let url = this.common.path2+'store/findByPageForMemberCard?pageNo='+start+'&pageSize='+size;
                 // let url = this.common.path2+'storeBeautician/front/findByPage?pageSize=100000';
-                let url = vm.common.path2+"storeBeautician/findByPageForFullTimeAndPartTime?pageNo="+start+'&pageSize='+size;
+                let url = vm.common.path2+"storeBeautician/findByPageForFullTimeAndPartTime?pageSize=10000";
                 this.$http.post(
                     url,
                     ajaxData,
