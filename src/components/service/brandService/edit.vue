@@ -93,6 +93,7 @@
                     <homeList></homeList>
                 </div>
             </div>
+            <!--
             <div v-if="!!isShowBox" class="ivu-form" style="margin-bottom: 20px;">
                 <div class="ivu-form-item-label" style="width: 160px; float:left; text-align:right;">
                     <span style="color:#ed3f14; font-size:12px; font-family: 'SimSun'; margin-right:4px;">*</span>招募员工
@@ -102,6 +103,11 @@
                     <recruitList></recruitList>
                 </div>
             </div>
+            -->
+            <FormItem label="招募员工" prop="" v-if="!!isShowBox">
+                <recruitTable></recruitTable>
+                <recruitList></recruitList>
+            </FormItem>
             <FormItem label="正式员工服务提成" prop="formalWorker" v-if="false">
                 <Input v-model="formValidate.formalWorker" placeholder="请填写正式员工服务提成"></Input>
             </FormItem>
@@ -304,12 +310,12 @@
                 }
 
                 // 招募员工
-                if(!!!vm.$store.getters.recruitList.length){
+                /* if(!!!vm.$store.getters.recruitList.length){
                     if(!!vm.isShowBox){
                         vm.$Message.error('请选择招募员工!');
                         return false;
                     }
-                }
+                } */
 
                 this.$refs[name].validate((valid) => {
                     if (valid) {
