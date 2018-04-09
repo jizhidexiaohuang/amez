@@ -112,7 +112,7 @@ const conn = new WebIM.connection({
 // 添加成功的回调
 conn.listen({
   onOpened: function (message) {
-    
+    alert(1);
     console.log('连接打开=>', message)
   },
   onClosed: function (message) {
