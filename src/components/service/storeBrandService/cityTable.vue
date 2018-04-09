@@ -1,11 +1,11 @@
 <template>
     <div>
         <div>
-            <Button @click="fnOpenModal">添加城市</Button>
-            <span>已选{{ show_city.length }}个城市</span>
+            <Button @click="fnOpenModal">添加省份</Button>
+            <span>已选{{ show_city.length }}个省份</span>
             <Modal
                 v-model="modal1"
-                title="添加城市"
+                title="添加省份"
                 width="950"
                 @on-ok="ok">
                 <Row>

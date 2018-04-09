@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="140" style="padding-bottom: 20px;">
+        <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="160" style="padding-bottom: 20px;">
             <FormItem label="服务分类" prop="type">
                 <Select v-model="formValidate.type" placeholder="选择服务分类">
                     <Option :value="item.id" v-for="item in serviceList" :key="item.id">{{ item.categoryName }}</Option>
@@ -16,8 +16,17 @@
                 <Input v-model="formValidate.serverName" placeholder="请填写服务名称"></Input>
             </FormItem>
 
-            <FormItem label="服务支持城市">
+            <FormItem label="品牌标签" v-if="!!!storeId">
+                <RadioGroup v-model="formValidate.label">
+                    <Radio label="0">默认</Radio>
+                    <Radio label="1">推荐</Radio>
+                    <Radio label="2">新品</Radio>
+                </RadioGroup>
+            </FormItem>
+
+            <FormItem label="服务支持省份" prop="productCityList">
                 <cityTable></cityTable>
+                <Input style="position: absolute; left: 9999px;" v-model="formValidate.productCityList" placeholder="请填写服务名称"></Input>
             </FormItem>
 
 
@@ -37,10 +46,10 @@
             <FormItem label="上门费（元）" prop="homeFee" number='true' v-if="!!checkBoxCode">
                 <InputNumber :min="0" v-model="formValidate.homeFee" style="width: 100%;"></InputNumber>
             </FormItem>
-            <FormItem label="正式美容师佣金（元）" number='true'>
+            <FormItem label="正式美容师佣金（元）" number='true' prop="formalBeauticianCommission">
                 <InputNumber :min="0" v-model="formValidate.formalBeauticianCommission" style="width: 100%;"></InputNumber>
             </FormItem>
-            <FormItem label="兼职美容师佣金（元）" number='true'>
+            <FormItem label="兼职美容师佣金（元）" number='true' prop="parttimeBeauticianCommission">
                 <InputNumber :min="0" v-model="formValidate.parttimeBeauticianCommission" style="width: 100%;"></InputNumber>
             </FormItem>
 
@@ -75,8 +84,9 @@
             <FormItem label="佣金价格" prop="commission" number='true' v-if="false">
                 <Input v-model="formValidate.commission" placeholder="请填写佣金价格，单位元"></Input>
             </FormItem>
-            <FormItem label="轮播图">
+            <FormItem label="轮播图" prop="uploadList">
                 <MyUpload :defaultList="defaultList" v-on:listenUpload="getUploadList" :uploadConfig="uploadConfig"></MyUpload>
+                <Input style="position:absolute; left: 9999px;" v-model="formValidate.uploadList" placeholder="请上传轮播图"></Input>
             </FormItem>
             <FormItem label="主图">
                 <img v-if="formValidate.coverImg" class='demo-img' :src="formValidate.coverImg">
@@ -100,7 +110,7 @@
                     <Radio label="2">不通过</Radio>
                 </RadioGroup>
             </FormItem>
-            <FormItem label="服务详情" prop="serverIntroduce">
+            <FormItem label="服务详情（图片最大1M）" prop="serverIntroduce">
                 <editor id="editor_id" height="700px" width="100%;" :content="formValidate.serverIntroduce"
                     :uploadJson="path"
                     :loadStyleMode="false"
@@ -129,6 +139,7 @@
         data () {
             return {
                 formValidate: {
+                    label: '0', // 品牌标签
                     type: '',//服务分类
                     brandId: '',//服务所属品牌
                     serverName: '',//服务名称
@@ -150,6 +161,8 @@
                     isSupportStore:0, // 是否支持到店 1支持 0不支持
                     parttimeBeauticianCommission: 0, // 兼职美容师佣金
                     formalBeauticianCommission: 0, // 正式美容师佣金
+                    productCityList: '',
+                    uploadList: '', // 轮播图
                 },
                 ruleValidate: {
                     type: [
@@ -161,8 +174,35 @@
                     serverName: [
                         {required: true, message: '请填写服务名称', pattern: /.+/, trigger: 'change'}
                     ],
+                    uploadList: [
+                        {required: true, message: ' ', pattern: /.+/, trigger: 'change'}
+                    ],
+                    productCityList: [
+                        {required: true, message: '请填写服务支持省份', pattern: /.+/, trigger: 'change'}
+                    ],
                     serverEffect1: [
                         {required: true, message: '请选择预约方式', pattern: /.+/, trigger: 'change'}
+                    ],
+                    originalPrice: [
+                        {required: true, message: '请填写市场价', pattern: /.+/, trigger: 'change'}
+                    ],
+                    salePrice: [
+                        {required: true, message: '请填写服务销售价', pattern: /.+/, trigger: 'change'}
+                    ],
+                    formalBeauticianCommission: [
+                        {required: true, message: '请填写正式美容师佣金', pattern: /.+/, trigger: 'change'}
+                    ],
+                    parttimeBeauticianCommission: [
+                        {required: true, message: '请填写兼职美容师佣金', pattern: /.+/, trigger: 'change'}
+                    ],
+                    serverAttention: [
+                        {required: true, message: '请填写注意事项', pattern: /.+/, trigger: 'change'}
+                    ],
+                    serverNeedTime: [
+                        {required: true, message: '请填写服务总时长', pattern: /.+/, trigger: 'change'}
+                    ],
+                    serverIntroduce: [
+                        {required: true, message: '请填写服务详情', pattern: /.+/, trigger: 'change'}
                     ],
 
 
@@ -187,7 +227,7 @@
                 defaultList: [],
                 uploadList:[],//图片列表
                 // path:"http://172.16.20.151:8009/system/api/file/uploadForKindeditor"
-                path:this.common.path1+"system/api/file/uploadForKindeditor",
+                path: this.common.path2 + "system/api/file/uploadForKindeditor",
                 serviceList:[],// 产品分类
                 brandList:[],// 品牌分类
                 uploadConfig:{
@@ -205,6 +245,9 @@
             // 提交验证
             handleSubmit (name) {
                 let vm = this;
+                vm.formValidate.productCityList = !!vm.$store.getters.cityList.length?'存在':'';
+                vm.formValidate.uploadList = !!vm.uploadList.length?'存在':'';
+
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         //添加品牌服务
@@ -227,6 +270,10 @@
                             auditStatus: vm.formValidate.auditStatus, // 审核状态，0待审核，1通过，2不通过
                             brandId: vm.formValidate.brandId, // 服务所属品牌
                             isPlatform: false,
+                            saleStatus: 0,
+                        }
+                        if(!!!vm.storeId){
+                            ajaxData.product.label = vm.formValidate.label;
                         }
                         /* 是否支持到店 isSupportStore */
                         ajaxData.product.isSupportStore = 0;
@@ -259,16 +306,16 @@
                         }
                         /* 商品城市集合 */
                         ajaxData.productCityList = vm.$store.getters.cityList;
-
                         /*  商品-美容师-关联集合（到店） storeProductBeauticianRefList*/
                         ajaxData.storeProductBeauticianRefList = [];
                         var storeList = vm.$store.getters.storeList;
                         for(var i = 0;i<storeList.length;i++){
                             var obj = {};
                             obj.beauticianId = storeList[i].id;
-                            obj.beauticianNickname = storeList[i].beauticianNickName;
+                            obj.beauticianNickName = storeList[i].beauticianNickName;
                             obj.beauticianHeadImgUrl = storeList[i].beauticianHeadImgUrl;
                             obj.serverType = 0;
+                            obj.memberId = storeList[i].memberId;
                             ajaxData.storeProductBeauticianRefList.push(obj);
                         }
                         /* 商品-美容师-关联集合（上门） homeProductBeauticianRefList */
@@ -277,9 +324,10 @@
                         for(var j = 0;j<homeList.length;j++){
                             var obj = {};
                             obj.beauticianId = homeList[j].id;
-                            obj.beauticianNickname = homeList[j].beauticianNickName;
+                            obj.beauticianNickName = homeList[j].beauticianNickName;
                             obj.beauticianHeadImgUrl = homeList[j].headImgUrl;
                             obj.serverType = 1;
+                            obj.memberId = homeList[j].memberId;
                             ajaxData.homeProductBeauticianRefList.push(obj);
                         }
                         /* 商品-美容师-关联集合（招募） recruitProductBeauticianRefList */
@@ -350,9 +398,7 @@
             // 服务所属品牌接口数据
             fnGetStoreChainBrand () {
                 let vm = this;
-                let _url = "http://120.79.42.13:8080/";
-                let url = _url + "storeChainBrand/front/findByPage?pageSize=1000";
-                // let url = vm.common.path2 + "storeChainBrand/front/findByPage?pageSize=1000";
+                let url = vm.common.path2 + "storeChainBrand/front/findByPage?pageSize=1000";
                 vm.$http.post(
                     url,
                     {
@@ -360,6 +406,11 @@
                             'Content-Type': 'application/x-www-form-urlencoded'
                         }
                     }
+                    /* {
+                        headers:{
+                            'Content-type':'application/json;charset=UTF-8'
+                        }
+                    } */
                 ).then(function(res){
                     let oData = res.data.data.list;
                     vm.brandList = oData

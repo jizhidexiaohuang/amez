@@ -58,6 +58,7 @@
                 this.$emit('returnList',type)
             },
             handleSubmit (name) {
+                let vm = this;
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         let url = common.path2+'notificationNotices/update';

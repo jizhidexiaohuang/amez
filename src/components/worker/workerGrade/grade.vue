@@ -1,7 +1,7 @@
 <template>
   <div class="testWrap">
       <div class="addPage boxStyle">
-        <h2>新增店铺等级</h2>
+        <h2>新增技师等级</h2>
         <Form ref="formDynamic" :model="formDynamic" :label-width="80" style="width: 80%;">
             <FormItem style="margin-bottom:0px;">
                 <Row>
@@ -29,17 +29,10 @@
                         </Row>
                     </Col>
                     <Col span="3" style="text-align:center;padding-top:10px;">
-                        <InputNumber :max="10" :min="1" v-model="item.sort"></InputNumber>
+                        <InputNumber :max="100" :min="1" v-model="item.sort"></InputNumber>
                     </Col>
                     <Col span="6" style="text-align:center;padding-top:10px;">
                         <MyUpload v-if="logoCtrl" :defaultList="defaultList[index]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,index)}"></MyUpload>
-                        <!-- <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="getUploadList">
-                            <Button v-if="!item.levelLogo" type="ghost" icon="ios-cloud-upload-outline" @click="getIndex(index)">上传Logo</Button>
-                            <div class="imgBox">
-                                <img v-if="item.levelLogo" :src="item.levelLogo" alt=""  @click="getIndex(index)">
-                                <div class="cover" @click="getIndex(index)"><Icon type="ios-cloud-upload-outline"></Icon></div>
-                            </div>
-                        </Upload> -->
                     </Col>
                     <Col span="2" offset="1">
                         <Button type="error" @click="handleRemove(index)">删除</Button>
@@ -49,12 +42,12 @@
             <FormItem>
                 <Row>
                     <Col span="4">
-                        <Button type="success" long @click="handleAdd" icon="plus-round">增加店铺等级</Button>
+                        <Button type="success" long @click="handleAdd" icon="plus-round">增加技师等级</Button>
                     </Col>
                 </Row>
             </FormItem>
             <FormItem>
-                <Button type="primary" @click="handleSubmit('formDynamic')" style="margin-right:8px">保存</Button>
+                <Button type="primary" :disabled="btnCtrl" @click="handleSubmit('formDynamic')" style="margin-right:8px">保存</Button>
                 <Button v-if="false" type="ghost" @click="handleReset('formDynamic')" style="margin:0px 8px">取消</Button>
                 <Button type="success" @click.native="returnHome('list')">返回</Button>
             </FormItem>
@@ -70,6 +63,10 @@
             return {
                 logoCtrl:false,
                 defaultList:[],//默认图片
+                uploadConfig:{
+                    num:1
+                },
+                btnCtrl:false,
                 index: 1,
                 ajaxArr:[],//提交的数据
                 logoIndex:0,
@@ -85,9 +82,6 @@
                             status: 1
                         }
                     ]
-                },
-                uploadConfig:{
-                    num:1
                 }
             }
         },
@@ -98,13 +92,12 @@
             },
             //提交
             handleSubmit (name) {
-               
                 console.log(this.index)
                 let url = common.path2+'storeBeauticianLevel/addByBatch'
-                console.log(url)
                 let ajaxData = {
                     storeBeauticianLevelList:this.getAjaxData()
                 }
+                this.btnCtrl = true;
                 this.$http.post(
                     url,
                     ajaxData,
@@ -117,7 +110,8 @@
                     console.log(res)
                     if(res.status==200){
                         this.$Message.success('提交成功!');
-                        this.returnHome('list')
+                        this.returnHome('list');
+                        this.btnCtrl = false;
                     }
                 })
                  
@@ -133,11 +127,6 @@
                 }
                 vm.formDynamic.items[index].status = 1
             },
-            //获取index
-            // getIndex(index){
-            //     this.logoIndex = index;
-            //     console.log(index)
-            // },
             //取消
             handleReset (name) {
                 this.$refs[name].resetFields();
@@ -146,25 +135,33 @@
             handleAdd () {
                 this.index++;
                 this.formDynamic.items.push({
-                    value: '',
                     index: this.index,
-                    status: 1
+                    status: 1,
+                    sort:0,
+                    gradeName:'',//门店等级
+                    startValue:'',//最小值
+                    endValue:'',//最大值
+                    levelLogo:'',//图片路径
                 });
+                console.log(this.formDynamic.items)
             },
             //删除一列
             handleRemove (index) {
                 this.formDynamic.items[index].status = 0;
+                this.formDynamic.items.splice(index,1);
+                this.defaultList.splice(index,1);
                 this.index--;
             },
             //获取提交数据
             getAjaxData(){
-                for(var i=0;i<this.index;i++){
+                for(var i=0;i<this.formDynamic.items.length;i++){
+                    console.log(this.formDynamic.items) 
                     var temp = {
-                        sort:this.formDynamic.items[i].sort||1,
-                        levelName:this.formDynamic.items[i].gradeName||'注册会员',
+                        sort:this.formDynamic.items[i].sort,
+                        levelName:this.formDynamic.items[i].gradeName,
                         levelLogo:this.formDynamic.items[i].levelLogo,
-                        beginUpgradeValue:this.formDynamic.items[i].startValue||1,
-                        endUpgradeValue:this.formDynamic.items[i].endValue||99
+                        beginUpgradeValue:this.formDynamic.items[i].startValue,
+                        endUpgradeValue:this.formDynamic.items[i].endValue
                     }
                     this.ajaxArr.push(temp)
                 }

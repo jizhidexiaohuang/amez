@@ -9,24 +9,23 @@
                 width="700">
                 <div v-if="pageType == 'list'">
                     <div>
-                        <Form :model="cd" inline>
-                            <FormItem style="margin-bottom:10px;" v-if="false">
-                                员工类型
-                                <Select v-model="cd.beauticianType" style="width:100px">
-                                    <!--<Option v-for="item in branchList" :value="item.id" :key="item.id">{{ item.brandName }}</Option>-->
-                                    <Option :value="1" :key="1">店长</Option>
-                                    <Option :value="2" :key="2">正式员工</Option>
-                                    <Option :value="3" :key="3">兼职员工</Option>
-                                </Select>
-                            </FormItem>
-                            <FormItem style="margin-bottom:10px; width:200px;" v-if="false">
-                                <Row>
-                                    <Col span="20">
-                                        <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
-                                        <Button style="margin-left:5px;" @click.native="getData('init')" @click="ievent" type="warning" icon="refresh">刷新</Button>
-                                    </Col>
-                                </Row>
-                            </FormItem>
+                        <Form :model="cd" :label-width="90">
+                            <Row>
+                                <Col span="13">
+                                    <FormItem label="店铺名称" style="margin-bottom:10px;">
+                                        <Input v-model="cd.storeName" placeholder="请填写店铺名称"></Input>
+                                    </FormItem>
+                                </Col>
+                                <Col span="11">
+                                    <FormItem style="margin-bottom:10px;">
+                                        <Row>
+                                            <Col span="20">
+                                                <Button style="margin-left:5px;" @click.native="getData" type="primary" icon="ios-search">查询</Button>
+                                            </Col>
+                                        </Row>
+                                    </FormItem>
+                                </Col>
+                            </Row>
                         </Form>
                         <Table
                             :loading="table.loading" 
@@ -75,7 +74,8 @@
 
                 ],
                 cd:{
-                    beauticianType:''
+                    beauticianType:'',
+                    storeName:'',
                 },
                 activatedType: false,//主要解决mounted和activated重复调用
                 pageType: 'list',
@@ -136,9 +136,13 @@
                 let size = vm.table.size;//每页条数
                 let url = common.path2+"store/front/findByPage?pageNo="+start+'&pageSize='+size;
                 let ajaxData = {
+                    "storeState" : 1
                 }
                 if(!!vm.cd.beauticianType){
                     ajaxData.beauticianType = vm.cd.beauticianType;
+                }
+                if(!!vm.cd.storeName){
+                    ajaxData.storeName = vm.cd.storeName;
                 }
                 vm.table.loading = true;
                 this.$http.post(
@@ -272,7 +276,7 @@
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
             ok () {
-                this.$Message.info('Clicked ok');
+                this.$Message.info('成功');
                 this.$store.commit('SERVICE_STORE_LIST',this.listId);
             },
             fnOpenModal () {

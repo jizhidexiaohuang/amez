@@ -165,6 +165,12 @@ export default {
             let timer = null;
             // 可以点击
             if(vm.codeText == "获取验证码"){
+                if(!!!vm.form.phone.length){
+                    vm.$Message.error('请输入手机号码!');
+                    return false;
+                }
+
+
                 vm.codeText = num;
                 timer = window.setInterval(function(){
                     if(num == 1){

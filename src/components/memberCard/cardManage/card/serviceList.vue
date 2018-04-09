@@ -45,7 +45,7 @@
                         title: '原价',
                         key: 'salePrice',
                         render:(h,params)=>{
-                            return h('div','￥'+params.row.salePrice);
+                            return h('div','￥'+params.row.salePrice/100);
                         }
                     },
                     {
@@ -53,7 +53,7 @@
                         key: 'salePrice',
                         render:(h,params)=>{
                             if(this.discount){
-                                return h('div','￥'+(params.row.salePrice*this.discount/100));
+                                return h('div','￥'+(params.row.salePrice*this.discount/10000));
                             }else{
                                 return h('div','￥'+params.row.salePrice*1);                                
                             }

@@ -20,7 +20,7 @@
           </Row>
           <Row>
               <Col span="8">交易金额：￥{{orderBase.tradeAmount/100}}</Col>
-              <Col span="8">售卡方抽佣：{{Incentive?'￥'+Incentive/100:''}}</Col>
+              <Col span="8">售卡方抽佣：{{incentive?'￥'+incentive/100:''}}</Col>
               <Col span="8"></Col>
           </Row>
         </div>
@@ -89,7 +89,7 @@
                 businessCtrl:false,
                 serviceCtrl:false,
                 discount:'',
-                Incentive:''
+                incentive:''
             }
         },
         computed:{
@@ -148,17 +148,20 @@
                         },
                     }
                     ).then(res=>{
-                    vm.Incentive = res.data.data.list[0].incentive;
+                        if(res.data.data.list.length!=0){
+                            vm.incentive = res.data.data.list[0].incentive;
+                        }
                 })
             },
             ok () {
-                this.$Message.info('Clicked ok');
+                
             },
             cancel () {
-                this.$Message.info('Clicked cancel');
+                
             }
         },
         mounted:function(){
+            console.log(this.parentMsg)
             this.getData(this.parentMsg.infoId);
             this.getIncentive(this.parentMsg.tradeNo);
         },

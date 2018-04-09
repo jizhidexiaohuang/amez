@@ -53,7 +53,7 @@
                         {required: true, message: '请填写短信模板', pattern: /.+/, trigger: 'change'}
                     ],
                 },
-                path:this.common.path1+"system/api/file/uploadForKindeditor",
+                path: this.common.path2 + "system/api/file/uploadForKindeditor",
             }
         },
         methods: {

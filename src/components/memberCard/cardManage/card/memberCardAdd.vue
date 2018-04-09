@@ -33,7 +33,7 @@
             </FormItem>
             <FormItem label="会员卡面值" prop="cardValue">
                 <Col span="2">
-                    <InputNumber :max="100000000" :min="1" v-model="formValidate.cardValue"></InputNumber>
+                    <InputNumber :max="100000000" :min="0.01" v-model="formValidate.cardValue"></InputNumber>
                     <!-- <Input v-model="formValidate.cardValue" placeholder="请输入会员卡面值"></Input>               -->
                 </Col>
                 <Col span="8">元（最高金额99999999.99）</Col>
@@ -109,6 +109,7 @@
                 discount:'',
                 brandId:'',
                 storeId:'',
+                storeName:'',
                 storeShow:false,
                 issueType:0,
                 src:'',
@@ -149,12 +150,12 @@
                     imgUrl:[
                         { required: true, message: '请选择会员卡卡面模版', pattern:/.+/, trigger: 'blur' }
                     ],
-                    expiryDate:[
-                        { required: true, type: 'date', message: '请设置会员卡有效期', trigger: 'change' }
-                    ],
-                    expiryDay:[
-                        { required: true, message: '请设置会员卡有效天数', pattern:/.+/, trigger: 'blur' }
-                    ],
+                    // expiryDate:[
+                    //     { required: true, type: 'date', message: '请设置会员卡有效期', trigger: 'blur' }
+                    // ],
+                    // expiryDay:[
+                    //     { required: true, message: '请设置会员卡有效天数', pattern:/.+/, trigger: 'blur' }
+                    // ],
                     cardExplain:[
                         { required: true, message: '请填写用卡说明', pattern:/.+/, trigger: 'blur' },
                     ],
@@ -266,6 +267,7 @@
                             brandId:this.formValidate.brandId,
                             brandName:this.formValidate.brandName,
                             issueType:this.issueType,
+                            useRange:this.issueType, //单店多店
                             issueNum:this.formValidate.cardTotal-0,
                             stylePattern:this.formValidate.imgUrl,
                             supportRecharge:this.formValidate.isRecharge=='0'?false:true,
@@ -279,6 +281,9 @@
                         }
                         if(this.storeId){
                             ajaxData.storeId = this.storeId;
+                        }
+                        if(this.storeName){
+                            ajaxData.storeName = this.storeName;
                         }
                         console.log(JSON.stringify(ajaxData))
                         let url = this.common.path2+'memberCard/releaseMemberCard';
@@ -345,6 +350,7 @@
                 this.issueType = 1;//店铺
                 this.storeRange = '限本店适用';
                 this.storeId = JSON.parse(window.localStorage.getItem('userInfo')).store.id;
+                this.storeName = JSON.parse(window.localStorage.getItem('userInfo')).store.storeName;
                 this.formValidate.useAbleStoreList.push(JSON.parse(window.localStorage.getItem('userInfo')).store.id);
                 this.formValidate.brandId = JSON.parse(window.localStorage.getItem('userInfo')).store.brandId;
                 this.formValidate.brandName = JSON.parse(window.localStorage.getItem('userInfo')).store.brandName;

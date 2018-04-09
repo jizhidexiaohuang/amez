@@ -4,7 +4,7 @@
             <Button @click="fnOpenModal">选择员工</Button>
             <Modal
                 v-model="usingRange"
-                title="选择员工"
+                title="选择上门员工s"
                 @on-ok="ok"
                 width="700">
                 <div v-if="pageType == 'list'">
@@ -283,7 +283,7 @@
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
             ok () {
-                this.$Message.info('Clicked ok');
+                this.$Message.info('成功');
                 this.$store.commit('TOHOME_LIST',this.listId);
             },
             fnOpenModal () {

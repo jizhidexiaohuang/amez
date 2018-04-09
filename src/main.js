@@ -9,11 +9,15 @@ import Loading from './components/Loading'
 import 'iview/dist/styles/iview.css';
 import iView from 'iview';
 import common from './base.js';
+
+import BASE_UTIL from './util/util.js'
+
 import '../static/sass/common.min.css'
 import qs from 'qs'
 // 引入 vue-kikindeditor 需要的文件
 import VueKindEditor from 'vue-kindeditor'
-import 'kindeditor/kindeditor-all-min.js'
+// import 'kindeditor/kindeditor-all-min.js'
+import '../static/js/kindeditor-all-min.js'
 import 'kindeditor/themes/default/default.css'
 // 注册 vue-kikindeditor plugin
 import VueDND from 'awe-dnd'
@@ -21,6 +25,7 @@ Vue.use(VueDND)
 
 Vue.use(VueKindEditor)
 Vue.prototype.common = common;
+Vue.prototype._u = BASE_UTIL;
 Vue.config.productionTip = false
 Vue.use(iView);
 Vue.prototype.qs = qs;

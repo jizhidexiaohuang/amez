@@ -38,9 +38,9 @@
                 </div>
                 <div class="content">
                 <Row>
-                    <Col span="4">{{data.membershiCard}}会员卡</Col>
+                    <Col span="4">{{data.membershiCard||'空'}}</Col>
                     <Col span="4">{{data.faceValue/100}}</Col>
-                    <Col span="4">{{data.cardContent}}</Col>
+                    <Col span="4" class="spec">{{data.cardContent}}</Col>
                     <Col span="4">{{payMethod}}</Col>
                     <Col span="4">{{data.actuallyAmount/100}}</Col>
                 </Row>
@@ -119,7 +119,7 @@
                 return str
             },
             payMethod:function(){
-                let str = ''
+                let str = '未知'
                 if(this.data.payMethod=='1'){
                     str = '支付宝'
                 }else if(this.data.payMethod=='2'){
@@ -223,5 +223,14 @@
     button{
         margin-top:20px;
     }
+}
+.spec{
+    line-height: 20px;
+    padding-top:15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
 }
 </style>

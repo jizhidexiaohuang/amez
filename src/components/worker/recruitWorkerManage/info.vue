@@ -1,101 +1,122 @@
 <template>
     <div>
         <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120" style="padding-bottom: 20px;">
-            <FormItem  label="员工姓名" prop="beauticianName">
-                <Input v-model="formValidate.beauticianName" placeholder="请填写员工姓名"></Input>
+            <FormItem  label="美容师昵称" prop="beauticianNickName">
+                <Input disabled v-model="formValidate.beauticianNickName" placeholder="请填写员工姓名"></Input>
             </FormItem>
-            <FormItem  label="员工昵称" prop="beauticianNickName">
-                <Input v-model="formValidate.beauticianNickName" placeholder="请填写员工姓名"></Input>
+            <FormItem  label="店铺名称" prop="storeName">
+                <Input disabled v-model="formValidate.storeName" placeholder="请填写员工姓名"></Input>
             </FormItem>
-            <FormItem label="员工照片">
-                <MyUpload v-if="imgCtrl" :defaultList="defaultList" :uploadConfig="uploadConfig" v-on:listenUpload="getUploadList"></MyUpload>
+            <FormItem  label="服务类型" prop="serverType">
+                <Input disabled v-model="formValidate.serverType" placeholder="请填写员工姓名"></Input>
             </FormItem>
-            <FormItem  label="工牌号" prop="workCardNo">
-                <Input v-model="formValidate.workCardNo" placeholder="请填写工牌号"></Input>
+            <FormItem label="美容师头像">
+                <img class='demo-img' :src="formValidate.beauticianHeadImgUrl">
             </FormItem>
-            <FormItem  label="注册手机" prop="mobile">
-                <Input v-model="formValidate.mobile" disabled placeholder="请填写注册手机"></Input>
+            <FormItem label="店铺合照">
+                <img class='demo-img' :src="formValidate.groupPhoto">
             </FormItem>
-            <FormItem label="员工类型" prop="position">
-                <RadioGroup v-model="formValidate.position">
-                    <Radio label="1">店长</Radio>
-                    <Radio label="2">正式员工</Radio>
-                    <Radio label="3">兼职员工</Radio>
-                </RadioGroup>
-            </FormItem>
-            <FormItem label="出生年月">
-                <Row>
-                    <Col span="11">
-                        <FormItem prop="birthday">
-                            <DatePicker type="date" v-model="formValidate.birthday"></DatePicker>
-                        </FormItem>
-                    </Col>
-                </Row>
-            </FormItem>
-            <FormItem label="入职时间">
-                <Row>
-                    <Col span="11">
-                        <FormItem prop="joinTime">
-                            <DatePicker type="date" v-model="formValidate.joinTime"></DatePicker>
-                        </FormItem>
-                    </Col>
-                </Row>
-            </FormItem>
-            <FormItem  label="从业经验" prop="experience">
-                <Input v-model="formValidate.experience" placeholder=""></Input>
-            </FormItem>
-            <FormItem label="员工住址" prop="">
-                <Row>
-                    <Col span="20">
-                        <CityLinkage v-if="cityCtrl" :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
-                    </Col>
-                </Row>
-            </FormItem>
-            <FormItem  label="详细地址" prop="address">
-                <Input v-model="formValidate.address" placeholder=""></Input>
-            </FormItem>
-            <FormItem label="员工状态" prop="beauticianStatus">
-                <RadioGroup v-model="formValidate.beauticianStatus">
-                    <Radio label="1">在职</Radio>
-                    <Radio label="0">离职</Radio>
-                </RadioGroup>
-            </FormItem>
-            <FormItem label="所属门店" prop="storeName" style="width:500px;">
-                <Input v-model="formValidate.storeName" placeholder="请选择所属门店" @click.native="selectStore"></Input>
-                <div class="tableBox" v-show="tableCtrl">
-                    <Table
-                        :loading="table.loading" 
-                        :data="table.tableData1" 
-                        :columns="tableColumns1" 
-                        stripe
-                        border
-                        size="small"
-                        @on-select="fnSelect"
-                        @on-select-all="fnSelectAll"
-                        @on-current-change="fnHighlight"
-                        :show-header="false"
-                        :stripe="false"
-                        highlight-row
-                        height="150"
-                    ></Table>
-                    <div style="overflow: hidden;" class="pageBox">
-                        <div style="float: right;">
-                            <Page 
-                                size="small"
-                                :total="table.recordsTotal" 
-                                :current="table.pageNun"
-                                @on-change="changePage"
-                                @on-page-size-change="changeSize"
-                            ></Page>
+
+
+
+
+
+
+
+
+
+
+            <div v-if="false">
+                <FormItem  label="工牌号" prop="workCardNo">
+                    <Input v-model="formValidate.workCardNo" placeholder="请填写工牌号"></Input>
+                </FormItem>
+                <FormItem  label="注册手机" prop="mobile">
+                    <Input v-model="formValidate.mobile" disabled placeholder="请填写注册手机"></Input>
+                </FormItem>
+                <FormItem label="员工类型" prop="position">
+                    <RadioGroup v-model="formValidate.position">
+                        <Radio label="1">店长</Radio>
+                        <Radio label="2">正式员工</Radio>
+                        <Radio label="3">兼职员工</Radio>
+                    </RadioGroup>
+                </FormItem>
+                <FormItem label="出生年月">
+                    <Row>
+                        <Col span="11">
+                            <FormItem prop="birthday">
+                                <DatePicker type="date" v-model="formValidate.birthday"></DatePicker>
+                            </FormItem>
+                        </Col>
+                    </Row>
+                </FormItem>
+                <FormItem label="入职时间">
+                    <Row>
+                        <Col span="11">
+                            <FormItem prop="joinTime">
+                                <DatePicker type="date" v-model="formValidate.joinTime"></DatePicker>
+                            </FormItem>
+                        </Col>
+                    </Row>
+                </FormItem>
+                <FormItem  label="从业经验" prop="experience">
+                    <Input v-model="formValidate.experience" placeholder=""></Input>
+                </FormItem>
+                <FormItem label="员工住址" prop="">
+                    <Row>
+                        <Col span="20">
+                            <CityLinkage v-if="cityCtrl" :cityConfig="cityConfig" v-on:listenCity="getCity"></CityLinkage>
+                        </Col>
+                    </Row>
+                </FormItem>
+                <FormItem  label="详细地址" prop="address">
+                    <Input v-model="formValidate.address" placeholder=""></Input>
+                </FormItem>
+                <FormItem label="员工状态" prop="beauticianStatus">
+                    <RadioGroup v-model="formValidate.beauticianStatus">
+                        <Radio label="1">在职</Radio>
+                        <Radio label="0">离职</Radio>
+                    </RadioGroup>
+                </FormItem>
+                <FormItem label="所属门店" prop="storeName" style="width:500px;">
+                    <Input v-model="formValidate.storeName" placeholder="请选择所属门店" @click.native="selectStore"></Input>
+                    <div class="tableBox" v-show="tableCtrl">
+                        <Table
+                            :loading="table.loading" 
+                            :data="table.tableData1" 
+                            :columns="tableColumns1" 
+                            stripe
+                            border
+                            size="small"
+                            @on-select="fnSelect"
+                            @on-select-all="fnSelectAll"
+                            @on-current-change="fnHighlight"
+                            :show-header="false"
+                            :stripe="false"
+                            highlight-row
+                            height="150"
+                        ></Table>
+                        <div style="overflow: hidden;" class="pageBox">
+                            <div style="float: right;">
+                                <Page 
+                                    size="small"
+                                    :total="table.recordsTotal" 
+                                    :current="table.pageNun"
+                                    @on-change="changePage"
+                                    @on-page-size-change="changeSize"
+                                ></Page>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </FormItem>
-            <FormItem label="员工等级" prop="workerGrade">
-                <Select v-model="formValidate.workerGrade">
-                    <Option :value="item.value" v-for='(item ,index) in formValidate.workerGradeList' :key="index">{{item.label}}</Option>
-                </Select>
-            </FormItem>
+                </FormItem>
+                <FormItem label="员工等级" prop="workerGrade">
+                    <Select v-model="formValidate.workerGrade">
+                        <Option :value="item.value" v-for='(item ,index) in formValidate.workerGradeList' :key="index">{{item.label}}</Option>
+                    </Select>
+                </FormItem>
+            </div>
+
+
+
             <FormItem>
                 <Button v-if="false" type="primary" @click="handleSubmit('formValidate')">提交</Button>
                 <Button type="primary" @click="handReturn('list')">返回</Button>
@@ -324,12 +345,22 @@
             // 根据id返回数据
             getDataById(id){
                 let vm = this;
-                let url = this.common.path2 +'storeBeautician/queryById/'+id
+                let url = this.common.path2 +'productBeauticianRef/queryById/'+id
                 vm.$http.get(url).then(res=>{
                     console.log(res.data.data)
                     let oData = res.data.data;
                     vm.formValidate.beauticianName = oData.beauticianName;
                     vm.formValidate.beauticianNickName = oData.beauticianNickName;
+                    vm.formValidate.beauticianHeadImgUrl = oData.beauticianHeadImgUrl;
+                    vm.formValidate.groupPhoto = oData.groupPhoto;
+                    vm.formValidate.storeName = oData.storeName;
+                    vm.formValidate.serverType = oData.serverType == 0?'到店':'上门';
+
+
+
+
+
+
                     vm.defaultList.push({
                         url:oData.headImgUrl
                     }); //员工头像
@@ -386,5 +417,19 @@
         border-top:none;
         border-radius:0 0 5px 5px;
     }
+}
+.demo-img{
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    text-align: center;
+    line-height: 60px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+    box-shadow: 0 1px 1px rgba(0,0,0,.2);
+    margin-right: 4px;
 }
 </style>

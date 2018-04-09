@@ -8,16 +8,24 @@
             @on-ok="fnAsyncOK">
             {{ modal.info }}
         </Modal>
+        <!-- 模态框 店长上架 -->
+        <Modal
+            v-model="server.mineModal"
+            title="上架服务"
+            :loading="server.loading"
+            @on-ok="fnAsyncOK2">
+            确定上架？
+        </Modal>
         <!-- 审核 模态框 -->
         <Modal
             v-model="audit.mineModal"
-            title="审核品牌"
+            title="审核平台自营服务"
             :loading="audit.loading"
             @on-ok="fnAsyncOK1">
             <Form>
                 <FormItem label="审核状态">
                     <RadioGroup v-model="audit.auditStatus">
-                        <Radio label="1">已审核</Radio>
+                        <Radio label="1">通过</Radio>
                         <Radio label="2">不通过</Radio>
                     </RadioGroup>
                 </FormItem>
@@ -32,6 +40,8 @@
         <EditPage v-if="pageType == 'edit'" :sendChild="sendChild" class="testWrap" v-on:returnList="changePageType"/>
         <!-- 上架容器 -->
         <OnSalePage v-if="pageType == 'onSale'" :sendChild="sendChild" class="testWrap" v-on:returnList="changePageType"/>
+        <!-- 详情 -->
+        <OnSaleInfoPage v-if="pageType == 'onSaleInfo'" :sendChild="sendChild" class="testWrap" v-on:returnList="changePageType"/>
         <!-- 详情容器 -->
         <div v-if="pageType == 'info'" class="testWrap">详情</div>
         <!-- 列表容器 -->
@@ -42,12 +52,23 @@
                         状态
                         <Select v-model="cd.saleStatus" style="width:200px">
                             <Option value="">全部</Option>
-                            <Option value="0">已下架</Option>
+                            <Option value="0">仓库中</Option>
                             <Option value="1">销售中</Option>
                         </Select>
                     </FormItem>
-                    <FormItem style="margin-bottom:10px;">
-                        评价时间
+
+
+                    <FormItem style="margin-bottom:10px;" v-if="false">
+                        审核状态
+                        <Select v-model="cd.auditStatus" style="width:200px">
+                            <Option value="">全部</Option>
+                            <Option value="0">待审核</Option>
+                            <Option value="1">通过</Option>
+                            <Option value="2">不通过</Option>
+                        </Select>
+                    </FormItem>
+                    <FormItem style="margin-bottom:10px;" v-if="false">
+                        发布时间
                         <DatePicker v-model="cd.time" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="请填写时间范围" style="width: 300px"></DatePicker>
                     </FormItem>
                     <FormItem style="margin-bottom:10px;" v-if="false">
@@ -98,9 +119,15 @@
     import AddPage from './add.vue'
     import EditPage from './edit.vue'
     import OnSalePage from './onSale.vue'
+    import OnSaleInfoPage from './onSaleInfo.vue'
     export default {
         data () {
             return {
+                server:{
+                    loading: true,
+                    mineModal: false,
+                },
+                mainStoreName:'', //店铺名称
                 operators: {},
                 modal:{
                     mineModal: false,
@@ -120,6 +147,7 @@
                 cd:{
                     time:[],//评论时间范围
                     saleStatus:"",//上下架状态
+                    auditStatus:"",//上下架状态
                     inputval:'',//选择的值
                     inputType:'serverName',//input类型
                     isBrand:false,// 门店自营还是产品
@@ -154,7 +182,7 @@
                             }
                         },
                         {   
-                            title: '是否支持上门',
+                            title: '服务方式',
                             key: 'isSupportHome',
                             render: (h,params) => {
                                 const row = params.row;
@@ -162,19 +190,23 @@
                                 // const text = !!!row.isSupportHome ? '默认' : row.isSupportHome === 1 ? '到店' : '上门';
 
                                 const color = !!!row.isSupportHome ? 'yellow' : 'blue';
-                                const text = !!!row.isSupportHome ? '到店' : '上门';
-                                /* return h('Tag', {
-                                    props: {
-                                        type: 'border',
-                                        color: color
-                                    }
-                                }, text); */
+                                let text = '';
+                                if(!!row.isSupportHome&&!!!row.isSupportStore){
+                                    text = '上门';
+                                }else if(!!row.isSupportStore&&!!!row.isSupportHome){
+                                    text = '到店';
+                                }else if(!!row.isSupportStore&&!!row.isSupportHome){
+                                    text = '到店和上门';
+                                }else{
+                                    text = '无';
+                                }
                                 return text;
                             }
                         },
                         {
                             title: '上门费用',
                             key: 'homeFee',
+                            width: 100,
                             render: (h,params) => {
                                 const row = params.row;
                                 return !!row.homeFee?+row.homeFee/100:"0"
@@ -183,10 +215,11 @@
                         {
                             title: '状态',
                             key: 'saleStatus',
+                            width: 100,
                             render: (h,params) => {
                                 const row = params.row;
                                 const color = row.saleStatus === 0 ? 'red' : 'blue';
-                                const text = row.saleStatus === 0 ? '已下架' : '销售中';
+                                const text = row.saleStatus === 0 ? '仓库中' : '销售中';
                                 /* return h('Tag', {
                                     props: {
                                         type: 'border',
@@ -199,6 +232,7 @@
                         {
                             title: '审核结果',
                             key: 'auditStatus',
+                            width: 100,
                             render: (h,params) => {
                                 const row = params.row;
                                 const color = row.auditStatus === 0 ? 'blue' : row.auditStatus === 1 ? 'green':'red';
@@ -230,7 +264,6 @@
                                 const color = row.saleStatus === 0 ? 'success' : 'warning';
                                 const text = row.saleStatus === 0 ? '管理员上架' : '管理员下架';
                                 const text1 = row.saleStatus  === 0 ? '店长上架': '店长下架';
-
                                 let obj1 = h('Button', {
                                     props: {
                                         type: 'primary',
@@ -247,6 +280,7 @@
                                         }
                                     }
                                 }, '编辑')
+                                console.log(this.operators);
                                 if(!!this.operators.edit){
                                     if(!!this.isShow){
                                         arrs.push(obj1);
@@ -272,7 +306,7 @@
                                         }
                                     }
                                 }, text)
-                                if(!!!this.storeId&&!!this.operators.adminUpdown){
+                                if(!!!this.storeId&&!!this.operators.adminUpdown&&row.auditStatus!=0){
                                     arrs.push(obj2);
                                 }
                                 /* 门店上下架 */
@@ -287,19 +321,21 @@
                                     on: {
                                         click: () => {
                                             let row = params.row;
-                                            this.fnOffShelves(row.id,row.storeId);
+                                            // this.fnOffShelves(row.id,row.storeId);
                                             if(row.saleStatus  == 0){
                                                 // 商品上架
                                                 this.sendChild.itemId = row.id;
                                                 this.changePageType('onSale');
-                                            }else if(row.saleStatus  == 1){
+                                                // this.server.mineModal = true;
+                                                // this.fnOnShelves(row.id);
+                                            }else if(row.saleStatus  == 1 || !!!row.saleStatus){
                                                 // 商品下架
                                                 this.fnOffShelves(row.id,row.storeId);
                                             }
                                         }
                                     }
                                 }, text1)
-                                if(!!this.storeId&&!!this.operators.storeUpdown){
+                                if(!!this.storeId&&!!this.operators.storeUpdown&&row.auditStatus!=0){
                                     arrs.push(obj4);
                                 }
                                 let obj7 = h('Button', {
@@ -343,6 +379,28 @@
                                         arrs.push(obj3);
                                     }
                                 }
+
+                                let obj_info = h('Button', {
+                                    props: {
+                                        type: 'success',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            let row = params.row;
+                                            this.sendChild.itemId = row.id;
+                                            this.changePageType('onSaleInfo');
+                                        }
+                                    }
+                                }, '查看')
+                                console.log(this.storeId);
+                                if(!!this.storeId&&row.saleStatus!=0){
+                                    arrs.push(obj_info);
+                                }
+
                                 return h('div', arrs);
                             }
                         }
@@ -362,6 +420,11 @@
                 storeId:'',//店铺id
                 brandId: '', // 品牌id
                 isShow: true,
+                formValidate:{
+                    homeFee:'',
+                    productId:'',
+                    storeId:'',
+                }
             }
         },
         methods: {
@@ -413,6 +476,9 @@
                 }
                 if(!!vm.cd.saleStatus){
                     ajaxData.saleStatus = vm.cd.saleStatus;
+                }
+                if(!!vm.cd.auditStatus){
+                    ajaxData.auditStatus = vm.cd.auditStatus;
                 }
                 if(!!vm.cd.inputval){
                     ajaxData[vm.cd.inputType] = vm.cd.inputval
@@ -477,7 +543,7 @@
                     this.table.pageSize = this.table.size;
                     this.getData();
                 }
-                if(type == "add" || type == "onSale"){
+                if(type == "add" || type == "onSale" || type == "onSaleInfo"){
                     this.$store.commit('SERVICE_STORE_LIST',[]);
                     this.$store.commit('PRODUCT_LIST',[]);
 
@@ -537,9 +603,7 @@
             // 服务所属品牌接口数据
             fnGetStoreChainBrand () {
                 let vm = this;
-                let _url = "http://120.79.42.13:8080/";
-                // let url = vm.common.path2 + "storeChainBrand/front/findByPage?pageSize=1000";
-                let url = _url + "storeChainBrand/front/findByPage?pageSize=1000";
+                let url = vm.common.path2 + "storeChainBrand/front/findByPage?pageSize=1000";
                 vm.$http.post(
                     url,
                     {
@@ -595,46 +659,6 @@
             },
 
             /*===================== 菜单权限配置 start ====================*/
-            /* 获取该菜单拥有的权限 */
-            fnGetOperators () {
-                let vm = this;
-                function fnGetDatas (id,vm) {
-                    let list = [];
-                    let menuArrs = []; // 相同menuId的数组
-                    let strArrs = []; // 权限数组 ["add","edit"]
-                    /* 菜单对应的权限组 */
-                    if(!!JSON.parse(window.localStorage.getItem("userInfo")).operator.list){
-                        list = JSON.parse(window.localStorage.getItem("userInfo")).operator.list;
-                    }
-                    /* 每个用户有可能被分配了多个角色，所以需要合并相同menuId的权限组 */
-                    for(var c = 0;c<list.length;c++){
-                        if(list[c].menuId == id){
-                            menuArrs.push(list[c]);
-                        }
-                    }
-
-                    for(var j = 0;j<menuArrs.length;j++){
-                        if(!!menuArrs[j].operCode){
-                            vm.fnChangeOperators(menuArrs[j].operCode.split(","));
-                        }
-                    }
-                }
-                /* 得到所有的菜单 */
-                let arrs = JSON.parse(window.localStorage.getItem("userInfo")).menu;
-                for(var i = 0;i<arrs.length;i++){
-                    if(!!arrs[i].hasChildList){
-                        for(var j = 0;j<arrs[i].childList.length;j++){
-                            if(arrs[i].childList[j].href == this.$route.path){
-                                fnGetDatas(arrs[i].childList[j].menuId,vm)
-                            }
-                        }
-                    }else{
-                        if(arrs[i].href == this.$route.path){
-                            fnGetDatas(arrs[i].menuId,vm)
-                        }
-                    }
-                }
-            },
             /* 店长下架 */
             //product/store/offShelves
             fnOffShelves (productId,storeId) {
@@ -650,18 +674,113 @@
                 ).then((res)=>{
                     vm.modal.loading = true;
                     vm.getData();
+                    vm.$Message.success('下架成功');
                 }).catch((err)=>{
                     vm.getData();
+                    vm.$Message.success('下架失败');
                 })
             },
-            /* 权限的遍历 */
-            fnChangeOperators (arrs) {
-                // operators{}是开关对象
+            /* 店长上架 */
+            fnOnShelves (id) {
                 let vm = this;
-                arrs.forEach(function(item,index){
-                    vm.operators[item] = true;
+                let url = vm.common.path2 + "product/detail/"+id;
+                vm.$http.get(
+                    url
+                ).then(function(res){
+                    let oData = res.data.data;
+                    vm.fnInitQuery(oData);
+                }).catch(function(err){
                 })
-            }
+            },
+            /* 上架需要用到的信息 */
+            fnInitQuery (data) {
+                let vm = this;
+                vm.formValidate.homeFee = !!data.product.homeFee?+data.product.homeFee/100:'';// 上门费
+                vm.formValidate.productId = data.id;
+                vm.formValidate.storeId = vm.storeId;
+                // 上门服务员工 homeProductBeauticianRefList
+                let homeList = data.homeProductBeauticianRefList;
+                let homeArrs = [];
+                homeList.forEach(function(item,index){
+                    var obj = {
+                        'id' : +item.beauticianId,
+                        'beauticianNickName': item.beauticianNickName,
+                        'headImgUrl': item.beauticianHeadImgUrl,
+                        'memberId': item.memberId,
+                    }
+                    homeArrs.push(obj);
+                });
+                vm.$store.commit('TOHOME_LIST',homeArrs);
+                // 到店服务员工 storeProductBeauticianRefList
+                let storeList = data.storeProductBeauticianRefList;
+                let storeArrs = [];
+                storeList.forEach(function(item,index){
+                    var obj = {
+                        'id' : +item.beauticianId,
+                        'beauticianNickName': item.beauticianNickName,
+                        'headImgUrl': item.beauticianHeadImgUrl,
+                        'memberId': item.memberId,
+                    }
+                    storeArrs.push(obj);
+                });
+                vm.$store.commit('STORE_LIST',storeArrs);
+            },
+            /* 确定上架 */
+            fnAsyncOK2 () {
+                let vm = this;
+                let url = vm.common.path2 + "product/store/onSale"
+                //添加品牌服务 
+                let ajaxData = {};
+                /* 店铺名称 */
+                ajaxData.storeName = vm.mainStoreName;
+                /* 上门费 */ 
+                ajaxData.homeFee = !!vm.formValidate.homeFee?+vm.formValidate.homeFee*100:"";
+                /* 商品id */
+                ajaxData.productId = vm.sendChild.itemId;
+                /* 店铺id */
+                ajaxData.storeId = vm.storeId;
+                /* 商品-美容师-关联集合（上门） homeProductBeauticianRefList */
+                ajaxData.homeProductBeauticianRefList = [];
+                var homeList = vm.$store.getters.tohomeList;
+                for(var j = 0;j<homeList.length;j++){
+                    var obj = {};
+                    obj.beauticianId = homeList[j].id;
+                    obj.beauticianNickName = homeList[j].beauticianNickName;
+                    obj.beauticianHeadImgUrl = homeList[j].headImgUrl;
+                    obj.serverType = 1;
+                    obj.memberId = homeList[j].memberId;
+                    ajaxData.homeProductBeauticianRefList.push(obj);
+                }
+                /*  商品-美容师-关联集合（到店） storeProductBeauticianRefList*/
+                ajaxData.storeProductBeauticianRefList = [];
+                var storeList = vm.$store.getters.storeList;
+                for(var i = 0;i<storeList.length;i++){
+                    var obj = {};
+                    obj.beauticianId = storeList[i].id;
+                    obj.beauticianNickName = storeList[i].beauticianNickName;
+                    obj.beauticianHeadImgUrl = storeList[i].headImgUrl;
+                    obj.serverType = 0;
+                    obj.memberId = storeList[i].memberId;
+                    ajaxData.storeProductBeauticianRefList.push(obj);
+                }
+                /* 商品-美容师-关联集合（招募） recruitProductBeauticianRefList */
+                ajaxData.recruitProductBeauticianRefList = [];
+                console.log(ajaxData);
+                /* ajax提交 */
+                vm.$http.post(
+                    url,
+                    ajaxData,
+                ).then(function(res){
+                    let oData = res.data
+                    vm.getData();
+                    vm.$Message.success('成功');
+                }).catch(function(err){
+                    vm.$Message.success('失败');
+                    vm.getData();
+                })
+                vm.server.loading = true;
+                vm.server.mineModal = false;
+            },
             /*=================== 菜单权限配置 end ===========================*/
         },
         mounted: function(){
@@ -669,11 +788,12 @@
             let vm = this;
             if(store!=null){
                 vm.storeId = store.id;
+                vm.mainStoreName = store.storeName;
                 vm.isShow = false;
             }else{
                 vm.isShow = true;       
             }
-            this.fnGetOperators();
+            this._u.operatorsEdit(this); // 控制页面按钮的显示
             this.fnGetProductCategory();
             this.fnGetStoreChainBrand();
             this.getData();
@@ -685,7 +805,8 @@
         components:{
             AddPage,
             EditPage,
-            OnSalePage
+            OnSalePage,
+            OnSaleInfoPage
         }
     }
 </script>

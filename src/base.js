@@ -7,13 +7,12 @@ const common = {
     path: (function(i){
         switch (i) {
             case 1:
-                return "http://120.79.42.13:8080/"  // 非系统和服务
+                // 测试环境
+                return "http://mrb.amez999.com/pc/"  
                 break;
             case 2:
-                return "http://192.168.1.32:8081/"
-                break;
-            case 3:
-                return "http://mrb.amez999.com/pc/"  
+                // 正式环境
+                return "http://www.52mrb.com/pc/"
                 break;
             default:
                 return "http://mrb.amez999.com/pc/"
@@ -22,28 +21,20 @@ const common = {
     path2: (function(i){
         switch (i) {
             case 1:
-                return "http://120.79.42.13:8081/"
+                // 测试环境
+                return "http://mrb.amez999.com/pc/"
                 break;
             case 2:
-                // 联合 飞华
-                return "http://192.168.1.32:8081/"
-                break;
-            case 3:
-                return "http://mrb.amez999.com/pc/"  
-                break;
-            case 4:
-                // 艾美 飞华
-                return "http://172.16.20.151:8081/"
+                // 正式环境
+                return "http://www.52mrb.com/pc/"
                 break;
             default:
-                return "http://mrb.amez999.com/pc/"  
+                return "http://mrb.amez999.com/pc/"
         } 
-    })(3),
+    })(1),
     /* 富文本 */
-    
-    // path1:"http://172.16.20.151:8081/",
-    path1:"http://mrb.amez999.com/pc/",
-    // path1:"http://120.79.42.13:8081/",
+    path1: "http://mrb.amez999.com/pc/", // 测试环境
+    // path1: "http://www.52mrb.com/pc/", // 正式环境
     /* 用户信息 */
     u: (function(){
         let data = JSON.parse(window.localStorage.getItem("userInfo"));

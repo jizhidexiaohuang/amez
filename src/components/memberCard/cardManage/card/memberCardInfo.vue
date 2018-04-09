@@ -5,7 +5,7 @@
             <h4>会员卡卡面</h4>
             <div class="memberCard">
                 <img :src="src" alt="">
-                <div class="brand">{{formValidate.brandName}}·会员卡（下单享{{formValidate.discount}}折）</div>
+                <div class="brand">{{formValidate.brandName}}·会员卡（下单享{{(formValidate.discount/10+'').replace('.','')}}折）</div>
                 <div class="quota">￥{{formValidate.cardValue}} （全国通用）</div>
                 <div class="periodOfValidity">有效期 {{getPeriod}}</div>
             </div>
@@ -88,7 +88,7 @@
                     vm.formValidate.brandId = oData.memberCard.brandId-0; //品牌id
                     vm.formValidate.brandName = oData.memberCard.brandName; //品牌名字
                     vm.formValidate.discount = oData.memberCard.discount; //折扣
-                    vm.formValidate.cardValue = oData.memberCard.balance; //面值
+                    vm.formValidate.cardValue = oData.memberCard.balance/100; //面值
                     vm.formValidate.cardTotal = oData.memberCard.issueNum; //发行数量
                     vm.formValidate.imgUrl = oData.memberCard.stylePattern; //卡面样式
                     vm.src = oData.memberCard.stylePattern;

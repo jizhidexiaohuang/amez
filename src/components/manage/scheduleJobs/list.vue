@@ -129,7 +129,7 @@
                         {
                             title: '操作',
                             key: 'action',
-                            width: 160,
+                            width: 350,
                             // align: 'center',
                             // fixed: 'right',
                             render: (h, params) => {
@@ -158,6 +158,9 @@
                                         type: 'error',
                                         size: 'small'
                                     },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
                                     on: {
                                         click: () => {
                                             let row = params.row;
@@ -168,6 +171,58 @@
                                 if(!!this.operators.delete){
                                     arrs.push(obj2);
                                 }
+                                /* 启动任务 */
+                                let obj3 =  h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            let row = params.row;
+                                            this.fnJobManage(row.id,'start');
+                                        }
+                                    }
+                                }, '启动任务');
+                                arrs.push(obj3);
+
+
+                                /* 停止任务 */
+                                let obj4=  h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            let row = params.row;
+                                            this.fnJobManage(row.id,'end');
+                                        }
+                                    }
+                                }, '停止任务');
+                                arrs.push(obj4);
+
+                                /* 执行任务 */
+                                let obj5 =  h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                        size: 'small'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            let row = params.row;
+                                            this.fnJobManage(row.id,'run');
+                                        }
+                                    }
+                                }, '执行任务');
+                                arrs.push(obj5);
+
                                 return h('div', arrs);
                             }
                         }
@@ -251,6 +306,32 @@
                     }
                 })
             },
+            /* 启动和停止任务 */
+            fnJobManage (id,type) {
+                let vm = this;
+                let text = type == 'start'?'启动任务':type == 'end'?'停止任务':'执行任务';
+                let url = '';
+                if(type == 'start'){
+                    url = vm.common.path2 + "scheduleJob/resumeJob?id="+id;
+                }else if(type == 'end'){
+                    url = vm.common.path2 + "scheduleJob/pauseJob?id="+id;
+                }else if(type == 'run'){
+                    url = vm.common.path2 + "scheduleJob/runJobNow?id="+id;
+                }
+                this.$Modal.confirm({
+                    title: text,
+                    content: '确定要'+text+'吗？',
+                    onOk: function(){
+                        this.$http.get(
+                            url
+                        ).then(function(res){
+                            vm.$Message.success('成功');
+                        }).catch(function(err){
+                            vm.$Message.error(err);
+                        })
+                    }
+                })
+            },
             /* 页码改变的回掉函数 */
             changeSize (size) {
                 let vm = this;
@@ -282,59 +363,9 @@
                 }
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
-            /*===================== 菜单权限配置 start ====================*/
-            /* 获取该菜单拥有的权限 */
-            fnGetOperators () {
-                let vm = this;
-                function fnGetDatas (id,vm) {
-                    let list = [];
-                    let menuArrs = []; // 相同menuId的数组
-                    let strArrs = []; // 权限数组 ["add","edit"]
-                    /* 菜单对应的权限组 */
-                    if(!!JSON.parse(window.localStorage.getItem("userInfo")).operator.list){
-                        list = JSON.parse(window.localStorage.getItem("userInfo")).operator.list;
-                    }
-                    /* 每个用户有可能被分配了多个角色，所以需要合并相同menuId的权限组 */
-                    for(var c = 0;c<list.length;c++){
-                        if(list[c].menuId == id){
-                            menuArrs.push(list[c]);
-                        }
-                    }
-
-                    for(var j = 0;j<menuArrs.length;j++){
-                        if(!!menuArrs[j].operCode){
-                            vm.fnChangeOperators(menuArrs[j].operCode.split(","));
-                        }
-                    }
-                }
-                /* 得到所有的菜单 */
-                let arrs = JSON.parse(window.localStorage.getItem("userInfo")).menu;
-                for(var i = 0;i<arrs.length;i++){
-                    if(!!arrs[i].hasChildList){
-                        for(var j = 0;j<arrs[i].childList.length;j++){
-                            if(arrs[i].childList[j].href == this.$route.path){
-                                fnGetDatas(arrs[i].childList[j].menuId,vm)
-                            }
-                        }
-                    }else{
-                        if(arrs[i].href == this.$route.path){
-                            fnGetDatas(arrs[i].menuId,vm)
-                        }
-                    }
-                }
-            },
-            /* 权限的遍历 */
-            fnChangeOperators (arrs) {
-                // operators{}是开关对象
-                let vm = this;
-                arrs.forEach(function(item,index){
-                    vm.operators[item] = true;
-                })
-            }
-            /*=================== 菜单权限配置 end ===========================*/
         },
         mounted: function(){
-            this.fnGetOperators();
+            this._u.operatorsEdit(this); // 控制页面按钮的显示
             this.getData();
         },
         activated: function(){

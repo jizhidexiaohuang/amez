@@ -225,9 +225,16 @@ export default {
         this.fnGetMenuList();//获取菜单
         this.addItem();
         this.fnBreadcrumb();//更新面包屑
+        console.log(JSON.parse(window.localStorage.getItem("userInfo")));
+        
         if(!!window.localStorage.getItem("userInfo")){
-            let userName = JSON.parse(window.localStorage.getItem("userInfo")).user.nickName;
-            this.user.name = userName;
+            let userInfo = JSON.parse(window.localStorage.getItem("userInfo"));
+            if(!!userInfo.store){
+                this.user.name = userInfo.store.storeName;
+            }else{
+                let userName = JSON.parse(window.localStorage.getItem("userInfo")).user.nickName;
+                this.user.name = userName;
+            }
         }
     },
     computed: {

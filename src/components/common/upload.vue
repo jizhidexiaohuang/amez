@@ -24,7 +24,7 @@
             :before-upload="handleBeforeUpload"
             multiple
             type="drag"
-            action="http://mrb.amez999.com/pc/system/api/file/uploadFile"
+            :action="path"
             style="display: inline-block;width:58px;">
             <div style="width: 58px;height:58px;line-height: 58px;">
                 <Icon type="camera" size="20"></Icon>
@@ -39,6 +39,7 @@
     export default {
         data(){
             return {
+                path: this.common.path2 + 'system/api/file/uploadFile',
                 imgName: '',
                 visible: false,
                 uploadList: [],

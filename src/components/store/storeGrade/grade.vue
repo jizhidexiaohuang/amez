@@ -29,17 +29,10 @@
                         </Row>
                     </Col>
                     <Col span="3" style="text-align:center;padding-top:10px;">
-                        <InputNumber :max="10" :min="1" v-model="item.sort"></InputNumber>
+                        <InputNumber :max="100" :min="1" v-model="item.sort"></InputNumber>
                     </Col>
                     <Col span="6" style="text-align:center;padding-top:10px;">
                         <MyUpload v-if="logoCtrl" :defaultList="defaultList[index]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,index)}"></MyUpload>
-                        <!-- <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="getUploadList">
-                            <Button v-if="!item.levelLogo" type="ghost" icon="ios-cloud-upload-outline" @click="getIndex(index)">上传Logo</Button>
-                            <div class="imgBox">
-                                <img v-if="item.levelLogo" :src="item.levelLogo" alt=""  @click="getIndex(index)">
-                                <div class="cover" @click="getIndex(index)"><Icon type="ios-cloud-upload-outline"></Icon></div>
-                            </div>
-                        </Upload> -->
                     </Col>
                     <Col span="2" offset="1">
                         <Button type="error" @click="handleRemove(index)">删除</Button>
@@ -142,11 +135,6 @@
                 }
                 vm.formDynamic.items[index].status = 1
             },
-            //获取index
-            // getIndex(index){
-            //     this.logoIndex = index;
-            //     console.log(index)
-            // },
             //取消
             handleReset (name) {
                 this.$refs[name].resetFields();
@@ -155,19 +143,25 @@
             handleAdd () {
                 this.index++;
                 this.formDynamic.items.push({
-                    value: '',
                     index: this.index,
-                    status: 1
+                    status: 1,
+                    sort:0,
+                    gradeName:'',//门店等级
+                    startValue:'',//最小值
+                    endValue:'',//最大值
+                    levelLogo:'',//图片路径
                 });
             },
             //删除一列
             handleRemove (index) {
                 this.formDynamic.items[index].status = 0;
+                this.formDynamic.items.splice(index,1);
+                this.defaultList.splice(index,1);
                 this.index--;
             },
             //获取提交数据
             getAjaxData(){
-                for(var i=0;i<this.index;i++){
+                for(var i=0;i<this.formDynamic.items.length;i++){
                     var temp = {
                         sort:this.formDynamic.items[i].sort||1,
                         levelName:this.formDynamic.items[i].gradeName||'注册会员',

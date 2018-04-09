@@ -29,7 +29,7 @@
         <Col span="8"></Col>
       </Row>
       <Row v-if="orderBase.type">
-        <Col span="8">上门地址：{{orderBase.memberAddress}}</Col>
+        <Col span="8">上门地址：{{orderBase.customerAddress}}</Col>
       </Row>
       <Row>
         <Col span="8">备注：{{orderBase.remark?orderBase.remark:'无'}}</Col>
@@ -125,10 +125,16 @@ export default {
     // 支付方式
     payType:function(){
       let str = '';
-      if(this.orderBase.payType=='wechatpay'){
+      if(this.orderBase.payType=='wxpay'){
         str = '微信支付'
       }else if(this.orderBase.payType=='alipay'){
         str = '支付宝支付'
+      }else if(this.orderBase.payType=='cardpay'){
+        str = '会员卡支付'
+      }else if(this.orderBase.payType=='oneCardPay'){
+        str = '一卡通支付'
+      }else if(this.orderBase.payType=='balancePay'){
+        str = '余额支付'
       }
       return str;
     },

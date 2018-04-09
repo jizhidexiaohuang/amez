@@ -1,6 +1,6 @@
 <template>
-  <div class="addPage boxStyle">
-    <Form  ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120">
+  <div class="addPage testWrap">
+    <Form class="boxStyle" ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="120">
         <h2>编辑门店基本资料</h2>    
         <Row>
             <Col span="12">
@@ -82,8 +82,8 @@
             <Row type="flex" justify="start">
                 <Col span="12">
                         <RadioGroup v-model="oldStore" @on-change="disabled = !disabled">
-                        <Radio label="1">是</Radio>
-                        <Radio label="0">否</Radio>
+                        <Radio label="true">是</Radio>
+                        <Radio label="false">否</Radio>
                     </RadioGroup>
                     <span>(连续经营超过5年)</span>
                 </Col>
@@ -92,6 +92,16 @@
                     <InputNumber :max="100" :min="5" v-model="formValidate.managerYear" :disabled="disabled"></InputNumber>
                 </Col>
                 <Col span="1" class="textAlign">年</Col>
+            </Row>
+        </FormItem>
+        <FormItem label="是否属于精选门店" prop="selectStore">
+            <Row type="flex" justify="start">
+                <Col span="12">
+                    <RadioGroup v-model="formValidate.selectStore">
+                        <Radio label="true">是</Radio>
+                        <Radio label="false">否</Radio>
+                    </RadioGroup>
+                </Col>
             </Row>
         </FormItem>
         <FormItem label="店铺地址" prop="">
@@ -179,7 +189,7 @@
                 </RadioGroup>
             </FormItem>
             <FormItem label="上传合同">
-                <Upload action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadFile">
+                <Upload :action="path2" :on-success="uploadFile">
                     <Button type="ghost" icon="ios-cloud-upload-outline">上传文件</Button>
                 </Upload>
             </FormItem>
@@ -188,80 +198,54 @@
         <Row>
             <Col span="24">
                 <FormItem label="营业执照" prop="businessLicense">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadLicense">
-                        <Button v-if="!formValidate.businessLicense" type="ghost" icon="ios-cloud-upload-outline">上传</Button>
-                        <img v-if="formValidate.businessLicense" :src="formValidate.businessLicense" alt="">
-                        <span>(三证合一只上传营业执照，非三证合一请分别上传营业执照，组织机构代码证，税务登记证)</span>
-                    </Upload>
+                    <MyUpload v-if="license" :defaultList="defaultListLicense" :uploadConfig="uploadConfigLicense" v-on:listenUpload="v=>{getUploadList(v,'license')}"></MyUpload>
+                    <span>(三证合一只上传营业执照，非三证合一请分别上传营业执照，组织机构代码证，税务登记证)</span>
                 </FormItem>
             </Col>
         </Row>
         <Row>
             <Col span="8">
                 <FormItem label="身份证正面照" prop="idcardPositivePhoto">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadPositivePhoto">
-                        <Button v-if="!formValidate.idcardPositivePhoto" type="ghost" icon="ios-cloud-upload-outline">正面照</Button>
-                        <img v-if="formValidate.idcardPositivePhoto" :src="formValidate.idcardPositivePhoto" alt="">
-                    </Upload>
-                    <span v-if="formValidate.idcardPositivePhoto">正面照</span>
+                    <MyUpload v-if="formValidate.idcardPositivePhoto" :defaultList="defaultList[0]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,'idcardPositivePhoto')}"></MyUpload>
                 </FormItem>
             </Col>
             <Col span="8">
                 <FormItem label="身份证反面照" prop="idcardNegativePhoto">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadNegativePhoto">
-                        <Button v-if="!formValidate.idcardNegativePhoto" type="ghost" icon="ios-cloud-upload-outline">反面照</Button>
-                        <img v-if="formValidate.idcardNegativePhoto" :src="formValidate.idcardNegativePhoto" alt="">
-                    </Upload>
-                    <span v-if="formValidate.idcardNegativePhoto">反面照</span>
+                    <MyUpload v-if="formValidate.idcardNegativePhoto" :defaultList="defaultList[1]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,'idcardNegativePhoto')}"></MyUpload>
                 </FormItem>
             </Col>
             <Col span="8">
                 <FormItem label="身份证手持照" prop="idcardHandheldPhoto">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadHandheldPhoto">
-                        <Button v-if="!formValidate.idcardHandheldPhoto" type="ghost" icon="ios-cloud-upload-outline">手持照</Button>
-                        <img v-if="formValidate.idcardHandheldPhoto" :src="formValidate.idcardHandheldPhoto" alt="">
-                    </Upload>
-                    <span v-if="formValidate.idcardHandheldPhoto">手持照</span>
+                    <MyUpload v-if="formValidate.idcardHandheldPhoto" :defaultList="defaultList[2]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,'idcardHandheldPhoto')}"></MyUpload>
                 </FormItem>
             </Col>
         </Row>
         <Row>
             <Col span="8">
                 <FormItem label="门头照" prop="storeDoorPhoto">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadDoorPhoto">
-                        <Button v-if="!formValidate.storeDoorPhoto" type="ghost" icon="ios-cloud-upload-outline">门头照</Button>
-                        <img v-if="formValidate.storeDoorPhoto" :src="formValidate.storeDoorPhoto" alt="">
-                    </Upload>
-                    <span v-if="formValidate.storeDoorPhoto">门头照</span>
+                    <MyUpload v-if="formValidate.storeDoorPhoto" :defaultList="defaultList[3]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,'storeDoorPhoto')}"></MyUpload>
                 </FormItem>
             </Col>
             <Col span="8">
                 <FormItem label="收银台" prop="storeCashierPhoto">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadCashierPhoto">
-                        <Button v-if="!formValidate.storeCashierPhoto" type="ghost" icon="ios-cloud-upload-outline">收银台</Button>
-                        <img v-if="formValidate.storeCashierPhoto" :src="formValidate.storeCashierPhoto" alt="">
-                    </Upload>
-                    <span v-if="formValidate.storeCashierPhoto">收银台</span>
+                    <MyUpload v-if="formValidate.storeCashierPhoto" :defaultList="defaultList[4]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,'storeCashierPhoto')}"></MyUpload>
                 </FormItem>
             </Col>
             <Col span="8">
                 <FormItem label="店内照" prop="storeInPhoto">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadInPhoto">
-                        <Button v-if="!formValidate.storeInPhoto" type="ghost" icon="ios-cloud-upload-outline">店内照</Button>
-                        <img v-if="formValidate.storeInPhoto" :src="formValidate.storeInPhoto" alt="">
-                    </Upload>
-                    <span v-if="formValidate.storeInPhoto">店内照</span>
+                    <MyUpload v-if="formValidate.storeInPhoto" :defaultList="defaultList[5]" :uploadConfig="uploadConfig" v-on:listenUpload="v=>{getUploadList(v,'storeInPhoto')}"></MyUpload>
                 </FormItem>
             </Col>
         </Row>
         <Row>
             <Col span="12">
                 <FormItem label="店铺荣誉" prop="">
-                    <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadStoreHonor">
+                    <!-- <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadStoreHonor">
                         <Button v-if="!storeHonorPhoto" type="ghost" icon="ios-cloud-upload-outline">上传</Button>
                         <img v-if="storeHonorPhoto" :src="storeHonorPhoto" alt="">
-                    </Upload>
-                    <span>(店铺相关的荣誉证书，获奖证书)</span>
+                    </Upload> -->
+                    <MyUpload v-if="honorCtrl" :defaultList="defaultListHonor" :uploadConfig="uploadConfigHonor" v-on:listenUpload="v=>{getUploadList(v,'honor')}"></MyUpload>
+                    <span>(店铺相关的荣誉证书，获奖证书，最多上传6张)</span>
                 </FormItem>
             </Col>
             <Col span="12">
@@ -395,16 +379,33 @@
     import common from '../../../base.js'
     import VDistpicker from 'v-distpicker'
     import CityLinkage from '../../common/city.vue'
-    // import MyUpload from '../../common/upload.vue'
+    import MyUpload from '../../common/upload.vue'
     export default {
         data () {
             return {
+                path2:common.path2+'system/api/file/uploadFile',
+                honorCtrl:false,
+                license:false,
                 btnCtrl:false,
                 cityConfig:{
                     key:false,
                     title:'',
                     type:'linkage',
                     cityList:[],
+                },
+                defaultList:[
+                    [],[],[],[],[],[]
+                ],
+                uploadConfig:{
+                    num:1
+                },
+                defaultListHonor:[],
+                uploadConfigHonor:{
+                    num:6
+                },
+                defaultListLicense:[],
+                uploadConfigLicense:{
+                    num:3
                 },
                 cityCtrl:false, //控制子组件是否创建
                 extendId:0,//扩展id
@@ -447,13 +448,14 @@
                 amPartner:'1',    //艾美合伙人
                 millionPartner:'1', //百万合伙人
                 crownManager:'1',  //皇冠店长
-                oldStore:'1',     //老店
+                oldStore:'true',     //老店
                 disabled:false,  //实际经营年限控制变量
                 storeLabel:'',//店铺标签(店铺标签)
                 storeHonorPhoto:'', //店铺荣誉
                 payStatus:true, //缴费状态布尔值
                 //formValidate对象
                 formValidate: {
+                    selectStore:'false', //是否属于精选门店
                     storeName: '',   //店名
                     storeTel:'', //门店电话
                     storeTime:'', //营业时间
@@ -570,7 +572,7 @@
                         { required: true, message: '请设置保证金缴纳状态', pattern:/.+/, trigger: 'change' }
                     ],
                     premiumReceived:[
-                        { required: true, message: '请填写缴费金额', pattern:/.+/, trigger: 'blur' }
+                        // { required: true, message: '请填写缴费金额', pattern:/.+/, trigger: 'blur' }
                     ],
                     businessLicense:[
                         { required: true, message: '请上传营业执照', pattern:/.+/, trigger: 'blur' }
@@ -604,7 +606,7 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         //处理几年老店
-                        if(this.oldStore=='1'){
+                        if(this.oldStore=='true'){
                             this.storeLabel = this.formValidate.managerYear + '年老店'
                         }else{
                             this.storeLabel = ''
@@ -638,12 +640,13 @@
                                 // sellerPhone:this.formValidate.sellerPhone,//店长账号
                                 brandName:this.formValidate.branchName,//品牌名
                                 brandId:this.formValidate.branchId, //品牌Id
-                                scId:this.oldStore,//老店
+                                isOld:this.oldStore,//老店
                                 manageYear:this.formValidate.managerYear,//实际经营年限
+                                isSelect:this.formValidate.selectStore, //是否属于精选门店
                                 storeLabel:this.storeLabel,//店铺标签(五年老店)
                                 specialProject:this.projectStr,//特色项目
                                 storeCompanyName:this.formValidate.companyName,//公司名称
-                                storeBanner:this.storeDoorPhoto,//横幅图
+                                storeBanner:this.formValidate.storeDoorPhoto,//横幅图
                                 beauticianTotal:this.formValidate.beauticianTotal, //店铺员工数
                                 description:this.formValidate.description, //店铺简介
                             },
@@ -693,10 +696,14 @@
                         ).then(res=>{
                             console.log(res)
                             this.returnHome('list')
-                            vm.btnCtrl = false;
-                            this.$Message.success(res.data.message);
+                            if(res.data.code){
+                                this.$Message.success('保存成功！');
+                            }else{
+                                this.$Message.success(res.data.message);
+                            }
+                            this.btnCtrl = false;
                         }).catch(res=>{
-                            vm.btnCtrl = false;
+                            this.btnCtrl = false;
                             console.log(res)
                             this.$Message.error('提交失败！');
                         })
@@ -804,6 +811,22 @@
                 }).catch(err=>{
                     console.log(err)
                 })
+                // let vm = this;
+                // var map = new BMap.Map("map");          
+                // // 创建地址解析器实例     
+                // var myGeo = new BMap.Geocoder();      
+                // // 将地址解析结果显示在地图上，并调整地图视野 
+                // var address = this.city+this.area+this.formValidate.storeAddress;
+                // myGeo.getPoint(address, function(point){      
+                //     if (point) {      
+                //         map.centerAndZoom(point, 16);      
+                //         map.addOverlay(new BMap.Marker(point)); 
+                //         console.log(point)
+                //         vm.mapData.latitude = point.lat;
+                //         vm.mapData.longitude = point.lng;
+                //     }
+                // }, 
+                // this.city);
             },
             //初始化地图
             mapInit(longitude,latitude){
@@ -841,36 +864,34 @@
                 this.formValidate.contract = res.data
             },
             //上传营业执照
-            uploadLicense(res){
-                this.businessLicense = res.data
-            },
-            //上传店铺荣誉
-            uploadStoreHonor(res){
-                this.storeHonorPhoto = res.data
-            },
-            //上传正面照
-            uploadPositivePhoto(res){
-                this.idcardPositivePhoto = res.data
-            },
-            //上传反面照
-            uploadNegativePhoto(res){
-                this.idcardNegativePhoto = res.data
-            },
-            //上传手持照
-            uploadHandheldPhoto(res){
-                this.idcardHandheldPhoto = res.data
-            },
-            //上传门头照
-            uploadDoorPhoto(res){
-                this.storeDoorPhoto = res.data
-            },
-            //上传收银台照
-            uploadCashierPhoto(res){
-                this.storeCashierPhoto = res.data
-            },
-            //上传店内照
-            uploadInPhoto(res){
-                this.storeInPhoto = res.data
+            getUploadList(data,type){
+                console.log(data)
+                let tempArr = [];
+                if(data.length!=0){
+                    if(type=='honor'){
+                        data.forEach((item,index)=>{
+                            tempArr.push(data[index].url)
+                            this.storeHonorPhoto = tempArr.join(',');
+                        })
+                    }else if(type=='license'){
+                        for(var i=0;i<data.length;i++){
+                            tempArr.push(data[i].url);
+                            this.formValidate.businessLicense = tempArr.join(',');                         
+                        }
+                    }else if(type=='idcardPositivePhoto'){
+                        this.formValidate.idcardPositivePhoto = data[0].url;
+                    }else if(type=='idcardNegativePhoto'){
+                        this.formValidate.idcardNegativePhoto = data[0].url;
+                    }else if(type=='idcardHandheldPhoto'){
+                        this.formValidate.idcardHandheldPhoto = data[0].url;
+                    }else if(type=='storeDoorPhoto'){
+                        this.formValidate.storeDoorPhoto = data[0].url;
+                    }else if(type=='storeCashierPhoto'){
+                        this.formValidate.storeCashierPhoto = data[0].url;
+                    }else if(type=='storeInPhoto'){
+                        this.formValidate.storeInPhoto = data[0].url;
+                    }
+                }
             },
             //获取数据
             getDataById(id){
@@ -907,16 +928,17 @@
                     }
 
                     this.formValidate.managerYear = store.manageYear; //店铺经营年限
-                    this.oldStore = store.scId; //是否是老店
-                    if(store.scId==0){
+                    this.oldStore = store.isOld?'true':'false'; //是否是老店
+                    this.formValidate.selectStore = store.isSelect?'true':'false'; //是否属于精选门店
+                    if(store.isOld==0){
                         this.disabled = true;
                     }else{
                         this.disabled = false;
                     }  //控制年限的可用
                     this.mapData.longitude = store.storeLongitude; //经度
                     this.mapData.latitude = store.storeLatitude; //纬度
-                    this.mapInit(this.mapData.longitude,this.mapData.latitude); //重新初始化地图
                     this.formValidate.storeAddress = store.storeAddress;  //店铺地址
+                    // this.mapInit(this.mapData.longitude,this.mapData.latitude); //重新初始化地图
                     this.city = store.cityName;
                     //省市区
                     this.cityArr.push({
@@ -930,19 +952,51 @@
                         label:store.areaName
                     })
                     this.cityConfig.cityList = this.cityArr;
-                    this.cityCtrl = true
+                    this.cityCtrl = true;
+                    this.orientate();
                     this.formValidate.beauticianTotal = store.beauticianTotal;
                     this.formValidate.description = store.description;
                     //------------扩展表----------------------------------------
                     this.extendId = storeExtend.id;
                     this.formValidate.companyName = storeExtend.companyName; //公司名称
-                    this.formValidate.businessLicense = storeExtend.businessLicense;  //营业执照(暂时用横幅代替营业执照)
+                    this.formValidate.businessLicense = storeExtend.businessLicense;  //营业执照
+                    storeExtend.businessLicense.split(',').forEach((item,index)=>{
+                        this.defaultListLicense.push({
+                            url:item
+                        })
+                    })
+                    this.license = true;
+                    this.storeHonorPhoto = storeExtend.storeHonorPhoto;  //店铺荣誉
+                    storeExtend.storeHonorPhoto.split(',').forEach((item,index)=>{
+                        this.defaultListHonor.push({
+                            url:item
+                        })
+                    })
+                    this.honorCtrl = true;
                     this.formValidate.idcardPositivePhoto = storeExtend.idcardPositivePhoto;//正面照
-                    this.formValidate.idcardNegativePhoto = storeExtend.idcardNegativePhoto;//正面照
+                    this.defaultList[0].push({
+                        url:storeExtend.idcardPositivePhoto
+                    })
+                    this.formValidate.idcardNegativePhoto = storeExtend.idcardNegativePhoto;//反面照
+                    this.defaultList[1].push({
+                        url:storeExtend.idcardNegativePhoto
+                    })
                     this.formValidate.idcardHandheldPhoto = storeExtend.idcardHandheldPhoto;//手持照
+                    this.defaultList[2].push({
+                        url:storeExtend.idcardHandheldPhoto
+                    })
                     this.formValidate.storeDoorPhoto = storeExtend.storeDoorPhoto;//门头照
+                    this.defaultList[3].push({
+                        url:storeExtend.storeDoorPhoto
+                    })
                     this.formValidate.storeCashierPhoto = storeExtend.storeCashierPhoto;//收银照
+                    this.defaultList[4].push({
+                        url:storeExtend.storeCashierPhoto
+                    })
                     this.formValidate.storeInPhoto = storeExtend.storeInPhoto;//店内照
+                    this.defaultList[5].push({
+                        url:storeExtend.storeInPhoto
+                    })
                     this.formValidate.contract = storeExtend.contract;//合同
                    
                     this.formValidate.businessLicenseNumber = storeExtend.businessLicenseNumber; //营业执照号码
@@ -1012,7 +1066,8 @@
         },
         components:{
            VDistpicker,
-           CityLinkage
+           CityLinkage,
+           MyUpload
         },
         props:['editId']
     }

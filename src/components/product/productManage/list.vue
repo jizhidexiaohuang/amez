@@ -160,27 +160,20 @@
                             }
                         },
                         {
-                            title: '状态',
-                            key: 'saleStatus',
-                            /* render: (h,params) => {
+                            title: '库存数',
+                            key: 'inventoryTotal',
+                        },
+                        {
+                            title: '邮费类型',
+                            key: 'postageType',
+                            render: (h,params) => {
                                 const row = params.row;
-                                const color = row.saleStatus === 0 ? 'red' : 'blue';
-                                const text = row.saleStatus === 0 ? '下架' : '上架';
-                                return h('Tag', {
-                                    props: {
-                                        type: 'border',
-                                        color: color
-                                    }
-                                }, text);
-                            } */
-                        },
-                        {
-                            title: '所属分类',
-                            key: 'saleStatus',
-                        },
-                        {
-                            title: '库存量',
-                            key: 'inventory',
+                                if(row.postageType == 1){
+                                    return '买家承担'
+                                }else if(row.postageType == 2){
+                                    return '卖家包邮'
+                                }
+                            }
                         },
                             {
                             title: '操作',
@@ -335,6 +328,9 @@
                 let ajaxData = {
                     pageNo:start,
                     pageSize: size,
+                }
+                if(!!vm.storeId){
+                    ajaxData.storeId = vm.storeId;
                 }
                
                 /* 需要传storeId 就放开 */
@@ -532,58 +528,6 @@
                 }
                 vm.activatedType = true;//主要解决mounted和activated重复调用
             },
-
-
-            /*===================== 菜单权限配置 start ====================*/
-            /* 获取该菜单拥有的权限 */
-            fnGetOperators () {
-                let vm = this;
-                function fnGetDatas (id,vm) {
-                    let list = [];
-                    let menuArrs = []; // 相同menuId的数组
-                    let strArrs = []; // 权限数组 ["add","edit"]
-                    /* 菜单对应的权限组 */
-                    if(!!JSON.parse(window.localStorage.getItem("userInfo")).operator.list){
-                        list = JSON.parse(window.localStorage.getItem("userInfo")).operator.list;
-                    }
-                    /* 每个用户有可能被分配了多个角色，所以需要合并相同menuId的权限组 */
-                    for(var c = 0;c<list.length;c++){
-                        if(list[c].menuId == id){
-                            menuArrs.push(list[c]);
-                        }
-                    }
-                    for(var j = 0;j<menuArrs.length;j++){
-                        if(!!menuArrs[j].operCode){
-                            vm.fnChangeOperators(menuArrs[j].operCode.split(","));
-                        }
-                    }
-                }
-                /* 得到所有的菜单 */
-                let arrs = JSON.parse(window.localStorage.getItem("userInfo")).menu;
-                for(var i = 0;i<arrs.length;i++){
-                    if(!!arrs[i].hasChildList){
-                        for(var j = 0;j<arrs[i].childList.length;j++){
-                            if(arrs[i].childList[j].href == this.$route.path){
-                                // debugger
-                                fnGetDatas(arrs[i].childList[j].menuId,vm)
-                            }
-                        }
-                    }else{
-                        if(arrs[i].href == this.$route.path){
-                            fnGetDatas(arrs[i].menuId,vm)
-                        }
-                    }
-                }
-            },
-            /* 权限的遍历 */
-            fnChangeOperators (arrs) {
-                // operators{}是开关对象
-                let vm = this;
-                arrs.forEach(function(item,index){
-                    vm.operators[item] = true;
-                })
-            }
-            /*=================== 菜单权限配置 end ===========================*/
         },
         mounted: function(){
             let vm = this;
@@ -596,7 +540,7 @@
             }else{
                 vm.isShow = true;
             }
-            this.fnGetOperators();
+            this._u.operatorsEdit(this); // 控制页面按钮的显示
             this.fnGetProductCategory();
             this.fnGetStoreChainBrand();
             this.getData();
