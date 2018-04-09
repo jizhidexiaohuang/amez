@@ -76,9 +76,6 @@
                                     <DropdownItem @click.native="backHome">
                                         <a>退出</a>
                                     </DropdownItem>
-                                    <DropdownItem @click.native="fnWebIM">
-                                        <a>聊天</a>
-                                    </DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
                         </div>
@@ -434,12 +431,6 @@ export default {
             let vm = this;
             window.localStorage.clear("userInfo");
             vm.$router.push("/login");
-        },
-        /* 聊天 */
-        fnWebIM () {
-            let vm = this;
-            console.log(vm.$imoption);
-            vm.$imconn.open(vm.$imoption);
         },
         /* 修改密码 */
         changePassWord () {

@@ -74,30 +74,8 @@ router.afterEach((to, from) => {
 
 /* =================环信================== */
 let WebIM = require('easemob-websdk');
-Vue.prototype.$webim = WebIM
-WebIM.config = {
-  xmppURL: 'im-api.easemob.com',
-  apiURL: (location.protocol === 'https:' ? 'https:' : 'http:') + '//a1.easemob.com',
-  appkey: '1186171226115717#pchoutai',
-  https: false,
-  isMultiLoginSessions: true,
-  isAutoLogin: true,
-  isWindowSDK: false,
-  isSandBox: false,
-  isDebug: false,
-  autoReconnectNumMax: 2,
-  autoReconnectInterval: 2,
-  isWebRTC: (/Firefox/.test(navigator.userAgent) || /WebKit/.test(navigator.userAgent)) && /^https\:$/.test(window.location.protocol),
-  heartBeatWait: 4500,
-  isHttpDNS: false,
-  msgStatus: true,
-  delivery: true,
-  read: true,
-  saveLocal: false,
-  encrypt: {
-    type: 'none'
-  }
-}
+WebIM.config = common.imConfig;
+Vue.prototype.$webim = WebIM;
 // 创建连接
 const conn = new WebIM.connection({
   isMultiLoginSessions: WebIM.config.isMultiLoginSessions,
@@ -109,30 +87,7 @@ const conn = new WebIM.connection({
   apiUrl: WebIM.config.apiURL,
   isAutoLogin: true
 })
-// 添加成功的回调
-conn.listen({
-  onOpened: function (message) {
-    alert(1);
-    console.log('连接打开=>', message)
-  },
-  onClosed: function (message) {
-    console.log('连接关闭=>', message)
-  },
-  onTextMessage: function (message) {
-    console.log('收到文本信息message=>', message)
-  }
-})
-const options = {
-  apiUrl: WebIM.config.apiURL,
-  user: '1913703612',
-  pwd: '1913703612',
-  appKey: WebIM.config.appkey
-}
 Vue.prototype.$imconn = conn
-Vue.prototype.$imoption = options
-
-
-
 /* ===================环信=============== */
 new Vue({
   el: '#app',
