@@ -67,7 +67,7 @@
                         </Select>
                     </FormItem>
 
-                    <FormItem style="margin-bottom:10px;">
+                    <FormItem style="margin-bottom:10px;" v-if="false">
                         发布时间
                         <DatePicker v-model="cd.time" type="datetimerange" format="yyyy-MM-dd HH:mm" placeholder="请填写时间范围" style="width: 300px"></DatePicker>
                     </FormItem>

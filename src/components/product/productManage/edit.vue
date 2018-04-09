@@ -38,7 +38,7 @@
                     <Radio label="2">卖家包邮</Radio>
                 </RadioGroup>
             </FormItem>
-            <FormItem label="运费模板" prop="templateId" v-if="formValidate.postageType == 2">
+            <FormItem label="运费模板" prop="templateId" v-if="formValidate.postageType == 1">
                 <Select v-model="formValidate.templateId" placeholder="选择运费模板">
                     <Option :value="item.id" v-for="(item,index) in tplList" :key="item.id">{{ item.templateName }}</Option>
                 </Select>
