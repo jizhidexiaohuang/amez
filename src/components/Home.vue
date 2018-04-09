@@ -1,6 +1,6 @@
 <template>
     <div class="">
-        首页    
+        {{msg}}
     </div>
 </template>
 
@@ -9,7 +9,7 @@ export default {
     name: 'home',
     data: function() {
          return {
-            msg:"首页"
+            msg:"这是一个首页"
         }
     },
     activated:function(){

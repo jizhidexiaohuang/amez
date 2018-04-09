@@ -22,18 +22,18 @@
                 <!-- 左侧菜单 -->
                 <Menu ref="leftMenu"  :active-name="menu.active" :theme="layout.theme2" :open-names="menu.open" :accordion="true">
                     <template v-for="item in menu.menuList">
-                        <router-link v-if="!!!item.hasChildList" :to="item.href">
+                        <router-link v-if="!!!item.hasChildList" :to="item.href" :key="item.id">
                             <MenuItem  :name="item.href">
                                 <Icon :type="item.menuLogo" :size="iconSize"></Icon>
                                 <span class="layout-text">{{ item.name }}</span>
                             </MenuItem>
                         </router-link>
-                        <Submenu v-if="!!item.hasChildList" :name="item.name">
+                        <Submenu v-if="!!item.hasChildList" :name="item.name" :key="item.id">
                             <template slot="title">
                                 <Icon :type="item.menuLogo" :size="iconSize"></Icon>
                                 <span class="layout-text">{{ item.name }}</span>
                             </template>
-                            <router-link v-for="list in item.childList" :to="list.href">
+                            <router-link v-for="list in item.childList" :to="list.href" :key="list.id">
                                 <MenuItem :name="list.href" class="layout-text">
                                     <span class="layout-text">{{ list.name }}</span>
                                 </MenuItem>
@@ -51,7 +51,7 @@
                     <div class="layout-breadcrumb">
                         <Breadcrumb>
                             <BreadcrumbItem to="/home">首页</BreadcrumbItem>
-                            <BreadcrumbItem v-for="item in bread.breadArrs" :to="item.path">{{ item.name }}</BreadcrumbItem>
+                            <BreadcrumbItem v-for="item in bread.breadArrs" :to="item.path" :key="item.id">{{ item.name }}</BreadcrumbItem>
                         </Breadcrumb>
                     </div>
                     <div class="layout-right-header">
@@ -89,7 +89,7 @@
                 <div class="tagWrap">
                     <div class="tabLeft">
                         <swiper :options="swiperOption" ref="mySwiper">
-                            <swiper-slide v-for="item in menu.arrs1">
+                            <swiper-slide v-for="item in menu.arrs1" :key="item.id">
                                 <Tag
                                     type="dot" 
                                     @click.native="fnDoSome(item.path)" 
