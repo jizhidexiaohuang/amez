@@ -335,5 +335,29 @@ const common = {
         }
         return time;
     },
+    /* IM配置 */
+    imConfig: {
+        xmppURL: 'im-api.easemob.com',
+        apiURL: (location.protocol === 'https:' ? 'https:' : 'http:') + '//a1.easemob.com',
+        appkey: '1186171226115717#pchoutai',
+        https: false,
+        isMultiLoginSessions: true,
+        isAutoLogin: true,
+        isWindowSDK: false,
+        isSandBox: false,
+        isDebug: false,
+        autoReconnectNumMax: 2,
+        autoReconnectInterval: 2,
+        isWebRTC: (/Firefox/.test(navigator.userAgent) || /WebKit/.test(navigator.userAgent)) && /^https\:$/.test(window.location.protocol),
+        heartBeatWait: 4500,
+        isHttpDNS: false,
+        msgStatus: true,
+        delivery: true,
+        read: true,
+        saveLocal: false,
+        encrypt: {
+          type: 'none'
+        }
+    },
 }
 export default common

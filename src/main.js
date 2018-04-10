@@ -71,6 +71,24 @@ router.afterEach((to, from) => {
 })
 
 
+
+/* =================环信================== */
+let WebIM = require('easemob-websdk');
+WebIM.config = common.imConfig;
+Vue.prototype.$webim = WebIM;
+// 创建连接
+const conn = new WebIM.connection({
+  isMultiLoginSessions: WebIM.config.isMultiLoginSessions,
+  https: typeof WebIM.config.https === 'boolean' ? WebIM.config.https : location.protocol === 'https:',
+  url: WebIM.config.xmppURL,
+  heartBeatWait: WebIM.config.heartBeatWait,
+  autoReconnectNumMax: WebIM.config.autoReconnectNumMax,
+  autoReconnectInterval: WebIM.config.autoReconnectInterval,
+  apiUrl: WebIM.config.apiURL,
+  isAutoLogin: true
+})
+Vue.prototype.$imconn = conn
+/* ===================环信=============== */
 new Vue({
   el: '#app',
   router,

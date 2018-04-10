@@ -63,7 +63,7 @@
           <Row>
             <Col span="6"><img :src="orderBase.productImg" alt=""><span>{{orderBase.productName}}</span></Col>
             <Col span="6">￥{{orderBase.productPrice/100}}</Col>
-            <Col span="6">{{orderBase.amountTotal/100}}(含上门费：￥30.00)</Col>
+            <Col span="6">{{orderBase.amountTotal/100}}<span v-if="orderBase.type">(含上门费：￥{{(orderBase.amountTotal-orderBase.productPrice)/100}})</span></Col>
             <Col span="6" v-if="orderBase.returnStatus=='0'">-</Button></Col>
             <Col span="6" v-if="orderBase.returnStatus!='0'"><Button type="ghost" @click="changePageType('refund');">{{returnStatus}}</Button></Col>
           </Row>

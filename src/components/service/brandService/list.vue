@@ -363,7 +363,7 @@
                                             let row = params.row;
                                             this.audit.id = row.id;
                                             this.audit.auditStatus = row.auditStatus;
-                                            this.audit.auditReason = row.auditReason;
+                                            this.audit.auditReason = !!row.auditReason?row.auditReason:'';
                                             this.fnShowModal1();
                                             // this.fnDeleteItem(params.row.id);
                                         }

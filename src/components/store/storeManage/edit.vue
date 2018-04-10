@@ -82,8 +82,8 @@
             <Row type="flex" justify="start">
                 <Col span="12">
                         <RadioGroup v-model="oldStore" @on-change="disabled = !disabled">
-                        <Radio label="true">是</Radio>
-                        <Radio label="false">否</Radio>
+                        <Radio label="1">是</Radio>
+                        <Radio label="0">否</Radio>
                     </RadioGroup>
                     <span>(连续经营超过5年)</span>
                 </Col>
@@ -98,8 +98,8 @@
             <Row type="flex" justify="start">
                 <Col span="12">
                     <RadioGroup v-model="formValidate.selectStore">
-                        <Radio label="true">是</Radio>
-                        <Radio label="false">否</Radio>
+                        <Radio label="1">是</Radio>
+                        <Radio label="0">否</Radio>
                     </RadioGroup>
                 </Col>
             </Row>
@@ -448,14 +448,14 @@
                 amPartner:'1',    //艾美合伙人
                 millionPartner:'1', //百万合伙人
                 crownManager:'1',  //皇冠店长
-                oldStore:'true',     //老店
+                oldStore:'1',     //老店
                 disabled:false,  //实际经营年限控制变量
                 storeLabel:'',//店铺标签(店铺标签)
                 storeHonorPhoto:'', //店铺荣誉
                 payStatus:true, //缴费状态布尔值
                 //formValidate对象
                 formValidate: {
-                    selectStore:'false', //是否属于精选门店
+                    selectStore:'0', //是否属于精选门店
                     storeName: '',   //店名
                     storeTel:'', //门店电话
                     storeTime:'', //营业时间
@@ -594,9 +594,6 @@
                     ],
                     storeInPhoto:[
                         { required: true, message: '请上传店内照', pattern:/.+/, trigger: 'blur' }
-                    ],
-                    contract:[
-                        { required: true, message: '请上传合同', pattern:/.+/, trigger: 'blur' }
                     ]
                 }
             }
@@ -606,7 +603,7 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         //处理几年老店
-                        if(this.oldStore=='true'){
+                        if(this.oldStore=='1'){
                             this.storeLabel = this.formValidate.managerYear + '年老店'
                         }else{
                             this.storeLabel = ''
@@ -640,9 +637,9 @@
                                 // sellerPhone:this.formValidate.sellerPhone,//店长账号
                                 brandName:this.formValidate.branchName,//品牌名
                                 brandId:this.formValidate.branchId, //品牌Id
-                                isOld:this.oldStore,//老店
+                                isOld:(this.oldStore=='1'?true:false),//老店
                                 manageYear:this.formValidate.managerYear,//实际经营年限
-                                isSelect:this.formValidate.selectStore, //是否属于精选门店
+                                isSelect:(this.formValidate.selectStore=='1'?true:false), //是否属于精选门店
                                 storeLabel:this.storeLabel,//店铺标签(五年老店)
                                 specialProject:this.projectStr,//特色项目
                                 storeCompanyName:this.formValidate.companyName,//公司名称
@@ -928,8 +925,8 @@
                     }
 
                     this.formValidate.managerYear = store.manageYear; //店铺经营年限
-                    this.oldStore = store.isOld?'true':'false'; //是否是老店
-                    this.formValidate.selectStore = store.isSelect?'true':'false'; //是否属于精选门店
+                    this.oldStore = store.isOld?'1':'0'; //是否是老店
+                    this.formValidate.selectStore = store.isSelect?'1':'0'; //是否属于精选门店
                     if(store.isOld==0){
                         this.disabled = true;
                     }else{

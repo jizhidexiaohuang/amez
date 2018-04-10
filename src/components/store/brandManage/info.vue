@@ -2,11 +2,11 @@
   <div class="testWrap">
       <div class="boxStyle editPage">
         <h2>查看连锁品牌</h2>
-        <h3>品牌名称：{{data.brandName}}</h3>
-        <div><h3>品牌Logo:
-            <img :src="data.brandLogo" alt=""></h3>
+        <h4>品牌名称：{{data.brandName}}</h4>
+        <div><h4>品牌Logo:
+            <img :src="data.brandLogo" alt=""></h4>
         </div>
-        <h3>品牌所属公司：{{data.brandOwnershipCompany}}</h3>
+        <h4>品牌所属公司：{{data.brandOwnershipCompany}}</h4>
         <Button type="success" @click.native="returnHome('list')">返回</Button>
       </div>
   </div>
@@ -53,6 +53,13 @@
 .editPage{
     h2{
         margin-bottom:10px;
+    }
+    h4{
+        padding:10px 0px;
+        padding-left:40px;
+    }
+    button{
+        margin-left:40px;
     }
     img{
         display: inline-block;
