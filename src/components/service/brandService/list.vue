@@ -285,6 +285,7 @@
                                         click: () => {
                                             let row = params.row;
                                             this.sendChild.itemId = row.id;
+                                            this.sendChild.storeId = row.storeId;
                                             this.changePageType('edit');
                                         }
                                     }

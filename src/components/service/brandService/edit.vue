@@ -501,10 +501,16 @@
             fnQueryById () {
                 let vm = this;
                 let id = vm.sendChild.itemId;
-                let url = vm.common.path2 + "product/detail/"+id;
+                let storeId = vm.sendChild.storeId;
+                let url = vm.common.path2 + "product/detail";
+                let ajaxData = {
+                    "productId": id,
+                    "storeId": storeId
+                }
                 vm.spinShow = true;
-                vm.$http.get(
-                    url
+                vm.$http.post(
+                    url,
+                    ajaxData
                 ).then(function(res){
                     let oData = res.data.data;
                     vm.fnInitQuery(oData);
