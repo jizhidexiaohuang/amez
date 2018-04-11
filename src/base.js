@@ -316,7 +316,12 @@ const common = {
         return year+'-'+month+'-'+day+' '+hour+':'+minute+':'+second;
     },
     baseFormatDate: function(date){
-        let d = new Date(date);
+        let d;
+        if(!!!date){
+            d = new Date();
+        }else{
+            d = new Date(date);
+        }
         let time = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds(); 
         return time;
     },

@@ -59,9 +59,45 @@
             <Button type="primary" @click="fnOenModal1('add')">添加好友</Button>
             <Button type="primary" @click="fnOenModal1('friendsNews')">好友申请</Button>
         </div>
-        <Row>
-            <Col span="18" offset="3" style="height: 490px; background: #fff; border-radius: 10px;"></Col>
-        </Row>
+        <div style="height: 520px; width: 800px; background:#fff; border-radius: 5px; margin: 10px auto; position: relative;">
+            <div class="configBox"></div>
+            <div class="listBox">
+                <div class="item" v-for="(item,index) in friendList">
+                    <div class="item_icon">
+                        <Icon type="ios-person-outline"></Icon>
+                    </div>
+                    <div class="item_user_name" @click="selectSendToName(item)">{{ item.name }}</div>
+                </div>
+            </div>
+            <div class="contentBox" v-if="!!sendtoInfo">
+                <div class="content_title">
+                    {{ !!sendtoInfo?sendtoInfo.name:'' }}
+                </div>
+                <div class="content_top">
+                    <div style="overflow: hidden;" v-if="!!sendtoInfo">
+                        <div class="content_item" v-for="(item,index) in showNewsList">
+                            <div :class="item.newsType == 'receive'?'fl':'fr'" style="width: 200px; overflow: hidden;">
+                                <div :class="item.newsType == 'receive'?'txt_fl':'txt_fr'" style="color: #999999;">
+                                    <span>{{ sendtoInfo.name }}</span>
+                                    <span>{{ item.theTime }}</span>
+                                </div>
+                                <div :class="['send_content',item.newsType == 'receive'?'bg1':'bg2']" class="send_content bg1">{{ item.sourceMsg }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="content_bottom">
+                    <div style="width; 100%;">
+                        <textarea class="text_area" v-model="sendText">
+                            
+                        </textarea>
+                    </div>
+                    <div style="width: 100%; height: 39px;">
+                        <Button @click="sendInfo" type="success" style="float: right; margin-top: 3px; margin-right: 5px;">发送</Button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -85,6 +121,10 @@ export default {
             activatedType: false,//主要解决mounted和activated重复调用
             subFriends: [], // 好友申请
             friendList: [], // 好友列表
+            sendtoInfo: '', // 发送信息给谁
+            sendText: '', // 发送的信息
+            newsList:[], // 用来存储不同人的消息
+            showNewsList: [], // 展示对应的消息列表
             /* 登录的信息 */
             login: {
                 userName: '',
@@ -169,6 +209,8 @@ export default {
                 },
                 onTextMessage: function (message) {
                     console.log('收到文本信息message=>', message)
+                    // 生成消息数据
+                    vm.fnMakeNewsList(message);
                 },
                 onPresence: function ( message ) {
                     vm.handlePresence(message);
@@ -180,9 +222,7 @@ export default {
             let vm = this;
             vm.$imconn.getRoster({
                 success: function (roster) {
-                    debugger
                     var arrs = [];
-
                     roster.forEach((item,i) => {
                         if(item.subscription === 'both' ||item.subscription === 'to') {
                             arrs.push(item);
@@ -240,6 +280,103 @@ export default {
                 }
             })
             vm.subFriends = arrs;
+        },
+        /* ============发送消息================= */
+        sendInfo () {
+            let vm = this;
+            var msg = vm.sendText;
+            if(!!!msg){
+                vm.$Message.error('请填写内容!');
+                return false;
+            }
+            var to = vm.sendtoInfo.name;
+            var options = {
+                to : to,
+                msg : msg,
+                type : "chat",
+                ext: {
+                    "time": vm.common.baseFormatDate()
+                }
+            };
+            //发送文本消息接口
+            vm.$imconn.send(options);
+
+            // 往数组里添加消息记录
+            vm.newsList.forEach((item,i) => {
+                if(item.name == vm.sendtoInfo.name){
+                    item.list.push({
+                        "sourceMsg": vm.sendText,
+                        "newsType": 'send',
+                        "theTime": vm.common.baseFormatDate()
+                    })
+                }
+            });
+            vm.sendText = '';
+        },
+        // 聊天数据
+        fnMakeNewsList (message) {
+            let vm = this;
+            var flag = true; 
+            debugger
+            vm.newsList.forEach((item,i) => {
+                if(item.name == message.from){
+                    item.list.push({
+                        "sourceMsg": message.sourceMsg,
+                        "newsType": 'receive',
+                        "theTime": message.ext.time
+                    })
+                    flag = false;
+                }
+            })
+            if(!!flag){
+                var obj = {
+                    "name": message.from,
+                    "list": []
+                }
+                obj.list.push({
+                    "sourceMsg": message.sourceMsg,
+                    "newsType": 'receive',
+                    "theTime": message.ext.time
+                })
+                vm.newsList.push(obj);
+            }
+        },
+        // 选择聊天对象
+        selectSendToName (info) {
+            console.log(info);
+            let vm = this;
+            vm.sendtoInfo = info;
+
+            // 判断是否有聊过天
+            if(vm.newsList.length == 0){
+                var obj = {
+                    "name": info.name,
+                    "list": [],
+                }
+                vm.newsList.push(obj);
+            }else{
+                var flag = true;
+                vm.newsList.forEach((item,i) => {
+                    if(item.name == info.name){
+                        flag = false;
+                    }
+                })
+                if(!!flag){
+                    var obj = {
+                        "name": info.name,
+                        "list": [],
+                    }
+                    vm.newsList.push(obj);
+                }
+            }
+            console.log(vm.newsList);
+
+            /* 展示对应的消息列表 */
+            vm.newsList.forEach((item,i) => {
+                if(item.name == info.name){
+                    vm.showNewsList = item.list;
+                }
+            })
         },
         //收到联系人订阅请求的处理方法，具体的type值所对应的值请参考xmpp协议规范
         handlePresence (e) {
@@ -312,5 +449,109 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+.fl{
+    float: left;
+}
+.fr{
+    float: right;
+}
+.txt_fl{
+    text-align: left;
+}
+.txt_fr{
+    text-align: right;
+}
+.configBox{
+    width: 70px; 
+    height: 100%;
+    border-right: 1px solid #f2f2f2;
+    float: left;
+    background-color: #fcfdfb;
+}
+.listBox{
+    float: left;
+    width: 250px;
+    border-right: 1px solid #f2f2f2;
+    height: 520px;
+    overflow-y: auto;
+}
+.contentBox{
+    float: left;
+    height: 100%;
+}
+.content_title{
+    padding-left: 15px;
+    height: 50px; 
+    line-height: 50px;
+    font-size: 20px;
+}
+.content_top{
+    width: 100%;
+    height: 320px;
+    padding-top: 20px;
+    border-bottom: 1px solid #f2f2f2;
+    overflow-y: auto;
+}
+.content_item{
+    margin-left: 10px; 
+    margin-right: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+.content_bottom{
+    width: 100%;
+    height: 149px;
+}
+.text_area{
+    width: 480px;
+    height: 100px;
+    padding: 10px 20px 10px 20px;
+    border: none;
+    background-color: white;
+    flex-direction: column;
+    outline:none;
+    font-size: 14px;
+    color: #999999;
+    resize: none;
+}
+.item{
+    height: 40px;
+    line-height: 40px;
+    padding-left: 10px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+.item_icon{
+    height: 40px; width: 40px;
+    border-radius: 50%; 
+    background:#f1f2ec; 
+    font-size: 25px; 
+    text-align:center; 
+    line-height: 40px;
+    float: left;
+    margin-right: 5px;
+}
+.item_user_name{
+    float: left;
+    font-size: 14px;
+    color: #1a1a1a;
+    width: calc(100% - 70px);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.send_content{
+    margin-top: 5px;
+    background: #f1f2ec;
+    width: 200px;
+    word-wrap:break-word;
+    padding: 5px;
+    border-radius: 5px;
+}
+.bg1{
+    background: #f1f2ec;
+}
+.bg2{
+    background: #b4e4fc;
+}
 </style>
