@@ -38,7 +38,7 @@
       <h4>美容院信息</h4>
       <Row>
         <Col span="8">美容师名称：{{orderBase.beauticianRealName}}</Col>
-        <Col span="8">美容师类型：{{ orderBase.beauticianType == 0?'店长':'兼职员工' }}</Col>
+        <Col span="8">美容师类型：{{ beauticianType }}</Col>
         <Col span="8">注册手机：{{orderBase.beauticianPhone}}</Col>
       </Row>
       <Row>
@@ -88,6 +88,20 @@ export default {
     };
   },
   computed:{
+    // 美容师类型
+    beauticianType : function () {
+      let vm = this;
+      let type = vm.orderBase.beauticianType;
+      if(type == 0){
+        return '老板'
+      }else if(type == 1){
+        return '店长'
+      }else if(type == 2){
+        return '正式员工'
+      }else if(type == 3){
+        return '兼职员工'
+      }
+    },
     // 总付金额
     allPrice : function () {
       var num = 0;

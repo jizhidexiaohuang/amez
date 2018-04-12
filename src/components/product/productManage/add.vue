@@ -12,12 +12,22 @@
             <FormItem label="产品编码">
                 <Input v-model="formValidate.physicalCode" placeholder="请填写产品编码"></Input>
             </FormItem>
-            <FormItem label="产品图片">
-                <MyUpload :defaultList="defaultList" v-on:listenUpload="v=>{getUploadList(v,'physicalImg')}" :uploadConfig="uploadConfig"></MyUpload>
-            </FormItem>
-            <FormItem label="封面图">
-                <MyUpload :defaultList="defaultList" v-on:listenUpload="v=>{getUploadList(v,'coverImg')}" :uploadConfig="uploadConfig1"></MyUpload>
-            </FormItem>
+            <div class="ivu-form" style="margin-bottom: 20px;">
+                <div class="ivu-form-item-label" style="width: 120px; float:left; text-align:right;">
+                    <span style="color:#ed3f14; font-size:12px; font-family: 'SimSun'; margin-right:4px;">*</span>产品图片
+                </div>
+                <div style="margin-left:120px;">
+                    <MyUpload :defaultList="defaultList" v-on:listenUpload="v=>{getUploadList(v,'physicalImg')}" :uploadConfig="uploadConfig"></MyUpload>
+                </div>
+            </div>
+            <div class="ivu-form" style="margin-bottom: 20px;">
+                <div class="ivu-form-item-label" style="width: 120px; float:left; text-align:right;">
+                    <span style="color:#ed3f14; font-size:12px; font-family: 'SimSun'; margin-right:4px;">*</span>封面图
+                </div>
+                <div style="margin-left:120px;">
+                    <MyUpload :defaultList="defaultList" v-on:listenUpload="v=>{getUploadList(v,'coverImg')}" :uploadConfig="uploadConfig1"></MyUpload>
+                </div>
+            </div>
             <FormItem label="产品价格（元）" prop="salePrice" number='true'>
                 <InputNumber :min="0" v-model="formValidate.salePrice" style="width: 100%;"></InputNumber>
             </FormItem>
@@ -205,6 +215,17 @@
             // 提交验证
             handleSubmit (name) {
                 let vm = this;
+                // 产品图片
+                if(!!!vm.uploadList.length){
+                    vm.$Message.error('请上传产品图片!');
+                    return false;
+                }
+                // 主图
+                if(!!!vm.formValidate.coverImg){
+                    vm.$Message.error('请上传封面图!');
+                    return false;
+                }
+
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         /* 产品提交的数据 */
