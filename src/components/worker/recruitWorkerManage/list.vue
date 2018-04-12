@@ -103,6 +103,7 @@
                     id: '' 
                 },
                 storeId: '', // 店铺id
+                storeName: '',// 店铺名称
                 examineId:'', //审核的id
                 infoId:'', //查看的id
                 authStatusList:[
@@ -373,8 +374,8 @@
                 let ajaxData = {
                    
                 }
-                if(!!vm.storeId){
-                    ajaxData.storeId = vm.storeId;
+                if(!!vm.storeName){
+                    ajaxData.storeName = vm.storeName;
                 }
                 if(vm.cd.authStatus){
                     ajaxData.authStatus = vm.cd.authStatus
@@ -478,6 +479,7 @@
             this._u.operatorsEdit(this); // 控制页面按钮的显示
             if(store!=null){
                 vm.storeId = store.id;
+                vm.storeName = store.storeName;
             }
             this.getData();
         },
