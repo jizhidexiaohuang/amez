@@ -59,22 +59,22 @@
             <Button type="primary" @click="fnOenModal1('add')">添加好友</Button>
             <Button type="primary" @click="fnOenModal1('friendsNews')">好友申请</Button>
         </div>
-        <div style="height: 520px; width: 800px; background:#fff; border-radius: 5px; margin: 10px auto; position: relative;">
+        <div style="height: 480px; width: 680px; background:#fff; border-radius: 5px; margin: 10px auto; position: relative;">
             <div class="configBox"></div>
             <div class="listBox">
-                <div class="item" v-for="(item,index) in friendList">
+                <div class="item" v-for="(item,index) in friendList" :class="['item',index == friendIndex?'item_active':'']">
                     <div class="item_icon">
                         <Icon type="ios-person-outline"></Icon>
                     </div>
-                    <div class="item_user_name" @click="selectSendToName(item)">{{ item.name }}</div>
+                    <div class="item_user_name" @click="selectSendToName(item,index)">{{ item.name }}</div>
                 </div>
             </div>
             <div class="contentBox" v-if="!!sendtoInfo">
                 <div class="content_title">
                     {{ !!sendtoInfo?sendtoInfo.name:'' }}
                 </div>
-                <div class="content_top">
-                    <div style="overflow: hidden;" v-if="!!sendtoInfo">
+                <div class="content_top" id="content_top" ref="content_top">
+                    <div style="overflow: hidden;">
                         <div class="content_item" v-for="(item,index) in showNewsList">
                             <div :class="item.newsType == 'receive'?'fl':'fr'" style="width: 200px; overflow: hidden;">
                                 <div :class="item.newsType == 'receive'?'txt_fl':'txt_fr'" style="color: #999999;">
@@ -88,7 +88,7 @@
                 </div>
                 <div class="content_bottom">
                     <div style="width; 100%;">
-                        <textarea class="text_area" v-model="sendText">
+                        <textarea @keyup.13="sendInfo" class="text_area" v-model="sendText">
                             
                         </textarea>
                     </div>
@@ -125,6 +125,7 @@ export default {
             sendText: '', // 发送的信息
             newsList:[], // 用来存储不同人的消息
             showNewsList: [], // 展示对应的消息列表
+            friendIndex: 1000, // 当前聊天好友的索引值
             /* 登录的信息 */
             login: {
                 userName: '',
@@ -211,6 +212,7 @@ export default {
                     console.log('收到文本信息message=>', message)
                     // 生成消息数据
                     vm.fnMakeNewsList(message);
+                    vm.fnFriendShowNews(message);
                 },
                 onPresence: function ( message ) {
                     vm.handlePresence(message);
@@ -284,7 +286,7 @@ export default {
         /* ============发送消息================= */
         sendInfo () {
             let vm = this;
-            var msg = vm.sendText;
+            var msg = vm.sendText.trim();
             if(!!!msg){
                 vm.$Message.error('请填写内容!');
                 return false;
@@ -312,12 +314,38 @@ export default {
                 }
             });
             vm.sendText = '';
+            // 滚动条固定在底部
+            let _div = vm.$refs.content_top;
+            let _num = _div.scrollHeight;
+            vm.fnChangeScroll(_div,_num);
+        },
+        // 收到信息时做相关的提示
+        fnFriendShowNews (message) {
+            let vm = this;
+            let name = message.from;
+            let flag = false;
+            if(this.$route.path != '/ownspace'){
+                flag = true;
+            }else{
+                if(name != vm.sendtoInfo.name){
+                    flag = true;
+                }else{
+                    // 滚动条固定在底部
+                    let _div = vm.$refs.content_top;
+                    let _num = _div.scrollHeight;
+                    vm.fnChangeScroll(_div,_num);
+                }
+            }
+            !!flag&&vm.$Notice.info({
+                title: name,
+                desc: message.sourceMsg,
+                duration:2
+            });
         },
         // 聊天数据
         fnMakeNewsList (message) {
             let vm = this;
             var flag = true; 
-            debugger
             vm.newsList.forEach((item,i) => {
                 if(item.name == message.from){
                     item.list.push({
@@ -342,10 +370,11 @@ export default {
             }
         },
         // 选择聊天对象
-        selectSendToName (info) {
+        selectSendToName (info,friendIndex) {
             console.log(info);
             let vm = this;
             vm.sendtoInfo = info;
+            vm.friendIndex = friendIndex;
 
             // 判断是否有聊过天
             if(vm.newsList.length == 0){
@@ -377,6 +406,12 @@ export default {
                     vm.showNewsList = item.list;
                 }
             })
+            // 滚动条固定在底部
+            if(vm.showNewsList.length>0){
+                let _div = vm.$refs.content_top;
+                let _num = _div.scrollHeight != undefined?_div.scrollHeight:0;
+                vm.fnChangeScroll(_div,_num);
+            }
         },
         //收到联系人订阅请求的处理方法，具体的type值所对应的值请参考xmpp协议规范
         handlePresence (e) {
@@ -440,6 +475,15 @@ export default {
             }
             vm.activatedType = true;//主要解决mounted和activated重复调用
         },
+        /* 元素的滚动条滚动位置变化 */ 
+        fnChangeScroll (_div,_num) {
+            let vm = this;
+            let div = _div;
+            let num = _num || 0;
+            vm.$nextTick(() => {
+                div.scrollTop = num;
+            })
+        }
     },
     components:{
         
@@ -462,7 +506,7 @@ export default {
     text-align: right;
 }
 .configBox{
-    width: 70px; 
+    width: 50px; 
     height: 100%;
     border-right: 1px solid #f2f2f2;
     float: left;
@@ -470,9 +514,9 @@ export default {
 }
 .listBox{
     float: left;
-    width: 250px;
+    width: 200px;
     border-right: 1px solid #f2f2f2;
-    height: 520px;
+    height: 480px;
     overflow-y: auto;
 }
 .contentBox{
@@ -481,14 +525,14 @@ export default {
 }
 .content_title{
     padding-left: 15px;
-    height: 50px; 
-    line-height: 50px;
+    height: 40px; 
+    line-height: 40px;
     font-size: 20px;
 }
 .content_top{
     width: 100%;
-    height: 320px;
-    padding-top: 20px;
+    height: 295px;
+    padding-top: 10px;
     border-bottom: 1px solid #f2f2f2;
     overflow-y: auto;
 }
@@ -503,7 +547,7 @@ export default {
     height: 149px;
 }
 .text_area{
-    width: 480px;
+    width: 430px;
     height: 100px;
     padding: 10px 20px 10px 20px;
     border: none;
@@ -515,11 +559,14 @@ export default {
     resize: none;
 }
 .item{
-    height: 40px;
+    overflow: hidden;
     line-height: 40px;
     padding-left: 10px;
-    margin-top: 5px;
-    margin-bottom: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.item_active{
+    background: #f3f6f6;
 }
 .item_icon{
     height: 40px; width: 40px;
@@ -539,6 +586,7 @@ export default {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    cursor: default;
 }
 .send_content{
     margin-top: 5px;
