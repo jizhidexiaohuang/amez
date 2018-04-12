@@ -57,6 +57,7 @@
                 this.$emit('returnList',type)
             },
             handleSubmit (name) {
+                let vm = this;
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                         let url = common.path2+'notificationNotices/insert';
@@ -78,17 +79,18 @@
                             }
                         ).then(res=>{
                             console.log(res)
-                            if(res.status==200){
+                            if(res.data.code==200){
                                 this.$Message.success('操作成功!');
                                 this.returnHome('list');
                                 vm.btnCtrl = false;
                             }
                         }).catch(err=>{
+                            console.log(err)
                             this.$Message.error('操作失败!');
-                            this.btnCtrl = false;
+                            vm.btnCtrl = false;
                         })
                     } else {
-                        this.$Message.error('操作失败!');
+                        this.$Message.error('数据不完整!');
                     }
                 })
             },

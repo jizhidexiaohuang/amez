@@ -20,7 +20,7 @@
             </Row>
             <Row>
                 <Col span="8">美容师：{{data.beauticianName}}</Col>
-                <Col span="8">注册手机：{{data.buyersPhone}}</Col>
+                <Col span="8">注册手机：{{data.beauticianPhone}}</Col>
                 <Col span="8"></Col>
             </Row>
             <Row>

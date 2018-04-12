@@ -72,10 +72,10 @@
     </div>
     <div class="discount">
       <div class="ticket" v-if="orderBase.couponReduce">
-        优惠券：-￥{{orderBase.couponReduce}} <span>满100减{{orderBase.couponReduce}}</span>
+        优惠券：-￥{{orderBase.couponReduce/100}} <span>满100减{{orderBase.couponReduce/100}}</span>
       </div>
       <div class="member_card" v-if="orderBase.memberCardReduce">
-        会员卡：-￥{{orderBase.memberCardReduce}} <span>一卡通折扣</span>
+        会员卡：-￥{{orderBase.memberCardReduce/100}} <span>一卡通折扣</span>
       </div>
       <div class="total_pay">
         <Button style="float:left;" type="success" @click.native="returnHome('list')">返回</Button>

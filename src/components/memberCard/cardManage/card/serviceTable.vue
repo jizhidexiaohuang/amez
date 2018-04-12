@@ -340,12 +340,12 @@
                     // this.getData();
                 }
             },
-            // storeId:{
-            //     deep:true,
-            //     handler(val){
-            //         this.getData()
-            //     }
-            // }
+            storeId:{
+                deep:true,
+                handler(val){
+                    this.getData()
+                }
+            }
         }
     }
 </script>

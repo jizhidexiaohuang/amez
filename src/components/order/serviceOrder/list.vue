@@ -178,7 +178,7 @@
                     {
                         title: '服务项目',
                         key: 'productName',
-                        width:'220px',
+                        width:'220',
                         render:(h,params)=>{
                             return h('div',[
                                 h('img',{
@@ -191,7 +191,7 @@
                                         marginRight:'8px',
                                         marginTop:'5px',
                                         marginBottom:'5px',
-                                        verticalAlign:'middle'
+                                        verticalAlign:'middle',
                                     }
                                 }),
                                 h('span',params.row.productName)

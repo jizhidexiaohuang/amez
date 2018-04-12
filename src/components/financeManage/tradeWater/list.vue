@@ -295,17 +295,9 @@
                             let str = '';
                             if(params.row.tradeType=='1'){
                                 if(params.row.tradeStatus==1){
-                                    str = '待服务'
-                                }else if(params.row.tradeStatus==2){
-                                    str = '服务中'
-                                }else if(params.row.tradeStatus==3){
-                                    str = '服务完成'
-                                }else if(params.row.tradeStatus==4){
-                                    str = '交易完成'
-                                }else if(params.row.tradeStatus==5){
-                                    str = '退款中'
-                                }else if(params.row.tradeStatus==6){
-                                    str = '退款完成'
+                                    str = '服务已完成'
+                                }else if(params.row.tradeStatus==0){
+                                    str = '服务未完成'
                                 }
                             }else if(params.row.tradeType=='2'){
                                 if(params.row.tradeStatus=='1'){

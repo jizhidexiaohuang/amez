@@ -5,13 +5,13 @@
             <h4>会员卡卡面</h4>
             <div class="memberCard">
                 <img :src="src" alt="">
-                <div class="brand">{{formValidate.brandName}}·会员卡（下单享{{(formValidate.discount/10+'').replace('.','')}}折）</div>
-                <div class="quota">￥{{formValidate.cardValue}} （全国通用）</div>
-                <div class="periodOfValidity">有效期 {{getPeriod}}</div>
+                <div class="brand">{{formValidate.cardName}}（下单享{{(formValidate.discount/10+'').replace('.','')}}折）</div>
+                <div class="quota">￥{{formValidate.cardValue}}{{formValidate.issueType?'（限本店使用）':'（'+businessId.length+'家门店可用）'}}</div>
+                <div class="periodOfValidity">有效期{{getPeriod}}</div>
             </div>
             <p>{{isRecharge}}充值</p>
             <p>卡项说明：{{formValidate.cardExplain}}</p>
-            <div class="businessTable">
+            <div class="businessTable" v-if="!formValidate.issueType">
                 <h4>适用门店</h4>
                 <businessList></businessList>
             </div>
@@ -29,6 +29,8 @@
     export default {
         data () {
             return {
+                businessId:[],
+                serviceId:[],
                 src:'../../../static/images/membercard.png',
                 formValidate:{
                     cardName:'',
@@ -90,6 +92,7 @@
                     vm.formValidate.discount = oData.memberCard.discount; //折扣
                     vm.formValidate.cardValue = oData.memberCard.balance/100; //面值
                     vm.formValidate.cardTotal = oData.memberCard.issueNum; //发行数量
+                    vm.formValidate.issueType = oData.memberCard.issueType; //发行方
                     vm.formValidate.imgUrl = oData.memberCard.stylePattern; //卡面样式
                     vm.src = oData.memberCard.stylePattern;
                     vm.formValidate.isRecharge = oData.memberCard.supportRecharge?'1':'0'; //支持充值
@@ -109,7 +112,7 @@
             },
             // 返回
             handReturn (val) {
-                this.$emit('returnList', val); 
+                this.$emit('returnList', val);
             },
         },
         mounted:function(){

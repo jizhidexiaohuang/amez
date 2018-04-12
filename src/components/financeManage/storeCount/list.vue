@@ -248,7 +248,7 @@
                             if(params.row.playStatus==1){
                                 return h('div',[
                                     h('div','已打款'),
-                                    h('div',common.formatDate(params.row.playTime))
+                                    h('div',params.row.playTime?common.formatDate(params.row.playTime):'')
                                 ])
                             }else{
                                 return h('div','未打款')
