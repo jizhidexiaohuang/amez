@@ -29,6 +29,9 @@
             <FormItem label="库存总数" prop="inventoryTotal">
                 <InputNumber :min="0" v-model="formValidate.inventoryTotal" style="width: 100%;"></InputNumber>
             </FormItem>
+            <FormItem label="库存可消耗数" prop="inventoryConsumable">
+                <InputNumber :min="0" v-model="formValidate.inventoryConsumable" style="width: 100%;"></InputNumber>
+            </FormItem>
             <FormItem label="发货地" prop="deliveryPlace">
                 <Input v-model="formValidate.deliveryPlace" placeholder="请填写发货地"></Input>
             </FormItem>
@@ -54,9 +57,7 @@
                 <InputNumber :min="0" v-model="formValidate.weight" style="width: 100%;"></InputNumber>
             </FormItem>
             
-            <FormItem label="库存可消耗数" prop="inventoryConsumable" v-if="false">
-                <InputNumber :min="0" v-model="formValidate.inventoryConsumable" style="width: 100%;"></InputNumber>
-            </FormItem>
+            
             <FormItem label="库存订单预约数" prop="inventoryOrderReservation" v-if="false">
                 <InputNumber :min="0" v-model="formValidate.inventoryOrderReservation" style="width: 100%;"></InputNumber>
             </FormItem>

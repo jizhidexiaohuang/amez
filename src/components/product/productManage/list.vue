@@ -164,6 +164,10 @@
                             key: 'inventoryTotal',
                         },
                         {
+                            title: '库存可消耗数',
+                            key: 'inventoryConsumable',
+                        },
+                        {
                             title: '邮费类型',
                             key: 'postageType',
                             render: (h,params) => {
