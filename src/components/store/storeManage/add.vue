@@ -90,6 +90,16 @@
                 </Col>
             </Row>
         </FormItem>
+        <FormItem label="门店等级" prop="levelId">
+            <Row>
+                <Col span="8">
+                    <Select v-model="formValidate.levelId" label-in-value @on-change="getStoreLevel">
+                        <Option :value="item.id" v-for='(item ,index) in levelList' :key="index">{{item.levelName}}</Option>
+                    </Select>
+                </Col>
+                <Col span="16"></Col>
+            </Row>
+        </FormItem>
         <FormItem label="店铺地址" prop="">
             <Row type="flex" justify="start">
                 <Col span="20">
@@ -385,6 +395,7 @@
                     num:3
                 },
                 branchList:[], //渲染所属品牌下拉框数组
+                levelList:[], //店铺等级list
                 province:'',//城市级联的值
                 city:'',//城市级联的值
                 erea:'',//城市级联的值
@@ -426,6 +437,9 @@
                 storeHonorPhoto:'', //店铺荣誉
                 //formValidate对象
                 formValidate: {
+                    levelId:'', //门店的等级id
+                    levelLogo:'', //门店等级logo
+                    levelName:'', //门店等级名称
                     selectStore:'0', //是否属于精选门店
                     storeName: '',   //店名
                     storeTel:'', //门店电话
@@ -591,6 +605,9 @@
                         this.projectStr = str;
                         let ajaxData = {
                             store:{
+                                levelId:this.formValidate.levelId, //等级id
+                                levelLogo:this.formValidate.levelLogo, //等级logo
+                                levelName:this.formValidate.levelName, //等级名称
                                 storeAddress:this.formValidate.storeAddress, //店铺详细地址
                                 provinceName:this.province,//省
                                 cityName:this.city,//市
@@ -667,7 +684,7 @@
                             if(res.data.code==200){
                                 this.$Message.success('保存成功！');
                             }else{
-                                this.$Message.success(res.data.message);
+                                this.$Message.warning(res.data.message);
                             }
                             vm.btnCtrl = false;
                         }).catch(err=>{
@@ -687,6 +704,18 @@
                 console.log(data)
                 this.formValidate.brandId = data.value;
                 this.formValidate.brandName = data.label;
+            },
+            //门店等级
+            getStoreLevel(data){
+                console.log(data)
+                let vm = this;
+                this.formValidate.levelId = data.value;
+                this.levelList.forEach(function(item,index){
+                    if(item.id==vm.formValidate.levelId){
+                        vm.formValidate.levelLogo = item.levelLogo;
+                        vm.formValidate.levelName = item.levelName;
+                    }
+                })
             },
             //添加新的特色项目
             addProject(){
@@ -865,10 +894,24 @@
                     this.branchList = data;
                     console.log(data)
                 })
+            },
+            //获取门店等级
+            getLevel(){
+                let vm = this;
+                let url = common.path2+"/storeLevel/findListByAll";
+                this.$http.get(url).then(res=>{
+                    let data = res.data.data;
+                    vm.levelList = data;
+                    vm.formValidate.levelId = data[0].id;
+                    vm.formValidate.levelName = data[0].levelName;
+                    vm.formValidate.levelLogo = data[0].levelLogo;
+                    console.log(this.levelList)
+                })
             }
         },
         beforeMount: function () {
-            this.getBranch()
+            this.getBranch();
+            this.getLevel();
         },
         watch: {
            

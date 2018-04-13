@@ -127,9 +127,9 @@
                     </div>
                 </div>
             </FormItem>
-            <FormItem label="员工等级" prop="workerGrade" style="width:500px;">
-                <Select v-model="formValidate.workerGrade">
-                    <Option :value="item.value" v-for='(item ,index) in formValidate.workerGradeList' :key="index">{{item.label}}</Option>
+            <FormItem label="员工等级" prop="levelId" style="width:500px;">
+                <Select v-model="formValidate.levelId" label-in-value @on-change="getWorkerLevel">
+                    <Option :value="item.id" v-for='(item ,index) in formValidate.levelList' :key="index">{{item.levelName}}</Option>
                 </Select>
             </FormItem>
             <FormItem>
@@ -184,25 +184,10 @@
                     experience:0, //从业经验
                     storeName:'', //店铺名称
                     storeId:'',//店铺id
-                    workerGrade:'', //员工等级
-                    workerGradeList:[
-                        {
-                            value:'',
-                            label:'请选择等级'
-                        },{
-                            value:1,
-                            label:'初级美容师'
-                        },{
-                            value:2,
-                            label:'中级美容师'
-                        },{
-                            value:3,
-                            label:'高级美容师'
-                        },{
-                            value:4,
-                            label:'资深美容师'
-                        }
-                    ],
+                    levelId:'', //员工等级
+                    levelLogo:'', //等级图标
+                    levelName:"", //等级名称
+                    levelList:[], //员工等级list
                     address:'',// 详细地址
                 },
                 ruleValidate: {
@@ -372,6 +357,9 @@
                 vm.$http.get(url).then(res=>{
                     console.log(res.data.data)
                     let oData = res.data.data;
+                    vm.formValidate.levelId = oData.levelId;
+                    vm.formValidate.levelLogo = oData.levelLogo;
+                    vm.formValidate.levelName = oData.levelName;
                     vm.formValidate.beauticianName = oData.beauticianName;
                     vm.formValidate.beauticianNickName = oData.beauticianNickName;
                     vm.defaultList.push({
@@ -404,6 +392,31 @@
                     vm.auditStatus = oData.auditStatus;
                     vm.auditReason = oData.auditReason
                 })
+            },
+            //选择员工等级
+            getWorkerLevel(data){
+                console.log(data)
+                let vm = this;
+                this.formValidate.levelId = data.value;
+                this.formValidate.levelList.forEach(function(item,index){
+                    if(item.id==vm.formValidate.levelId){
+                        vm.formValidate.levelLogo = item.levelLogo;
+                        vm.formValidate.levelName = item.levelName;
+                    }
+                })
+            },
+            //获取员工list
+            getLevel(){
+                let vm = this;
+                let url = this.common.path2+"/storeBeauticianLevel/findListByAll";
+                this.$http.get(url).then(res=>{
+                    let data = res.data.data;
+                    vm.formValidate.levelList = data;
+                    vm.formValidate.levelId = data[0].id;
+                    vm.formValidate.levelName = data[0].levelName;
+                    vm.formValidate.levelLogo = data[0].levelLogo;
+                    console.log(this.formValidate.levelList)
+                })
             }
         },
         beforeMount:function(){
@@ -416,6 +429,7 @@
                 this.formValidate.storeName = JSON.parse(window.localStorage.getItem('userInfo')).store.storeName;
             }
             this.getData();
+            this.getLevel();
         },
         components:{
             MyUpload,

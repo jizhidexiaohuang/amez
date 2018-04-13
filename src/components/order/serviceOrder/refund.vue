@@ -50,14 +50,14 @@
           <Row>
             <Col span="8"><img :src=orderBase.productImg alt=""><span>{{orderBase.productName}}</span></Col>
             <Col span="8">￥{{orderBase.productPrice/100}}</Col>
-            <Col span="8">￥{{orderBase.amountTotal/100}}{{orderBase.orderType?'(含上门费：￥30.00)':''}}</Col>
+            <Col span="8">￥{{orderBase.amountTotal/100}}{{orderBase.orderType?'(含上门费：￥'+(orderBase.amountTotal-orderBase.productPrice)/100+')':''}}</Col>
           </Row>
         </div>
       </div>
     </div>
     <div class="discount">
       <div class="ticket" v-if="orderBase.couponReduce">
-        优惠券：-￥{{orderBase.couponReduce/100}} <span>满100减20</span>
+        优惠券：-￥{{orderBase.couponReduce/100}} <span>满100减{{orderBase.couponReduce/100}}</span>
       </div>
       <div class="member_card" v-if="orderBase.memberCardReduce">
         会员卡：-￥{{orderBase.memberCardReduce/100}} <span>一卡通折扣</span>

@@ -51,6 +51,8 @@ import CustomerOrder from '@/components/order/customerOrder/list'
 import CommentManage from '@/components/order/commentManage/list'
 //产品订单
 import GoodsOrder from '@/components/order/goodsOrder/list'
+//退款订单
+import ReturnOrder from '@/components/order/returnOrder/list'
 /*=====================================权限管理==========================*/
 //用户管理
 import UserManage from '@/components/manage/userManage/list'
@@ -347,6 +349,16 @@ const menuRouter = [
         meta:{
           type:"菜单",
           name:"产品订单"
+        }
+      },
+      {
+        path: '/order/returnOrder',
+        name: '退款订单',
+        title: '退款订单',
+        component: ReturnOrder,
+        meta:{
+          type:"菜单",
+          name:"退款订单"
         }
       },
     ]

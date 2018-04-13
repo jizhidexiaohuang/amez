@@ -104,6 +104,16 @@
                 </Col>
             </Row>
         </FormItem>
+        <FormItem label="门店等级" prop="levelId">
+            <Row>
+                <Col span="8">
+                    <Select v-model="formValidate.levelId" label-in-value @on-change="getStoreLevel">
+                        <Option :value="item.id" v-for='(item ,index) in levelList' :key="index">{{item.levelName}}</Option>
+                    </Select>
+                </Col>
+                <Col span="16"></Col>
+            </Row>
+        </FormItem>
         <FormItem label="店铺地址" prop="">
             <Row type="flex" justify="start">
                 <Col span="20">
@@ -240,10 +250,6 @@
         <Row>
             <Col span="12">
                 <FormItem label="店铺荣誉" prop="">
-                    <!-- <Upload :show-upload-list="false" action="http://120.79.42.13:8080/system/api/file/uploadFile" :on-success="uploadStoreHonor">
-                        <Button v-if="!storeHonorPhoto" type="ghost" icon="ios-cloud-upload-outline">上传</Button>
-                        <img v-if="storeHonorPhoto" :src="storeHonorPhoto" alt="">
-                    </Upload> -->
                     <MyUpload v-if="honorCtrl" :defaultList="defaultListHonor" :uploadConfig="uploadConfigHonor" v-on:listenUpload="v=>{getUploadList(v,'honor')}"></MyUpload>
                     <span>(店铺相关的荣誉证书，获奖证书，最多上传6张)</span>
                 </FormItem>
@@ -410,6 +416,7 @@
                 cityCtrl:false, //控制子组件是否创建
                 extendId:0,//扩展id
                 branchList:[],//渲染品牌下拉框数组
+                levelList:[], //店铺等级list
                 // storeBanner:false,//正面照的显示
                 cityArr:[],//城市数组
                 province:'',//城市级联的值
@@ -455,6 +462,9 @@
                 payStatus:true, //缴费状态布尔值
                 //formValidate对象
                 formValidate: {
+                    levelId:'', //门店的等级id
+                    levelLogo:'', //门店等级logo
+                    levelName:'', //门店等级名称
                     selectStore:'0', //是否属于精选门店
                     storeName: '',   //店名
                     storeTel:'', //门店电话
@@ -619,6 +629,9 @@
                         let ajaxData = {
                             store:{
                                 id:this.editId, //编辑的id
+                                levelId:this.formValidate.levelId, //等级id
+                                levelLogo:this.formValidate.levelLogo, //等级logo
+                                levelName:this.formValidate.levelName, //等级名称
                                 storeAddress:this.formValidate.storeAddress, //店铺详细地址
                                 provinceName:this.province,//省
                                 cityName:this.city,//市
@@ -696,7 +709,7 @@
                             if(res.data.code){
                                 this.$Message.success('保存成功！');
                             }else{
-                                this.$Message.success(res.data.message);
+                                this.$Message.warning(res.data.message);
                             }
                             this.btnCtrl = false;
                         }).catch(res=>{
@@ -717,6 +730,18 @@
                 console.log(data)
                 this.formValidate.brandId = data.value;
                 this.formValidate.brandName = data.label;
+            },
+            //门店等级
+            getStoreLevel(data){
+                console.log(data)
+                let vm = this;
+                this.formValidate.levelId = data.value;
+                this.levelList.forEach(function(item,index){
+                    if(item.id==vm.formValidate.levelId){
+                        vm.formValidate.levelLogo = item.levelLogo;
+                        vm.formValidate.levelName = item.levelName;
+                    }
+                })
             },
             //添加新的特色项目
             addProject(){
@@ -892,53 +917,57 @@
             },
             //获取数据
             getDataById(id){
+                let vm = this;
                 let url = common.path2+'store/detail/'+id;
                 this.$http.get(url).then(res=>{
                     let store = res.data.data.store;
                     let storeExtend = res.data.data.storeExtend
-                    console.log(store)
-                    console.log(storeExtend)
-                    this.formValidate.storeName = store.storeName; //门店名称
-                    this.formValidate.date = store.createTime;  //开店时间
-                    this.formValidate.storeTel = store.storeTel;  //开店时间
-                    this.formValidate.storeTime = store.storeTime;  //开店时间
-                    this.formValidate.sellerAccount = store.bossName;  //老板姓名
-                    this.formValidate.bossPhone = store.bossPhone; //老板账号
-                    this.formValidate.storeManagerAccount = store.sellerName; //店长姓名
-                    this.formValidate.sellerPhone = store.sellerPhone;//店长账号
+                    // console.log(store)
+                    // console.log(storeExtend)
+                    vm.formValidate.levelId = store.levelId;
+                    vm.formValidate.levelLogo = store.levelLogo;
+                    vm.formValidate.levelName = store.levelName;
+                    vm.formValidate.storeName = store.storeName; //门店名称
+                    vm.formValidate.date = vm.common.formatDate(store.createTime);  //开店时间
+                    vm.formValidate.storeTel = store.storeTel;  //门店电话
+                    vm.formValidate.storeTime = store.storeTime;  //营业时间
+                    vm.formValidate.sellerAccount = store.bossName;  //老板姓名
+                    vm.formValidate.bossPhone = store.bossPhone; //老板账号
+                    vm.formValidate.storeManagerAccount = store.sellerName; //店长姓名
+                    vm.formValidate.sellerPhone = store.sellerPhone;//店长账号
                     //多选框
-                    this.formValidate.branchId = store.brandId; //所属品牌id
-                    this.formValidate.branchName = store.branchName; //所属品牌
+                    vm.formValidate.branchId = store.brandId; //所属品牌id
+                    vm.formValidate.branchName = store.branchName; //所属品牌
                     if(store.specialProject){
                         let tempArr = []
                         tempArr = store.specialProject.trim().split(' | '); //主营特色项目
                         for(var i=0;i<tempArr.length;i++){
-                            this.projectList.push({
+                            vm.projectList.push({
                                 disabled:false,
                                 label:tempArr[i]
                             })
                         }
-                        this.formValidate.mainProject = store.specialProject.trim().split(' | '); //主营特色项目
-                        this.showProject = true;
-                        console.log(this.formValidate.mainProject)
-                        console.log(this.projectList)
+                        vm.formValidate.mainProject = store.specialProject.trim().split(' | '); //主营特色项目
+                        vm.showProject = true;
+                        console.log(vm.formValidate.mainProject)
+                        console.log(vm.projectList)
                     }
 
-                    this.formValidate.managerYear = store.manageYear; //店铺经营年限
-                    this.oldStore = store.isOld?'1':'0'; //是否是老店
-                    this.formValidate.selectStore = store.isSelect?'1':'0'; //是否属于精选门店
+                    vm.formValidate.managerYear = store.manageYear; //店铺经营年限
+                    vm.oldStore = store.isOld?'1':'0'; //是否是老店
+                    vm.formValidate.selectStore = store.isSelect?'1':'0'; //是否属于精选门店
                     if(store.isOld==0){
-                        this.disabled = true;
+                        vm.disabled = true;
                     }else{
-                        this.disabled = false;
+                        vm.disabled = false;
                     }  //控制年限的可用
-                    this.mapData.longitude = store.storeLongitude; //经度
-                    this.mapData.latitude = store.storeLatitude; //纬度
-                    this.formValidate.storeAddress = store.storeAddress;  //店铺地址
-                    // this.mapInit(this.mapData.longitude,this.mapData.latitude); //重新初始化地图
-                    this.city = store.cityName;
+                    vm.mapData.longitude = store.storeLongitude; //经度
+                    vm.mapData.latitude = store.storeLatitude; //纬度
+                    vm.formValidate.storeAddress = store.storeAddress;  //店铺地址
+                    // vm.mapInit(vm.mapData.longitude,vm.mapData.latitude); //重新初始化地图
+                    vm.city = store.cityName;
                     //省市区
-                    this.cityArr.push({
+                    vm.cityArr.push({
                         value:store.productId,
                         label:store.provinceName
                     },{
@@ -948,77 +977,77 @@
                         value:store.areaId,
                         label:store.areaName
                     })
-                    this.cityConfig.cityList = this.cityArr;
-                    this.cityCtrl = true;
-                    this.orientate();
-                    this.formValidate.beauticianTotal = store.beauticianTotal;
-                    this.formValidate.description = store.description;
+                    vm.cityConfig.cityList = vm.cityArr;
+                    vm.cityCtrl = true;
+                    vm.orientate();
+                    vm.formValidate.beauticianTotal = store.beauticianTotal;
+                    vm.formValidate.description = store.description;
                     //------------扩展表----------------------------------------
-                    this.extendId = storeExtend.id;
-                    this.formValidate.companyName = storeExtend.companyName; //公司名称
-                    this.formValidate.businessLicense = storeExtend.businessLicense;  //营业执照
+                    vm.extendId = storeExtend.id;
+                    vm.formValidate.companyName = storeExtend.companyName; //公司名称
+                    vm.formValidate.businessLicense = storeExtend.businessLicense;  //营业执照
                     storeExtend.businessLicense.split(',').forEach((item,index)=>{
-                        this.defaultListLicense.push({
+                        vm.defaultListLicense.push({
                             url:item
                         })
                     })
-                    this.license = true;
-                    this.storeHonorPhoto = storeExtend.storeHonorPhoto;  //店铺荣誉
+                    vm.license = true;
+                    vm.storeHonorPhoto = storeExtend.storeHonorPhoto;  //店铺荣誉
                     storeExtend.storeHonorPhoto.split(',').forEach((item,index)=>{
-                        this.defaultListHonor.push({
+                        vm.defaultListHonor.push({
                             url:item
                         })
                     })
-                    this.honorCtrl = true;
-                    this.formValidate.idcardPositivePhoto = storeExtend.idcardPositivePhoto;//正面照
-                    this.defaultList[0].push({
+                    vm.honorCtrl = true;
+                    vm.formValidate.idcardPositivePhoto = storeExtend.idcardPositivePhoto;//正面照
+                    vm.defaultList[0].push({
                         url:storeExtend.idcardPositivePhoto
                     })
-                    this.formValidate.idcardNegativePhoto = storeExtend.idcardNegativePhoto;//反面照
-                    this.defaultList[1].push({
+                    vm.formValidate.idcardNegativePhoto = storeExtend.idcardNegativePhoto;//反面照
+                    vm.defaultList[1].push({
                         url:storeExtend.idcardNegativePhoto
                     })
-                    this.formValidate.idcardHandheldPhoto = storeExtend.idcardHandheldPhoto;//手持照
-                    this.defaultList[2].push({
+                    vm.formValidate.idcardHandheldPhoto = storeExtend.idcardHandheldPhoto;//手持照
+                    vm.defaultList[2].push({
                         url:storeExtend.idcardHandheldPhoto
                     })
-                    this.formValidate.storeDoorPhoto = storeExtend.storeDoorPhoto;//门头照
-                    this.defaultList[3].push({
+                    vm.formValidate.storeDoorPhoto = storeExtend.storeDoorPhoto;//门头照
+                    vm.defaultList[3].push({
                         url:storeExtend.storeDoorPhoto
                     })
-                    this.formValidate.storeCashierPhoto = storeExtend.storeCashierPhoto;//收银照
-                    this.defaultList[4].push({
+                    vm.formValidate.storeCashierPhoto = storeExtend.storeCashierPhoto;//收银照
+                    vm.defaultList[4].push({
                         url:storeExtend.storeCashierPhoto
                     })
-                    this.formValidate.storeInPhoto = storeExtend.storeInPhoto;//店内照
-                    this.defaultList[5].push({
+                    vm.formValidate.storeInPhoto = storeExtend.storeInPhoto;//店内照
+                    vm.defaultList[5].push({
                         url:storeExtend.storeInPhoto
                     })
-                    this.formValidate.contract = storeExtend.contract;//合同
+                    vm.formValidate.contract = storeExtend.contract;//合同
                    
-                    this.formValidate.businessLicenseNumber = storeExtend.businessLicenseNumber; //营业执照号码
-                    this.formValidate.LegalPersonName = storeExtend.legalPersonName; //法人姓名
-                    this.formValidate.IdCardNum = storeExtend.legalPersonIdcard; //身份证号码
-                    this.formValidate.AccountOpeningBank = storeExtend.praBank; //开户银行
-                    this.formValidate.OpeningArea = storeExtend.praArea; //开户地区
-                    this.formValidate.bankBranch = storeExtend.praBankBranch; //支行名称
-                    this.formValidate.accountName = storeExtend.praAccountName; //开户名称
-                    this.formValidate.BankCardNumber = storeExtend.praBankCardNumber; //银行卡号
-                    this.formValidate.eraBank = storeExtend.eraBank; //企业--开户银行
-                    this.formValidate.eraArea = storeExtend.eraArea; //企业--开户地区
-                    this.formValidate.eraBankBranch = storeExtend.eraBankBranch; //企业--支行名称
-                    this.formValidate.eraCompanyName = storeExtend.eraCompanyName; //企业--公司名称
-                    this.formValidate.eraBankCardNumber = storeExtend.eraBankCardNumber; //企业--银行卡号
-                    this.formValidate.marginPaymentStatus = storeExtend.marginPaymentStatus?'true':'false'; //保证金缴纳状态
-                    this.formValidate.premiumReceived = storeExtend.paymentAmount; //缴纳金额
-                    this.formValidate.storeArea = storeExtend.storeArea //店铺面积
+                    vm.formValidate.businessLicenseNumber = storeExtend.businessLicenseNumber; //营业执照号码
+                    vm.formValidate.LegalPersonName = storeExtend.legalPersonName; //法人姓名
+                    vm.formValidate.IdCardNum = storeExtend.legalPersonIdcard; //身份证号码
+                    vm.formValidate.AccountOpeningBank = storeExtend.praBank; //开户银行
+                    vm.formValidate.OpeningArea = storeExtend.praArea; //开户地区
+                    vm.formValidate.bankBranch = storeExtend.praBankBranch; //支行名称
+                    vm.formValidate.accountName = storeExtend.praAccountName; //开户名称
+                    vm.formValidate.BankCardNumber = storeExtend.praBankCardNumber; //银行卡号
+                    vm.formValidate.eraBank = storeExtend.eraBank; //企业--开户银行
+                    vm.formValidate.eraArea = storeExtend.eraArea; //企业--开户地区
+                    vm.formValidate.eraBankBranch = storeExtend.eraBankBranch; //企业--支行名称
+                    vm.formValidate.eraCompanyName = storeExtend.eraCompanyName; //企业--公司名称
+                    vm.formValidate.eraBankCardNumber = storeExtend.eraBankCardNumber; //企业--银行卡号
+                    vm.formValidate.marginPaymentStatus = storeExtend.marginPaymentStatus?'true':'false'; //保证金缴纳状态
+                    vm.formValidate.premiumReceived = storeExtend.paymentAmount; //缴纳金额
+                    vm.formValidate.storeArea = storeExtend.storeArea //店铺面积
                     console.log(JSON.parse(storeExtend.otherService))
                     if(storeExtend.otherService){
                         JSON.parse(storeExtend.otherService).forEach((item,index)=>{
-                            this.formValidate.additionalServices.push(item.name)
+                            vm.formValidate.additionalServices.push(item.name)
                         })
                     }
-                    this.additionalServicesObj = storeExtend.otherService;
+                    vm.additionalServicesObj = storeExtend.otherService;
                 })
             },
             //获取连锁品牌
@@ -1041,6 +1070,19 @@
                     this.branchList = data;
                     console.log(data)
                 })
+            },
+            //获取门店等级
+            getLevel(){
+                let vm = this;
+                let url = common.path2+"/storeLevel/findListByAll";
+                this.$http.get(url).then(res=>{
+                    let data = res.data.data;
+                    vm.levelList = data;
+                    vm.formValidate.levelId = data[0].id;
+                    vm.formValidate.levelName = data[0].levelName;
+                    vm.formValidate.levelLogo = data[0].levelLogo;
+                    console.log(this.levelList)
+                })
             }
         },
         beforeMount: function () {
@@ -1052,6 +1094,7 @@
         beforeMount:function(){
             this.getDataById(this.editId);
             this.getBranch();
+            this.getLevel();
         },
         mounted: function(){
             //初始化地图

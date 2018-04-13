@@ -7,7 +7,7 @@
             编辑
         </div>
         <!-- 详情容器 -->
-        <infoPage v-if="pageType == 'info'"  class="testWrap" :message="parentMsg" v-on:returnList="changePageType"/>
+        <refundPage v-if="pageType == 'refund'"  class="testWrap" :refundId="refundId" v-on:returnList="changePageType"/>
         <!-- 列表容器 -->
         <div v-if="pageType == 'list'" class="testWrap">
             <div class="boxStyle">
@@ -31,13 +31,13 @@
                         <Option v-for="item in orderTypeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
                 </FormItem>
-                <FormItem style="margin-bottom:10px;">
+                <FormItem style="margin-bottom:10px;" v-if="false">
                     订单来源
                     <Select v-model="cd.orderOrigin" style="width:100px">
                         <Option v-for="item in orderOriginList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                     </Select>
                 </FormItem>
-                <FormItem style="margin-bottom:10px;">
+                <FormItem style="margin-bottom:10px;" v-if="false">
                     订单状态
                     <Select v-model="cd.orderStatus" style="width:100px">
                         <Option v-for="item in orderStatusList" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -50,16 +50,14 @@
                     </Select>
                 </FormItem>
                 <FormItem style="margin-bottom:10px;">
-                    下单时间
+                    退款申请时间
                     <DatePicker v-model="cd.addTime" type="daterange" placement="bottom-end" placeholder="请填写时间范围" style="width:200px"></DatePicker>
                 </FormItem>
                 <FormItem style="margin-bottom:10px;">
                     <Input v-model="cd.inputVal">
                     <Select v-model="cd.selectType" slot="prepend" style="width: 100px">
                         <Option value="orderNo">订单号</Option>
-                        <Option v-if="!storeName" value="storeName">门店名称</Option>
-                        <Option value="memberRealName">收货人姓名</Option>
-                        <Option value="phone">收货人手机</Option>
+                        <Option value="storeName">退款订单号</Option>
                     </Select>
                     </Input>
                 </FormItem>
@@ -100,8 +98,7 @@
     </div>
 </template>
 <script>
-    import expandRow from './table-expand.vue'
-    import infoPage from './info.vue'
+    import refundPage from '../serviceOrder/refund.vue'
     import common from '../../../base.js'
     export default {
         data () {
@@ -109,7 +106,7 @@
                 operators:{},
                 src:'../../../static/images/footer/1_1.png',
                 area:'',
-                parentMsg:'',
+                refundId:'',
                 storeName:'',
                 orderTypeList:[
                     {
@@ -184,18 +181,7 @@
                 pageType: 'list',
                 tableColumns1: [
                     {
-                        type: 'expand',
-                        width: 50,
-                        render: (h, params) => {
-                            return h(expandRow, {
-                                props: {
-                                    row: params.row
-                                }
-                            })
-                        }
-                    },
-                    {
-                        title: '服务项目',
+                        title: '退款编号',
                         key: 'productName',
                         width:220,
                         render:(h,params)=>{
@@ -218,14 +204,14 @@
                         }
                     },
                     {
-                        title: '单价',
+                        title: '订单编号',
                         key: 'productPrice',
                         render: (h,params) =>{
                             return params.row.productPrice/100
                         }
                     },
                     {
-                        title: '订单总价',
+                        title: '服务项目',
                         key: 'amountTotal',
                         render:(h,params)=>{
                             if(params.row.type){
@@ -236,7 +222,7 @@
                         }
                     },
                     {
-                        title: '订单状态',
+                        title: '应/实付金额',
                         key: 'status',
                         render:(h,params) =>{
                            let status = params.row.status;
@@ -258,7 +244,7 @@
                         }
                     },
                     {
-                        title: '退款状态',
+                        title: '退款金额',
                         key: 'returnStatus',
                         width:120,
                         render:(h,params) =>{
@@ -277,7 +263,7 @@
                         }
                     },
                     {   
-                        title: '应/实付金额',
+                        title: '申请时间',
                         key: 'amountPay',
                         width:120,
                         render:(h,params)=>{
@@ -285,26 +271,11 @@
                         }
                     },
                     {   
-                        title: '美容院',
+                        title: '售后状态',
                         key: 'storeName',
                         render:(h,params)=>{
                             return h('div',[
                                 h('div',params.row.storeName)
-                            ])
-                        }
-                    },
-                    {   
-                        title: '买家信息',
-                        key: 'customerName',
-                        render:(h,params)=>{
-                            let str = '';
-                            if(params.row.type){
-                                str = params.row.customerName
-                            }else{
-                                str = params.row.memberNickName 
-                            }
-                            return h('div',[
-                                h('div',str)
                             ])
                         }
                     },
@@ -325,8 +296,8 @@
                                 },
                                 on: {
                                     click: () => {
-                                        this.parentMsg = params.row.id
-                                        this.changePageType('info');
+                                        this.refundId = params.row.id;
+                                        this.changePageType('refund');
                                     }
                                 }
                             }, '查看');
@@ -637,8 +608,7 @@
             vm.fnExistTabList()
         },
         components:{
-            infoPage,
-            expandRow,
+            refundPage
         }
     }
 </script>

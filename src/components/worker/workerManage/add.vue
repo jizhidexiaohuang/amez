@@ -126,9 +126,9 @@
                     </div>
                 </div>
             </FormItem>
-            <FormItem label="员工等级" prop="workerGrade" style="width:500px;">
-                <Select v-model="formValidate.workerGrade">
-                    <Option :value="item.value" v-for='(item ,index) in formValidate.workerGradeList' :key="index">{{item.label}}</Option>
+            <FormItem label="员工等级" prop="levelId" style="width:500px;">
+                <Select v-model="formValidate.levelId" label-in-value @on-change="getWorkerLevel">
+                    <Option :value="item.id" v-for='(item ,index) in formValidate.levelList' :key="index">{{item.levelName}}</Option>
                 </Select>
             </FormItem>
             <FormItem>
@@ -179,25 +179,10 @@
                     experience:0, //从业经验
                     storeName:'', //店铺名称
                     storeId:'',//店铺id
-                    workerGrade:'', //员工等级
-                    workerGradeList:[
-                        {
-                            value:'',
-                            label:'请选择等级'
-                        },{
-                            value:1,
-                            label:'初级美容师'
-                        },{
-                            value:2,
-                            label:'中级美容师'
-                        },{
-                            value:3,
-                            label:'高级美容师'
-                        },{
-                            value:4,
-                            label:'资深美容师'
-                        }
-                    ],
+                    levelId:'', //员工等级
+                    levelLogo:'', //等级图标
+                    levelName:"", //等级名称
+                    levelList:[], //员工等级list
                     address:'',// 详细地址
                 },
                 ruleValidate: {
@@ -225,7 +210,7 @@
                     storeName:[
                         { required: true, message: '请填写员工所属店铺', pattern:/.+/, trigger: 'change' }
                     ],
-                    workerGrade:[
+                    levelId:[
                         { required: true, message: '请选择员工等级', pattern:/.+/, trigger: 'change' }
                     ],
                 },
@@ -252,6 +237,9 @@
                     if (valid) {
                         //添加品牌服务
                         let ajaxData = {
+                            levelId:this.formValidate.levelId, //等级id
+                            levelLogo:this.formValidate.levelLogo, //等级logo
+                            levelName:this.formValidate.levelName, //等级名称
                             beauticianName: vm.formValidate.beauticianName, // 员工姓名
                             beauticianNickName: vm.formValidate.beauticianNickName, // 员工昵称
                             headImgUrl: vm.formValidate.headImgUrl, // 员工头像
@@ -393,6 +381,31 @@
                 this.area = data[2].label
                 this.areaId = data[2].value
             },
+            //选择员工等级
+            getWorkerLevel(data){
+                console.log(data)
+                let vm = this;
+                this.formValidate.levelId = data.value;
+                this.formValidate.levelList.forEach(function(item,index){
+                    if(item.id==vm.formValidate.levelId){
+                        vm.formValidate.levelLogo = item.levelLogo;
+                        vm.formValidate.levelName = item.levelName;
+                    }
+                })
+            },
+            //获取员工list
+            getLevel(){
+                let vm = this;
+                let url = this.common.path2+"/storeBeauticianLevel/findListByAll";
+                this.$http.get(url).then(res=>{
+                    let data = res.data.data;
+                    vm.formValidate.levelList = data;
+                    vm.formValidate.levelId = data[0].id;
+                    vm.formValidate.levelName = data[0].levelName;
+                    vm.formValidate.levelLogo = data[0].levelLogo;
+                    console.log(this.formValidate.levelList)
+                })
+            }
         },
         mounted: function(){
             if(JSON.parse(window.localStorage.getItem('userInfo')).store){
@@ -400,7 +413,8 @@
                 this.formValidate.storeId = JSON.parse(window.localStorage.getItem('userInfo')).store.id;
                 this.formValidate.storeName = JSON.parse(window.localStorage.getItem('userInfo')).store.storeName;
             }
-            this.getData()
+            this.getData();
+            this.getLevel();
         },
         components:{
             MyUpload,
